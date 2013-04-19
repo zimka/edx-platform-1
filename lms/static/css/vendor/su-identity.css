@@ -103,9 +103,13 @@
 #su-footer p.copyright {
   font: 11px 'Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif;
   margin: 0;
-  padding: 25px 0 0;
+  padding: 30px 0 0;
   line-height: 1.5em;
-  text-align: center;
+  color: #e3dfd5;
+}
+
+#su-footer p.copyright span {
+  color: #e3dfd5;
 }
 
 /* Footer two columns */
@@ -233,7 +237,7 @@ Media queries
   /* Bootstrap style */
   #su-header .container,
   #su-footer .container {
-    width:1170px;
+    width:1180px;
   }
 
   #su-footer .span2 {
