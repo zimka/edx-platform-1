@@ -1,0 +1,83 @@
+/****************************************************************************************************
+*   Stanford Theming File
+*
+*   Contains all the theme color definitions for the Stanford Open Source MOOC Project
+*
+****************************************************************************************************/
+
+//-----------------
+//  Color variables (from Stanford palette unless noted)
+//-----------------
+
+//Cardinal Color Variables
+$cardinal-red: #8C1515;
+$dark-red: #820000; //Link Color
+$cardinal-light: #c83737; //Selected Header BG Color, ie. calendar        ***Custom, not from palette***
+$cardinal-bg: #e9afaf; //Selected Content BG Color, ie. calendar          ***Custom, not from palette***
+
+//Beige Color Variables
+$beige: #9d9573;
+$beige-60: lighten($beige, 18.5%); //Main Border/HR Color
+$beige-25: lighten($beige, 25%); 
+
+//Sandstone Color Variables
+$sandstone: #ddcf99;
+$sandstone-50: lighten($sandstone, 9%);
+$sandstone-25: lighten($sandstone, 20%); //Important Heading BG Color 
+
+//Gray Color Variables
+$gray: #3f3c30; //Main Text Color
+$gray-75: lighten($gray, 18.25%); //Lighter Text Color
+
+$gray-3: #e9e6df; //Block/Course BG Color
+$gray-1: #fbfbf9; //Main BG Color
+
+
+
+
+//-----------------
+//  Font Assignment
+//-----------------
+
+$theme-sans-font: 'Source Sans';
+$sans-serif: $theme-sans-font, $sans-serif;
+$body-font-family: $sans-serif;
+
+$theme-serif-font: 'Crimson Text';
+$serif: $theme-serif-font, $serif;
+
+
+
+
+//-----------------
+//  Theme Element Assignments
+//-----------------
+
+$body-bg: $gray-1;
+$content-wrapper-bg: $gray-1;
+$header-image: none;
+$header-bg: $sandstone-25;
+$footer-bg: $sandstone-25;
+
+$faded-hr-image-1: none;
+$faded-hr-image-2: none;
+$faded-hr-image-3: none;
+$faded-hr-image-4: none;
+$faded-hr-image-5: none;
+$faded-hr-image-6: none;
+$faded-bg: $beige-60;
+
+$base-font-color: $gray;
+$lighter-base-font-color: $gray-75;
+
+$link-color: $dark-red;
+$link-hover: $cardinal-light;
+$selection-color: $cardinal-bg;
+$site-status-color: $cardinal-bg;
+
+$border-color-1: $beige-60;
+$border-color-2: $beige-60;
+$border-color-3: $beige-60;
+
+$course-bg-color: $gray-3;
+$course-bg-image: none;
