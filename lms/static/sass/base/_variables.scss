@@ -18,6 +18,7 @@ $base-font-color: rgb(60,60,60);
 $baseFontColor: rgb(60,60,60);
 $base-font-color: rgb(60,60,60);
 $lighter-base-font-color: rgb(100,100,100);
+$very-light-text: #fff;
 
 $blue: rgb(29,157,217);
 $pink: rgb(182,37,104);
@@ -27,10 +28,19 @@ $border-color: #C8C8C8;
 $sidebar-color: #f6f6f6;
 $outer-border-color: #aaa;
 
+// old variables
+$light-gray: #ddd;
+$dark-gray: #333;
+$text-color: $dark-gray;
+
 $body-bg: rgb(250,250,250);
 $header-image: linear-gradient(-90deg, rgba(255,255,255, 1), rgba(230,230,230, 0.9));
 $header-bg: transparent;
 $footer-bg: transparent;
+
+$button-bg-image: linear-gradient(#fff 0%, rgb(250,250,250) 50%, rgb(237,237,237) 50%, rgb(220,220,220) 100%);
+$button-bg-color: transparent;
+$button-bg-hover-color: #fff;
 
 $faded-hr-image-1: linear-gradient(180deg, rgba(200,200,200, 0) 0%, rgba(200,200,200, 1) 50%, rgba(200,200,200, 0));
 $faded-hr-image-2: linear-gradient(180deg, rgba(200,200,200, 0) 0%, rgba(200,200,200, 1));
@@ -39,6 +49,11 @@ $faded-hr-image-4: linear-gradient(180deg, rgba(240,240,240, 0) 0%, rgba(240,240
 $faded-hr-image-5: linear-gradient(180deg, rgba(255,255,255, 0) 0%, rgba(255,255,255, 0.8) 50%, rgba(255,255,255, 0));
 $faded-hr-image-6: linear-gradient(90deg, rgba(255,255,255, 0) 0%, rgba(255,255,255, 0.6) 50%, rgba(255,255,255, 0));
 $faded-bg: transparent;
+
+$dashboard-profile-header-image: linear-gradient(-90deg, rgb(255,255,255), rgb(245,245,245));
+$dashboard-profile-header-color: transparent;
+$dashboard-profile-color: rgb(252,252,252);
+$dot-color: $light-gray;
 
 $content-wrapper-bg: rgb(255,255,255);
 $course-bg-color: #d6d6d6;
@@ -51,10 +66,9 @@ $border-color-4: rgb(252,252,252);
 
 $link-color: $blue;
 $link-hover: $pink;
-$selection-color: #444;
+$selection-color-1: $pink;
+$selection-color-2: #444;
 $site-status-color: $pink;
 
-// old variables
-$light-gray: #ddd;
-$dark-gray: #333;
-$text-color: $dark-gray;
+$button-color: $blue;
+$button-archive-color: #eee;

@@ -202,5 +202,6 @@ mark {
   }
 }
 
-
-
+::selection {
+  background-color: $selection-color-1;
+}

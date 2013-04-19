@@ -69,15 +69,29 @@ $faded-bg: $beige-60;
 
 $base-font-color: $gray;
 $lighter-base-font-color: $gray-75;
+$very-light-text: $gray-1;
 
 $link-color: $dark-red;
 $link-hover: $cardinal-light;
-$selection-color: $cardinal-bg;
+$selection-color-1: $cardinal-bg;
+$selection-color-2: $cardinal-bg;
 $site-status-color: $cardinal-bg;
+
+$button-color: $dark-red;
+$button-archive-color: $gray-3;
+
+$button-bg-image: none;
+$button-bg-color: $gray-3;
+$button-bg-hover-color: $gray-1;
 
 $border-color-1: $beige-60;
 $border-color-2: $beige-60;
 $border-color-3: $beige-60;
+
+$dashboard-profile-header-image: none;
+$dashboard-profile-header-color: $sandstone-25;
+$dashboard-profile-color: $gray-3;
+$dot-color: $beige-60;
 
 $course-bg-color: $gray-3;
 $course-bg-image: none;
