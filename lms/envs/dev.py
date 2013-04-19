@@ -13,6 +13,9 @@ from logsettings import get_logger_config
 DEBUG = True
 TEMPLATE_DEBUG = True
 
+# TODO: fixme. This is an ugly hack.
+SPECIAL_HEADER = "su-header"
+SPECIAL_FOOTER = "su-footer"
 
 MITX_FEATURES['DISABLE_START_DATES'] = True
 MITX_FEATURES['ENABLE_SQL_TRACKING_LOGS'] = True
