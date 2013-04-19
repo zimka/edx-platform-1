@@ -435,6 +435,7 @@ PIPELINE_CSS = {
             'css/vendor/jquery.treeview.css',
             'css/vendor/ui-lightness/jquery-ui-1.8.22.custom.css',
             'css/vendor/jquery.qtip.min.css',
+            'css/vendor/su-identity.css',
             'sass/course.scss'
         ],
         'output_filename': 'css/lms-course.css',
