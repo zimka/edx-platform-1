@@ -1,27 +1,23 @@
 .faded-hr-divider {
   @include background-image($faded-hr-image-1);
-  background: $faded-bg;
   height: 1px;
   width: 100%;
 }
 
 .faded-hr-divider-medium {
   @include background-image($faded-hr-image-4);
-  background: $faded-bg;
   height: 1px;
   width: 100%;
 }
 
 .faded-hr-divider-light {
   @include background-image($faded-hr-image-5);
-  background: $faded-bg;
   height: 1px;
   width: 100%;
 }
 
 .faded-vertical-divider {
   @include background-image($faded-hr-image-1);
-  background: $faded-bg;
   height: 100%;
   width: 1px;
 }
@@ -62,13 +58,11 @@
 
 .fade-right-hr-divider {
   @include background-image($faded-hr-image-2);
-  background: $faded-bg;
   border: none;
 }
 
 .fade-left-hr-divider {
   @include background-image($faded-hr-image-3);
-  background: $faded-bg;
   border: none;
 }
 
