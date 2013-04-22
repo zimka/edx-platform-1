@@ -1,64 +1,26 @@
-## mako
-<%! from django.core.urlresolvers import reverse %>
-<%namespace name='static' file='/static_content.html'/>
+<%inherit file="/footer.html"/>
 
-<footer>
-  <nav>
-    <section class="top">
-      <section class="primary">
-        <a href="${reverse('root')}" class="logo"></a>
-        <a href="${reverse('courses')}">Find Courses</a>
-        <a href="${reverse('about_edx')}">About</a>
-        <a href="http://blog.edx.org/">Blog</a>
-        <a href="${reverse('jobs')}">Jobs</a>
-        <a href="${reverse('contact')}">Contact</a>
-      </section>
-
-      <section class="social">
-        <a href="http://youtube.com/user/edxonline"><img src="${static.url('images/social/youtube-sharing.png')}" /></a>
-        <a href="https://plus.google.com/108235383044095082735"><img src="${static.url('images/social/google-plus-sharing.png')}" /></a>
-        <a href="http://www.facebook.com/EdxOnline"><img src="${static.url('images/social/facebook-sharing.png')}" /></a>
-        <a href="https://twitter.com/edXOnline"><img src="${static.url('images/social/twitter-sharing.png')}" /></a>
-      </section>
-    </section>
-
-    <section class="bottom">
-      <section class="copyright">
-##        <p>&copy; 2013 edX, <a href="${reverse('copyright')}">some rights reserved.</a></p> # TODO: (bridger) Update the copyright for edX, then re-enable the link.
-        <p>&copy; 2013 edX, some rights reserved.</p>
-      </section>
-
-      <section class="secondary">
-        <a href="${reverse('tos')}">Terms of Service</a>
-        <a href="${reverse('privacy_edx')}">Privacy Policy</a>
-        <a href="${reverse('honor')}">Honor Code</a>
-        <a href="${reverse('help_edx')}">Help</a>
-      </section>
-    </section>
-
-  </nav>
-</footer>
-
-<div id="su-footer">
-  <div class="container">
-    <div class="row">
-      <div id="su-footer-logo" class="span2">
-        <a href="http://www.stanford.edu">
-          <img src="https://www.stanford.edu/su-identity/images/footer-stanford-logo@2x.png" alt="Stanford University" width="105" height="49"/>
-        </a>
+<%block name="footer_bottom">
+  <div id="su-footer">
+    <div class="container">
+      <div class="row">
+        <div id="su-footer-logo" class="span2">
+          <a href="http://www.stanford.edu">
+            <img src="https://www.stanford.edu/su-identity/images/footer-stanford-logo@2x.png" alt="Stanford University" width="105" height="49"/>
+          </a>
+        </div>
+        <div id="su-footer-text" class="span10">
+          <ul>
+            <li class="home"><a href="http://www.stanford.edu">SU Home</a></li>
+            <li class="maps alt"><a href="http://visit.stanford.edu/plan/maps.html">Maps &amp; Directions</a></li>
+            <li class="search-stanford"><a href="http://www.stanford.edu/search/">Search Stanford</a></li>
+            <li class="terms alt"><a href="http://www.stanford.edu/site/terms.html">Terms of Use</a></li>
+            <li class="copyright"><a href="http://www.stanford.edu/site/copyright.html">Copyright Complaints</a></li>
+          </ul>
+          <div class="clear"></div>
+          <p class="copyright vcard">&copy; <span class="fn org">Stanford University</span>, <span class="adr"> <span class="locality">Stanford</span>, <span class="region">California</span> <span class="postal-code">94305</span> </span></p>
+        </div>
       </div>
-      <!-- #su-footer-logo end -->
-      <div id="su-footer-text" class="span10">
-        <ul>
-          <li class="home"><a href="http://www.stanford.edu">SU Home</a></li>
-          <li class="maps alt"><a href="http://visit.stanford.edu/plan/maps.html">Maps &amp; Directions</a></li>
-          <li class="search-stanford"><a href="http://www.stanford.edu/search/">Search Stanford</a></li>
-          <li class="terms alt"><a href="http://www.stanford.edu/site/terms.html">Terms of Use</a></li>
-          <li class="copyright"><a href="http://www.stanford.edu/site/copyright.html">Copyright Complaints</a></li>
-        </ul>
-        <div class="clear"></div>
-        <p class="copyright vcard">&copy; <span class="fn org">Stanford University</span>, <span class="adr"> <span class="locality">Stanford</span>, <span class="region">California</span> <span class="postal-code">94305</span> </span></p>
-      </div> <!-- #su-footer-text end -->
-    </div> <!-- .row end -->
-  </div> <!-- .container end -->
-</div> <!-- su-footer end -->
+    </div>
+  </div>
+</%block>

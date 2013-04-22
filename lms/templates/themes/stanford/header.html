@@ -1,106 +1,15 @@
-<div id="su-header">
-  <div class="container">
-    <a href="http://www.stanford.edu">
-      <img src="https://www.stanford.edu/su-identity/images/brandbar-stanford-logo@2x.png" alt="Stanford University" width="152" height="23">
-    </a>
+<%inherit file="/navigation.html"/>
+
+<%block name="navigation_top">
+  <div id="su-header">
+    <div class="container">
+      <a href="http://www.stanford.edu">
+        <img src="https://www.stanford.edu/su-identity/images/brandbar-stanford-logo@2x.png" alt="Stanford University" width="152" height="23">
+      </a>
+    </div>
   </div>
-</div>
-
-## mako
-## TODO: Split this into two files, one for people who are authenticated, and
-## one for people who aren't. Assume a Course object is passed to the former,
-## instead of using settings.COURSE_TITLE
-<%namespace name='static' file='/static_content.html'/>
-<%!
-from django.core.urlresolvers import reverse
-
-# App that handles subdomain specific branding
-import branding
-# app that handles site status messages
-from status.status import get_site_status_msg
-%>
-
-<%block cached="False">
-<%
-try:
-    course_id = course.id
-except:
-    # can't figure out a better way to get at a possibly-defined course var
-    course_id = None
-site_status_msg = get_site_status_msg(course_id)
-%>
-% if site_status_msg:
-<div class="site-status">
-  <div class="inner-wrapper">
-    <span class="white-error-icon"></span>
-    <p>${site_status_msg}</p>
-  </div>
-</div>
-% endif
 </%block>
 
-
-% if course:
-  <header class="global slim" aria-label="Global Navigation">
-% else:
-  <header class="global" aria-label="Global Navigation">
-% endif
-  <nav>
-  <h1 class="logo"><a href="${reverse('root')}"><img src="${static.url(branding.get_logo_url(request.META.get('HTTP_HOST')))}"/></a></h1>
-
-    % if course:
-      <h2><span class="provider">${course.org}:</span> ${course.number} ${course.display_name_with_default}</h2>
-    % endif
-
-    <ol class="left find-courses-button">
-      <li class="primary">
-        <a href="${reverse('courses')}">Find Courses</a>
-      </li>
-    </ol>
-
-  % if user.is_authenticated():
-    <ol class="user">
-      <li class="primary">
-        <a href="${reverse('dashboard')}" class="user-link">
-          <span class="avatar"></span>
-          ${user.username}
-        </a>
-      </li>
-      <li class="primary">
-        <a href="#" class="dropdown">&#9662</a>
-        <ul class="dropdown-menu">
-##          <li><a href="#">Account Settings</a></li>
-          <li><a href="${reverse('help_edx')}">Help</a></li>
-          <li><a href="${reverse('logout')}">Log Out</a></li>
-        </ul>
-      </li>
-    </ol>
-
-  % else:
-    <ol class="guest">
-      <li class="secondary">
-        <a href="${reverse('about_edx')}">About</a>
-        <a href="http://edxonline.tumblr.com/">Blog</a>
-        <a href="${reverse('jobs')}">Jobs</a>
-% if not settings.MITX_FEATURES['DISABLE_LOGIN_BUTTON']:
-        <a href="#login-modal" id="login" rel="leanModal">Log In</a>
-% endif
-      </li>
-% if not settings.MITX_FEATURES['DISABLE_LOGIN_BUTTON']:
-      <li class="primary">
-        <a href="#signup-modal" id="signup" rel="leanModal">Sign Up</a>
-      </li>
-% endif
-    </ol>
-  %endif
-  </nav>
-</header>
-% if course:
-<div class="ie-banner"><strong>Warning:</strong> Your browser is not fully supported. We strongly recommend using <a href="https://www.google.com/intl/en/chrome/browser/" target="_blank">Chrome</a> or <a href="http://www.mozilla.org/en-US/firefox/new/" target="_blank">Firefox</a>.</div>
-% endif
-
-%if not user.is_authenticated():
-  <%include file="/login_modal.html" />
-  <%include file="/signup_modal.html" />
-  <%include file="/forgot_password_modal.html" />
-%endif
+<%block name="navigation_secondary_links">
+  <a href="${self.attr.reverse('about_edx')}">About</a>
+</%block>

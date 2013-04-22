@@ -26,7 +26,7 @@
 % endif
 
 % if settings.MITX_FEATURES.get('ENABLE_CUSTOM_THEME'):
-  <%include file="themes/${settings.CUSTOM_THEME}/head.html" />
+  <%include file="themes/${settings.CUSTOM_THEME}/head.html"/>
 % endif
 
 </head>
@@ -34,9 +34,9 @@
 <body class="<%block name='bodyclass'/>">
 
 % if settings.MITX_FEATURES.get('ENABLE_CUSTOM_THEME'):
-  <%include file="themes/${settings.CUSTOM_THEME}/header.html" />
+  <%include file="themes/${settings.CUSTOM_THEME}/header.html"/>
 % elif not suppress_toplevel_navigation:
-  <%include file="navigation.html" />
+  <%include file="navigation.html"/>
 % endif
 
   <section class="content-wrapper">
@@ -45,9 +45,9 @@
   </section>
 
 % if settings.MITX_FEATURES.get('ENABLE_CUSTOM_THEME'):
-  <%include file="themes/${settings.CUSTOM_THEME}/footer.html" />
+  <%include file="themes/${settings.CUSTOM_THEME}/footer.html"/>
 % elif not suppress_toplevel_navigation:
-  <%include file="footer.html" />
+  <%include file="footer.html"/>
 % endif
 
   <%static:js group='application'/>
