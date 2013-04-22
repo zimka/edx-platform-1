@@ -4,23 +4,25 @@
 
 <footer>
   <nav>
-    
-    <!--
     <section class="top">
       <section class="primary">
-        <a href="${reverse('root')}" class="logo"></a>
-        <a href="${reverse('courses')}">Find Courses</a>
-        <a href="${reverse('about_edx')}">About</a>
-        <a href="http://blog.edx.org/">Blog</a>
-        <a href="${reverse('jobs')}">Jobs</a>
-        <a href="${reverse('contact')}">Contact</a>
+        <%block name="footer_primary_links">
+          <a href="${reverse('root')}" class="logo"></a>
+          <a href="${reverse('courses')}">Find Courses</a>
+          <a href="${reverse('about_edx')}">About</a>
+          <a href="http://blog.edx.org/">Blog</a>
+          <a href="${reverse('jobs')}">Jobs</a>
+          <a href="${reverse('contact')}">Contact</a>
+        </%block>
       </section>
 
       <section class="social">
-        <a href="http://youtube.com/user/edxonline"><img src="${static.url('images/social/youtube-sharing.png')}" /></a>
-        <a href="https://plus.google.com/108235383044095082735"><img src="${static.url('images/social/google-plus-sharing.png')}" /></a>
-        <a href="http://www.facebook.com/EdxOnline"><img src="${static.url('images/social/facebook-sharing.png')}" /></a>
-        <a href="https://twitter.com/edXOnline"><img src="${static.url('images/social/twitter-sharing.png')}" /></a>
+        <%block name="footer_social_links">
+          <a href="http://youtube.com/user/edxonline"><img src="${static.url('images/social/youtube-sharing.png')}" /></a>
+          <a href="https://plus.google.com/108235383044095082735"><img src="${static.url('images/social/google-plus-sharing.png')}" /></a>
+          <a href="http://www.facebook.com/EdxOnline"><img src="${static.url('images/social/facebook-sharing.png')}" /></a>
+          <a href="https://twitter.com/edXOnline"><img src="${static.url('images/social/twitter-sharing.png')}" /></a>
+        </%block>
       </section>
     </section>
 
@@ -31,23 +33,15 @@
       </section>
 
       <section class="secondary">
-        <a href="${reverse('tos')}">Terms of Service</a>
-        <a href="${reverse('privacy_edx')}">Privacy Policy</a>
-        <a href="${reverse('honor')}">Honor Code</a>
-        <a href="${reverse('help_edx')}">Help</a>
-      </section>
-    </section>
-    -->
-    
-    <section class="top">
-      <section class="primary">
-          <a href="${reverse('root')}" class="logo"></a>
+        <%block name="footer_secondary_links">
           <a href="${reverse('tos')}">Terms of Service</a>
           <a href="${reverse('privacy_edx')}">Privacy Policy</a>
           <a href="${reverse('honor')}">Honor Code</a>
           <a href="${reverse('help_edx')}">Help</a>
+        </%block>
       </section>
     </section>
-    
   </nav>
 </footer>
+
+<%block name="footer_bottom"/>
