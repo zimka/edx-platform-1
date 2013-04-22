@@ -21,33 +21,21 @@
   <meta name="path_prefix" content="${MITX_ROOT_URL}">
   <meta name="google-site-verification" content="_mipQ4AtZQDNmbtOkwehQDOgCxUUV2fb_C0b6wbiRHY" />
 
-  % if not course:
+% if not course:
   <%include file="google_analytics.html" />
-  % endif
+% endif
 
-% if settings.SPECIAL_HEADER or settings.SPECIAL_FOOTER:
-  <link rel="stylesheet" href="${static.url('css/vendor/su-identity.css')}" />
-  <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,900,300italic,400italic,700italic,900italic,' rel='stylesheet' type='text/css'>
-  <!--[if lt IE 9]>
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-  <![endif]-->
-  <!--[if IE 8]>
-    <link rel="stylesheet" type="text/css" href="https://www.stanford.edu/su-identity/css/ie/ie8.css" />
-  <![endif]-->
-  <!--[if IE 7]>
-    <link rel="stylesheet" type="text/css" href="https://www.stanford.edu/su-identity/css/ie/ie7.css" />
-  <![endif]-->
+% if settings.MITX_FEATURES.get('ENABLE_CUSTOM_THEME'):
+  <%include file="themes/${settings.CUSTOM_THEME}/head.html" />
 % endif
 
 </head>
 
 <body class="<%block name='bodyclass'/>">
 
-% if settings.SPECIAL_HEADER:
-  <%include file="${settings.SPECIAL_HEADER}.html" />
-% endif
-
-% if not suppress_toplevel_navigation:
+% if settings.MITX_FEATURES.get('ENABLE_CUSTOM_THEME'):
+  <%include file="themes/${settings.CUSTOM_THEME}/header.html" />
+% elif not suppress_toplevel_navigation:
   <%include file="navigation.html" />
 % endif
 
@@ -56,12 +44,10 @@
     <%block name="bodyextra"/>
   </section>
 
-% if not suppress_toplevel_navigation:
+% if settings.MITX_FEATURES.get('ENABLE_CUSTOM_THEME'):
+  <%include file="themes/${settings.CUSTOM_THEME}/footer.html" />
+% elif not suppress_toplevel_navigation:
   <%include file="footer.html" />
-% endif
-
-% if settings.SPECIAL_FOOTER:
-  <%include file="${settings.SPECIAL_FOOTER}.html" />
 % endif
 
   <%static:js group='application'/>
