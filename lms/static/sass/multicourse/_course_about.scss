@@ -140,10 +140,10 @@
           }
 
           span.register {
-            background: lighten($button-color, 20%);
-            border: 1px solid $button-color;
+            background: $button-archive-color;
+            border: 1px solid darken($button-archive-color, 50%);
             @include box-sizing(border-box);
-            color: darken($button-color, 20%);
+            color: darken($button-archive-color, 50%);
             display: block;
             letter-spacing: 1px;
             padding: 10px 0px 8px;
