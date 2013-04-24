@@ -4,7 +4,12 @@
 <head>
   <%block name="title"><title>edX</title></%block>
 
-  <link rel="icon" type="image/x-icon" href="${static.url('images/favicon.ico')}" />
+  % if settings.MITX_FEATURES.get('ENABLE_CUSTOM_THEME'):
+    <link rel="icon" type="image/x-icon" href="${static.url('themes/' + settings.CUSTOM_THEME + '/images/favicon.ico')}" />
+  % else:
+    <link rel="icon" type="image/x-icon" href="${static.url('images/favicon.ico')}" />
+  % endif
+  
 
   <%static:css group='application'/>
 

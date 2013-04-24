@@ -8,7 +8,7 @@
 
   > header {
     background: rgb(255,255,255);
-    @include background-image(url('/static/images/homepage-bg.jpg'));
+    @include background-image(url($homepage-bg-image));
     background-size: cover;
     border-bottom: 1px solid rgb(80,80,80);
     @include box-shadow(0 1px 0 0 rgba(255,255,255, 0.9), inset 0 -1px 5px 0 rgba(0,0,0, 0.1));
