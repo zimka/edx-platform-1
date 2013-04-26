@@ -1,8 +1,9 @@
 <%! from django.core.urlresolvers import reverse %>
 <%inherit file="/footer.html"/>
 
+<%block name="footer_top_attributes">style="border-bottom: 0;"</%block>
+
 <%block name="footer_primary_links">
-  <a href="${reverse('root')}" class="logo"></a>
   <a href="${reverse('tos')}">Terms of Service</a>
   <a href="${reverse('privacy_edx')}">Privacy Policy</a>
   <a href="${reverse('honor')}">Honor Code</a>

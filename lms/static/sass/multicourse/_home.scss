@@ -14,8 +14,9 @@
     @include box-shadow(0 1px 0 0 rgba(255,255,255, 0.9), inset 0 -1px 5px 0 rgba(0,0,0, 0.1));
     @include clearfix;
     height: 460px;
-    margin-top: -69px;
+    float: left;
     overflow: hidden;
+    margin-top: -69px;
     padding: 0px;
     width: flex-grid(12);
 
@@ -101,7 +102,7 @@
         height: 100%;
         overflow: hidden;
         position: relative;
-        background: url('../images/courses/video-thumb.jpg') center no-repeat;
+        background: url($video-thumb-url) center no-repeat;
         @include background-size(cover);
 
         .play-intro {
@@ -172,7 +173,7 @@
       letter-spacing: 1px;
       margin-bottom: 0px;
       margin-top: -15px;
-      padding: 10px 10px 8px;
+      padding: 10px 10px 12px;
       text-align: center;
       text-transform: uppercase;
       text-shadow: 0 1px rgba(255,255,255, 0.6);

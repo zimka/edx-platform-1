@@ -98,6 +98,11 @@ span.edx {
   text-transform: none;
   font: inherit;
 }
+span.theme {
+  font: inherit;
+  color: $base-font-color;
+  font-weight: bold;
+}
 
 .static-container {
   @include clearfix;
