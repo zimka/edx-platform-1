@@ -57,7 +57,12 @@ $body-bg: $gray-1;
 $content-wrapper-bg: $gray-1;
 $header-image: none;
 $header-bg: transparentize(lighten($sandstone, 18.5%), .25);
+$courseware-header-image: none;
+$courseware-header-bg: transparentize(lighten($sandstone, 18.5%), .25);
 $footer-bg: $sandstone-25;
+$courseware-footer-border: 1px solid $beige-60;
+$courseware-footer-shadow: box-shadow(2px 1px 0 rgba(0, 0, 0, .1));
+$courseware-footer-margin: 50px;
 
 $faded-hr-image-1: linear-gradient($beige-60 0%, $beige-60);
 $faded-hr-image-2: linear-gradient($beige-60 0%, $beige-60);
@@ -88,6 +93,7 @@ $button-bg-hover-color: $gray-1;
 $border-color-1: $beige-60;
 $border-color-2: $beige-60;
 $border-color-3: $beige-60;
+$outer-border-color: $beige-60;
 
 $dashboard-profile-header-image: none;
 $dashboard-profile-header-color: $sandstone-25;
