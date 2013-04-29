@@ -433,7 +433,7 @@ PIPELINE_CSS = {
             'css/vendor/ui-lightness/jquery-ui-1.8.22.custom.css',
             'css/vendor/jquery.qtip.min.css',
             'css/vendor/su-identity.css',
-            'sass/course.scss'
+            'sass/course.css',
             'xmodule/modules.css',
         ],
         'output_filename': 'css/lms-course.css',
