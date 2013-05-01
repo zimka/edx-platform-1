@@ -4,13 +4,18 @@
 <head>
   {% block title %}<title>edX</title>{% endblock %}
   
-  <link rel="icon" type="image/x-icon" href="{% static "images/favicon.ico" %}" />
+  {% if settings.MITX_FEATURES.ENABLE_CUSTOM_THEME %}
+    {% with "themes/"|add:settings.CUSTOM_THEME|add:"/images/favicon.ico" as theme_favicon %}
+      <link rel="icon" type="image/x-icon" href="{{ theme_favicon }}" />
+    {% endwith %}
+  {% else %}
+    <link rel="icon" type="image/x-icon" href="{% static "images/favicon.ico" %}" />
+  {% endif %}
   
   {% compressed_css 'application' %}
   {% compressed_js 'main_vendor' %}
   {% block headextra %}{% endblock %}
   {% render_block "css" %}
-  
   
   <!--[if lt IE 9]>
   <script src="${static.url('js/html5shiv.js')}"></script>
