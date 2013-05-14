@@ -23,7 +23,7 @@ h1.top-header {
 }
 
 .blue-button {
-  @include button(simple, $blue);
+  @include button(simple, $button-color);
   @extend .button-reset;
   font-size: em(13);
 }

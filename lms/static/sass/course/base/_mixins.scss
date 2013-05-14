@@ -1,10 +1,10 @@
-@mixin blue-button {
+@mixin color-button {
   display: block;
   height: 35px;
   padding: 0 15px;
   border-radius: 3px;
-  border: 1px solid #2d81ad;
-  @include linear-gradient(top, #6dccf1, #38a8e5);
+  border: 1px solid $forum-button-color-3;
+  @include linear-gradient(top, $forum-button-color-1, $forum-button-color-2);
   font-size: 13px;
   font-weight: 700;
   line-height: 32px;
@@ -13,8 +13,8 @@
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset, 0 1px 1px rgba(0, 0, 0, .15);
 
   &:hover {
-    border-color: #297095;
-    @include linear-gradient(top, #4fbbe4, #2090d0);
+    border-color: $forum-button-color-3;
+    @include linear-gradient(top, $forum-button-color-4, $forum-button-color-3);
   }
 }
 

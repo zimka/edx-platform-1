@@ -268,7 +268,7 @@
       }
 
       .submit {
-        @include blue-button;
+        @include color-button;
         float: left;
         height: 37px;
         margin-top: 10px;
@@ -323,7 +323,7 @@
   }
 
   .new-post-btn {
-    @include blue-button;
+    @include color-button;
     display: inline-block;
     font-size: 13px;
     margin-right: 4px;
