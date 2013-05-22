@@ -162,6 +162,7 @@
     position: relative;
     width: flex-grid(12);
     z-index: 1;
+    clear: both;
 
     > h2 {
       @include background-image(linear-gradient(-90deg, rgb(250,250,250), rgb(230,230,230)));
