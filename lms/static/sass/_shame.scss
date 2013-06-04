@@ -37,7 +37,7 @@
 
   .btn-primary {
     @extend .btn;
-    @include linear-gradient($m-blue-s1 5%, $m-blue-d1 95%);
+    @include linear-gradient(saturate($link-color,15%) 5%, shade($link-color,15%) 95%);
 
     // no hover state conventions to follow from marketing :/
     &:hover, &:active {
@@ -47,7 +47,7 @@
 
   .btn-secondary {
     @extend .btn;
-    @include linear-gradient($m-gray 5%, $m-gray-d1 95%);
+    @include linear-gradient($outer-border-color 5%, $lighter-base-font-color 95%);
 
     // no hover state conventions to follow from marketing :/
     &:hover, &:active {
@@ -58,7 +58,7 @@
   .btn-tertiary {
     @extend .btn;
     background: $m-blue-l1;
-    color: $m-blue;
+    color: $link-color;
 
     // no hover state conventions to follow from marketing :/
     &:hover, &:active {
