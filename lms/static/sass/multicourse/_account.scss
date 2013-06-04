@@ -20,7 +20,7 @@
   .heading-2 {
     font-size: 25px;
     margin: 0 0 $baseline 0;
-    font-weight: 300;
+    font-weight: 400;
     text-transform: uppercase;
     color: $link-color;
   }
@@ -107,7 +107,7 @@
     @include clearfix;
     margin: 0 auto;
     width: 960px;
-    background: $body-bg;
+    background: $login-register-bg;
   }
 
   .container {
