@@ -44,6 +44,8 @@ section.combined-open-ended {
 }
 
 section.legend-container {
+  display: none !important;
+  
   .legenditem {
     background-color : #d4d4d4;
     font-size: .9em;
