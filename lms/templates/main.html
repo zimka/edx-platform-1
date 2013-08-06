@@ -17,8 +17,8 @@
 <html lang="en-us">
 <head>
   <%block name="title">
-    % if stanford_theme_enabled():
-      <title>Home | class.stanford.edu</title>
+    % if theme_enabled():
+      <title>Home | ${getattr(settings, "THEME_NAME").capitalize()} OpenEdX</title>
     % else:
       <title>edX</title>
       

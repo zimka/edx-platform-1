@@ -1,6 +1,11 @@
 <%inherit file="../main.html" />
 
 <%namespace name='static' file='../static_content.html'/>
+<%! from django.utils import html %>
+
+<%def name="theme_enabled()">
+  <% return settings.MITX_FEATURES["USE_CUSTOM_THEME"] %>
+</%def>
 
 <%block name="title"><title>Courses</title></%block>
 
@@ -8,16 +13,12 @@
   <header class="search">
     <div class="inner-wrapper main-search">
       <hgroup>
-        <div class="logo">
-          % if self.stanford_theme_enabled():
-            <img src="${static.url('themes/stanford/images/seal.png')}" alt="Stanford Seal Logo" />
-          % else:
+        % if theme_enabled():
+          <%include file="../theme-courses.html" />
+        % else :
+          <div class="logo">
             <img src="${static.url('images/edx_bw.png')}" alt="Black and White edX Logo" />
-          % endif
-        </div>
-        % if self.stanford_theme_enabled():
-          <h2>Explore free courses from Stanford University.</h2>
-        % else:
+          </div>
           <h2>Explore free courses from leading universities.</h2>
         % endif
       </hgroup>
