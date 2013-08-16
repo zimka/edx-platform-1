@@ -109,6 +109,7 @@ class @CombinedOpenEnded
     @is_ctrl = false
 
     @allow_reset = @el.data('allow_reset')
+    @has_been_reset = false
     @reset_button = @$('.reset-button')
     @reset_button.click @reset
     @next_problem_button = @$('.next-step-button')
@@ -230,7 +231,15 @@ class @CombinedOpenEnded
     $.postWithPrefix "#{@ajax_url}/get_last_response", data, (response) =>
       if response.success && response.response != ""
         @answer_area.html(response.response)
-        @gentle_alert "You have already answered this question."
+        if @has_been_reset
+          @submit_button.show()
+          @answer_area.attr("disabled", false)
+          @gentle_alert "Here is your previous answer to this question."
+        else if @allow_reset=="True"
+          @reset_button.show()
+          @gentle_alert "You may reset and answer this question again."
+        else
+          @gentle_alert "You have answered this question."
       else
         @submit_button.show()
         @answer_area.attr("disabled", false)
@@ -350,6 +359,7 @@ class @CombinedOpenEnded
     event.preventDefault()
     max_filesize = 2*1000*1000 #2MB
     pre_can_upload_files = @can_upload_files
+    @has_been_reset = false
     if @child_state == 'initial'
       files = ""
       if @can_upload_files == true
@@ -360,7 +370,7 @@ class @CombinedOpenEnded
             files = ""
         else
           @can_upload_files = false
-
+      
       fd = new FormData()
       fd.append('student_answer', @answer_area.val())
       fd.append('student_file', files)
@@ -462,6 +472,7 @@ class @CombinedOpenEnded
           @child_state = 'initial'
           @combined_open_ended.after(response.html).remove()
           @allow_reset="False"
+          @has_been_reset = true
           @reinitialize(@element)
           @rebind()
           @reset_button.hide()
