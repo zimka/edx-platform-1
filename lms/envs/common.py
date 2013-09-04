@@ -555,7 +555,8 @@ main_vendor_js = [
     'js/vendor/jquery.ba-bbq.min.js',
     'js/vendor/annotator.min.js',
     'js/vendor/annotator.store.min.js',
-    'js/vendor/annotator.tags.min.js'
+    'js/vendor/annotator.tags.min.js',
+    'js/vendor/ice.min.js'
 ]
 
 discussion_js = sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/discussion/**/*.js'))

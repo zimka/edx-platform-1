@@ -43,8 +43,8 @@
                         <p class="score-selection-container"></p>
                         <h3>${_("Written Feedback")}</h3>
                         <p>${_("Please include some written feedback as well.")}</p>
-                        <textarea name="feedback" placeholder="Feedback for student" class="feedback-area" cols="70" ></textarea>
-                        <div class="flag-student-container"> ${_("This submission has explicit or offensive content : ")}
+                        <textarea name="feedback" placeholder="Feedback for student" class="feedback-area" cols="70" id="peer-feedback-area" contenteditable="true"></textarea>
+                        <div class="flag-student-container"> ${_("This submission has explicit or pornographic content : ")}
                             <input type="checkbox" class="flag-checkbox" value="student_is_flagged"> 
                         </div>
                         <div class="answer-unknown-container"> ${_("I am uncomfortable with my choices above : ")}
@@ -96,3 +96,22 @@
         <input type="button" value="${_("Go Back")}" class="action-button" name="back" />
     </div>
 </section>
+
+<script type="text/javascript">
+    $(function() {
+            var text = document.getElementById('peer-feedback-area');
+            window.tracker = new ice.InlineChangeEditor({
+                    element: text,
+                    handleEvents: true,
+                    currentUser: {id: 1, name: 'Anonymous User #1'},
+                    plugins : ['IceAddTitlePlugin', 'IceSmartQuotesPlugin', {
+                                    name : 'IceCopyPastePlugin',
+                                    settings : {
+                                            pasteType : 'formattedClean',
+                                            preserve : 'p,a[href],i,em,b,span'
+                                    }
+                            }
+                    ]
+            }).startTracking();
+    });
+</script>
