@@ -44,6 +44,29 @@
                         <h3>${_("Written Feedback")}</h3>
                         <p>${_("Please include some written feedback as well.")}</p>
                         <div name="feedback" class="feedback-area" id="peer-feedback-area" contenteditable="true"></div>
+                        
+                        <style>
+                            #peer-feedback-area h1, #peer-feedback-area h3 {
+                                color: #7F7F7F;
+                                text-shadow: 0 1px 0 white;
+                            }
+                            #peer-feedback-area #textbody { 
+                                    margin: 0 auto;
+                                    padding: 15px 30px 30px;
+                            }
+                            
+                            #peer-feedback-area .del {
+                                    text-decoration: line-through;
+                            }
+                            #peer-feedback-area .ins {
+                                    text-decoration: underline;
+                            }
+                            #peer-feedback-area .cts-1 {
+                                background-color: #e9e6df;
+                                color: #820000;
+                            }
+                        </style>
+                        
                         <div class="flag-student-container"> ${_("This submission has explicit or offensive content : ")}
                             <input type="checkbox" class="flag-checkbox" value="student_is_flagged"> 
                         </div>
@@ -102,7 +125,7 @@
     window.tracker = new ice.InlineChangeEditor({
         element: text,
         handleEvents: true,
-        currentUser: {id: 1, name: 'Anonymous User #1'},
+        currentUser: {id: 1, name: 'Peer Edit'},
         plugins : ['IceAddTitlePlugin', 'IceSmartQuotesPlugin', {
             name : 'IceCopyPastePlugin',
             settings : {
