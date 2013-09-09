@@ -495,7 +495,7 @@ class @PeerGradingProblem
       @grading_panel.find(@grading_text_sel).show()
       @flag_student_container.show()
       @answer_unknown_container.show()
-      @feedback_area.val(@make_paragraphs(response.student_response)).attr("contenteditable", true)
+      @feedback_area.html(@make_paragraphs(response.student_response))
       @answer_unknown_checkbox.removeAttr("checked")
       @flag_student_checkbox.removeAttr("checked")
 
