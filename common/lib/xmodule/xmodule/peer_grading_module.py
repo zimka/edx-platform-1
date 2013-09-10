@@ -80,6 +80,9 @@ class PeerGradingModule(PeerGradingFields, XModule):
     _VERSION = 1
 
     js = {
+        'js': [
+            resource_string(__name__, 'js/src/peergrading/ice.min.js'),
+        ],
         'coffee': [
             resource_string(__name__, 'js/src/peergrading/peer_grading.coffee'),
             resource_string(__name__, 'js/src/peergrading/peer_grading_problem.coffee'),
@@ -479,6 +482,15 @@ class PeerGradingModule(PeerGradingFields, XModule):
         })
         return html
 
+    def _find_corresponding_module_for_location(self, location):
+        '''find the peer grading module that links to the given location'''
+        try:
+            return modulestore().get_instance(self.system.course_id, location)
+        except Exception:
+            # the linked problem doesn't exist
+            log.error("Problem {0} does not exist in this course".format(location))
+            raise
+
     def peer_grading(self, _data=None):
         '''
         Show a peer grading interface
@@ -512,23 +524,11 @@ class PeerGradingModule(PeerGradingFields, XModule):
             log.exception("Could not contact peer grading service.")
             success = False
 
-
-        def _find_corresponding_module_for_location(location):
-            '''
-            find the peer grading module that links to the given location
-            '''
-            try:
-                return modulestore().get_instance(self.system.course_id, location)
-            except Exception:
-                # the linked problem doesn't exist
-                log.error("Problem {0} does not exist in this course".format(location))
-                raise
-
         good_problem_list = []
         for problem in problem_list:
             problem_location = problem['location']
             try:
-                descriptor = _find_corresponding_module_for_location(problem_location)
+                descriptor = self._find_corresponding_module_for_location(problem_location)
             except Exception:
                 continue
             if descriptor:
@@ -579,6 +579,21 @@ class PeerGradingModule(PeerGradingFields, XModule):
         elif data.get('location') is not None:
             problem_location = data.get('location')
 
+        success, response = self.query_data_for_location(location=problem_location)
+        if not success:
+            log.error(
+                "No instance data found and could not get data from controller for loc {0} student {1}".format(
+                    problem_location, self.system.anonymous_student_id
+                ))
+            return {'html': "", 'success': False}
+        count_graded = response['count_graded']
+        count_required = response['count_required']
+        descriptor = None
+        try:
+            descriptor = self._find_corresponding_module_for_location(problem_location)
+        except Exception:
+            pass
+
         ajax_url = self.ajax_url
         html = self.system.render_template('peer_grading/peer_grading_problem.html', {
             'view_html': '',
@@ -587,6 +602,7 @@ class PeerGradingModule(PeerGradingFields, XModule):
             'ajax_url': ajax_url,
             # Checked above
             'staff_access': False,
+            'track_changes': getattr(descriptor, 'track_changes', False),
             'use_single_location': self.use_for_single_location,
         })
 

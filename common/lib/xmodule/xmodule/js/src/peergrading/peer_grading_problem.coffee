@@ -306,13 +306,18 @@ class @PeerGradingProblem
 
 
   construct_data: () ->
+    if @feedback_area.hasClass('track-changes')
+      feedback_content = @feedback_area.html()
+    else
+      feedback_content = @feedback_area.val()
+    
     data =
       rubric_scores: @rub.get_score_list()
       score: @rub.get_total_score()
       location: @location
       submission_id: @essay_id_input.val()
       submission_key: @submission_key_input.val()
-      feedback: @feedback_area.val()
+      feedback: feedback_content
       submission_flagged: @flag_student_checkbox.is(':checked')
       answer_unknown: @answer_unknown_checkbox.is(':checked')
     return data
@@ -391,6 +396,17 @@ class @PeerGradingProblem
         message = message + " You have completed the required number of gradings."
       message = message + "</p>"
       @grading_message.html(message)
+      required = @grading_wrapper.data('required')
+      graded = @grading_wrapper.data('graded')+1
+      @grading_wrapper.data('graded', graded)
+      @grading_wrapper.attr('data-graded', graded) #just in case someone wants to read the DOM
+      message = "<p>Successfully saved your feedback. Fetching the next essay.</p>"
+      if graded >= required
+        message = "<p>Successfully saved your feedback. Fetching the next essay.</p>
+          <p><strong>You have completed the required number of peer evaluations, but may
+          choose to continue grading if you'd like.</strong></p>"
+      @grading_message.html(message)
+      $.scrollTo(@grading_message)
     else
       if response.error
         @render_error(response.error)
@@ -483,8 +499,11 @@ class @PeerGradingProblem
       @grading_panel.find(@grading_text_sel).show()
       @flag_student_container.show()
       @answer_unknown_container.show()
-      @feedback_area.val("")
-
+      if @feedback_area.hasClass('track-changes')
+        @feedback_area.html(@make_paragraphs(response.student_response))
+      else
+        @feedback_area.val("")
+      @answer_unknown_checkbox.removeAttr("checked")
       @flag_student_checkbox.removeAttr("checked")
       @submit_button.show()
       @submit_button.unbind('click')
@@ -495,7 +514,6 @@ class @PeerGradingProblem
       @render_error(response.error)
     else
       @render_error("An error occured when retrieving the next submission.")
-
 
   make_paragraphs: (text) ->
     paragraph_split = text.split(/\n\s*\n/)
