@@ -512,9 +512,9 @@ class @PeerGradingProblem
     else
       @render_error("An error occured when retrieving the next submission.")
 
-  track_changes: (tracker-id) ->
+  track_changes: (tracker_id) ->
     tracker = new ice.InlineChangeEditor({
-      element: document.getElementById(tracker-id),
+      element: document.getElementById(tracker_id),
       handleEvents: true,
       currentUser: { id: 1, name: 'Peer Feedback' },
     }).startTracking();
