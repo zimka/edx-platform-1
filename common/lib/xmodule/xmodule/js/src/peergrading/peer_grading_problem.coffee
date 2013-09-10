@@ -495,10 +495,12 @@ class @PeerGradingProblem
       @grading_panel.find(@grading_text_sel).show()
       @flag_student_container.show()
       @answer_unknown_container.show()
-      @feedback_area.val("")
+      if @feedback_area.hasClass('track-changes')
+        @feedback_area.html(@make_paragraphs(response.student_response))
+        @track_changes(@feedback_area.getAttribute('id'))
+      else
+        @feedback_area.val("")
       @answer_unknown_checkbox.removeAttr("checked")
-      @flag_student_checkbox.removeAttr("checked")
-
       @flag_student_checkbox.removeAttr("checked")
       @submit_button.show()
       @submit_button.unbind('click')
@@ -510,6 +512,12 @@ class @PeerGradingProblem
     else
       @render_error("An error occured when retrieving the next submission.")
 
+  track_changes: (tracker-id) ->
+    tracker = new ice.InlineChangeEditor({
+      element: document.getElementById(tracker-id),
+      handleEvents: true,
+      currentUser: { id: 1, name: 'Peer Feedback' },
+    }).startTracking();
 
   make_paragraphs: (text) ->
     paragraph_split = text.split(/\n\s*\n/)
