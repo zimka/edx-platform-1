@@ -559,6 +559,7 @@ class PeerGradingModule(PeerGradingFields, XModule):
             # Checked above
             'staff_access': False,
             'use_single_location': self.use_for_single_location,
+            'track_changes': True,                                                                                                 ### Pipe OE Boolean Here ####
         })
 
         return html

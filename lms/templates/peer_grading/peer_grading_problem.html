@@ -42,9 +42,15 @@
                         <p class="rubric-selection-container"></p>
                         <p class="score-selection-container"></p>
                         <h3>${_("Written Feedback")}</h3>
-                        <p>${_("Please include some written feedback as well.")}</p>
-                        <textarea name="feedback" placeholder="Feedback for student" class="feedback-area" cols="70" ></textarea>
-                        <div class="flag-student-container"> ${_("This submission has explicit or pornographic content : ")}
+                        % if track_changes:
+                            <p>${_("Please edit your peer's submission below.")}</p>
+                            <p class="legend"><span class="ins">${_("This is an insertion.")}</span>&nbsp;<span class="del">${_("This is a deletion.")}</span></p>
+                            <div name="feedback" class="feedback-area" id="track-changes-area"></div>
+                        % else:
+                            <p>${_("Please include some written feedback as well.")}</p>
+                            <textarea name="feedback" placeholder="Feedback for student" class="feedback-area" cols="70" ></textarea>
+                        % endif
+                        <div class="flag-student-container"> ${_("This submission has explicit or offensive content : ")}
                             <input type="checkbox" class="flag-checkbox" value="student_is_flagged"> 
                         </div>
                         <div class="answer-unknown-container"> ${_("I do not know how to grade this question : ")}
