@@ -81,14 +81,14 @@ class PeerGradingModule(PeerGradingFields, XModule):
     _VERSION = 1
 
     js = {
+        'js': [
+            resource_string(__name__, 'js/src/peergrading/ice.min.js'),
+        ],
         'coffee': [
             resource_string(__name__, 'js/src/peergrading/peer_grading.coffee'),
             resource_string(__name__, 'js/src/peergrading/peer_grading_problem.coffee'),
             resource_string(__name__, 'js/src/collapsible.coffee'),
             resource_string(__name__, 'js/src/javascript_loader.coffee'),
-        ],
-        'js': [
-            resource_string(__name__, 'js/common_static/js/vendor/ice.min.js'),
         ]
     }
     js_module_name = "PeerGrading"
