@@ -2,6 +2,7 @@ import json
 import logging
 
 from lxml import etree
+from lxml.html.clean import autolink_html, Cleaner
 
 from datetime import datetime
 from pkg_resources import resource_string
@@ -326,6 +327,13 @@ class PeerGradingModule(PeerGradingFields, XModule):
         if 'rubric_scores[]' in required:
             data_dict['rubric_scores'] = data.getlist('rubric_scores[]')
         data_dict['grader_id'] = self.system.anonymous_student_id
+
+        scrubbing_feedback = data_dict['feedback']
+        scrubbing_feedback = autolink_html(scrubbing_feedback)
+        scrubbing_feedback = Cleaner(page_structure=True, 
+                                     remove_unknown_tags=False, 
+                                     allow_tags=['insert', 'delete']).clean_html(scrubbing_feedback)
+        data_dict['feedback'] = scrubbing_feedback
 
         try:
             response = self.peer_gs.save_grade(**data_dict)
