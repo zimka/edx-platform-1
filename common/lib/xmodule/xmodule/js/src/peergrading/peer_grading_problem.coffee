@@ -391,18 +391,13 @@ class @PeerGradingProblem
       graded = @grading_wrapper.data('graded')+1
       @grading_wrapper.data('graded', graded)
       @grading_wrapper.attr('data-graded', graded) #just in case someone wants to read the DOM
-      message = "<p>Successfully saved your feedback. Fetching the next essay.</p>"
-      tracker.stopTracking()
       if graded >= required
         message = "<p>Successfully saved your feedback. Fetching the next essay.</p>
           <p><strong>You have completed the required number of peer evaluations, but may
           choose to continue grading if you'd like.</strong></p>"
-      @grading_message.fadeIn()
-      message = "<p>Successfully saved your feedback. Fetching the next essay."
-      if response.required_done
-        message = message + " You have completed the required number of gradings."
-      message = message + "</p>"
-      @grading_message.html(message)
+      else
+        message = "<p>Successfully saved your feedback. Fetching the next essay.</p>"
+      @grading_message.html(message).fadeIn()
       $.scrollTo(@grading_message)
     else
       if response.error
@@ -498,22 +493,6 @@ class @PeerGradingProblem
       @answer_unknown_container.show()
       if @feedback_area.hasClass('track-changes')
         @feedback_area.html(@make_paragraphs(response.student_response))
-        tracker = new ice.InlineChangeEditor({
-        element: document.getElementById('textbody'),
-          handleEvents: true,
-          currentUser: { id: 1, name: 'Miss T' },
-          // optional plugins
-          plugins: [
-            // Track content that is cut and pasted
-            {
-              name: 'IceCopyPastePlugin',
-              settings: {
-                // List of tags and attributes to preserve when cleaning a paste
-                preserve: 'p,a[href],span[id,class],em,strong'
-              }
-            }
-          ]
-        }).startTracking();
       else
         @feedback_area.val("")
       @answer_unknown_checkbox.removeAttr("checked")

@@ -60,6 +60,42 @@
                     <div class="submission">
                         <input type="button" value="${_("Submit")}" class="submit-button" name="show"/>
                     </div>
+                    % if track_changes:
+                        <script>
+                            $(function() {
+                                var tracker;
+                                var newTracker = true;
+                                
+                                $('#track-changes-area').focus(function() {
+                                    if (newTracker) {
+                                        tracker = new ice.InlineChangeEditor({
+                                            element: document.getElementById('track-changes-area'),
+                                            handleEvents: true,
+                                            currentUser: { id: 1, name: 'Peer Feedback' },
+                                            //optional plugins
+                                            plugins: [
+                                              //Track content that is cut and pasted
+                                              {
+                                                name: 'IceCopyPastePlugin',
+                                                settings: {
+                                                  //List of tags and attributes to preserve when cleaning a paste
+                                                  preserve: 'p,a[href],span[id,class],em,strong'
+                                                }
+                                              }
+                                            ]
+                                        });
+                                        tracker.startTracking();
+                                        newTracker = false;
+                                    }
+                                });
+                                
+                                $('.submission .submit-button').click(function() {
+                                    tracker.stopTracking();
+                                    newTracker = true;
+                                });
+                            });
+                        </script>
+                    % endif
                 </div>
             </section>
         </section>
