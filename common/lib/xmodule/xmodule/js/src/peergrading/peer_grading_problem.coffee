@@ -306,13 +306,18 @@ class @PeerGradingProblem
 
 
   construct_data: () ->
+    if @feedback_area.hasClass('track-changes')
+      feedback_content = @feedback_area.html()
+    else
+      feedback_content = @feedback_area.val()
+    
     data =
       rubric_scores: @rub.get_score_list()
       score: @rub.get_total_score()
       location: @location
       submission_id: @essay_id_input.val()
       submission_key: @submission_key_input.val()
-      feedback: @feedback_area.val()
+      feedback: feedback_content
       submission_flagged: @flag_student_checkbox.is(':checked')
       answer_unknown: @answer_unknown_checkbox.is(':checked')
     return data
