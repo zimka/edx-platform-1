@@ -396,12 +396,11 @@ class @PeerGradingProblem
       graded = @grading_wrapper.data('graded')+1
       @grading_wrapper.data('graded', graded)
       @grading_wrapper.attr('data-graded', graded) #just in case someone wants to read the DOM
+      message = "<p>Successfully saved your feedback. Fetching the next essay.</p>"
       if graded >= required
         message = "<p>Successfully saved your feedback. Fetching the next essay.</p>
           <p><strong>You have completed the required number of peer evaluations, but may
           choose to continue grading if you'd like.</strong></p>"
-      else
-        message = "<p>Successfully saved your feedback. Fetching the next essay.</p>"
       @grading_message.html(message).fadeIn()
       $.scrollTo(@grading_message)
     else

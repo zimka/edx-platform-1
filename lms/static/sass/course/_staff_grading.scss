@@ -18,11 +18,16 @@ div.peer-grading{
         overflow: auto;
     }
     div.feedback-area, p.legend {
+        .ice-controls {
+            float: right;
+        }
         .del {
+            position: relative;
             text-decoration: line-through;
             background-color: #ffc3c3;
         }
         .ins {
+            position: relative;
             background-color: #c3ffc3;
         }
     }
