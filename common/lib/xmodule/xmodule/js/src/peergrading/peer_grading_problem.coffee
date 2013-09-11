@@ -392,6 +392,7 @@ class @PeerGradingProblem
       @grading_wrapper.data('graded', graded)
       @grading_wrapper.attr('data-graded', graded) #just in case someone wants to read the DOM
       message = "<p>Successfully saved your feedback. Fetching the next essay.</p>"
+      tracker.stopTracking()
       if graded >= required
         message = "<p>Successfully saved your feedback. Fetching the next essay.</p>
           <p><strong>You have completed the required number of peer evaluations, but may
@@ -498,9 +499,20 @@ class @PeerGradingProblem
       if @feedback_area.hasClass('track-changes')
         @feedback_area.html(@make_paragraphs(response.student_response))
         tracker = new ice.InlineChangeEditor({
-          element: document.getElementById('track-changes-area'),
+        element: document.getElementById('textbody'),
           handleEvents: true,
-          currentUser: { id: 1, name: 'Peer Feedback' },
+          currentUser: { id: 1, name: 'Miss T' },
+          // optional plugins
+          plugins: [
+            // Track content that is cut and pasted
+            {
+              name: 'IceCopyPastePlugin',
+              settings: {
+                // List of tags and attributes to preserve when cleaning a paste
+                preserve: 'p,a[href],span[id,class],em,strong'
+              }
+            }
+          ]
         }).startTracking();
       else
         @feedback_area.val("")
