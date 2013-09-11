@@ -44,7 +44,13 @@
                         <h3>${_("Written Feedback")}</h3>
                         % if track_changes:
                             <p>${_("Please edit your peer's submission below.")}</p>
-                            <p class="legend"><span class="ins">${_("This is an insertion.")}</span>&nbsp;<span class="del">${_("This is a deletion.")}</span></p>
+                            <p class="legend">
+                                <span class="ins">${_("This is an insertion.")}</span>&nbsp;
+                                <span class="del">${_("This is a deletion.")}</span>&nbsp;
+                                <span class="ice-controls">
+                                    <a href="#" id="reset-changes"><i class="icon-refresh"></i> Reset Changes</a>
+                                </span>
+                            </p>
                             <div name="feedback" class="feedback-area track-changes" id="track-changes-area" contenteditable="true"></div>
                         % else:
                             <p>${_("Please include some written feedback as well.")}</p>
@@ -92,6 +98,11 @@
                                 $('.submission .submit-button').click(function() {
                                     tracker.stopTracking();
                                     newTracker = true;
+                                });
+                                
+                                $('#reset-changes').click(function() {
+                                    event.preventDefault();
+                                    tracker.rejectAll();
                                 });
                             });
                         </script>

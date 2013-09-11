@@ -306,13 +306,18 @@ class @PeerGradingProblem
 
 
   construct_data: () ->
+    if @feedback_area.hasClass('track-changes')
+      feedback_content = @feedback_area.html()
+    else
+      feedback_content = @feedback_area.val()
+    
     data =
       rubric_scores: @rub.get_score_list()
       score: @rub.get_total_score()
       location: @location
       submission_id: @essay_id_input.val()
       submission_key: @submission_key_input.val()
-      feedback: @feedback_area.val()
+      feedback: feedback_content
       submission_flagged: @flag_student_checkbox.is(':checked')
       answer_unknown: @answer_unknown_checkbox.is(':checked')
     return data
@@ -391,12 +396,11 @@ class @PeerGradingProblem
       graded = @grading_wrapper.data('graded')+1
       @grading_wrapper.data('graded', graded)
       @grading_wrapper.attr('data-graded', graded) #just in case someone wants to read the DOM
+      message = "<p>Successfully saved your feedback. Fetching the next essay.</p>"
       if graded >= required
         message = "<p>Successfully saved your feedback. Fetching the next essay.</p>
           <p><strong>You have completed the required number of peer evaluations, but may
           choose to continue grading if you'd like.</strong></p>"
-      else
-        message = "<p>Successfully saved your feedback. Fetching the next essay.</p>"
       @grading_message.html(message).fadeIn()
       $.scrollTo(@grading_message)
     else
