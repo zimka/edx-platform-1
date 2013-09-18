@@ -9,19 +9,28 @@
 <section class="container cart-list">
     <h2>${_("Your selected items:")}</h2>
     % if shoppingcart_items:
-        <table>
+        <table class="cart-table">
             <thead>
-            <tr>${_("<td>Quantity</td><td>Description</td><td>Unit Price</td><td>Price</td><td>Currency</td>")}</tr>
+            <tr class="cart-headings">
+                <th class="qty">${_("Quantity")}</th>
+                <th class="dsc">${_("Description")}</th>
+                <th class="u-pr">${_("Unit Price")}</th>
+                <th class="prc">${_("Price")}</th>
+                <th class="cur">${_("Currency")}</th>
+            </tr>
             </thead>
             <tbody>
             % for item in shoppingcart_items:
-            <tr><td>${item.qty}</td><td>${item.line_desc}</td>
-                <td>${"{0:0.2f}".format(item.unit_cost)}</td><td>${"{0:0.2f}".format(item.line_cost)}</td>
+            <tr class="cart-items">
+                <td>${item.qty}</td>
+                <td>${item.line_desc}</td>
+                <td>${"{0:0.2f}".format(item.unit_cost)}</td>
+                <td>${"{0:0.2f}".format(item.line_cost)}</td>
                 <td>${item.currency.upper()}</td>
                 <td><a data-item-id="${item.id}" class='remove_line_item' href='#'>[x]</a></td></tr>
             % endfor
-            <tr><td></td><td></td><td></td><td>${_("Total Amount")}</td></tr>
-            <tr><td></td><td></td><td></td><td>${"{0:0.2f}".format(amount)}</td></tr>
+            <tr class="cart-headings"><td></td><td></td><td></td><th>${_("Total Amount")}</th></tr>
+            <tr class="cart-totals"><td></td><td></td><td></td><td class="cart-total-cost">${"{0:0.2f}".format(amount)}</td></tr>
 
             </tbody>
         </table>

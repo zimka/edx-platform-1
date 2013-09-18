@@ -88,7 +88,7 @@ site_status_msg = get_site_status_msg(course_id)
       shoppingcart.models.Order.get_cart_for_user(user).has_items():
     <ol class="user">
       <li class="primary">
-          <a href="${reverse('shoppingcart.views.show_cart')}">Cart</a>
+          <a class="shopping-cart" href="${reverse('shoppingcart.views.show_cart')}"><em class="icon-shopping-cart"></em> Shopping Cart</a>
       </li>
     </ol>
     % endif
