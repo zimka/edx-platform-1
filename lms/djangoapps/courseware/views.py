@@ -36,6 +36,7 @@ from xmodule.modulestore.django import modulestore
 from xmodule.modulestore.exceptions import InvalidLocationError, ItemNotFoundError, NoPathToItem
 from xmodule.modulestore.search import path_to_location
 from xmodule.course_module import CourseDescriptor
+import shoppingcart
 
 import comment_client
 
@@ -604,10 +605,25 @@ def course_about(request, course_id):
     show_courseware_link = (has_access(request.user, course, 'load') or
                             settings.MITX_FEATURES.get('ENABLE_LMS_MIGRATION'))
 
+    # Note: this is a flow for payment for course registration, not the Verified Certificate flow.
+    registration_prices = (CourseMode.objects
+                           .filter(course_id=course_id,
+                                   currency=settings.PLATFORM_CURRENCY[0],
+                                   mode_slug=CourseMode.DEFAULT_MODE_SLUG,)
+                           .values_list('min_price', flat=True))
+
+    if request.user.is_authenticated():
+        cart = shoppingcart.models.Order.get_cart_for_user(request.user)
+        in_cart = shoppingcart.models.PaidCourseRegistration.part_of_order(cart, course_id)
+    else:
+        in_cart = False
+
     return render_to_response('courseware/course_about.html',
                               {'course': course,
                                'registered': registered,
                                'course_target': course_target,
+                               'registration_prices': registration_prices,
+                               'in_cart': in_cart,
                                'show_courseware_link': show_courseware_link})
 
 

@@ -14,22 +14,25 @@ from .processors import process_postpay_callback, render_purchase_form_html
 
 log = logging.getLogger("shoppingcart")
 
-
+@require_POST
 def add_course_to_cart(request, course_id):
     if not request.user.is_authenticated():
+        log.info("Anon user trying to add course {} to cart".format(course_id))
         return HttpResponseForbidden(_('You must be logged-in to add to a shopping cart'))
     cart = Order.get_cart_for_user(request.user)
     if PaidCourseRegistration.part_of_order(cart, course_id):
+        log.warning("User {} trying to add course {}, already in cart".format(request.user.email, course_id))
         return HttpResponseBadRequest(_('The course {0} is already in your cart.'.format(course_id)))
     if CourseEnrollment.is_enrolled(user=request.user, course_id=course_id):
+        log.warning("User {} trying to add course {}, already registered".format(request.user.email, course_id))
         return HttpResponseBadRequest(_('You are already registered in course {0}.'.format(course_id)))
 
     try:
         PaidCourseRegistration.add_to_order(cart, course_id)
+        log.info("User {} added course registration {} to cart".format(request.user.email, course_id))
     except ItemNotFoundError:
+        log.error("User {} tried to add non-existent course {} to cart".format(request.user.email, course_id))
         return HttpResponseNotFound(_('The course you requested does not exist.'))
-    if request.method == 'GET':  # This is temporary for testing purposes and will go away before we pull
-        return HttpResponseRedirect(reverse('shoppingcart.views.show_cart'))
     return HttpResponse(_("Course added to cart."))
 
 
@@ -80,6 +83,9 @@ def postpay_callback(request):
     params = request.POST.dict()
     result = process_postpay_callback(params)
     if result['success']:
+        user = result['order'].user
+        user.is_active = True
+        user.save()
         return HttpResponseRedirect(reverse('shoppingcart.views.show_receipt', args=[result['order'].id]))
     else:
         return render_to_response('shoppingcart/error.html', {'order': result['order'],
@@ -103,12 +109,20 @@ def show_receipt(request, ordernum):
     order_items = OrderItem.objects.filter(order=order).select_subclasses()
     any_refunds = any(i.status == "refunded" for i in order_items)
     receipt_template = 'shoppingcart/receipt.html'
+
+    # messaging if PaidRegistration was part of order
+    any_paid_reg = any(isinstance(i, PaidCourseRegistration) for i in order_items)
+    notification = None
+    if any_paid_reg:
+        notification = (_('Please visit your <a href="{dashboard_link}">dashboard</a> to see your new enrollments.')
+                        .format(dashboard_link=reverse('dashboard')))
     # we want to have the ability to override the default receipt page when
     # there is only one item in the order
     context = {
         'order': order,
         'order_items': order_items,
         'any_refunds': any_refunds,
+        'notification': notification,
     }
 
     if order_items.count() == 1:

@@ -58,6 +58,7 @@ from external_auth.models import ExternalAuthMap
 import external_auth.views
 
 from bulk_email.models import Optout
+import shoppingcart
 
 import track.views
 
@@ -402,6 +403,12 @@ def change_enrollment(request):
         CourseEnrollment.enroll(user, course.id)
 
         return HttpResponse()
+
+    elif action == "add_to_cart":
+        shoppingcart.views.add_course_to_cart(request, course_id)
+        return HttpResponse(
+            reverse("shoppingcart.views.show_cart")
+        )
 
     elif action == "unenroll":
         try:

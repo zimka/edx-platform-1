@@ -80,6 +80,12 @@ class Order(models.Model):
         """
         return sum(i.line_cost for i in self.orderitem_set.filter(status=self.status))
 
+    def has_items(self):
+        """
+        Does the cart have any items in it?
+        """
+        return self.orderitem_set.all().exists()
+
     def clear(self):
         """
         Clear out all the items in the cart
@@ -133,7 +139,8 @@ class Order(models.Model):
         subject = _("Order Payment Confirmation")
         message = render_to_string('emails/order_confirmation_email.txt', {
             'order': self,
-            'order_items': orderitems
+            'order_items': orderitems,
+            'billing_info': settings.MITX_FEATURES['STORE_BILLING_INFO']
         })
         try:
             send_mail(subject, message,
