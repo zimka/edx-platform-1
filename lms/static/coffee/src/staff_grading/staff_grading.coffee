@@ -170,6 +170,15 @@ class @StaffGrading
     @grading_wrapper = $('.grading-wrapper')
 
     @feedback_area = $('.feedback-area')
+    @ice_legend = $('<p class="ice-legend">
+                      <span class="ins">This is an insertion.</span>&nbsp;
+                      <span class="del">This is a deletion.</span>&nbsp;
+                      <span class="ins">[This is a comment.]</span>&nbsp;
+                      <span class="ice-controls">
+                        <a href="#" class="undo-change"><i class="icon-undo"></i> Undo Change</a>&nbsp;&nbsp;
+                        <a href="#" class="reset-changes"><i class="icon-refresh"></i> Reset Changes</a>
+                      </span>
+                    </p>')
     @score_selection_container = $('.score-selection-container')
     @grade_selection_container = $('.grade-selection-container')
     @flag_submission_checkbox = $('.flag-checkbox')
@@ -220,6 +229,9 @@ class @StaffGrading
 
     # send initial request automatically
     @get_problem_list()
+    
+    if @tracking_changes()
+      @change_tracker = new TrackChanges(@el)
 
 
   setup_score_selection: =>
@@ -314,7 +326,11 @@ class @StaffGrading
     @submission = response.submission
     @rubric = response.rubric
     @submission_id = response.submission_id
-    @feedback_area.val('')
+    if true
+      @feedback_area.before(@ice_legend)
+      @feedback_area.replaceWith('<div name="feedback" class="feedback-area track-changes" contenteditable="true">' + @make_paragraphs(response.submission) + '</div>')
+    else
+      @feedback_area.replaceWith('<textarea name="feedback" placeholder="Feedback for student" class="feedback-area" cols="70" ></textarea>')
     @grade = null
     @max_score = response.max_score
     @ml_error_info=response.ml_error_info
@@ -382,6 +398,9 @@ class @StaffGrading
       "#{problem.problem_name}")
         .click =>
           @get_next_submission problem.location
+
+  tracking_changes: () =>
+    return @grading_wrapper.data('track-changes') == true
 
   make_paragraphs: (text) ->
     paragraph_split = text.split(/\n\s*\n/)
