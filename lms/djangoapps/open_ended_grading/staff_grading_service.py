@@ -14,8 +14,9 @@ from xblock.field_data import DictFieldData
 from courseware.access import has_access
 from util.json_request import expect_json
 from xmodule.course_module import CourseDescriptor
-from student.models import unique_id_for_user
 from xmodule.x_module import ModuleSystem
+from xmodule.modulestore.exceptions import ItemNotFoundError, NoPathToItem
+from student.models import unique_id_for_user
 from mitxmako.shortcuts import render_to_string
 from utils import does_location_exist
 
@@ -105,6 +106,22 @@ class StaffGradingService(GradingService):
         params = {'course_id': course_id, 'grader_id': grader_id}
         return self.get(self.get_problem_list_url, params)
 
+### WIP: works like prototype ###
+    def _find_corresponding_module_for_location(self, location):
+        """
+        Find the peer grading module that exists at the given location.
+        """
+        try:
+            return self.descriptor.system.load_item(location)
+        except ItemNotFoundError:
+            # The linked problem doesn't exist.
+            log.error("Problem {0} does not exist in this course.".format(location))
+            raise
+        except NoPathToItem:
+            # The linked problem does not have a path to it (ie is in a draft or other strange state).
+            log.error("Cannot find a path to problem {0} in this course.".format(location))
+            raise
+### WIP: works like prototype ###
 
     def get_next(self, course_id, location, grader_id):
         """
@@ -124,9 +141,13 @@ class StaffGradingService(GradingService):
         Raises:
             GradingServiceError: something went wrong with the connection.
         """
+        module = self._find_corresponding_module_for_location(location)
+        
         response = self.get(self.get_next_url,
-                            params={'location': location,
-                                    'grader_id': grader_id})
+                params={'location': location,
+                        'grader_id': grader_id,
+                        'track_changes': getattr(module, 'track_changes', False),
+                        })
         return json.dumps(self._render_rubric(response))
 
 
