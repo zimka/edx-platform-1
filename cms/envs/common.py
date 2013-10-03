@@ -257,12 +257,6 @@ PIPELINE_CSS = {
         ],
         'output_filename': 'css/cms-style-app.css',
     },
-    'style-xmodule': {
-        'source_filenames': [
-            'sass/style-xmodule.css',
-        ],
-        'output_filename': 'css/cms-style-xmodule.css',
-    },
 }
 
 # test_order: Determines the position of this chunk of javascript on

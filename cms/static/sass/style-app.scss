@@ -56,6 +56,11 @@
 @import 'views/checklists';
 @import 'views/textbooks';
 
+// xmodule
+@import 'xmodule/modules/css/module-styles.scss';
+@import 'xmodule/descriptors/css/module-styles.scss';
+@import 'elements/xmodules'; // styling for Studio-specific contexts
+
 // base - contexts
 @import 'contexts/ie'; // ie-specific rules (mostly for known/older bugs)
 
