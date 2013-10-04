@@ -565,9 +565,9 @@ class @PeerGradingProblem
       calibration_wrapper.append("<p>You may want to review the rubric again.</p>")
 
     if response.actual_rubric != undefined
-      calibration_wrapper.append("<div>Instructor Scored Rubric: #{response.actual_rubric}</div>")
+      calibration_wrapper.append('<div class="instructor-scores">Instructor Scored Rubric: #{response.actual_rubric}</div>')
     if response.actual_feedback.feedback!=undefined
-      calibration_wrapper.append("<div>Instructor Feedback: #{response.actual_feedback}</div>")
+      calibration_wrapper.append('<div class="instructor-feedback">Instructor Feedback: #{response.actual_feedback}</div>')
 
     # disable score selection and submission from the grading interface
     @$("input[name='score-selection']").attr('disabled', true)
