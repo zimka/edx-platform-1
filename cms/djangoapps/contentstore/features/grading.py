@@ -164,6 +164,15 @@ def cannot_edit_fail(_step):
 def i_change_grace_period(_step, grace_period):
     grace_period_css = '#course-grading-graceperiod'
     ele = world.css_find(grace_period_css).first
+    
+    # Sometimes it takes a moment for the JavaScript
+    # to populate the field.  If we don't wait for
+    # this to happen, then we can end up with
+    # an invalid value (e.g. "00:0048:00")
+    # which prevents us from saving.
+    assert_true(world.css_has_value(grace_period_css, "00:00", allow_blank=False))
+
+    # Set the new grace period
     ele.value = grace_period
 
 
