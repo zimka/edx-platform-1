@@ -34,7 +34,7 @@ def wait(seconds):
 def wait_for_js_variable_truthy(variable):
     """
     Using Selenium's `execute_async_script` function, poll the Javascript
-    enviornment until the given variable is defined and truthy. This process
+    environment until the given variable is defined and truthy. This process
     guards against page reloads, and seamlessly retries on the next page.
     """
     js = """
