@@ -78,6 +78,16 @@ def wait_for_mathjax():
     world.wait_for_js_variable_truthy("MathJax.isReady")
 
 
+@world.absorb
+def wait_for_dom():
+    world.browser.evaluate_script("""
+        _.defer(function() {
+            $('body').append('<div id="selenium_dom_finished"></div>');
+        });
+    """)
+    world.is_css_present('#selenium_dom_finished')
+
+
 class RequireJSError(Exception):
     """
     An error related to waiting for require.js. If require.js is unable to load
