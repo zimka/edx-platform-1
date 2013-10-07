@@ -230,7 +230,9 @@ def is_css_not_present(css_selector, wait_time=5):
 
 
 @world.absorb
-def css_has_text(css_selector, text, index=0, strip=False, allow_blank=True):
+def css_has_text(css_selector, text, index=0,
+                 strip=False, allow_blank=True,
+                 partial_text=False):
     """
     Return a boolean indicating whether the element with `css_selector`
     has `text`.
@@ -241,6 +243,9 @@ def css_has_text(css_selector, text, index=0, strip=False, allow_blank=True):
     If `allow_blank` is False, wait for the element to have non-empty
     text before making the assertion.  This is useful for elements
     that are populated by JavaScript after the page loads.
+
+    If `allow_partial` is True, verify that the actual text
+    contains the expected text.
 
     If there are multiple elements matching the css selector,
     use `index` to indicate which one.
@@ -255,7 +260,10 @@ def css_has_text(css_selector, text, index=0, strip=False, allow_blank=True):
         actual_text = actual_text.strip()
         text = text.strip()
 
-    return actual_text == text
+    if partial_text:
+        return text in actual_text
+    else:
+        return actual_text == text
 
 
 @world.absorb

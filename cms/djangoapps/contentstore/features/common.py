@@ -77,11 +77,12 @@ def press_the_notification_button(_step, name):
     world.wait_for_ajax_complete()
 
     # Verify that changes were saved
-    confirmed = world.css_has_text(
-        '#alert-confirmation-title', u'Your changes have been saved.',
-        allow_blank=False
-    )
-    assert_true(confirmed)
+    if name == "Save":
+        confirmed = world.css_has_text(
+            '#alert-confirmation-title', u'changes have been saved',
+            allow_blank=False, partial_text=True
+        )
+        assert_true(confirmed)
 
 
 @step('I change the "(.*)" field to "(.*)"$')
