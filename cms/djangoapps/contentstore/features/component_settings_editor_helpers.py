@@ -33,11 +33,18 @@ def create_component_instance(step, component_button_css, category,
 @world.absorb
 def click_new_component_button(step, component_button_css):
     step.given('I have clicked the new unit button')
+
+    # Wait for the RequireJS sources we care about to load
     world.wait_for_requirejs(
         ["jquery", "backbone", "js/models/course", "coffee/src/models/module",
          "coffee/src/views/unit", "jquery.ui"]
     )
-    world.wait_for_dom()
+
+    # Wait for BackBone to finish installing its event handlers
+    # This prevents the case where we click on the "new component"
+    # button before the click event handler is installed.
+    world.wait_for_dom_events()
+
     world.css_click(component_button_css)
 
 

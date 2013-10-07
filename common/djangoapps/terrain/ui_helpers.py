@@ -79,7 +79,33 @@ def wait_for_mathjax():
 
 
 @world.absorb
-def wait_for_dom():
+def wait_for_dom_events():
+    """
+    Wait for remaining DOM events to execute.
+
+    This is useful in cases where JavaScript has been loaded,
+    but we need to wait for it to finish initializing the page
+    (for example, installing click event handlers).
+
+    This technique is somewhat inefficient, since it may end
+    up waiting for DOM events that we don't care about.
+    In many cases, there are other cues we can look for
+    to verify that the page is initialized (default fields
+    filled in, for example).  But when those fail,
+    this menthod is useful.
+
+    Shamelessly borrowed and modified from:
+    http://artsy.github.io/blog/2012/02/03/reliably-testing-asynchronous-ui-w-slash-rspec-and-capybara/
+    """
+    # Ensure that 'body' has been loaded.
+    assert_true(world.is_css_present('body'))
+
+    # Add a new defer event, which will be executed after
+    # all events that have already been deferred.
+    # This takes advantage of the fact that the JS UI event
+    # loop is single-threaded.
+    # Our event adds a new <div> to the DOM, which we can
+    # then wait for.
     world.browser.evaluate_script("""
         _.defer(function() {
             $('body').append('<div id="selenium_dom_finished"></div>');
