@@ -5,6 +5,7 @@ from lettuce import world
 import time
 import json
 import platform
+from uuid import uuid4
 from textwrap import dedent
 from urllib import quote_plus
 from selenium.common.exceptions import (
@@ -100,18 +101,26 @@ def wait_for_dom_events():
     # Ensure that 'body' has been loaded.
     assert_true(world.is_css_present('body'))
 
+    # Ensure underscore is loaded
+    world.wait_for_js_variable_truthy('_')
+
+    # Generate a unique CSS ID to wait for
+    # The ID must start with a letter
+    div_id = 'a' + str(uuid4())
+
     # Add a new defer event, which will be executed after
     # all events that have already been deferred.
     # This takes advantage of the fact that the JS UI event
     # loop is single-threaded.
     # Our event adds a new <div> to the DOM, which we can
     # then wait for.
-    world.browser.evaluate_script("""
-        _.defer(function() {
-            $('body').append('<div id="selenium_dom_finished"></div>');
-        });
-    """)
-    world.is_css_present('#selenium_dom_finished')
+    script = """
+        _.defer(function() {{
+            $('body').append('<div id="{}"></div>');
+        }});
+    """.format(div_id)
+    world.browser.execute_script(script)
+    assert_true(world.is_css_present('#' + div_id))
 
 
 class RequireJSError(Exception):
