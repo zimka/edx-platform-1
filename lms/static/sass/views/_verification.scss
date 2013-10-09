@@ -14,7 +14,7 @@
   @extend %t-title4;
   @extend %t-weight1;
   margin: 0 0 ($baseline*0.75) 0;
-  border-bottom: 1px solid $m-gray-l3;
+  border-bottom: 1px solid $m-gray-l4;
   padding-bottom: ($baseline/2);
   color: $m-gray-d4;
 }
@@ -160,7 +160,7 @@
 // ====================
 
 // VIEW: all verification steps
-.register.verification-process {
+.verification-process {
 
   // reset: box-sizing (making things so right its scary)
   * {
@@ -476,11 +476,12 @@
 
       .sts-label {
         @extend %t-title7;
+        @extend %t-weight4;
         display: block;
         margin-bottom: ($baseline/2);
         border-bottom: ($baseline/10) solid $m-gray-l4;
         padding-bottom: ($baseline/2);
-        color: $m-gray;
+        color: $m-gray-d1;
       }
 
       .sts-course {
@@ -1900,5 +1901,13 @@
 
   .progress-sts-value {
     width: 32% !important;
+  }
+}
+
+// STATE: upgrading registration type
+.register.is-upgrading {
+
+  .form-register-choose {
+    margin-top: ($baseline*2);
   }
 }
