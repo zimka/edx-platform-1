@@ -27,6 +27,8 @@ V1_SETTINGS_ATTRIBUTES = [
     "peer_grader_count",
     "required_peer_grading",
     "peer_grade_finished_submissions_when_none_pending",
+    "staff_minimum_for_peer_grading",
+    "staff_minimum_for_ai_grading",
 ]
 
 V1_STUDENT_ATTRIBUTES = [
@@ -303,6 +305,20 @@ class CombinedOpenEndedFields(object):
         default=3,
         scope=Scope.settings,
         values={"min": 1, "step": "1", "max": 5}
+    )
+    staff_minimum_for_peer_grading = Integer(
+        display_name="Staff Grading Needed For Peer Grading",
+        help="The number of responses that need to be staff graded before peer grading can start.  Must be higher than maximum peer grading calibrations.",
+        default=10,
+        scope=Scope.settings,
+        values={"min": 1, "step": "1", "max": 20}
+    )
+    staff_minimum_for_ai_grading = Integer(
+        display_name="Staff Grading Needed For AI Grading",
+        help="The number of responses that need to be staff graded before AI grading can start.  Must be higher than 50.  At least 100 is recommended.",
+        default=100,
+        scope=Scope.settings,
+        values={"min": 50, "step": "1", "max": 300}
     )
     peer_grade_finished_submissions_when_none_pending = Boolean(
         display_name='Allow "overgrading" of peer submissions',

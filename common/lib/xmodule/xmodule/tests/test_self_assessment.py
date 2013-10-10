@@ -56,6 +56,8 @@ class SelfAssessmentTest(unittest.TestCase):
                 'min_to_calibrate': 3,
                 'max_to_calibrate': 6,
                 'peer_grade_finished_submissions_when_none_pending': False,
+                'staff_minimum_for_peer_grading': 10,
+                'staff_minimum_for_ai_grading': 50,
                 }
         }
 

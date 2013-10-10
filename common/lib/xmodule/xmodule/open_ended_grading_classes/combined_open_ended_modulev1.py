@@ -130,6 +130,8 @@ class CombinedOpenEndedV1Module():
         self.peer_grade_finished_submissions_when_none_pending = instance_state.get(
             'peer_grade_finished_submissions_when_none_pending', False
         )
+        self.staff_minimum_for_peer_grading = instance_state.get('staff_minimum_for_peer_grading', 10)
+        self.staff_minimum_for_ai_grading = instance_state.get('staff_minimum_for_ai_grading', 50)
 
         due_date = instance_state.get('due', None)
 
@@ -164,6 +166,8 @@ class CombinedOpenEndedV1Module():
                 'peer_grade_finished_submissions_when_none_pending': (
                     self.peer_grade_finished_submissions_when_none_pending
                 ),
+                'staff_minimum_for_peer_grading': self.staff_minimum_for_peer_grading,
+                'staff_minimum_for_ai_grading': self.staff_minimum_for_ai_grading,
             }
         }
 
