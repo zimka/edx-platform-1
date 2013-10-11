@@ -473,3 +473,19 @@ class TestStudentProblemList(ModuleStoreTestCase):
         self.assertEqual(len(valid_problems), 2)
         # Ensure that human names are being set properly.
         self.assertEqual(valid_problems[0]['grader_type_display_name'], "Instructor Assessment")
+
+    def test_get_problems_success(self):
+        """
+        Test to see if we find any open ended modules when they exist.
+        """
+
+        items_exist = utils.check_if_open_ended_problems_exist(self.course_name)
+        self.assertTrue(items_exist)
+
+    def test_get_problems_fail(self):
+        """
+        Test to see if we find any open ended modules when they exist.
+        """
+
+        items_exist = utils.check_if_open_ended_problems_exist("random course")
+        self.assertFalse(items_exist)

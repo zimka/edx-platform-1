@@ -32,6 +32,7 @@ from instructor.views.api import (
     _split_input_list, _msk_from_problem_urlname, common_exceptions_400)
 from instructor_task.api_helper import AlreadyRunningError
 
+from open_ended_grading.utils import MockCourseDataService
 
 @common_exceptions_400
 def view_success(request):  # pylint: disable=W0613
@@ -458,6 +459,18 @@ class TestInstructorAPILevelsDataDump(ModuleStoreTestCase, LoginEnrollmentTestCa
         body = response.content.replace('\r', '')
         self.assertTrue(body.startswith('"User ID","Anonymized user ID"\n"2","42"\n'))
         self.assertTrue(body.endswith('"7","42"\n'))
+
+    @patch('instructor.views.api.CourseDataService', Mock(return_value=MockCourseDataService(success=True)))
+    def test_get_oe_data_success(self):
+        """
+        Test that we can get open ended data dump links properly.
+        """
+        url = reverse('get_open_ended_data', kwargs={'course_id': self.course.id})
+        response = self.client.get(url)
+        content = json.loads(response.content)
+        self.assertIn('success', content)
+        self.assertTrue(content['success'])
+        self.assertIn('file_url', content)
 
     def test_get_students_features_csv(self):
         """

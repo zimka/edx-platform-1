@@ -5,12 +5,13 @@ from xmodule.modulestore.django import modulestore
 from xmodule.modulestore.exceptions import ItemNotFoundError, NoPathToItem
 from xmodule.x_module import ModuleSystem
 from xmodule.open_ended_grading_classes.controller_query_service import ControllerQueryService
-from xmodule.open_ended_grading_classes.grading_service_module import GradingServiceError
+from xmodule.open_ended_grading_classes.grading_service_module import GradingServiceError, GradingService
 
 from django.utils.translation import ugettext as _
 from django.conf import settings
 
 from mitxmako.shortcuts import render_to_string
+from courseware.courses import get_course_by_id
 
 from xblock.field_data import DictFieldData
 
@@ -176,3 +177,76 @@ class StudentProblemList(object):
             problem['grader_type_display_name'] = grader_type_display_name
             valid_problems.append(problem)
         return valid_problems
+
+
+def check_if_open_ended_problems_exist(course_id):
+    """
+    Check to see if there are any open ended problems in the course.
+    """
+
+    try:
+        # Get the course object.
+        course = get_course_by_id(course_id)
+    except ValueError:
+        # If we get a ValueError, the course id is invalid.
+        return False
+
+    course_id_parts = course.id.split("/")
+
+    # See if we can find any items in the modulestore.
+    items = modulestore().get_items(
+        ['i4x', course_id_parts[0], course_id_parts[1], 'combinedopenended', None],
+        course_id=course.id
+    )
+
+    return len(items) > 0
+
+
+class MockCourseDataService(object):
+    """
+    Mock a course data service.
+    """
+    def __init__(self, success):
+        self.success = success
+
+    def get_course_data(self, course_id):
+        """
+        Mock the response from ORA when getting course data.
+        """
+        return {'success': self.success, 'file_url': "www.test.com"}
+
+
+class CourseDataService(GradingService):
+    """
+    A service that queries the ORA server for course data.
+    """
+    def __init__(self, config):
+        config['system'] = ModuleSystem(
+            static_url='/static',
+            ajax_url=None,
+            track_function=None,
+            get_module=None,
+            render_template=render_to_string,
+            replace_urls=None,
+        )
+        super(CourseDataService, self).__init__(config)
+        self.url = config['url'] + config['grading_controller']
+        self.course_data_url = self.url + "/get_course_data/"
+        self.login_url = self.url + '/login/'
+
+    def get_course_data(self, course_id):
+        """
+        Get a url for the course data dump for a given course.
+
+        Args:
+            course_id: course id that we want the data dump for.
+
+        Returns:
+            json string with the response from the service.  Contains a boolean success, and a key 'file_url'
+            if success is True.
+
+        Raises:
+            GradingServiceError: something went wrong with the connection.
+        """
+        params = {'course': course_id}
+        return json.loads(self.get(self.course_data_url, params))

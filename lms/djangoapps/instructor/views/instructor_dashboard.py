@@ -22,6 +22,7 @@ from courseware.courses import get_course_by_id
 from django_comment_client.utils import has_forum_access
 from django_comment_common.models import FORUM_ROLE_ADMINISTRATOR
 from student.models import CourseEnrollment
+from open_ended_grading.utils import check_if_open_ended_problems_exist
 from bulk_email.models import CourseAuthorization
 
 @ensure_csrf_cookie
@@ -156,6 +157,9 @@ def _section_data_download(course_id):
         'get_grading_config_url': reverse('get_grading_config', kwargs={'course_id': course_id}),
         'get_students_features_url': reverse('get_students_features', kwargs={'course_id': course_id}),
         'get_anon_ids_url': reverse('get_anon_ids', kwargs={'course_id': course_id}),
+        'open_ended_problems_exist_in_course': check_if_open_ended_problems_exist(course_id),
+        'get_open_ended_data_url': reverse('get_open_ended_data', kwargs={'course_id': course_id}),
+
     }
     return section_data
 

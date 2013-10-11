@@ -34,5 +34,7 @@ urlpatterns = patterns('',  # nopep8
     url(r'^proxy_legacy_analytics$',
         'instructor.views.api.proxy_legacy_analytics', name="proxy_legacy_analytics"),
     url(r'^send_email$',
-        'instructor.views.api.send_email', name="send_email")
+        'instructor.views.api.send_email', name="send_email"),
+    url(r'^get_open_ended_data$',
+        'instructor.views.api.get_open_ended_data', name="get_open_ended_data"),
 )
