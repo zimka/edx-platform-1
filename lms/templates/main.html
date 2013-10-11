@@ -96,6 +96,8 @@
 % endif
 
   <script>window.baseUrl = "${settings.STATIC_URL}";</script>
+  <%block name="js_pre_extra"/>
+
   <%static:js group='application'/>
   <%static:js group='module-js'/>
 
