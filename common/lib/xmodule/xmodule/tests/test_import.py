@@ -18,6 +18,9 @@ from xmodule.fields import Date
 from xmodule.tests import DATA_DIR
 from xmodule.modulestore.inheritance import InheritanceMixin
 
+from xblock.core import XBlock
+from xblock.fields import Scope, String, Integer
+
 
 ORG = 'test_org'
 COURSE = 'test_course'
@@ -65,6 +68,22 @@ class BaseCourseTestCase(unittest.TestCase):
         courses = modulestore.get_courses()
         self.assertEquals(len(courses), 1)
         return courses[0]
+
+
+class GenericXBlock(XBlock):
+    has_children = True
+    field1 = String(default="something", scope=Scope.user_state)
+    field2 = Integer(scope=Scope.user_state)
+
+
+class TryItTest(BaseCourseTestCase):
+    @XBlock.register_temp_plugin(GenericXBlock)
+    def test_pure_xblock(self):
+        system = self.get_system(load_error_modules=False)
+        descriptor = system.process_xml("<course/>")
+        descriptor = system.process_xml("<genericxblock field1='abc' field2='23' />")
+        descriptor = system.process_xml("<genericxblock field1='abc' field2='23'><genericxblock/></genericxblock>")
+        self.assertIsInstance(descriptor, GenericXBlock)
 
 
 class ImportTestCase(BaseCourseTestCase):

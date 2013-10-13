@@ -584,7 +584,7 @@ class XModuleDescriptor(XModuleMixin, HTMLSnippet, ResourceTemplates, XBlock):
 
     # ================================= XML PARSING ============================
     @classmethod
-    def parse_xml(cls, node, runtime, keys):
+    def parse_xml(cls, node, runtime, keys, field_data=None):
         """
         Interpret the parsed XML in `node`, creating an XModuleDescriptor.
         """
@@ -822,9 +822,20 @@ class DescriptorSystem(ConfigurableFragmentWrapper, Runtime):  # pylint: disable
                that you're about to re-raise---let the caller track them.
         """
 
+        from xblock.runtime import UsageStore
+
+        class MyUsageStore(UsageStore):
+            def __init__(self, system):
+                self.system = system
+
+            def create_definition(self, block_type):
+                raw_class = XModuleDescriptor.load_class(block_type) ### TODO: , default_classXXX)
+                xblock_class = self.system.mixologist.mix(raw_class)
+
+
         # Right now, usage_store is unused, and field_data is always supplanted
         # with an explicit field_data during construct_xblock, so None's suffice.
-        super(DescriptorSystem, self).__init__(usage_store=None, field_data=None, **kwargs)
+        super(DescriptorSystem, self).__init__(usage_store=MyUsageStore(self), field_data=None, **kwargs)
 
         self.load_item = load_item
         self.resources_fs = resources_fs

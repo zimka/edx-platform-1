@@ -210,6 +210,7 @@ class ImportSystem(XMLParsingSystem, MakoDescriptorSystem):
         # policy to be loaded.  For now, just add the course_id here...
         load_item = lambda location: xmlstore.get_instance(course_id, location)
         resources_fs = OSFS(xmlstore.data_dir / course_dir)
+
         super(ImportSystem, self).__init__(
             load_item=load_item,
             resources_fs=resources_fs,
