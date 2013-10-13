@@ -27,7 +27,7 @@ from xmodule.errortracker import null_error_tracker, exc_info_to_str
 from xmodule.mako_module import MakoDescriptorSystem
 from xmodule.x_module import XModuleDescriptor
 from xmodule.error_module import ErrorDescriptor
-from xblock.runtime import DbModel
+from xblock.runtime import KvsFieldData
 from xblock.exceptions import InvalidScopeError
 from xblock.fields import Scope, ScopeIds
 
@@ -190,7 +190,7 @@ class CachingDescriptorSystem(MakoDescriptorSystem):
                     metadata,
                 )
 
-                field_data = DbModel(kvs)
+                field_data = KvsFieldData(kvs)
                 scope_ids = ScopeIds(None, category, location, location)
                 module = self.construct_xblock_from_class(class_, scope_ids, field_data)
                 if self.cached_metadata is not None:
@@ -853,5 +853,5 @@ class MongoModuleStore(ModuleStoreBase):
             metadata,
         )
 
-        field_data = DbModel(kvs)
+        field_data = KvsFieldData(kvs)
         return field_data

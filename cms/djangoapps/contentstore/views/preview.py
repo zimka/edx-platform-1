@@ -14,7 +14,7 @@ from xmodule.errortracker import exc_info_to_str
 from xmodule.exceptions import NotFoundError, ProcessingError
 from xmodule.modulestore.django import modulestore
 from xmodule.x_module import ModuleSystem
-from xblock.runtime import DbModel
+from xblock.runtime import KvsFieldData
 
 from lms.xblock.field_data import lms_field_data
 
@@ -143,7 +143,7 @@ def load_preview_module(request, preview_id, descriptor):
     preview_id (str): An identifier specifying which preview this module is used for
     descriptor: An XModuleDescriptor
     """
-    student_data = DbModel(SessionKeyValueStore(request))
+    student_data = KvsFieldData(SessionKeyValueStore(request))
     descriptor.bind_for_student(
         preview_module_system(request, preview_id, descriptor),
         lms_field_data(descriptor._field_data, student_data),  # pylint: disable=protected-access

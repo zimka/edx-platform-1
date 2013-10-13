@@ -29,7 +29,7 @@ from xmodule.modulestore import Location
 from xblock.fields import Scope, String, Boolean, Float, List, Integer, ScopeIds
 
 from xmodule.modulestore.inheritance import InheritanceKeyValueStore
-from xblock.runtime import DbModel
+from xblock.runtime import KvsFieldData
 
 log = logging.getLogger(__name__)
 
@@ -238,7 +238,7 @@ class VideoDescriptor(VideoFields, TabsEditingDescriptor, EmptyDataRawDescriptor
         field_data = cls._parse_video_xml(xml_data)
         field_data['location'] = location
         kvs = InheritanceKeyValueStore(initial_values=field_data)
-        field_data = DbModel(kvs)
+        field_data = KvsFieldData(kvs)
         video = system.construct_xblock_from_class(
             cls,
             # We're loading a descriptor, so student_id is meaningless

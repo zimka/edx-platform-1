@@ -17,7 +17,7 @@ from dogapi import dog_stats_api
 
 from capa.xqueue_interface import XQueueInterface
 from mitxmako.shortcuts import render_to_string
-from xblock.runtime import DbModel
+from xblock.runtime import KvsFieldData
 from xmodule.error_module import ErrorDescriptor, NonStaffErrorDescriptor
 from xmodule.errortracker import exc_info_to_str
 from xmodule.exceptions import NotFoundError, ProcessingError
@@ -219,7 +219,7 @@ def get_module_for_descriptor_internal(user, descriptor, field_data_cache, cours
     if not has_access(user, descriptor, 'load', course_id):
         return None
 
-    student_data = DbModel(DjangoKeyValueStore(field_data_cache))
+    student_data = KvsFieldData(DjangoKeyValueStore(field_data_cache))
     descriptor._field_data = lms_field_data(descriptor._field_data, student_data)
 
     # Setup system context for module instance
