@@ -195,11 +195,10 @@ class CapaHtmlRenderTest(unittest.TestCase):
         # Grade the problem
         correctmap = problem.grade_answers({'1_2_1': 'test'})
 
+
+
         # Render the html
         rendered_html = etree.XML(problem.get_html())
-        import ipdb
-        #ipdb.set_trace()
-        #print 'foo:', rendered_html
 
 
         # Expect that there is a <div> within the response <div>

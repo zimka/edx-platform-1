@@ -414,21 +414,11 @@ class LoncapaProblem(object):
         rng.shuffle(middle)
         return head + middle + tail
     
-    def shuffled_tree(self, tree):
+    def shuffle_tree(self, tree):
         """
-        Implements the shuffling of the tree if needed.
-        Returns a new, shuffled tree if shuffling was required, or None.
-        The caller needs to distinguish these cases to update data structures
-        to match the new tree.
+        Shuffles the options in-place in the given tree.
         """
-        # TBD: logic to decide if we shuffle
-        # TBD: integrate with the "seed" .. maybe need to fix that to change sometimes
-        # Q: not sure about multiple choicegroups in the tree .. what is that?
-        # Q: could take tree param, or use self.tree as starting point
-        if not tree.xpath('//choicegroup[@shuffle="true"]'):
-            return None
-        shuffled = deepcopy(tree)
-        for choicegroup in shuffled.xpath('//choicegroup[@shuffle="true"]'):
+        for choicegroup in tree.xpath('//choicegroup[@shuffle="true"]'):
             ordering = list(choicegroup.getchildren())
             # remove all from parent
             for choice in ordering:
@@ -436,7 +426,6 @@ class LoncapaProblem(object):
             ordering = self.shuffle_choices(ordering)
             for choice in ordering:
                 choicegroup.append(choice)
-        return shuffled
 
     def get_html(self):
         '''
@@ -444,15 +433,8 @@ class LoncapaProblem(object):
         '''
         #import ipdb
         #ipdb.set_trace()
-        shuffled = self.shuffled_tree(self.tree)
-        if shuffled:  # shuffling happened
-            process_this = shuffled
-            ###self._preprocess_problem(process_this)
-        else:
-            process_this = deepcopy(self.tree)
-            # deepcopy here just to shake out tests which fail with a tree copy
-            # Take out the copy and everything works fine.
-        html = contextualize_text(etree.tostring(self._extract_html(process_this)), self.context)
+        self.shuffle_tree(self.tree)
+        html = contextualize_text(etree.tostring(self._extract_html(self.tree)), self.context)
         return html
 
     def handle_input_ajax(self, data):
