@@ -20,7 +20,13 @@ urlpatterns = patterns('',  # nopep8
     url(r'^delete_item$', 'contentstore.views.delete_item', name='delete_item'),
     url(r'^create_item$', 'contentstore.views.create_item', name='create_item'),
 
-    url(r'^transcripts/(?P<action>[^/]+)$', 'contentstore.views.process_transcripts', name='process_transcripts'),
+    url(r'^transcripts/upload$', 'contentstore.transcripts_ajax.upload_transcripts', name='upload_transcripts'),
+    url(r'^transcripts/download$', 'contentstore.transcripts_ajax.download_transcripts', name='download_transcripts'),
+    url(r'^transcripts/check$', 'contentstore.transcripts_ajax.check_transcripts', name='check_transcripts'),
+    url(r'^transcripts/choose$', 'contentstore.transcripts_ajax.choose_transcripts', name='choose_transcripts'),
+    url(r'^transcripts/replace$', 'contentstore.transcripts_ajax.replace_transcripts', name='replace_transcripts'),
+    url(r'^transcripts/rename$', 'contentstore.transcripts_ajax.rename_transcripts', name='rename_transcripts'),
+    url(r'^transcripts/save$', 'contentstore.transcripts_ajax.save_transcripts', name='save_transcripts'),
 
     url(r'^create_draft$', 'contentstore.views.create_draft', name='create_draft'),
     url(r'^publish_draft$', 'contentstore.views.publish_draft', name='publish_draft'),

@@ -10,6 +10,7 @@ import json
 
 from django.http import HttpResponse, Http404
 from django.core.exceptions import PermissionDenied
+from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
 from xmodule.contentstore.content import StaticContent
@@ -47,6 +48,7 @@ def log_and_return_response(response, message, status_code=400):
     return JsonResponse(response, status_code)
 
 
+@login_required
 def upload_transcripts(request):
     """
     Upload transcripts for current module.
@@ -125,6 +127,7 @@ def upload_transcripts(request):
     return JsonResponse(response)
 
 
+@login_required
 def download_transcripts(request):
     """
     Test
@@ -171,6 +174,7 @@ def download_transcripts(request):
         raise Http404
 
 
+@login_required
 def check_transcripts(request):
     """
     Check transcripts availability current module state..
@@ -326,6 +330,7 @@ def transcripts_logic(transcripts_presence, videos):
     return command, subs
 
 
+@login_required
 def choose_transcripts(request):
     """
     Replaces html5 subtitles, presented for both html5 sources, with chosen one.
@@ -359,6 +364,7 @@ def choose_transcripts(request):
     return JsonResponse(response)
 
 
+@login_required
 def replace_transcripts(request):
     """
     Replaces all transcripts with youtube ones.
@@ -432,6 +438,7 @@ def validate_transcripts_data(request):
     return True, 'Success', data, videos, item
 
 
+@login_required
 def rename_transcripts(request):
     """
     Create copies of existing subtitles with new names of HTML5 sources.
@@ -461,6 +468,7 @@ def rename_transcripts(request):
     return JsonResponse(response)
 
 
+@login_required
 def save_transcripts(request):
     response = {'status': 'Unknown Error'}
 

@@ -13,16 +13,6 @@ from xmodule.modulestore.exceptions import ItemNotFoundError, InvalidLocationErr
 
 from util.json_request import expect_json, JsonResponse
 
-from .transcripts_ajax import (
-    upload_transcripts,
-    download_transcripts,
-    check_transcripts,
-    choose_transcripts,
-    replace_transcripts,
-    rename_transcripts,
-    save_transcripts,
-)
-
 from ..transcripts_utils import manage_video_subtitles_save
 
 from ..utils import get_modulestore
@@ -218,20 +208,3 @@ def delete_item(request):
                 modulestore('direct').update_children(parent.location, parent.children)
 
     return JsonResponse()
-
-
-@login_required
-def process_transcripts(request, action):
-    """
-    Dispatcher for trascripts actions.
-    """
-    allowed_actions = {
-        'upload': upload_transcripts,
-        'download': download_transcripts,
-        'check': check_transcripts,
-        'choose': choose_transcripts,
-        'replace': replace_transcripts,
-        'rename': rename_transcripts,
-        'save': save_transcripts,
-    }
-    return allowed_actions.get(action, lambda x: JsonResponse())(request)
