@@ -434,13 +434,12 @@ def validate_transcripts_data(request):
 
 def rename_transcripts(request):
     """
-    Renames html5 subtitles
-    """
+    Create copies of existing subtitles with new names of HTML5 sources.
 
-    response = {
-        'status': 'Error',
-        'subs': '',
-    }
+    Old subtitles are not deleted now.
+    After implementing rollback functionality,
+    """
+    response = {'status': 'Error', 'subs': '',}
 
     validation_status, validation_message, __, videos, item = validate_transcripts_data(request)
     if not validation_status:
@@ -448,16 +447,17 @@ def rename_transcripts(request):
 
     old_name = item.sub
 
-    statuses = {}
+    for new_name in videos['html5'].keys(): # copy subtitles for every HTML5 source
+        try:
+            # updates item.sub with new_name if it is successful.
+            copy_or_rename_transcript(new_name, old_name, item)
+        except NotFoundError:
+            # subtitles file `item.sub` is not presented in the system. Nothing to copy or rename.
+            log_and_return_response(response, "Can't find transcripts in storage for {}".format(old_name))
 
-    # copy subtitles for every html5 source
-    for new_name in videos['html5'].keys():
-        statuses[new_name] = copy_or_rename_transcript(new_name, old_name, item)
-
-    if any(statuses):
-        response['status'] = 'Success'
-        response['subs'] = item.sub
-        log.debug("Updated item.sub to {}".format(item.sub))
+    response['status'] = 'Success'
+    response['subs'] = item.sub  # item.sub has been changed, it is not equal to old_name.
+    log.debug("Updated item.sub to {}".format(item.sub))
     return JsonResponse(response)
 
 
