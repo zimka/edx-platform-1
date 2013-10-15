@@ -112,7 +112,7 @@ def get_transcripts_from_youtube(youtube_id):
                 # Start and end should be ints representing the millisecond timestamp.
                 sub_starts.append(int(start * 1000))
                 sub_ends.append(int((end + 0.0001) * 1000))
-                sub_texts.append(html_parser.unescape(text.replace('\n', ' ')))
+                sub_texts.append(text.replace('\n', ' '))
 
     return True, {'start': sub_starts, 'end': sub_ends, 'text': sub_texts}
 
