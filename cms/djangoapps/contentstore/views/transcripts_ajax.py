@@ -152,7 +152,7 @@ def download_transcripts(request):
     """
     item_location = request.GET.get('id')
     if not item_location:
-        log.error('GET data without "id" property.')
+        log.debug('GET data without "id" property.')
         raise Http404
 
     # Check permissions for this user within this course.
@@ -161,17 +161,17 @@ def download_transcripts(request):
 
     subs_id = request.GET.get('subs_id')
     if not subs_id:
-        log.error('GET data without "subs_id" property.')
+        log.debug('GET data without "subs_id" property.')
         raise Http404
 
     try:
         item = modulestore().get_item(item_location)
     except (ItemNotFoundError, InvalidLocationError):
-        log.error("Can't find item by location.")
+        log.debug("Can't find item by location.")
         raise Http404
 
     if item.category != 'video':
-        log.error('transcripts are supported only for video" modules.')
+        log.debug('transcripts are supported only for video" modules.')
         raise Http404
 
     filename = 'subs_{0}.srt.sjson'.format(subs_id)
@@ -183,7 +183,7 @@ def download_transcripts(request):
         log.debug("Downloading subs for %s id", subs_id)
         str_subs = generate_srt_from_sjson(json.loads(sjson_transcripts.data), speed=1.0)
         if not str_subs:
-            log.error('generate_srt_from_sjson produces no subtitles')
+            log.debug('generate_srt_from_sjson produces no subtitles')
             raise Http404
         response = HttpResponse(str_subs, content_type='application/x-subrip')
         response['Content-Disposition'] = 'attachment; filename="{0}.srt"'.format(subs_id)
