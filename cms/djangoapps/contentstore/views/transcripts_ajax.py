@@ -213,7 +213,7 @@ def check_transcripts(request):
         youtube_local: bool, if youtube transcripts exist locally.
         youtube_server: bool, if youtube transcripts exist on server.
         youtube_diff: bool, if youtube transcripts exist on youtube server, and are different from local youtube ones.
-        current_item_subs: string, value of item.sub filed,
+        current_item_subs: string, value of item.sub field,
         status: string, 'Error' or 'Success'
 
     With `command` and `subs`.
