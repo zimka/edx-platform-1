@@ -30,12 +30,20 @@ from ..transcripts_utils import (
     save_module,
     manage_video_subtitles_save,
     TranscriptsGenerationException,
+    GetTranscriptsFromYoutubeException,
 )
 
 from .access import has_access
 
-__all__ = ['upload_transcripts', 'download_transcripts', 'check_transcripts',
-    'choose_transcripts', 'replace_transcripts', 'rename_transcripts', 'save_transcripts']
+__all__ = [
+    'upload_transcripts',
+    'download_transcripts',
+    'check_transcripts',
+    'choose_transcripts',
+    'replace_transcripts',
+    'rename_transcripts',
+    'save_transcripts'
+]
 
 log = logging.getLogger(__name__)
 
@@ -394,7 +402,11 @@ def replace_transcripts(request):
     if not youtube_id:
         return log_and_return_response(response, 'Youtube id is not presented.')
 
-    download_youtube_subs({1.0: youtube_id}, item)
+    try:
+        download_youtube_subs({1.0: youtube_id}, item)
+    except GetTranscriptsFromYoutubeException as e:
+        return log_and_return_response(response, e.message)
+
     item.sub = youtube_id
     item = save_module(item)
     response['status'] = 'Success'

@@ -160,8 +160,9 @@ class TestDownloadYoutubeSubs(ModuleStoreTestCase):
             2.0: 'AKqURZnYqpk'
         }
         self.clear_subs_content(good_youtube_subs)
-        status = transcripts_utils.download_youtube_subs(good_youtube_subs, self.course)
-        self.assertTrue(status)
+
+        # Check transcripts_utils.GetTranscriptsFromYoutubeException not thrown
+        transcripts_utils.download_youtube_subs(good_youtube_subs, self.course)
 
         # Check assets status after importing subtitles.
         for subs_id in good_youtube_subs.values():
@@ -180,8 +181,8 @@ class TestDownloadYoutubeSubs(ModuleStoreTestCase):
         }
         self.clear_subs_content(bad_youtube_subs)
 
-        status = transcripts_utils.download_youtube_subs(bad_youtube_subs, self.course)
-        self.assertFalse(status)
+        with transcripts_utils.GetTranscriptsFromYoutubeException:
+            transcripts_utils.download_youtube_subs(bad_youtube_subs, self.course)
 
         # Check assets status after importing subtitles.
         for subs_id in bad_youtube_subs.values():
@@ -198,8 +199,9 @@ class TestDownloadYoutubeSubs(ModuleStoreTestCase):
             1.0: 'j_jEn79vS3g',  # Chinese, utf-8
         }
         self.clear_subs_content(good_youtube_subs)
-        status = transcripts_utils.download_youtube_subs(good_youtube_subs, self.course)
-        self.assertTrue(status)
+
+        # Check transcripts_utils.GetTranscriptsFromYoutubeException not thrown
+        transcripts_utils.download_youtube_subs(good_youtube_subs, self.course)
 
         # Check assets status after importing subtitles.
         for subs_id in good_youtube_subs.values():

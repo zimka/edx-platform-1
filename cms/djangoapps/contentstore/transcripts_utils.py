@@ -24,8 +24,10 @@ log = logging.getLogger(__name__)
 class TranscriptsGenerationException(Exception):
     pass
 
+
 class GetTranscriptsFromYoutubeException(Exception):
     pass
+
 
 def generate_subs(speed, source_speed, source_subs):
     """
@@ -123,7 +125,8 @@ def download_youtube_subs(youtube_subs, item):
     Args:
     youtube_subs: dict, speed: youtube_id.
 
-    Returns: bool, True if transcripts were successfully downloaded and saved.
+    Returns: None, if transcripts were successfully downloaded and saved.
+    Otherwise raises GetTranscriptsFromYoutubeException
     """
     status_dict = {}
     # Iterate from lowest to highest speed and try to do download transcripts
@@ -151,8 +154,7 @@ def download_youtube_subs(youtube_subs, item):
         status_dict.update({speed: True, 'subs': subs, 'available_speed': available_speed})
 
     if not any(status_dict.itervalues()):
-        log.error("Can't find any transcripts on the Youtube service.")
-        return False
+        raise GetTranscriptsFromYoutubeException("Can't find any transcripts on the Youtube service.")
 
     # When we exit from the previous loop, `available_speed` and `subs`
     # in status_dict are the transcripts data with the highest speed available on the
@@ -178,8 +180,6 @@ def download_youtube_subs(youtube_subs, item):
                 youtube_subs[available_speed],
                 available_speed)
             )
-
-    return True
 
 
 def remove_subs_from_store(subs_id, item):
