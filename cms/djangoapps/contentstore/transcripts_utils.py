@@ -74,7 +74,8 @@ def save_subs_to_store(subs, subs_id, item):
     filename = 'subs_{0}.srt.sjson'.format(subs_id)
 
     content_location = StaticContent.compute_location(
-        item.location.org, item.location.course, filename)
+        item.location.org, item.location.course, filename
+    )
     content = StaticContent(content_location, filename, mime_type, filedata)
     contentstore().save(content)
     del_cached_content(content_location)
@@ -184,7 +185,8 @@ def remove_subs_from_store(subs_id, item):
     """
     filename = 'subs_{0}.srt.sjson'.format(subs_id)
     content_location = StaticContent.compute_location(
-        item.location.org, item.location.course, filename)
+        item.location.org, item.location.course, filename
+    )
     try:
         content = contentstore().find(content_location)
         contentstore().delete(content.get_id())
@@ -279,7 +281,8 @@ def copy_or_rename_transcript(new_name, old_name, item, delete_old=False):
     """
     filename = 'subs_{0}.srt.sjson'.format(old_name)
     content_location = StaticContent.compute_location(
-        item.location.org, item.location.course, filename)
+        item.location.org, item.location.course, filename
+    )
     transcripts = contentstore().find(content_location).data
     save_subs_to_store(json.loads(transcripts), new_name, item)
     item.sub = new_name

@@ -103,7 +103,8 @@ class TestSaveSubsToStore(ModuleStoreTestCase):
         self.course = CourseFactory.create(
             org=self.org, number=self.number, display_name=self.display_name)
         self.content_location = StaticContent.compute_location(
-            self.org, self.number, filename)
+            self.org, self.number, filename
+        )
 
         self.clear_subs_content()
 
@@ -138,7 +139,8 @@ class TestDownloadYoutubeSubs(ModuleStoreTestCase):
         for subs_id in youtube_subs.values():
             filename = 'subs_{0}.srt.sjson'.format(subs_id)
             content_location = StaticContent.compute_location(
-                self.org, self.number, filename)
+                self.org, self.number, filename
+            )
             try:
                 content = contentstore().find(content_location)
                 contentstore().delete(content.get_id())
@@ -168,7 +170,8 @@ class TestDownloadYoutubeSubs(ModuleStoreTestCase):
         for subs_id in good_youtube_subs.values():
             filename = 'subs_{0}.srt.sjson'.format(subs_id)
             content_location = StaticContent.compute_location(
-                self.org, self.number, filename)
+                self.org, self.number, filename
+            )
             self.assertTrue(contentstore().find(content_location))
 
         self.clear_subs_content(good_youtube_subs)
@@ -188,7 +191,8 @@ class TestDownloadYoutubeSubs(ModuleStoreTestCase):
         for subs_id in bad_youtube_subs.values():
             filename = 'subs_{0}.srt.sjson'.format(subs_id)
             content_location = StaticContent.compute_location(
-                self.org, self.number, filename)
+                self.org, self.number, filename
+            )
             with self.assertRaises(NotFoundError):
                 contentstore().find(content_location)
 
@@ -207,7 +211,8 @@ class TestDownloadYoutubeSubs(ModuleStoreTestCase):
         for subs_id in good_youtube_subs.values():
             filename = 'subs_{0}.srt.sjson'.format(subs_id)
             content_location = StaticContent.compute_location(
-                self.org, self.number, filename)
+                self.org, self.number, filename
+            )
             self.assertTrue(contentstore().find(content_location))
 
         self.clear_subs_content(good_youtube_subs)
@@ -240,7 +245,8 @@ At the left we can see...
         for subs_id in youtube_subs.values():
             filename = 'subs_{0}.srt.sjson'.format(subs_id)
             content_location = StaticContent.compute_location(
-                self.org, self.number, filename)
+                self.org, self.number, filename
+            )
             self.assertTrue(contentstore().find(content_location))
 
         self.clear_subs_content(youtube_subs)

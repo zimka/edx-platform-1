@@ -174,7 +174,8 @@ def download_transcripts(request):
 
     filename = 'subs_{0}.srt.sjson'.format(subs_id)
     content_location = StaticContent.compute_location(
-        item.location.org, item.location.course, filename)
+        item.location.org, item.location.course, filename
+    )
     try:
         sjson_transcripts = contentstore().find(content_location)
         log.debug("Downloading subs for %s id", subs_id)
@@ -235,7 +236,8 @@ def check_transcripts(request):
 
     filename = 'subs_{0}.srt.sjson'.format(item.sub)
     content_location = StaticContent.compute_location(
-        item.location.org, item.location.course, filename)
+        item.location.org, item.location.course, filename
+    )
     try:
         local_transcripts = contentstore().find(content_location).data
         transcripts_presence['current_item_subs'] = item.sub
@@ -250,7 +252,8 @@ def check_transcripts(request):
         # youtube local
         filename = 'subs_{0}.srt.sjson'.format(youtube_id)
         content_location = StaticContent.compute_location(
-            item.location.org, item.location.course, filename)
+            item.location.org, item.location.course, filename
+        )
         try:
             local_transcripts = contentstore().find(content_location).data
             transcripts_presence['youtube_local'] = True
@@ -278,7 +281,8 @@ def check_transcripts(request):
     for html5_id in videos['html5']:
         filename = 'subs_{0}.srt.sjson'.format(html5_id)
         content_location = StaticContent.compute_location(
-            item.location.org, item.location.course, filename)
+            item.location.org, item.location.course, filename
+        )
         try:
             html5_subs.append(contentstore().find(content_location).data)
             transcripts_presence['html5_local'].append(html5_id)
