@@ -55,7 +55,7 @@ def error_response(response, message, status_code=400):
 
     By default return 400 (Bad Request) Response.
     """
-    log.error(message)
+    log.debug(message)
     response['status'] = message
     return JsonResponse(response, status_code)
 
