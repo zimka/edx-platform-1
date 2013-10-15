@@ -534,4 +534,3 @@ def save_transcripts(request):
         response = {'status': 'Success'}
 
     return JsonResponse(response)
-

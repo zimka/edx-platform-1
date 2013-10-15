@@ -168,7 +168,8 @@ def download_youtube_subs(youtube_subs, item):
         save_subs_to_store(
             generate_subs(speed, highest_speed, highest_speed_subs),
             youtube_subs[speed],
-            item)
+            item
+        )
 
         log.info(
             "Transcripts for YouTube id %s (speed %s)"
@@ -230,7 +231,8 @@ def generate_subs_from_source(speed_subs, subs_type, subs_filedata, item):
         save_subs_to_store(
             generate_subs(speed, 1, subs),
             subs_id,
-            item)
+            item
+        )
 
     return subs
 
@@ -256,7 +258,8 @@ def generate_srt_from_sjson(sjson_subs, speed):
             index=i,
             start=SubRipTime(milliseconds=sjson_speed_1['start'][i]),
             end=SubRipTime(milliseconds=sjson_speed_1['end'][i]),
-            text=sjson_speed_1['text'][i])
+            text=sjson_speed_1['text'][i]
+        )
         output += (unicode(item))
         output += '\n'
     return output
