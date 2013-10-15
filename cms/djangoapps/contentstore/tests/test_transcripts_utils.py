@@ -161,7 +161,7 @@ class TestDownloadYoutubeSubs(ModuleStoreTestCase):
         }
         self.clear_subs_content(good_youtube_subs)
 
-        # Check transcripts_utils.GetTranscriptsFromYoutubeException not thrown
+        # Check transcripts_utils.GetTranscriptsFromYouTubeException not thrown
         transcripts_utils.download_youtube_subs(good_youtube_subs, self.course)
 
         # Check assets status after importing subtitles.
@@ -181,7 +181,7 @@ class TestDownloadYoutubeSubs(ModuleStoreTestCase):
         }
         self.clear_subs_content(bad_youtube_subs)
 
-        with transcripts_utils.GetTranscriptsFromYoutubeException:
+        with transcripts_utils.GetTranscriptsFromYouTubeException:
             transcripts_utils.download_youtube_subs(bad_youtube_subs, self.course)
 
         # Check assets status after importing subtitles.
@@ -200,7 +200,7 @@ class TestDownloadYoutubeSubs(ModuleStoreTestCase):
         }
         self.clear_subs_content(good_youtube_subs)
 
-        # Check transcripts_utils.GetTranscriptsFromYoutubeException not thrown
+        # Check transcripts_utils.GetTranscriptsFromYouTubeException not thrown
         transcripts_utils.download_youtube_subs(good_youtube_subs, self.course)
 
         # Check assets status after importing subtitles.

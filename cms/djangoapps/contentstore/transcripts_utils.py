@@ -26,7 +26,7 @@ class TranscriptsGenerationException(Exception):
     pass
 
 
-class GetTranscriptsFromYoutubeException(Exception):
+class GetTranscriptsFromYouTubeException(Exception):
     pass
 
 
@@ -99,7 +99,7 @@ def get_transcripts_from_youtube(youtube_id):
     if data.status_code != 200 or not data.text:
         msg = "Can't receive transcripts from Youtube for {}. Status code: {}.".format(
             youtube_id, data.status_code)
-        raise GetTranscriptsFromYoutubeException(msg)
+        raise GetTranscriptsFromYouTubeException(msg)
 
     sub_starts, sub_ends, sub_texts = [], [], []
     xmltree = etree.fromstring(data.content, parser=utf8_parser)
@@ -124,10 +124,11 @@ def download_youtube_subs(youtube_subs, item):
     Download transcripts from Youtube and save them to assets.
 
     Args:
-    youtube_subs: dict, speed: youtube_id.
+    youtube_subs: dictionary of `speed: youtube_id` key:value pairs.
+    item: video module instance.
 
     Returns: None, if transcripts were successfully downloaded and saved.
-    Otherwise raises GetTranscriptsFromYoutubeException
+    Otherwise raises GetTranscriptsFromYouTubeException.
     """
     status_dict = {}
     # Iterate from lowest to highest speed and try to do download transcripts
@@ -138,8 +139,8 @@ def download_youtube_subs(youtube_subs, item):
         try:
             subs = get_transcripts_from_youtube(youtube_id)
             if not subs:  # if empty subs are returned
-                raise GetTranscriptsFromYoutubeException
-        except GetTranscriptsFromYoutubeException:
+                raise GetTranscriptsFromYouTubeException
+        except GetTranscriptsFromYouTubeException:
             status_dict.update({speed: False})
             continue
 
@@ -153,7 +154,7 @@ def download_youtube_subs(youtube_subs, item):
         status_dict.update({speed: True, 'subs': subs, 'available_speed': available_speed})
 
     if not any(status_dict.itervalues()):
-        raise GetTranscriptsFromYoutubeException("Can't find any transcripts on the Youtube service.")
+        raise GetTranscriptsFromYouTubeException("Can't find any transcripts on the Youtube service.")
 
     # When we exit from the previous loop, `available_speed` and `subs`
     # in status_dict are the transcripts data with the highest speed available on the

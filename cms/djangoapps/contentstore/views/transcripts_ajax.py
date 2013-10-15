@@ -31,7 +31,7 @@ from ..transcripts_utils import (
     save_module,
     manage_video_subtitles_save,
     TranscriptsGenerationException,
-    GetTranscriptsFromYoutubeException,
+    GetTranscriptsFromYouTubeException,
 )
 
 from .access import has_access
@@ -270,7 +270,7 @@ def check_transcripts(request):
                 youtube_server_subs = get_transcripts_from_youtube(youtube_id)
                 if json.loads(local_transcripts) == youtube_server_subs:  # check transcripts for equality
                     transcripts_presence['youtube_diff'] = False
-            except GetTranscriptsFromYoutubeException:
+            except GetTranscriptsFromYouTubeException:
                 pass
 
     # Check for html5 local transcripts presence
@@ -409,7 +409,7 @@ def replace_transcripts(request):
 
     try:
         download_youtube_subs({1.0: youtube_id}, item)
-    except GetTranscriptsFromYoutubeException as e:
+    except GetTranscriptsFromYouTubeException as e:
         return log_and_return_response(response, e.message)
 
     item.sub = youtube_id
