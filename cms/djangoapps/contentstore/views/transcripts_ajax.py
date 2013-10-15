@@ -134,7 +134,7 @@ def upload_transcripts(request):
                 log_and_return_response(response, "Can't find transcripts in storage for {}".format(sub_attr))
 
         item.sub = selected_name  # write one of  new subtitles names to item.sub attribute.
-        item = save_module(item)
+        save_module(item)
         response['subs'] = item.sub
         response['status'] = 'Success'
     else:
@@ -385,7 +385,7 @@ def choose_transcripts(request):
 
     if item.sub != html5_id:  # update sub value
         item.sub = html5_id
-        item = save_module(item)
+        save_module(item)
     response = {'status': 'Success',  'subs': item.sub}
     return JsonResponse(response)
 
@@ -417,7 +417,7 @@ def replace_transcripts(request):
         return log_and_return_response(response, e.message)
 
     item.sub = youtube_id
-    item = save_module(item)
+    save_module(item)
     response['status'] = 'Success'
     response['subs'] = item.sub
     return JsonResponse(response)
@@ -519,7 +519,7 @@ def save_transcripts(request):
         for metadata_key, value in metadata.items():
             setattr(item, metadata_key, value)
 
-        new_item = save_module(item)
+        save_module(item)  # item becomes updated with new values
 
         if new_sub:
             manage_video_subtitles_save(item, new_item)

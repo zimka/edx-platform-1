@@ -278,7 +278,6 @@ def save_module(item):
     item.save()
     store = get_modulestore(Location(item.id))
     store.update_metadata(item.id, own_metadata(item))
-    return item
 
 
 def copy_or_rename_transcript(new_name, old_name, item, delete_old=False):
@@ -295,7 +294,7 @@ def copy_or_rename_transcript(new_name, old_name, item, delete_old=False):
     transcripts = contentstore().find(content_location).data
     save_subs_to_store(json.loads(transcripts), new_name, item)
     item.sub = new_name
-    item = save_module(item)
+    save_module(item)
     if delete_old:
         remove_subs_from_store(old_name, item)
 
