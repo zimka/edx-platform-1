@@ -91,7 +91,9 @@ def get_transcripts_from_youtube(youtube_id):
         params=settings.YOUTUBE_API['params']
     )
     if data.status_code != 200 or not data.text:
-        log.debug("Can't receive correct transcripts from Youtube.")
+        msg = "Can't receive non-empty transcripts from Youtube for {}. Status code: {}.".format(
+            youtube_id, data.status_code)
+        log.debug(msg)
         return False,  {}
 
     sub_starts, sub_ends, sub_texts = [], [], []
