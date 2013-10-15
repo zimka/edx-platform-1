@@ -24,6 +24,9 @@ log = logging.getLogger(__name__)
 class TranscriptsGenerationException(Exception):
     pass
 
+class GetTranscriptsFromYoutubeException(Exception):
+    pass
+
 def generate_subs(speed, source_speed, source_subs):
     """
     Generate transcripts from one speed to another speed.
@@ -91,10 +94,9 @@ def get_transcripts_from_youtube(youtube_id):
         params=settings.YOUTUBE_API['params']
     )
     if data.status_code != 200 or not data.text:
-        msg = "Can't receive non-empty transcripts from Youtube for {}. Status code: {}.".format(
+        msg = "Can't receive transcripts from Youtube for {}. Status code: {}.".format(
             youtube_id, data.status_code)
-        log.debug(msg)
-        return False,  {}
+        raise GetTranscriptsFromYoutubeException(msg)
 
     sub_starts, sub_ends, sub_texts = [], [], []
     xmltree = etree.fromstring(data.content, parser=utf8_parser)
@@ -111,7 +113,7 @@ def get_transcripts_from_youtube(youtube_id):
                 sub_ends.append(int((end + 0.0001) * 1000))
                 sub_texts.append(text.replace('\n', ' '))
 
-    return True, {'start': sub_starts, 'end': sub_ends, 'text': sub_texts}
+    return {'start': sub_starts, 'end': sub_ends, 'text': sub_texts}
 
 
 def download_youtube_subs(youtube_subs, item):
@@ -129,12 +131,12 @@ def download_youtube_subs(youtube_subs, item):
     for speed, youtube_id in sorted(youtube_subs.iteritems()):
         if not youtube_id:
             continue
-
-        status, subs = get_transcripts_from_youtube(youtube_id)
-        if not subs:  # if google return empty subs
-            status = False
-        if not status:
-            status_dict.update({speed: status})
+        try:
+            subs = get_transcripts_from_youtube(youtube_id)
+            if not subs:  # if empty subs are returned
+                raise GetTranscriptsFromYoutubeException
+        except GetTranscriptsFromYoutubeException:
+            status_dict.update({speed: False})
             continue
 
         available_speed = speed
