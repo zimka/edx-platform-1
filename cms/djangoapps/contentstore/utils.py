@@ -1,7 +1,5 @@
 #pylint: disable=E1103, E1101
 
-from __future__ import division
-
 import copy
 import logging
 import re
