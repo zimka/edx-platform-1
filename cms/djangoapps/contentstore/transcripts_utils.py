@@ -1,6 +1,7 @@
 """
 Utility functions for transcripts.
 """
+import copy
 import json
 import requests
 import logging
@@ -90,11 +91,11 @@ def get_transcripts_from_youtube(youtube_id):
     Returns (status, transcripts): bool, dict.
     """
     utf8_parser = etree.XMLParser(encoding='utf-8')
-    settings.YOUTUBE_API['params']['v'] = youtube_id
-    data = requests.get(
-        settings.YOUTUBE_API['url'],
-        params=settings.YOUTUBE_API['params']
-    )
+
+    youtube_api = copy.deepcopy(settings.YOUTUBE_API)
+    youtube_api['params']['v'] = youtube_id
+    data = requests.get(youtube_api['url'], params=youtube_api['params'])
+
     if data.status_code != 200 or not data.text:
         msg = "Can't receive transcripts from Youtube for {}. Status code: {}.".format(
             youtube_id, data.status_code)

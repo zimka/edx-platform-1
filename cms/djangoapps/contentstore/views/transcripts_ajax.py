@@ -4,6 +4,7 @@
 Module do not support rollback (pressing "Cancel" button in Studio)
 All user changes are saved immediately.
 """
+import copy
 import os
 import logging
 import json
@@ -257,11 +258,10 @@ def check_transcripts(request):
             log.debug("Can't find transcripts in storage for youtube id: {}".format(youtube_id))
 
         # youtube server
-        settings.YOUTUBE_API['params']['v'] = youtube_id
-        youtube_response = rqsts.get(
-            settings.YOUTUBE_API['url'],
-            params=settings.YOUTUBE_API['params']
-        )
+        youtube_api = copy.deepcopy(settings.YOUTUBE_API)
+        youtube_api['params']['v'] = youtube_id
+        youtube_response = rqsts.get(youtube_api['url'], params=youtube_api['params'])
+
         if youtube_response.status_code == 200 and youtube_response.text:
             transcripts_presence['youtube_server'] = True
         #check youtube local and server transcripts for equality
