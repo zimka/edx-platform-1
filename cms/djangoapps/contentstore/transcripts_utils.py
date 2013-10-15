@@ -320,7 +320,9 @@ def manage_video_subtitles_save(old_item, new_item):
     html5_ids = [x.split('/')[-1].split('.')[0] for x in new_item.html5_sources]
     possible_video_id_list = [new_item.youtube_id_1_0] + html5_ids
     sub_name = new_item.sub
-    for video_id in [x for x in possible_video_id_list if x]:
+    for video_id in possible_video_id_list:
+        if not video_id:
+            continue
         # copy_or_rename_transcript changes item.sub of module
         try:
             # updates item.sub with `video_id`, if it is successful.
