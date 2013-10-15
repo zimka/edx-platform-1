@@ -28,8 +28,6 @@ log = logging.getLogger(__name__)
 # cdodge: these are categories which should not be parented, they are detached from the hierarchy
 DETACHED_CATEGORIES = ['about', 'static_tab', 'course_info']
 
-log = logging.getLogger(__name__)
-
 
 @login_required
 @expect_json
