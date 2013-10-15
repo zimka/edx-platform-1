@@ -107,7 +107,27 @@ def own_metadata(module):
 
 
 class InheritanceFieldData(KvsFieldData):
-    pass
+    """A `FieldData` implementation that can inherit value from parents to children."""
+
+    def __init__(self, inheritable_names, **kwargs):
+        """
+        `inheritable_names` is a list of names that can be inherited from
+        parents.
+
+        """
+        super(InheritanceFieldData, self).__init__(**kwargs)
+        self.inheritable_names = set(inheritable_names)
+
+    def default(self, block, name):
+        """
+        The default for an inheritable name is found on a parent.
+        """
+        if name in self.inheritable_names and block.parent is not None:
+            parent = block.runtime.get_block(block.parent)
+            if parent:
+                if hasattr(parent, name):
+                    return getattr(parent, name)
+        super(InheritanceFieldData, self).default(block, name)
 
 
 class InheritanceKeyValueStore(KeyValueStore):
