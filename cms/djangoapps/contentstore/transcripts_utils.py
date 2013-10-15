@@ -130,7 +130,8 @@ def download_youtube_subs(youtube_subs, item):
     Returns: None, if transcripts were successfully downloaded and saved.
     Otherwise raises GetTranscriptsFromYouTubeException.
     """
-    status_dict = {}
+    highest_speed = highest_speed_subs = None
+    missed_speeds = []
     # Iterate from lowest to highest speed and try to do download transcripts
     # from the Youtube service.
     for speed, youtube_id in sorted(youtube_subs.iteritems()):
@@ -141,43 +142,40 @@ def download_youtube_subs(youtube_subs, item):
             if not subs:  # if empty subs are returned
                 raise GetTranscriptsFromYouTubeException
         except GetTranscriptsFromYouTubeException:
-            status_dict.update({speed: False})
+            missed_speeds.append(speed)
             continue
 
-        available_speed = speed
         save_subs_to_store(subs, youtube_id, item)
 
         log.info(
             "Transcripts for YouTube id %s (speed %s)"
             "are downloaded and saved.", youtube_id, speed
         )
-        status_dict.update({speed: True, 'subs': subs, 'available_speed': available_speed})
 
-    if not any(status_dict.itervalues()):
+        highest_speed = speed
+        highest_speed_subs = subs
+
+    if not highest_speed:
         raise GetTranscriptsFromYouTubeException("Can't find any transcripts on the Youtube service.")
 
-    # When we exit from the previous loop, `available_speed` and `subs`
-    # in status_dict are the transcripts data with the highest speed available on the
+    # When we exit from the previous loop, `highest_speed` and `highest_speed_subs`
+    # are the transcripts data for the highest speed available on the
     # Youtube service. We use the highest speed as main speed for the
     # generation other transcripts, cause during calculation timestamps
-    # for lower speeds we just use multiplication istead of division.
-    subs = status_dict['subs']
-    available_speed = status_dict['available_speed']
-    # Generate transcripts for missed speeds.
-    for speed, status in status_dict.iteritems():
-        if not status:
-            save_subs_to_store(
-                generate_subs(speed, available_speed, subs),
-                youtube_subs[speed],
-                item)
+    # for lower speeds we just use multiplication instead of division.
+    for speed in missed_speeds:  # Generate transcripts for missed speeds.
+        save_subs_to_store(
+            generate_subs(speed, highest_speed, highest_speed_subs),
+            youtube_subs[speed],
+            item)
 
-            log.info(
-                "Transcripts for YouTube id %s (speed %s)"
-                "are generated from YouTube id %s (speed %s) and saved",
-                youtube_subs[speed], speed,
-                youtube_subs[available_speed],
-                available_speed
-            )
+        log.info(
+            "Transcripts for YouTube id %s (speed %s)"
+            "are generated from YouTube id %s (speed %s) and saved",
+            youtube_subs[speed], speed,
+            youtube_subs[highest_speed],
+            highest_speed
+        )
 
 
 def remove_subs_from_store(subs_id, item):
