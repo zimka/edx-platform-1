@@ -49,7 +49,7 @@ __all__ = [
 log = logging.getLogger(__name__)
 
 
-def log_and_return_response(response, message, status_code=400):
+def error_response(response, message, status_code=400):
     """
     Simplify similar actions: log message and return JsonResponse with message included in response.
 
@@ -76,25 +76,25 @@ def upload_transcripts(request):
     }
     item_location = request.POST.get('id')
     if not item_location:
-        return log_and_return_response(response, 'POST data without "id" form data.')
+        return error_response(response, 'POST data without "id" form data.')
 
     if 'file' not in request.FILES:
-        return log_and_return_response(response, 'POST data without "file" form data.')
+        return error_response(response, 'POST data without "file" form data.')
 
     video_list = request.POST.get('video_list')
     if not video_list:
-        return log_and_return_response(response, 'POST data without video names.')
+        return error_response(response, 'POST data without video names.')
 
     try:
         video_list = json.loads(video_list)
     except ValueError:
-        return log_and_return_response(response, 'Invalid video_list JSON.')
+        return error_response(response, 'Invalid video_list JSON.')
 
     source_subs_filedata = request.FILES['file'].read().decode('utf8')
     source_subs_filename = request.FILES['file'].name
 
     if '.' not in source_subs_filename:
-        return log_and_return_response(response, "Undefined file extension.")
+        return error_response(response, "Undefined file extension.")
 
     basename = os.path.basename(source_subs_filename)
     source_subs_name = os.path.splitext(basename)[0]
@@ -103,13 +103,13 @@ def upload_transcripts(request):
     try:
         item = modulestore().get_item(item_location)
     except (ItemNotFoundError, InvalidLocationError):
-        return log_and_return_response(response, "Can't find item by location.")
+        return error_response(response, "Can't find item by location.")
     # Check permissions for this user within this course.
     if not has_access(request.user, item_location):
         raise PermissionDenied()
 
     if item.category != 'video':
-        return log_and_return_response(response, 'Transcripts are supported only for "video" modules.')
+        return error_response(response, 'Transcripts are supported only for "video" modules.')
 
     # Allow upload only if any video link is presented
     if video_list:
@@ -118,7 +118,7 @@ def upload_transcripts(request):
         try:  # Generate and save for 1.0 speed, will create subs_sub_attr.srt.sjson subtitles file in storage.
             generate_subs_from_source({1: sub_attr}, source_subs_ext, source_subs_filedata, item)
         except TranscriptsGenerationException as e:
-            return log_and_return_response(response, e.message)
+            return error_response(response, e.message)
         statuses = {}
         for video_dict in video_list:
             video_name = video_dict['video']
@@ -131,14 +131,14 @@ def upload_transcripts(request):
                 selected_name = video_name  # name to write to item.sub field, chosen at random.
             except NotFoundError:
                 # subtitles file `sub_attr` is not presented in the system. Nothing to copy or rename.
-                log_and_return_response(response, "Can't find transcripts in storage for {}".format(sub_attr))
+                error_response(response, "Can't find transcripts in storage for {}".format(sub_attr))
 
         item.sub = selected_name  # write one of  new subtitles names to item.sub attribute.
         save_module(item)
         response['subs'] = item.sub
         response['status'] = 'Success'
     else:
-        return log_and_return_response(response, 'Empty video sources.')
+        return error_response(response, 'Empty video sources.')
 
     return JsonResponse(response)
 
@@ -230,7 +230,7 @@ def check_transcripts(request):
     }
     validation_status, validation_message, __, videos, item = validate_transcripts_data(request)
     if not validation_status:
-        return log_and_return_response(transcripts_presence, validation_message)
+        return error_response(transcripts_presence, validation_message)
 
     transcripts_presence['status'] = 'Success'
 
@@ -374,7 +374,7 @@ def choose_transcripts(request):
 
     validation_status, validation_message, data, videos, item = validate_transcripts_data(request)
     if not validation_status:
-        return log_and_return_response(response, validation_message)
+        return error_response(response, validation_message)
 
     html5_id = data.get('html5_id')
 
@@ -405,16 +405,16 @@ def replace_transcripts(request):
 
     validation_status, validation_message, __, videos, item = validate_transcripts_data(request)
     if not validation_status:
-        return log_and_return_response(response, validation_message)
+        return error_response(response, validation_message)
 
     youtube_id = videos['youtube']
     if not youtube_id:
-        return log_and_return_response(response, 'Youtube id is not presented.')
+        return error_response(response, 'Youtube id is not presented.')
 
     try:
         download_youtube_subs({1.0: youtube_id}, item)
     except GetTranscriptsFromYouTubeException as e:
-        return log_and_return_response(response, e.message)
+        return error_response(response, e.message)
 
     item.sub = youtube_id
     save_module(item)
@@ -480,7 +480,7 @@ def rename_transcripts(request):
 
     validation_status, validation_message, __, videos, item = validate_transcripts_data(request)
     if not validation_status:
-        return log_and_return_response(response, validation_message)
+        return error_response(response, validation_message)
 
     old_name = item.sub
 
@@ -490,7 +490,7 @@ def rename_transcripts(request):
             copy_or_rename_transcript(new_name, old_name, item)
         except NotFoundError:
             # subtitles file `item.sub` is not presented in the system. Nothing to copy or rename.
-            log_and_return_response(response, "Can't find transcripts in storage for {}".format(old_name))
+            error_response(response, "Can't find transcripts in storage for {}".format(old_name))
 
     response['status'] = 'Success'
     response['subs'] = item.sub  # item.sub has been changed, it is not equal to old_name.
@@ -504,13 +504,13 @@ def save_transcripts(request):
 
     data = json.loads(request.GET.get('data', '{}'))
     if not data:
-        return log_and_return_response(response, 'Incoming video data is empty.')
+        return error_response(response, 'Incoming video data is empty.')
 
     item_location = data.get('id')
     try:
         item = modulestore().get_item(item_location)
     except (ItemNotFoundError, InvalidLocationError):
-        return log_and_return_response(response, "Can't find item by location.")
+        return error_response(response, "Can't find item by location.")
 
     metadata = data.get('metadata')
     if metadata is not None:
