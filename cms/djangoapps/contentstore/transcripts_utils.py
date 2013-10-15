@@ -147,11 +147,9 @@ def download_youtube_subs(youtube_subs, item):
         save_subs_to_store(subs, youtube_id, item)
 
         log.info(
-            """transcripts for Youtube ID {0} (speed {1})
-            are downloaded from Youtube and
-            saved.""".format(youtube_id, speed)
+            "Transcripts for YouTube id %s (speed %s)"
+            "are downloaded and saved.", youtube_id, speed
         )
-
         status_dict.update({speed: True, 'subs': subs, 'available_speed': available_speed})
 
     if not any(status_dict.itervalues()):
@@ -173,13 +171,11 @@ def download_youtube_subs(youtube_subs, item):
                 item)
 
             log.info(
-                """transcripts for Youtube ID {0} (speed {1})
-                are generated from Youtube ID {2} (speed {3}) and
-                saved.""".format(
-                youtube_subs[speed],
-                speed,
+                "Transcripts for YouTube id %s (speed %s)"
+                "are generated from YouTube id %s (speed %s) and saved",
+                youtube_subs[speed], speed,
                 youtube_subs[available_speed],
-                available_speed)
+                available_speed
             )
 
 
@@ -193,7 +189,7 @@ def remove_subs_from_store(subs_id, item):
     try:
         content = contentstore().find(content_location)
         contentstore().delete(content.get_id())
-        log.info("Removed subs {} from store".format(subs_id))
+        log.info("Removed subs %s from store", subs_id)
     except NotFoundError:
         pass
 
@@ -321,5 +317,8 @@ def manage_video_subtitles_save(old_item, new_item):
             copy_or_rename_transcript(video_id, sub_name, new_item)
         except NotFoundError:
             # subtitles file `sub_name` is not presented in the system. Nothing to copy or rename.
-            log.debug("Copying {} file content to {} name is failed, original file does not exist.".format(
-                sub_name, video_id))
+            log.debug(
+                "Copying %s file content to %s name is failed, "
+                "original file does not exist.",
+                sub_name, video_id
+            )

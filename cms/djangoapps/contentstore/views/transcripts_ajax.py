@@ -117,7 +117,7 @@ def upload_transcripts(request):
 
         try:  # Generate and save for 1.0 speed, will create subs_sub_attr.srt.sjson subtitles file in storage.
             generate_subs_from_source({1: sub_attr}, source_subs_ext, source_subs_filedata, item)
-        except TranscriptsGenerationException, e:
+        except TranscriptsGenerationException as e:
             return log_and_return_response(response, e.message)
         statuses = {}
         for video_dict in video_list:
@@ -177,7 +177,7 @@ def download_transcripts(request):
         item.location.org, item.location.course, filename)
     try:
         sjson_transcripts = contentstore().find(content_location)
-        log.debug("Downloading subs for {} id".format(subs_id))
+        log.debug("Downloading subs for %s id", subs_id)
         str_subs = generate_srt_from_sjson(json.loads(sjson_transcripts.data), speed=1.0)
         if not str_subs:
             log.error('generate_srt_from_sjson produces no subtitles')
@@ -186,7 +186,7 @@ def download_transcripts(request):
         response['Content-Disposition'] = 'attachment; filename="{0}.srt"'.format(subs_id)
         return response
     except NotFoundError:
-        log.debug("Can't find content in storage for {} subs".format(subs_id))
+        log.debug("Can't find content in storage for %s subs", subs_id)
         raise Http404
 
 
@@ -255,7 +255,7 @@ def check_transcripts(request):
             local_transcripts = contentstore().find(content_location).data
             transcripts_presence['youtube_local'] = True
         except NotFoundError:
-            log.debug("Can't find transcripts in storage for youtube id: {}".format(youtube_id))
+            log.debug("Can't find transcripts in storage for youtube id: %s", youtube_id)
 
         # youtube server
         youtube_api = copy.deepcopy(settings.YOUTUBE_API)
@@ -283,7 +283,7 @@ def check_transcripts(request):
             html5_subs.append(contentstore().find(content_location).data)
             transcripts_presence['html5_local'].append(html5_id)
         except NotFoundError:
-            log.debug("Can't find transcripts in storage for non-youtube video_id: {}".format(html5_id))
+            log.debug("Can't find transcripts in storage for non-youtube video_id: %s", html5_id)
         if len(html5_subs) == 2:  # check html5 transcripts for equality
             transcripts_presence['html5_equal'] = json.loads(html5_subs[0]) == json.loads(html5_subs[1])
 
@@ -338,12 +338,17 @@ def transcripts_logic(transcripts_presence, videos):
         else:  # html5 source have no subtitles
             # check if item sub has subtitles
             if transcripts_presence['current_item_subs'] and not transcripts_presence['is_youtube_mode']:
-                log.debug("Command is use existing {} subs".format(transcripts_presence['current_item_subs']))
+                log.debug("Command is use existing %s subs", transcripts_presence['current_item_subs'])
                 command = 'use_existing'
                 # subs = transcripts_presence['current_item_subs']
             else:
                 command = 'not_found'
-    log.debug('Resulted command: {}, current transcripts: {}, youtube mode: {}'.format(command, transcripts_presence['current_item_subs'], transcripts_presence['is_youtube_mode']))
+    log.debug(
+        "Resulted command: %s, current transcripts: %s, youtube mode: %s",
+        command,
+        transcripts_presence['current_item_subs'],
+        transcripts_presence['is_youtube_mode']
+    )
     return command, subs
 
 
@@ -467,7 +472,7 @@ def rename_transcripts(request):
     Old subtitles are not deleted now.
     After implementing rollback functionality,
     """
-    response = {'status': 'Error', 'subs': '',}
+    response = {'status': 'Error', 'subs': ''}
 
     validation_status, validation_message, __, videos, item = validate_transcripts_data(request)
     if not validation_status:
@@ -475,7 +480,7 @@ def rename_transcripts(request):
 
     old_name = item.sub
 
-    for new_name in videos['html5'].keys(): # copy subtitles for every HTML5 source
+    for new_name in videos['html5'].keys():  # copy subtitles for every HTML5 source
         try:
             # updates item.sub with new_name if it is successful.
             copy_or_rename_transcript(new_name, old_name, item)
@@ -485,7 +490,7 @@ def rename_transcripts(request):
 
     response['status'] = 'Success'
     response['subs'] = item.sub  # item.sub has been changed, it is not equal to old_name.
-    log.debug("Updated item.sub to {}".format(item.sub))
+    log.debug("Updated item.sub to %s", item.sub)
     return JsonResponse(response)
 
 
