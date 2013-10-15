@@ -2,8 +2,6 @@
 Utility functions for transcripts.
 """
 import json
-import HTMLParser
-import StringIO
 import requests
 import logging
 from pysrt import SubRipTime, SubRipItem, SubRipFile
@@ -86,7 +84,6 @@ def get_transcripts_from_youtube(youtube_id):
 
     Returns (status, transcripts): bool, dict.
     """
-    html_parser = HTMLParser.HTMLParser()
     utf8_parser = etree.XMLParser(encoding='utf-8')
     settings.YOUTUBE_API['params']['v'] = youtube_id
     data = requests.get(
@@ -205,12 +202,10 @@ def generate_subs_from_source(speed_subs, subs_type, subs_filedata, item):
 
     :param speed_subs: dictionary {speed: sub_id, ...}
     :param subs_type: type of source subs: "srt", ...
-    :param subs_filedata: content of source subs.
+    :param subs_filedata:unicode, content of source subs.
     :param item: module object.
     :returns: True, if all subs are generated and saved successfully.
     """
-    html_parser = HTMLParser.HTMLParser()
-
     if subs_type != 'srt':
         raise TranscriptsGenerationException("We support only SubRip (*.srt) transcripts format.")
     srt_subs_obj = SubRipFile.from_string(subs_filedata)
@@ -224,7 +219,7 @@ def generate_subs_from_source(speed_subs, subs_type, subs_filedata, item):
     for sub in srt_subs_obj:
         sub_starts.append(sub.start.ordinal)
         sub_ends.append(sub.end.ordinal)
-        sub_texts.append(html_parser.unescape(sub.text.replace('\n', ' ')))
+        sub_texts.append(sub.text.replace('\n', ' '))
 
     subs = {
         'start': sub_starts,
@@ -297,7 +292,7 @@ def copy_or_rename_transcript(new_name, old_name, item, delete_old=False):
 
 def manage_video_subtitles_save(old_item, new_item):
     """
-    Does some specific thins, that can be done only on save.
+    Does some specific things, that can be done only on save.
 
     Video player item has some video fields: HTML5 ones and Youtube one.
 
