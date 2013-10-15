@@ -193,6 +193,23 @@ class TestDownloadYoutubeSubs(ModuleStoreTestCase):
 
         self.clear_subs_content(bad_youtube_subs)
 
+    def test_success_downloading_chinise_transcripts(self):
+        good_youtube_subs = {
+            1.0: 'j_jEn79vS3g',  # Chinese, utf-8
+        }
+        self.clear_subs_content(good_youtube_subs)
+        status = transcripts_utils.download_youtube_subs(good_youtube_subs, self.course)
+        self.assertTrue(status)
+
+        # Check assets status after importing subtitles.
+        for subs_id in good_youtube_subs.values():
+            filename = 'subs_{0}.srt.sjson'.format(subs_id)
+            content_location = StaticContent.compute_location(
+                self.org, self.number, filename)
+            self.assertTrue(contentstore().find(content_location))
+
+        self.clear_subs_content(good_youtube_subs)
+
 
 class TestGenerateSubsFromSource(TestDownloadYoutubeSubs):
     """Tests for `generate_subs_from_source` function."""

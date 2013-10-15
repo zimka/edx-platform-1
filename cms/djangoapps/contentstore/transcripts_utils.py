@@ -81,6 +81,9 @@ def get_transcripts_from_youtube(youtube_id):
     """
     Gets transcripts from youtube for youtube_id.
 
+    Parses only utf-8 encoded transcripts.
+    Other encodings are not supported at the moment.
+
     Returns (status, transcripts): bool, dict.
     """
     html_parser = HTMLParser.HTMLParser()
@@ -97,7 +100,7 @@ def get_transcripts_from_youtube(youtube_id):
         return False,  {}
 
     sub_starts, sub_ends, sub_texts = [], [], []
-    xmltree = etree.fromstring(data.text.encode('utf-8'), parser=utf8_parser)
+    xmltree = etree.fromstring(data.content, parser=utf8_parser)
     for element in xmltree:
         if element.tag == "text":
             start = float(element.get("start"))
