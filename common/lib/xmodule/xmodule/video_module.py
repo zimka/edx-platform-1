@@ -236,7 +236,7 @@ class VideoDescriptor(VideoFields, TabsEditingDescriptor, EmptyDataRawDescriptor
             filepath = cls._format_filepath(xml_object.tag, name_to_pathname(url_name))
             xml_data = etree.tostring(cls.load_file(filepath, system.resources_fs, location))
         field_data = cls._parse_video_xml(xml_data)
-        field_data['location'] = location
+        #field_data['location'] = location
         kvs = InheritanceKeyValueStore(initial_values=field_data)
         field_data = KvsFieldData(kvs)
         video = system.construct_xblock_from_class(

@@ -330,9 +330,9 @@ class XmlDescriptor(XModuleDescriptor):
         field_data.update(definition)
         field_data['children'] = children
 
-        field_data['xml_attributes']['filename'] = definition.get('filename', ['', None])  # for git link
-        field_data['location'] = location
-        field_data['category'] = xml_object.tag
+        #-- field_data['xml_attributes']['filename'] = definition.get('filename', ['', None])  # for git link
+        #-- field_data['location'] = location
+        #-- field_data['category'] = xml_object.tag
         kvs = InheritanceKeyValueStore(initial_values=field_data)
         field_data = KvsFieldData(kvs)
 
