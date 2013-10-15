@@ -21,7 +21,7 @@ from .access import has_access
 from .helpers import _xmodule_recurse
 from xmodule.x_module import XModuleDescriptor
 
-__all__ = ['save_item', 'create_item', 'delete_item', 'process_transcripts']
+__all__ = ['save_item', 'create_item', 'delete_item']
 
 log = logging.getLogger(__name__)
 

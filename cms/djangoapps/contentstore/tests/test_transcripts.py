@@ -85,7 +85,7 @@ class Basetranscripts(CourseTestCase):
 
 
 class TestUploadtranscripts(Basetranscripts):
-    """Tests for '/process_transcripts/upload' url."""
+    """Tests for '/transcripts/upload' url."""
 
     def setUp(self):
         """Create initial data."""
@@ -129,7 +129,7 @@ At the left we can see...
 """
         modulestore().update_item(self.item_location, data)
 
-        link = reverse('process_transcripts', args=('upload',))
+        link = reverse('upload_transcripts')
         filename = os.path.splitext(os.path.basename(self.good_srt_file.name))[0]
         resp = self.client.post(link, {
             'id': self.item_location,
@@ -151,20 +151,20 @@ At the left we can see...
         self.assertTrue(contentstore().find(content_location))
 
     def test_fail_data_without_id(self):
-        link = reverse('process_transcripts', args=('upload',))
+        link = reverse('upload_transcripts')
         resp = self.client.post(link, {'file': self.good_srt_file})
         self.assertEqual(resp.status_code, 400)
         self.assertEqual(json.loads(resp.content).get('status'), 'POST data without "id" form data.')
 
     def test_fail_data_without_file(self):
-        link = reverse('process_transcripts', args=('upload',))
+        link = reverse('upload_transcripts')
         resp = self.client.post(link, {'id': self.item_location})
         self.assertEqual(resp.status_code, 400)
         self.assertEqual(json.loads(resp.content).get('status'), 'POST data without "file" form data.')
 
     def test_fail_data_with_bad_location(self):
         # Test for raising `InvalidLocationError` exception.
-        link = reverse('process_transcripts', args=('upload',))
+        link = reverse('upload_transcripts')
         filename = os.path.splitext(os.path.basename(self.good_srt_file.name))[0]
         resp = self.client.post(link, {
             'id': 'BAD_LOCATION',
@@ -179,7 +179,7 @@ At the left we can see...
         self.assertEqual(json.loads(resp.content).get('status'), "Can't find item by location.")
 
         # Test for raising `ItemNotFoundError` exception.
-        link = reverse('process_transcripts', args=('upload',))
+        link = reverse('upload_transcripts')
         filename = os.path.splitext(os.path.basename(self.good_srt_file.name))[0]
         resp = self.client.post(link, {
             'id': '{0}_{1}'.format(self.item_location, 'BAD_LOCATION'),
@@ -207,7 +207,7 @@ At the left we can see...
 
         # non_video module: testing
 
-        link = reverse('process_transcripts', args=('upload',))
+        link = reverse('upload_transcripts')
         filename = os.path.splitext(os.path.basename(self.good_srt_file.name))[0]
         resp = self.client.post(link, {
             'id': item_location,
@@ -225,7 +225,7 @@ At the left we can see...
         data = '<<<video youtube="0.75:JMD_ifUUfsU,1.25:AKqURZnYqpk,1.50:DYpADpL7jAY" />'
         modulestore().update_item(self.item_location, data)
 
-        link = reverse('process_transcripts', args=('upload',))
+        link = reverse('upload_transcripts')
         filename = os.path.splitext(os.path.basename(self.good_srt_file.name))[0]
         resp = self.client.post(link, {
             'id': self.item_location,
@@ -242,7 +242,7 @@ At the left we can see...
         self.assertEqual(json.loads(resp.content).get('status'), 'Transcripts are supported only for "video" modules.')
 
     def test_fail_bad_data_srt_file(self):
-        link = reverse('process_transcripts', args=('upload',))
+        link = reverse('upload_transcripts')
         filename = os.path.splitext(os.path.basename(self.bad_data_srt_file.name))[0]
         resp = self.client.post(link, {
             'id': self.item_location,
@@ -254,10 +254,10 @@ At the left we can see...
             }])
         })
         self.assertEqual(resp.status_code, 400)
-        self.assertEqual(json.loads(resp.content).get('status'), 'Generation of transcripts from file is failed.')
+        self.assertEqual(json.loads(resp.content).get('status'), 'Something wrong with SubRip transcripts file during parsing.')
 
     def test_fail_bad_name_srt_file(self):
-        link = reverse('process_transcripts', args=('upload',))
+        link = reverse('upload_transcripts')
         filename = os.path.splitext(os.path.basename(self.bad_name_srt_file.name))[0]
         resp = self.client.post(link, {
             'id': self.item_location,
@@ -269,7 +269,7 @@ At the left we can see...
             }])
         })
         self.assertEqual(resp.status_code, 400)
-        self.assertEqual(json.loads(resp.content).get('status'), 'Generation of transcripts from file is failed.')
+        self.assertEqual(json.loads(resp.content).get('status'), 'We support only SubRip (*.srt) transcripts format.')
 
     def test_undefined_file_extension(self):
         srt_file = tempfile.NamedTemporaryFile(suffix='')
@@ -284,7 +284,7 @@ At the left we can see...
         """)
         srt_file.seek(0)
 
-        link = reverse('process_transcripts', args=('upload',))
+        link = reverse('upload_transcripts')
         filename = os.path.splitext(os.path.basename(srt_file.name))[0]
         resp = self.client.post(link, {
             'id': self.item_location,
@@ -307,7 +307,7 @@ At the left we can see...
 
 
 class TestDownloadtranscripts(Basetranscripts):
-    """Tests for '/process_transcripts/download' url."""
+    """Tests for '/transcripts/download' url."""
 
     def save_subs_to_store(self, subs, subs_id):
         """Save transcripts into `StaticContent`."""
@@ -348,7 +348,7 @@ class TestDownloadtranscripts(Basetranscripts):
         }
         self.save_subs_to_store(subs, 'JMD_ifUUfsU')
 
-        link = reverse('process_transcripts', args=('download',))
+        link = reverse('download_transcripts')
         resp = self.client.get(link, {'id': self.item_location, 'subs_id': "JMD_ifUUfsU"})
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.content, """0\n00:00:00,100 --> 00:00:00,200\nsubs #1\n\n1\n00:00:00,200 --> 00:00:00,240\nsubs #2\n\n2\n00:00:00,240 --> 00:00:00,380\nsubs #3\n\n""")
@@ -375,7 +375,7 @@ class TestDownloadtranscripts(Basetranscripts):
         }
         self.save_subs_to_store(subs, subs_id)
 
-        link = reverse('process_transcripts', args=('download',))
+        link = reverse('download_transcripts')
         resp = self.client.get(link, {'id': self.item_location, 'subs_id': subs_id})
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(
@@ -385,7 +385,7 @@ class TestDownloadtranscripts(Basetranscripts):
         transcripts_utils.remove_subs_from_store(subs_id, self.item)
 
     def test_fail_data_without_file(self):
-        link = reverse('process_transcripts', args=('download',))
+        link = reverse('download_transcripts')
         resp = self.client.get(link, {'id': ''})
         self.assertEqual(resp.status_code, 404)
 
@@ -394,12 +394,12 @@ class TestDownloadtranscripts(Basetranscripts):
 
     def test_fail_data_with_bad_location(self):
         # Test for raising `InvalidLocationError` exception.
-        link = reverse('process_transcripts', args=('download',))
+        link = reverse('download_transcripts')
         resp = self.client.get(link, {'id': 'BAD_LOCATION'})
         self.assertEqual(resp.status_code, 404)
 
         # Test for raising `ItemNotFoundError` exception.
-        link = reverse('process_transcripts', args=('download',))
+        link = reverse('download_transcripts')
         resp = self.client.get(link, {'id': '{0}_{1}'.format(self.item_location, 'BAD_LOCATION')})
         self.assertEqual(resp.status_code, 404)
 
@@ -433,7 +433,7 @@ class TestDownloadtranscripts(Basetranscripts):
         }
         self.save_subs_to_store(subs, subs_id)
 
-        link = reverse('process_transcripts', args=('download',))
+        link = reverse('download_transcripts')
         resp = self.client.get(link, {'id': item_location})
         self.assertEqual(resp.status_code, 404)
 
@@ -447,7 +447,7 @@ class TestDownloadtranscripts(Basetranscripts):
 """
         modulestore().update_item(self.item_location, data)
 
-        link = reverse('process_transcripts', args=('download',))
+        link = reverse('download_transcripts')
         resp = self.client.get(link, {'id': self.item_location})
         self.assertEqual(resp.status_code, 404)
 
@@ -461,7 +461,7 @@ class TestDownloadtranscripts(Basetranscripts):
 """
         modulestore().update_item(self.item_location, data)
 
-        link = reverse('process_transcripts', args=('download',))
+        link = reverse('download_transcripts')
         resp = self.client.get(link, {'id': self.item_location})
 
         self.assertEqual(resp.status_code, 404)
@@ -486,14 +486,14 @@ class TestDownloadtranscripts(Basetranscripts):
         }
         self.save_subs_to_store(subs, 'JMD_ifUUfsU')
 
-        link = reverse('process_transcripts', args=('download',))
+        link = reverse('download_transcripts')
         resp = self.client.get(link, {'id': self.item_location})
 
         self.assertEqual(resp.status_code, 404)
 
 
 class TestChecktranscripts(Basetranscripts):
-    """Tests for '/process_transcripts/check' url."""
+    """Tests for '/transcripts/check' url."""
 
     def save_subs_to_store(self, subs, subs_id):
         """Save transcripts into `StaticContent`."""
@@ -549,7 +549,7 @@ class TestChecktranscripts(Basetranscripts):
                 'mode': 'mp4',
             }]
         }
-        link = reverse('process_transcripts', args=('check',))
+        link = reverse('check_transcripts')
         resp = self.client.get(link, {'data': json.dumps(data)})
         self.assertEqual(resp.status_code, 200)
         self.assertDictEqual(
@@ -584,7 +584,7 @@ class TestChecktranscripts(Basetranscripts):
             ]
         }
         self.save_subs_to_store(subs, 'JMD_ifUUfsU')
-        link = reverse('process_transcripts', args=('check',))
+        link = reverse('check_transcripts')
         data = {
             'id': self.item_location,
             'videos': [{
@@ -612,7 +612,7 @@ class TestChecktranscripts(Basetranscripts):
         )
 
     def test_fail_data_without_id(self):
-        link = reverse('process_transcripts', args=('check',))
+        link = reverse('check_transcripts')
         data = {
             'id': '',
             'videos': [{
@@ -627,7 +627,7 @@ class TestChecktranscripts(Basetranscripts):
 
     def test_fail_data_with_bad_location(self):
         # Test for raising `InvalidLocationError` exception.
-        link = reverse('process_transcripts', args=('check',))
+        link = reverse('check_transcripts')
         data = {
             'id': '',
             'videos': [{
@@ -691,7 +691,7 @@ class TestChecktranscripts(Basetranscripts):
                 'mode': '',
             }]
         }
-        link = reverse('process_transcripts', args=('check',))
+        link = reverse('check_transcripts')
         resp = self.client.get(link, {'data': json.dumps(data)})
         self.assertEqual(resp.status_code, 400)
         self.assertEqual(json.loads(resp.content).get('status'), 'transcripts are supported only for "video" modules.')

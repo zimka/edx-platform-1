@@ -34,6 +34,9 @@ from ..transcripts_utils import (
 
 from .access import has_access
 
+__all__ = ['upload_transcripts', 'download_transcripts', 'check_transcripts',
+    'choose_transcripts', 'replace_transcripts', 'rename_transcripts', 'save_transcripts']
+
 log = logging.getLogger(__name__)
 
 
@@ -58,7 +61,6 @@ def upload_transcripts(request):
         status: 'Success' or 'Error'
         subs: Value of uploaded and saved html5 sub field in  video item.
     """
-
     response = {
         'status': 'Unknown Error',
         'subs': '',
@@ -104,23 +106,28 @@ def upload_transcripts(request):
     if video_list:
         sub_attr = source_subs_name
 
-        try:  # generate and save for 1.0 speed
+        try:  # Generate and save for 1.0 speed, will create subs_sub_attr.srt.sjson subtitles file in storage.
             generate_subs_from_source({1: sub_attr}, source_subs_ext, source_subs_filedata, item)
         except TranscriptsGenerationException, e:
             return log_and_return_response(response, e.message)
         statuses = {}
         for video_dict in video_list:
             video_name = video_dict['video']
-            # We are creating transcripts for every video source, in case that some of video sources would be deleted.
+            # We are creating transcripts for every video source,
+            # for the case that in future, some of video sources can be deleted.
             statuses[video_name] = copy_or_rename_transcript(video_name, sub_attr, item)
+            try:
+                # updates item.sub with `video_name` if it is successful.
+                copy_or_rename_transcript(video_name, sub_attr, item)
+                selected_name = video_name  # name to write to item.sub field, chosen at random.
+            except NotFoundError:
+                # subtitles file `sub_attr` is not presented in the system. Nothing to copy or rename.
+                log_and_return_response(response, "Can't find transcripts in storage for {}".format(sub_attr))
 
-        selected_name = video_list[0]['video']  # name to write to sub field
-
-        if statuses[selected_name]:  # write names to sub attribute files
-            item.sub = selected_name
-            item = save_module(item)
-            response['subs'] = item.sub
-            response['status'] = 'Success'
+        item.sub = selected_name  # write one of  new subtitles names to item.sub attribute.
+        item = save_module(item)
+        response['subs'] = item.sub
+        response['status'] = 'Success'
     else:
         return log_and_return_response(response, 'Empty video sources.')
 

@@ -313,5 +313,10 @@ def manage_video_subtitles_save(old_item, new_item):
     sub_name = new_item.sub
     for video_id in [x for x in possible_video_id_list if x]:
         # copy_or_rename_transcript changes item.sub of module
-        status = copy_or_rename_transcript(video_id, sub_name, new_item)
-        log.debug("Copying {} file content to {} name is {}".format(sub_name, video_id, status))
+        try:
+            # updates item.sub with `video_id`, if it is successful.
+            copy_or_rename_transcript(video_id, sub_name, new_item)
+        except NotFoundError:
+            # subtitles file `sub_name` is not presented in the system. Nothing to copy or rename.
+            log.debug("Copying {} file content to {} name is failed, original file does not exist.".format(
+                sub_name, video_id))
