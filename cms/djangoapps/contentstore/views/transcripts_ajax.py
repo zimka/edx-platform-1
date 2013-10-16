@@ -8,6 +8,7 @@ import copy
 import os
 import logging
 import json
+import requests
 
 from django.http import HttpResponse, Http404
 from django.core.exceptions import PermissionDenied
@@ -25,7 +26,6 @@ from util.json_request import JsonResponse
 from ..transcripts_utils import (
     generate_subs_from_source,
     generate_srt_from_sjson, remove_subs_from_store,
-    requests as rqsts,
     download_youtube_subs, get_transcripts_from_youtube,
     copy_or_rename_transcript,
     save_module,
@@ -265,7 +265,7 @@ def check_transcripts(request):
         # youtube server
         youtube_api = copy.deepcopy(settings.YOUTUBE_API)
         youtube_api['params']['v'] = youtube_id
-        youtube_response = rqsts.get(youtube_api['url'], params=youtube_api['params'])
+        youtube_response = requests.get(youtube_api['url'], params=youtube_api['params'])
 
         if youtube_response.status_code == 200 and youtube_response.text:
             transcripts_presence['youtube_server'] = True
