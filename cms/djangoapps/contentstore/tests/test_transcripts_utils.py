@@ -2,6 +2,8 @@
 import unittest
 from uuid import uuid4
 import copy
+import textwrap
+
 from pymongo import MongoClient
 
 from django.test.utils import override_settings
@@ -227,15 +229,15 @@ class TestGenerateSubsFromSource(TestDownloadYoutubeSubs):
             1.0: 'hI10vDNYz4M',
             2.0: 'AKqURZnYqpk'
         }
-        srt_filedata = """
-1
-00:00:10,500 --> 00:00:13,000
-Elephant's Dream
+        srt_filedata = textwrap.dedent("""
+            1
+            00:00:10,500 --> 00:00:13,000
+            Elephant's Dream
 
-2
-00:00:15,000 --> 00:00:18,000
-At the left we can see...
-        """
+            2
+            00:00:15,000 --> 00:00:18,000
+            At the left we can see...
+        """)
         self.clear_subs_content(youtube_subs)
 
         # Check transcripts_utils.TranscriptsGenerationException not thrown
@@ -258,15 +260,15 @@ At the left we can see...
             2.0: 'AKqURZnYqpk'
         }
 
-        srt_filedata = """
-1
-00:00:10,500 --> 00:00:13,000
-Elephant's Dream
+        srt_filedata = textwrap.dedent("""
+            1
+            00:00:10,500 --> 00:00:13,000
+            Elephant's Dream
 
-2
-00:00:15,000 --> 00:00:18,000
-At the left we can see...
-        """
+            2
+            00:00:15,000 --> 00:00:18,000
+            At the left we can see...
+        """)
 
         with self.assertRaises(transcripts_utils.TranscriptsGenerationException) as cm:
                 transcripts_utils.generate_subs_from_source(youtube_subs, 'BAD_FORMAT', srt_filedata, self.course)
@@ -354,7 +356,6 @@ class TestGenerateSrtFromSjson(TestDownloadYoutubeSubs):
         }
         srt_subs = transcripts_utils.generate_srt_from_sjson(sjson_subs, 2)
         self.assertTrue(srt_subs)
-
 
         expected_subs = [
             '00:00:00,200 --> 00:00:00,400\nsubs #1',
