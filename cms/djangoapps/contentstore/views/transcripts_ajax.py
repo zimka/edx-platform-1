@@ -238,7 +238,6 @@ def check_transcripts(request):
         'current_item_subs': None,
         'status': 'Error',
     }
-
     try:
         __, videos, item = validate_transcripts_data(request)
     except TranscriptsRequestValidationException as e:
@@ -464,7 +463,7 @@ def validate_transcripts_data(request):
         raise PermissionDenied()
 
     if item.category != 'video':
-        TranscriptsRequestValidationException('Transcripts are supported only for "video" modules.')
+        raise TranscriptsRequestValidationException('Transcripts are supported only for "video" modules.')
 
     # parse data form request.GET.['data']['video'] to useful format
     videos = {'youtube': '', 'html5': {}}

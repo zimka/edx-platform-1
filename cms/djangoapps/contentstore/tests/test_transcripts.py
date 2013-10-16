@@ -695,4 +695,4 @@ class TestChecktranscripts(Basetranscripts):
         link = reverse('check_transcripts')
         resp = self.client.get(link, {'data': json.dumps(data)})
         self.assertEqual(resp.status_code, 400)
-        self.assertEqual(json.loads(resp.content).get('status'), 'transcripts are supported only for "video" modules.')
+        self.assertEqual(json.loads(resp.content).get('status'), 'Transcripts are supported only for "video" modules.')
