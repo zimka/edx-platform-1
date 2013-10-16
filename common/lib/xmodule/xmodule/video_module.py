@@ -17,6 +17,7 @@ from lxml import etree
 from pkg_resources import resource_string
 import datetime
 import time
+import copy
 
 from django.http import Http404
 from django.conf import settings
@@ -295,7 +296,7 @@ class VideoDescriptor(VideoFields, TabsEditingDescriptor, EmptyDataRawDescriptor
         """
         _context = super(VideoDescriptor, self).get_context()
 
-        metadata_fields = copy.deepcopy(editable_metadata_fields)
+        metadata_fields = copy.deepcopy(self.editable_metadata_fields)
 
         display_name = metadata_fields['display_name']
         video_url = metadata_fields['html5_sources']
@@ -308,7 +309,7 @@ class VideoDescriptor(VideoFields, TabsEditingDescriptor, EmptyDataRawDescriptor
                 return ''
 
         video_url.update({
-            'help': _('A YouTube URL or a link to a file hosted anywhere on the web.'),
+            'help': 'A YouTube URL or a link to a file hosted anywhere on the web.',
             'display_name': 'Video URL',
             'field_name': 'video_url',
             'type': 'VideoList',
