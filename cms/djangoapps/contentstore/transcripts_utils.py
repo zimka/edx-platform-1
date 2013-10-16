@@ -213,8 +213,8 @@ def generate_subs_from_source(speed_subs, subs_type, subs_filedata, item):
         srt_subs_obj = SubRipFile.from_string(subs_filedata)
     except Exception as e:
         raise TranscriptsGenerationException(
-            "Something wrong with SubRip transcripts file during parsing."
-            "Inner message is".format(e.message)
+            "Something wrong with SubRip transcripts file during parsing. "
+            "Inner message is {}".format(e.message)
         )
     if not srt_subs_obj:
         raise TranscriptsGenerationException("Something wrong with SubRip transcripts file during parsing.")
