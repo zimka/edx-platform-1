@@ -80,6 +80,13 @@ def upload_transcripts(request):
     if not item_location:
         return error_response(response, 'POST data without "id" form data.')
 
+    # This is placed before has_access() to validate item_location,
+    # because has_access() raises InvalidLocationError if location is invalid.
+    try:
+        item = modulestore().get_item(item_location)
+    except (ItemNotFoundError, InvalidLocationError):
+        return error_response(response, "Can't find item by location.")
+
     # Check permissions for this user within this course.
     if not has_access(request.user, item_location):
         raise PermissionDenied()
@@ -105,11 +112,6 @@ def upload_transcripts(request):
     basename = os.path.basename(source_subs_filename)
     source_subs_name = os.path.splitext(basename)[0]
     source_subs_ext = os.path.splitext(basename)[1][1:]
-
-    try:
-        item = modulestore().get_item(item_location)
-    except (ItemNotFoundError, InvalidLocationError):
-        return error_response(response, "Can't find item by location.")
 
     if item.category != 'video':
         return error_response(response, 'Transcripts are supported only for "video" modules.')
@@ -158,6 +160,14 @@ def download_transcripts(request):
         log.debug('GET data without "id" property.')
         raise Http404
 
+    # This is placed before has_access() to validate item_location,
+    # because has_access() raises InvalidLocationError if location is invalid.
+    try:
+        item = modulestore().get_item(item_location)
+    except (ItemNotFoundError, InvalidLocationError):
+        log.debug("Can't find item by location.")
+        raise Http404
+
     # Check permissions for this user within this course.
     if not has_access(request.user, item_location):
         raise PermissionDenied()
@@ -165,12 +175,6 @@ def download_transcripts(request):
     subs_id = request.GET.get('subs_id')
     if not subs_id:
         log.debug('GET data without "subs_id" property.')
-        raise Http404
-
-    try:
-        item = modulestore().get_item(item_location)
-    except (ItemNotFoundError, InvalidLocationError):
-        log.debug("Can't find item by location.")
         raise Http404
 
     if item.category != 'video':
@@ -448,14 +452,16 @@ def validate_transcripts_data(request):
 
     item_location = data.get('id')
 
-    # Check permissions for this user within this course.
-    if not has_access(request.user, item_location):
-        raise PermissionDenied()
-
+    # This is placed before has_access() to validate item_location,
+    # because has_access() raises InvalidLocationError if location is invalid.
     try:
         item = modulestore().get_item(item_location)
     except (ItemNotFoundError, InvalidLocationError):
         raise TranscriptsRequestValidationException("Can't find item by location.")
+
+    # Check permissions for this user within this course.
+    if not has_access(request.user, item_location):
+        raise PermissionDenied()
 
     if item.category != 'video':
         TranscriptsRequestValidationException('Transcripts are supported only for "video" modules.')
