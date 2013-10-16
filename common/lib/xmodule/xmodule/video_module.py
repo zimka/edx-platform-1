@@ -290,26 +290,42 @@ class VideoDescriptor(VideoFields, TabsEditingDescriptor, EmptyDataRawDescriptor
         return xml
 
     def get_context(self):
-        """Extend context and add additional flag:
-
-        This context variables we use for CMS subtitles feature, where
-        we try to understand, must we show some buttons or not.
+        """
+        Extend context by data for transcripts basic tab.
         """
         _context = super(VideoDescriptor, self).get_context()
-        content = None
 
-        if self.sub:
-            filename = 'subs_{0}.srt.sjson'.format(self.sub)
-            content_location = StaticContent.compute_location(
-                self.location.org, self.location.course, filename)
-            try:
-                content = contentstore().find(content_location)
-            except NotFoundError:
-                pass
+        metadata_fields = copy.deepcopy(editable_metadata_fields)
 
-        _context.update({
-            'has_subs_content': bool(content)
+        display_name = metadata_fields['display_name']
+        video_url = metadata_fields['html5_sources']
+        youtube_id_1_0 = metadata_fields['youtube_id_1_0']
+
+        def get_youtube_link(video_id):
+            if video_id:
+                return 'http://youtu.be/{0}'.format(video_id)
+            else:
+                return ''
+
+        video_url.update({
+            'help': _('A YouTube URL or a link to a file hosted anywhere on the web.'),
+            'display_name': 'Video URL',
+            'field_name': 'video_url',
+            'type': 'VideoList',
+            'default_value': [get_youtube_link(youtube_id_1_0['default_value'])]
         })
+
+        youtube_id_1_0_value = get_youtube_link(youtube_id_1_0['value'])
+
+        if youtube_id_1_0_value:
+            video_url['value'].insert(0, youtube_id_1_0_value)
+
+        metadata = {
+            'display_name': display_name,
+            'video_url': video_url
+        }
+
+        _context.update({'transcripts_basic_tab_metadata': metadata})
         return _context
 
     @classmethod
@@ -409,6 +425,8 @@ class VideoDescriptor(VideoFields, TabsEditingDescriptor, EmptyDataRawDescriptor
             except ValueError:
                 # We've seen serialized versions of float in this field
                 return float(str_time)
+
+        def editable_metadata_fields(self)
 
 
 def _create_youtube_string(module):

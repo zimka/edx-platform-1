@@ -3,67 +3,22 @@
 <%page args="tabName"/>
 
 <%
-import hashlib
-import copy
 import json
-hlskey = hashlib.md5(module.location.url()).hexdigest()
-from os import listdir
-from os.path import isfile, join
-from django.conf import settings
-
-path = join(settings.PROJECT_ROOT, 'static/js/views/transcripts/')
-files = [f for f in listdir(path) if isfile(join(path,f)) and f.endswith('.js')]
-files.sort()
 %>
 
-
-## js templates
+## include js templates:
 
 % for template_name in ["metadata-videolist-entry", "file-upload"]:
-<script type="text/template" id="${template_name}">
-  <%static:include path="js/transcripts/${template_name}.underscore" />
-</script>
+    <script type="text/template" id="${template_name}">
+        <%static:include path="js/transcripts/${template_name}.underscore" />
+    </script>
 % endfor
+
 % for template_name in ["transcripts-found", "transcripts-uploaded", "transcripts-use-existing", "transcripts-not-found", "transcripts-replace", "transcripts-import", "transcripts-choose"]:
-<script type="text/template" id="${template_name}">
-  <%static:include path="js/transcripts/messages/${template_name}.underscore" />
-</script>
+    <script type="text/template" id="${template_name}">
+        <%static:include path="js/transcripts/messages/${template_name}.underscore" />
+    </script>
 % endfor
-<% metadata_fields = copy.deepcopy(editable_metadata_fields) %>
-<%
-    display_name = metadata_fields['display_name']
-    video_url = metadata_fields['html5_sources']
-    youtube_id_1_0 = metadata_fields['youtube_id_1_0']
-
-    def get_youtube_link(video_id):
-      if video_id:
-        return 'http://youtu.be/{0}'.format(video_id)
-      else:
-        return False
-
-    video_url.update({
-        'help': _('A YouTube URL or a link to a file hosted anywhere on the web.'),
-        'display_name': 'Video URL',
-        'field_name': 'video_url',
-        'type': 'VideoList',
-        'default_value': [
-          get_youtube_link(youtube_id_1_0['default_value'])
-        ]
-    })
-
-    youtube_id_1_0_value = get_youtube_link(youtube_id_1_0['value'])
-
-    if youtube_id_1_0_value:
-        video_url['value'].insert(
-          0,
-          youtube_id_1_0_value
-        )
-
-    metadata = {
-        'display_name': display_name,
-        'video_url': video_url
-    }
- %>
 
 <div class="wrapper-comp-settings basic_metadata_edit" data-metadata='${json.dumps(metadata) | h}'></div>
 
