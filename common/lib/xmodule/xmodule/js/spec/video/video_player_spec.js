@@ -684,8 +684,13 @@
       });
 
       it('set the player volume', function() {
+        var expectedValue = 60,
+            realValue;
+
         player.setVolume(60);
-        expect(player.getVolume()).toEqual(0.6);
+        realValue = Math.round(player.getVolume()*100);
+
+        expect(realValue).toEqual(expectedValue);
       });
     });
   });
