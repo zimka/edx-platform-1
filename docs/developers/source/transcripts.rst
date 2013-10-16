@@ -92,7 +92,7 @@ So,
    * **IF** we are working just with 1 field **AND** item.sub field **HAS** a value **AND** user fill editor/view by the new value/video source without transcripts file, we respond with `use_existing` command. In this case, user will have possibility to use transcripts file from previous video.
    * **OTHERWISE**, we will respond with `not_found` command.
 
-Command from front-end point of view is nothing else as a reference to the needed View with possible actions that user can do depending on conditions described above.
+Command from front-end point of view is nothing else as a reference to the needed View with possible actions that user can do depending on conditions described above (See edx-platform/cms/static/js/views/transcripts/message_manager.js:21-29).
 
 *Method:*
     GET
@@ -192,3 +192,38 @@ After invoking this method will be saved all changes that were done before this 
         {
             status: 'Success' or 'Error'
         }
+
+
+Description
+-----------
+
+Front-end part has 3 editors/views that might contain 3 kinds of URLs:
+    * **Youtube** link. There are supported formats:
+        * http://www.youtube.com/watch?v=OEoXaMPEzfM&feature=feedrec_grec_index ;
+        * http://www.youtube.com/user/IngridMichaelsonVEVO#p/a/u/1/OEoXaMPEzfM ;
+        * http://www.youtube.com/v/OEoXaMPEzfM?fs=1&amp;hl=en_US&amp;rel=0 ;
+        * http://www.youtube.com/watch?v=OEoXaMPEzfM#t=0m10s ;
+        * http://www.youtube.com/embed/OEoXaMPEzfM?rel=0 ;
+        * http://www.youtube.com/watch?v=OEoXaMPEzfM ;
+        * http://youtu.be/OEoXaMPEzfM ;
+
+    * **MP4** video source;
+    * **WEBM** video source.
+
+Each of these kind of URLs can be specified just **ONCE**. Otherwise, error message occurs on Front-end.
+
+After filling editor **transcripts/check** method will be invoked with described above parameters. Depends on conditions, that are also described above, this method respond with a *command* and Front-end render the appropriate View.
+Each View could have specific actions. There is a list of supported actions:
+    * Download Timed Transcripts;
+    * Upload Timed Transcripts;
+    * Import Timed Transcripts from Youtube;
+    * Replace edX Timed Transcripts by Timed Transcripts from Youtube;
+    * Choose Timed Transcripts;
+    * Use existing Timed Transcripts.
+
+All of these actions are handled by 7 API methods described above.
+
+Because of rallback functionality doesn't implemented now, after invoking some of the actions user cannot revert changes by clicking button `Cancel`.
+
+
+
