@@ -399,9 +399,11 @@ class ModuleStoreBase(ModuleStore):
     '''
     def __init__(
         self,
-        doc_store_config=None,  # ignore if passed up
+        doc_store_config=None,  # ignore if passed up (e.g., from XMLModuleStore)
         metadata_inheritance_cache_subsystem=None, request_cache=None,
-        modulestore_update_signal=None, xblock_mixins=()
+        modulestore_update_signal=None, xblock_mixins=(),
+        # TODO remove when all configs use doc_store_config only
+        db=None, host=None, collection=None, port=None, tz_aware=None, user=None, password=None
     ):
         '''
         Set up the error-tracking logic.
