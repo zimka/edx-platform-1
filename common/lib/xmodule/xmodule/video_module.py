@@ -426,8 +426,6 @@ class VideoDescriptor(VideoFields, TabsEditingDescriptor, EmptyDataRawDescriptor
                 # We've seen serialized versions of float in this field
                 return float(str_time)
 
-        def editable_metadata_fields(self)
-
 
 def _create_youtube_string(module):
     """
