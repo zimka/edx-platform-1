@@ -184,7 +184,7 @@ class TestDownloadYoutubeSubs(ModuleStoreTestCase):
         }
         self.clear_subs_content(bad_youtube_subs)
 
-        with transcripts_utils.GetTranscriptsFromYouTubeException:
+        with self.assertRaises(transcripts_utils.GetTranscriptsFromYouTubeException):
             transcripts_utils.download_youtube_subs(bad_youtube_subs, self.course)
 
         # Check assets status after importing subtitles.
