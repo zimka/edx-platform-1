@@ -195,9 +195,19 @@ After invoking this method will be saved all changes that were done before this 
 
 
 Description
------------
+++++++++++++
 
-Front-end part has 3 editors/views that might contain 3 kinds of URLs:
+Timed Transcripts functionality is added in separate tab of Video module Editor, that is active by default. This tab is called `Basic`, another one tab is called `Advanced` and contains default metadata fields.
+
+`Basic` tab is a simple representation of `Advanced` tab that provide functionality to speed up adding Video module with transcripts to the course.
+
+To make more accurate adjustments `Advanced` tab should be used.
+
+Front-end part of `Basic` tab has 4 editors/views:
+    * Display name
+    * 3 editors for inserting Video URLs.
+
+ Video URL fields might contain 3 kinds of URLs:
     * **Youtube** link. There are supported formats:
         * http://www.youtube.com/watch?v=OEoXaMPEzfM&feature=feedrec_grec_index ;
         * http://www.youtube.com/user/IngridMichaelsonVEVO#p/a/u/1/OEoXaMPEzfM ;
@@ -224,6 +234,19 @@ Each View could have specific actions. There is a list of supported actions:
 All of these actions are handled by 7 API methods described above.
 
 Because of rallback functionality doesn't implemented now, after invoking some of the actions user cannot revert changes by clicking button `Cancel`.
+
+To remove remove timed transcripts file from the video just go to `Advanced` tab and clear field `sub` then Save changes.
+
+Synchronization and Saving workflow
+++++++++++++++++++++++++++++++++++++
+
+For now saving mechanism works so:
+
+On click `Save` button **ModuleEdit** class (See edx-platform/cms/static/coffee/src/views/module_edit.coffee:83-101) grab values from all modified metadata fields and send all of these data to the server.
+
+Because of Timed Transcripts is module specific functionality, ModuleEdit class is not extended. Instead, to apply all changes that user did in the `Basic` tab, we use synchronization mechanism of TabsEditingDescriptor class. That mechanism provides us possibility to do needed actions on Tab switching and on Save (See edx-platform/cms/templates/widgets/video/transcripts.html).
+
+On tab switching and when save action is invoked, JavaScript code synchronize collections (Metadata Collection and Transcripts Collection). You can see synchronization logic in the edx-platform/cms/static/js/views/transcripts/editor.js:72-219. In this case, Metadata fields always have an actual data.
 
 
 
