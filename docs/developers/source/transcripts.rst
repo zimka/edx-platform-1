@@ -36,7 +36,7 @@ List of implemented acceptance tests
 Developer's workflow for the timed transcripts in CMS.
 ------------------------------------------------------
 
-We provide 7 API methods to work with timed transcript
+We provide 7 API methods to work with timed transcripts
 (edx-platform/cms/urls.py:23-29):
     * transcripts/upload
     * transcripts/download
@@ -47,7 +47,7 @@ We provide 7 API methods to work with timed transcript
     * transcripts/save
 
 **"transcripts/upload"** method is used for uploading SRT transcripts for the
-HTML5 and Youtube video modules.
+HTML5 and YouTube video modules.
 
 *Method:*
     POST
@@ -67,7 +67,7 @@ HTML5 and Youtube video modules.
 
 
 **"transcripts/download"** method is used for downloading SRT transcripts for the
-HTML5 and Youtube video modules.
+HTML5 and YouTube video modules.
 
 *Method:*
     GET
@@ -80,19 +80,19 @@ HTML5 and Youtube video modules.
     HTTP 200 + BLOB of SRT file
 
 
-**"transcripts/check"** method is used for checking availability timed transcripts
+**"transcripts/check"** method is used for checking availability of timed transcripts
 for the video module.
 So,
-   * **IF** youtube transcripts present locally **AND** on Youtube server **AND** both of these transcripts files are **DIFFERENT**, we respond with `replace` command. Ask user to replace local transcript file by Youtube's ones.
-   * **IF** youtube transcripts present **ONLY** locally, we respond with `found` command.
-   * **IF** youtube transcripts present **ONLY** on Youtube server, we respond with `import` command. Ask user to import transcripts file from Youtube server.
-   * **IF** player in HTML5 video mode. It means that **ONLY** html5 sources are added:
+   * **IF** YouTube transcripts present locally **AND** on YouTube server **AND** both of these transcripts files are **DIFFERENT**, we respond with `replace` command. Ask user to replace local transcripts file by YouTube's ones.
+   * **IF** YouTube transcripts present **ONLY** locally, we respond with `found` command.
+   * **IF** YouTube transcripts present **ONLY** on YouTube server, we respond with `import` command. Ask user to import transcripts file from YouTube server.
+   * **IF** player is in HTML5 video mode. It means that **ONLY** html5 sources are added:
         * **IF** just 1 html5 source was added or both html5 sources have **EQUAL** transcripts files, then we respond with `found` command.
-        * **OTHERWISE**, when 2 html5 sources were added and founded transcripts files are **DIFFERENT**, we respond with `choose` command. In this case, user should choose which one transcripts file he want to use.
-   * **IF** we are working just with 1 field **AND** item.sub field **HAS** a value **AND** user fill editor/view by the new value/video source without transcripts file, we respond with `use_existing` command. In this case, user will have possibility to use transcripts file from previous video.
+        * **OTHERWISE**, when 2 html5 sources were added and founded transcripts files are **DIFFERENT**, we respond with `choose` command. In this case, user should choose which one transcripts file he wants to use.
+   * **IF** we are working with just 1 field **AND** item.sub field **HAS** a value **AND** user fills editor/view by the new value/video source without transcripts file, we respond with `use_existing` command. In this case, user will have possibility to use transcripts file from previous video.
    * **OTHERWISE**, we will respond with `not_found` command.
 
-Command from front-end point of view is nothing else as a reference to the needed View with possible actions that user can do depending on conditions described above (See edx-platform/cms/static/js/views/transcripts/message_manager.js:21-29).
+Command from front-end point of view is just a reference to the needed View with possible actions that user can do depending on conditions described above (See edx-platform/cms/static/js/views/transcripts/message_manager.js:21-29).
 
 *Method:*
     GET
@@ -116,7 +116,7 @@ Command from front-end point of view is nothing else as a reference to the neede
         }
 
 
-**"transcripts/choose"** method is used for choosing which one transcripts file should be used.
+**"transcripts/choose"** method is used for choosing which transcripts file should be used.
 
 *Method:*
     GET
@@ -135,7 +135,7 @@ Command from front-end point of view is nothing else as a reference to the neede
 
 
 **"transcripts/replace"** method is used for handling `import` and `replace` commands.
-Invoking this method starts downloading new transcripts file from Youtube server.
+Invoking this method starts downloading new transcripts file from YouTube server.
 
 *Method:*
     GET
@@ -155,7 +155,7 @@ Invoking this method starts downloading new transcripts file from Youtube server
 
 
 **"transcripts/rename"** method is used for handling `use_existing` command.
-After invoking this method will be copied and renamed current transcripts file to another one with name of current video passed in the editor/view.
+After invoking this method current transcripts file will be copied and renamed to another one with name of current video passed in the editor/view.
 
 *Method:*
     GET
@@ -175,7 +175,7 @@ After invoking this method will be copied and renamed current transcripts file t
 
 
 **"transcripts/save"** method is used for handling `save` command.
-After invoking this method will be saved all changes that were done before this moment.
+After invoking this method all changes will be saved that were done before this moment.
 
 *Method:*
     GET
@@ -197,9 +197,9 @@ After invoking this method will be saved all changes that were done before this 
 Description
 ++++++++++++
 
-Timed Transcripts functionality is added in separate tab of Video module Editor, that is active by default. This tab is called `Basic`, another one tab is called `Advanced` and contains default metadata fields.
+Timed Transcripts functionality is added in separate tab of Video module Editor, that is active by default. This tab is called `Basic`, another tab is called `Advanced` and contains default metadata fields.
 
-`Basic` tab is a simple representation of `Advanced` tab that provide functionality to speed up adding Video module with transcripts to the course.
+`Basic` tab is a simple representation of `Advanced` tab that provides functionality to speed up adding Video module with transcripts to the course.
 
 To make more accurate adjustments `Advanced` tab should be used.
 
@@ -208,7 +208,7 @@ Front-end part of `Basic` tab has 4 editors/views:
     * 3 editors for inserting Video URLs.
 
  Video URL fields might contain 3 kinds of URLs:
-    * **Youtube** link. There are supported formats:
+    * **YouTube** link. There are supported formats:
         * http://www.youtube.com/watch?v=OEoXaMPEzfM&feature=feedrec_grec_index ;
         * http://www.youtube.com/user/IngridMichaelsonVEVO#p/a/u/1/OEoXaMPEzfM ;
         * http://www.youtube.com/v/OEoXaMPEzfM?fs=1&amp;hl=en_US&amp;rel=0 ;
@@ -220,33 +220,33 @@ Front-end part of `Basic` tab has 4 editors/views:
     * **MP4** video source;
     * **WEBM** video source.
 
-Each of these kind of URLs can be specified just **ONCE**. Otherwise, error message occurs on Front-end.
+Each of these kind of URLs can be specified just **ONCE**. Otherwise, error message occurs on front-end.
 
-After filling editor **transcripts/check** method will be invoked with described above parameters. Depends on conditions, that are also described above, this method respond with a *command* and Front-end render the appropriate View.
-Each View could have specific actions. There is a list of supported actions:
+After filling editor **transcripts/check** method will be invoked with the parameters described above. Depending on conditions, that are also described above, this method responds with a *command* and front-end renders the appropriate View.
+Each View can have specific actions. There is a list of supported actions:
     * Download Timed Transcripts;
     * Upload Timed Transcripts;
-    * Import Timed Transcripts from Youtube;
-    * Replace edX Timed Transcripts by Timed Transcripts from Youtube;
+    * Import Timed Transcripts from YouTube;
+    * Replace edX Timed Transcripts by Timed Transcripts from YouTube;
     * Choose Timed Transcripts;
     * Use existing Timed Transcripts.
 
 All of these actions are handled by 7 API methods described above.
 
-Because of rallback functionality doesn't implemented now, after invoking some of the actions user cannot revert changes by clicking button `Cancel`.
+Because rollback functionality isn't implemented now, after invoking some of the actions user cannot revert changes by clicking button `Cancel`.
 
-To remove remove timed transcripts file from the video just go to `Advanced` tab and clear field `sub` then Save changes.
+To remove timed transcripts file from the video just go to `Advanced` tab and clear field `sub` then Save changes.
 
 Synchronization and Saving workflow
 ++++++++++++++++++++++++++++++++++++
 
-For now saving mechanism works so:
+For now saving mechanism works as follows:
 
-On click `Save` button **ModuleEdit** class (See edx-platform/cms/static/coffee/src/views/module_edit.coffee:83-101) grab values from all modified metadata fields and send all of these data to the server.
+On click `Save` button **ModuleEdit** class (See edx-platform/cms/static/coffee/src/views/module_edit.coffee:83-101) grabs values from all modified metadata fields and sends all this data to the server.
 
-Because of Timed Transcripts is module specific functionality, ModuleEdit class is not extended. Instead, to apply all changes that user did in the `Basic` tab, we use synchronization mechanism of TabsEditingDescriptor class. That mechanism provides us possibility to do needed actions on Tab switching and on Save (See edx-platform/cms/templates/widgets/video/transcripts.html).
+Because of the fact that Timed Transcripts is module specific functionality, ModuleEdit class is not extended. Instead, to apply all changes that user did in the `Basic` tab, we use synchronization mechanism of TabsEditingDescriptor class. That mechanism provides us possibility to do needed actions on Tab switching and on Save (See edx-platform/cms/templates/widgets/video/transcripts.html).
 
-On tab switching and when save action is invoked, JavaScript code synchronize collections (Metadata Collection and Transcripts Collection). You can see synchronization logic in the edx-platform/cms/static/js/views/transcripts/editor.js:72-219. In this case, Metadata fields always have an actual data.
+On tab switching and when save action is invoked, JavaScript code synchronize collections (Metadata Collection and Transcripts Collection). You can see synchronization logic in the edx-platform/cms/static/js/views/transcripts/editor.js:72-219. In this case, Metadata fields always have the actual data.
 
 
 
