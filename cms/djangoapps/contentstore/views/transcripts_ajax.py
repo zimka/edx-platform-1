@@ -196,29 +196,30 @@ def download_transcripts(request):
 @login_required
 def check_transcripts(request):
     """
-    Check transcripts availability current module state..
+    Check state of transcripts availability.
 
-    request.GET['data'] has key videos, which can contain any of the following::
+    request.GET['data'] has key `videos`, which can contain any of the following::
 
         [
             {u'type': u'youtube', u'video': u'OEoXaMPEzfM', u'mode': u'youtube'},
             {u'type': u'html5',    u'video': u'video1',             u'mode': u'mp4'}
             {u'type': u'html5',    u'video': u'video2',             u'mode': u'webm'}
         ]
+        `type` is youtube or html5
+        `video` is html5 or youtube video_id
+        `mode` is youtube, ,p4 or webm
 
-    Returns transcripts_presence object::
+    Returns transcripts_presence dict::
 
-        html5_local: [], [True], [True], if html5 subtitles exist locally for any of [0-2] sources.
-        is_youtube_mode: bool, if we have youtube_id, and as youtube_id are of higher priority, reflect this with flag.
-        youtube_local: bool, if youtube transcripts exist locally.
-        youtube_server: bool, if youtube transcripts exist on server.
-        youtube_diff: bool, if youtube transcripts exist on youtube server, and are different from local youtube ones.
-        current_item_subs: string, value of item.sub field,
-        status: string, 'Error' or 'Success'
-
-    With `command` and `subs`.
-    `command`: str,  action to front-end what to do and what show to user.
-    `subs`: str, new value of item.sub field, that should be set in module.
+        html5_local: list of html5 ids, if subtitles exist locally for them;
+        is_youtube_mode: bool, if we have youtube_id, and as youtube mode is of higher priority, reflect this with flag;
+        youtube_local: bool, if youtube transcripts exist locally;
+        youtube_server: bool, if youtube transcripts exist on server;
+        youtube_diff: bool, if youtube transcripts exist on youtube server, and are different from local youtube ones;
+        current_item_subs: string, value of item.sub field;
+        status: string, 'Error' or 'Success';
+        subs: string, new value of item.sub field, that should be set in module;
+        command: string, action to front-end what to do and what to show to user.
     """
     transcripts_presence = {
         'html5_local': [],
@@ -346,7 +347,6 @@ def transcripts_logic(transcripts_presence, videos):
             if transcripts_presence['current_item_subs'] and not transcripts_presence['is_youtube_mode']:
                 log.debug("Command is use existing %s subs", transcripts_presence['current_item_subs'])
                 command = 'use_existing'
-                # subs = transcripts_presence['current_item_subs']
             else:
                 command = 'not_found'
     log.debug(
@@ -397,13 +397,11 @@ def replace_transcripts(request):
     """
     Replaces all transcripts with youtube ones.
 
-    Returns: status (Success or Error), resulted item.sub value and True for  is_youtube_mode value.
+    Downloads subtitles from youtube and replaces all transcripts with downloaded ones.
+
+    Returns: status (Success or Error), resulted item.sub value.
     """
-    response = {
-        'status': 'Error',
-        'subs': '',
-        'is_youtube_mode': True,
-    }
+    response = {'status': 'Error', 'subs': ''}
 
     validation_status, validation_message, __, videos, item = validate_transcripts_data(request)
     if not validation_status:
@@ -411,7 +409,7 @@ def replace_transcripts(request):
 
     youtube_id = videos['youtube']
     if not youtube_id:
-        return error_response(response, 'Youtube id is not presented.')
+        return error_response(response, 'YouTube id {} is not presented in request data.'.format(youtube_id))
 
     try:
         download_youtube_subs({1.0: youtube_id}, item)
@@ -420,8 +418,7 @@ def replace_transcripts(request):
 
     item.sub = youtube_id
     save_module(item)
-    response['status'] = 'Success'
-    response['subs'] = item.sub
+    response = {'status': 'Success',  'subs': item.sub}
     return JsonResponse(response)
 
 
