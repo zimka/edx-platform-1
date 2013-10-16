@@ -21,18 +21,14 @@ import copy
 
 from django.http import Http404
 from django.conf import settings
+from django.utils.translation import ugettext as _
 
 from xmodule.x_module import XModule
 from xmodule.editing_module import TabsEditingDescriptor
 from xmodule.raw_module import EmptyDataRawDescriptor
 from xmodule.xml_module import is_pointer_tag, name_to_pathname, deserialize_field
 from xmodule.modulestore import Location
-from xmodule.exceptions import NotFoundError
-from xmodule.contentstore.django import contentstore
-from xmodule.contentstore.content import StaticContent
 from xblock.fields import Scope, String, Boolean, Float, List, Integer, ScopeIds
-
-from xblock.field_data import DictFieldData
 
 from xmodule.modulestore.inheritance import InheritanceKeyValueStore
 from xblock.runtime import DbModel
@@ -309,7 +305,7 @@ class VideoDescriptor(VideoFields, TabsEditingDescriptor, EmptyDataRawDescriptor
                 return ''
 
         video_url.update({
-            'help': 'A YouTube URL or a link to a file hosted anywhere on the web.',
+            'help': _('A YouTube URL or a link to a file hosted anywhere on the web.'),
             'display_name': 'Video URL',
             'field_name': 'video_url',
             'type': 'VideoList',
