@@ -32,6 +32,7 @@ from ..transcripts_utils import (
     manage_video_subtitles_save,
     TranscriptsGenerationException,
     GetTranscriptsFromYouTubeException,
+    TranscriptsRequestValidationException
 )
 
 from .access import has_access
@@ -231,9 +232,11 @@ def check_transcripts(request):
         'current_item_subs': None,
         'status': 'Error',
     }
-    validation_status, validation_message, __, videos, item = validate_transcripts_data(request)
-    if not validation_status:
-        return error_response(transcripts_presence, validation_message)
+
+    try:
+        __, videos, item = validate_transcripts_data(request)
+    except TranscriptsRequestValidationException as e:
+        return error_response(transcripts_presence, e.message)
 
     transcripts_presence['status'] = 'Success'
 
@@ -374,11 +377,12 @@ def choose_transcripts(request):
         'subs': '',
     }
 
-    validation_status, validation_message, data, videos, item = validate_transcripts_data(request)
-    if not validation_status:
-        return error_response(response, validation_message)
+    try:
+        data, videos, item = validate_transcripts_data(request)
+    except TranscriptsRequestValidationException as e:
+        return error_response(response, e.message)
 
-    html5_id = data.get('html5_id')
+    html5_id = data.get('html5_id')  # html5_id chosen by user
 
     # find rejected html5_id and remove appropriate subs from store
     html5_id_to_remove = [x for x in videos['html5'] if x != html5_id]
@@ -403,9 +407,10 @@ def replace_transcripts(request):
     """
     response = {'status': 'Error', 'subs': ''}
 
-    validation_status, validation_message, __, videos, item = validate_transcripts_data(request)
-    if not validation_status:
-        return error_response(response, validation_message)
+    try:
+        __, videos, item = validate_transcripts_data(request)
+    except TranscriptsRequestValidationException as e:
+        return error_response(response, e.message)
 
     youtube_id = videos['youtube']
     if not youtube_id:
@@ -426,19 +431,18 @@ def validate_transcripts_data(request):
     """
     Validates, that request contains all proper data for transcripts processing.
 
-    Returns tuple of 4 elements::
+    Returns tuple of 3 elements::
 
-    validations_status: bool,
     data: dict, loaded json from request,
     videos: parsed `data` to useful format,
     item:  video item from storage
-    """
-    validation_status = False
 
+    Raises `TranscriptsRequestValidationException` if validation is unsuccessful
+    or `PermissionDenied` if user has no access.
+    """
     data = json.loads(request.GET.get('data', '{}'))
     if not data:
-        validation_message = 'Incoming video data is empty.'
-        return validation_status, validation_message, None, {}, None
+        raise TranscriptsRequestValidationException('Incoming video data is empty.')
 
     item_location = data.get('id')
 
@@ -449,12 +453,10 @@ def validate_transcripts_data(request):
     try:
         item = modulestore().get_item(item_location)
     except (ItemNotFoundError, InvalidLocationError):
-        validation_message = "Can't find item by location."
-        return validation_status, validation_message, None, {}, None
+        raise TranscriptsRequestValidationException("Can't find item by location.")
 
     if item.category != 'video':
-        validation_message = 'transcripts are supported only for "video" modules.'
-        return validation_status, validation_message, None, {}, None
+        TranscriptsRequestValidationException('Transcripts are supported only for "video" modules.')
 
     # parse data form request.GET.['data']['video'] to useful format
     videos = {'youtube': '', 'html5': {}}
@@ -465,7 +467,7 @@ def validate_transcripts_data(request):
             if videos['html5'].get('video') != video_data['video']:
                 videos['html5'][video_data['video']] = video_data['mode']
 
-    return True, 'Success', data, videos, item
+    return data, videos, item
 
 
 @login_required
@@ -478,9 +480,10 @@ def rename_transcripts(request):
     """
     response = {'status': 'Error', 'subs': ''}
 
-    validation_status, validation_message, __, videos, item = validate_transcripts_data(request)
-    if not validation_status:
-        return error_response(response, validation_message)
+    try:
+        __, videos, item = validate_transcripts_data(request)
+    except TranscriptsRequestValidationException as e:
+        return error_response(response, e.message)
 
     old_name = item.sub
 
