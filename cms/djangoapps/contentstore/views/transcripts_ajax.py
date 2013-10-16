@@ -68,8 +68,8 @@ def upload_transcripts(request):
 
     returns: response dict::
 
-        status: 'Success' or 'Error'
-        subs: Value of uploaded and saved html5 sub field in  video item.
+        status: 'Success' and HTTP 200 or 'Error' and HTTP 400.
+        subs: Value of uploaded and saved html5 sub field in video item.
     """
     response = {
         'status': 'Unknown Error',
@@ -149,7 +149,9 @@ def upload_transcripts(request):
 @login_required
 def download_transcripts(request):
     """
-    Test
+    Passes to user requested transcripts file.
+
+    Raises Http404 if unsuccessful.
     """
     item_location = request.GET.get('id')
     if not item_location:
@@ -307,12 +309,12 @@ def check_transcripts(request):
 
 def transcripts_logic(transcripts_presence, videos):
     """
-    By transcripts status, figure what show to user:
+    By `transcripts_presence` content, figure what show to user:
 
     returns: `command` and `subs`.
 
-    `command`: str,  action to front-end what to do and what show to user.
-    `subs`: str, new value of item.sub field, that should be set in module.
+    `command`: string,  action to front-end what to do and what show to user.
+    `subs`: string, new value of item.sub field, that should be set in module.
 
     `command` is one of::
 
@@ -370,7 +372,7 @@ def choose_transcripts(request):
 
     It does nothing with youtube id's.
 
-    Returns: status (Success or Error) and resulted item.sub value
+    Returns: status `Success` and resulted item.sub value or status `Error` and HTTP 400.
     """
     response = {
         'status': 'Error',
@@ -403,7 +405,7 @@ def replace_transcripts(request):
 
     Downloads subtitles from youtube and replaces all transcripts with downloaded ones.
 
-    Returns: status (Success or Error), resulted item.sub value.
+    Returns: status `Success` and resulted item.sub value or status `Error` and HTTP 400.
     """
     response = {'status': 'Error', 'subs': ''}
 
@@ -433,9 +435,9 @@ def validate_transcripts_data(request):
 
     Returns tuple of 3 elements::
 
-    data: dict, loaded json from request,
-    videos: parsed `data` to useful format,
-    item:  video item from storage
+        data: dict, loaded json from request,
+        videos: parsed `data` to useful format,
+        item:  video item from storage
 
     Raises `TranscriptsRequestValidationException` if validation is unsuccessful
     or `PermissionDenied` if user has no access.
@@ -475,8 +477,7 @@ def rename_transcripts(request):
     """
     Create copies of existing subtitles with new names of HTML5 sources.
 
-    Old subtitles are not deleted now.
-    After implementing rollback functionality,
+    Old subtitles are not deleted now, because we do not have rollback functionality.
     """
     response = {'status': 'Error', 'subs': ''}
 
@@ -503,7 +504,12 @@ def rename_transcripts(request):
 
 @login_required
 def save_transcripts(request):
-    response = {'status': 'Unknown Error'}
+    """
+    Saves video module with updated values of fields.
+
+    Returns: status `Success` or status `Error` and HTTP 400.
+    """
+    response = {'status': 'Error'}
 
     data = json.loads(request.GET.get('data', '{}'))
     if not data:
@@ -525,15 +531,15 @@ def save_transcripts(request):
         save_module(item)  # item becomes updated with new values
 
         if new_sub:
-            manage_video_subtitles_save(item, new_item)
+            manage_video_subtitles_save(None, item)
         else:
             # If `new_sub` is empty, it means that user explicitly does not want to use
-            # transcripts for current video and we remove all transcripts from storage.
+            # transcripts for current video ids and we remove all transcripts from storage.
             current_subs = data.get('current_subs')
             if current_subs is not None:
                 for sub in current_subs:
-                    remove_subs_from_store(sub, new_item)
+                    remove_subs_from_store(sub, item)
 
-        response = {'status': 'Success'}
+        response['status'] = 'Success'
 
     return JsonResponse(response)

@@ -30,6 +30,10 @@ class GetTranscriptsFromYouTubeException(Exception):
     pass
 
 
+class TranscriptsRequestValidationException(Exception):
+    pass
+
+
 def generate_subs(speed, source_speed, source_subs):
     """
     Generate transcripts from one speed to another speed.
