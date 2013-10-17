@@ -136,7 +136,7 @@ def upload_transcripts(request):
                 selected_name = video_name  # name to write to item.sub field, chosen at random.
             except NotFoundError:
                 # subtitles file `sub_attr` is not presented in the system. Nothing to copy or rename.
-                error_response(response, "Can't find transcripts in storage for {}".format(sub_attr))
+                return error_response(response, "Can't find transcripts in storage for {}".format(sub_attr))
 
         item.sub = selected_name  # write one of  new subtitles names to item.sub attribute.
         save_module(item)
