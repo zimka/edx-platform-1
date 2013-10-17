@@ -72,7 +72,7 @@ def upload_transcripts(request):
         subs: Value of uploaded and saved html5 sub field in video item.
     """
     response = {
-        'status': 'Unknown Error',
+        'status': 'Unknown server error',
         'subs': '',
     }
 

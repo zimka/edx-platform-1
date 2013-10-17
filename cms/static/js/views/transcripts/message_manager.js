@@ -214,18 +214,15 @@ function($, Backbone, _, Utils, FileUploader, gettext) {
 
             xhr = Utils.command(action, component_id, videoList, extraParam)
                 .done(function (resp) {
-                    if (resp.status && resp.status === 'Success') {
                         var sub = resp.subs;
 
                         self.render('found', resp);
                         Utils.Storage.set('sub', sub);
                         self.currentItemSubs = sub;
-                    } else {
-                        self.render('not_found', resp);
-                    }
                 })
                 .fail(function (resp) {
-                    self.showError(errorMessage);
+                    var message = resp.status || errorMessage;
+                    self.showError(message);
                 });
 
             return xhr;

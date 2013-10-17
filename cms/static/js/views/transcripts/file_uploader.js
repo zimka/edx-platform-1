@@ -182,13 +182,13 @@ function($, Backbone, _, Utils) {
         */
         xhrCompleteHandler: function (xhr) {
             var resp = JSON.parse(xhr.responseText),
-                err = (resp.error) ? resp.error : 'Error: Uploading failed.',
+                err = resp.status || 'Error: Uploading failed.',
                 sub = resp.subs;
 
             this.$progress
                 .addClass(this.invisibleClass);
 
-            if (xhr.status === 200 && resp.status === "Success") {
+            if (xhr.status === 200) {
                 this.options.messenger.render('uploaded', resp);
                 Utils.Storage.set('sub', sub);
             } else {

@@ -56,11 +56,12 @@ function($, Backbone, _, Utils, MessageManager, MetadataView) {
                 component_id =  this.$el.closest('.component').data('id'),
                 videoList = this.getVideoObjectsList(),
 
-                showServerError = function () {
+                showServerError = function (response) {
+                    var errorMessage = response.status || 'Error: Connection with server failed.';
                     self.messenger
                         .render('not_found')
                         .showError(
-                            'Error: Connection with server failed.',
+                            errorMessage,
                             true // hide buttons
                         );
                 };
@@ -81,24 +82,20 @@ function($, Backbone, _, Utils, MessageManager, MetadataView) {
             // Check current state of Timed Transcripts.
             Utils.command('check', component_id, videoList)
                 .done(function (resp) {
-                    if (resp.status === 'Success') {
-                        var params = resp,
-                            len = videoList.length,
-                            mode = (len === 1) ? videoList[0].mode : false;
+                    var params = resp,
+                        len = videoList.length,
+                        mode = (len === 1) ? videoList[0].mode : false;
 
-                        // If there are more than 1 video or just html5 source is
-                        // passed, video sources box should expand
-                        if (len > 1 || mode === 'html5') {
-                            self.openExtraVideosBar();
-                        } else {
-                            self.closeExtraVideosBar();
-                        }
-
-                        self.messenger.render(resp.command, params);
-                        self.checkIsUniqVideoTypes();
+                    // If there are more than 1 video or just html5 source is
+                    // passed, video sources box should expand
+                    if (len > 1 || mode === 'html5') {
+                        self.openExtraVideosBar();
                     } else {
-                        showServerError();
+                        self.closeExtraVideosBar();
                     }
+
+                    self.messenger.render(resp.command, params);
+                    self.checkIsUniqVideoTypes();
                     // Synchronize transcripts field in the `Advanced` tab.
                     Utils.Storage.set('sub', resp.subs);
                 })

@@ -230,19 +230,8 @@ function ($, _, Utils, FileUploader) {
 
             it('Ajax transport Error', function () {
                 var xhr = {
-                    status: 404,
+                    status: 400,
                     responseText: JSON.stringify({})
-                };
-
-                assertAjaxError(xhr);
-            });
-
-            it('Ajax status Error', function () {
-                var xhr = {
-                    status: 200,
-                    responseText: JSON.stringify({
-                        status: 'Error'
-                    })
                 };
 
                 assertAjaxError(xhr);

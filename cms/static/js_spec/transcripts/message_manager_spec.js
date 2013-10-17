@@ -259,38 +259,9 @@ function ($, _, Utils, MessageManager, FileUploader, sinon) {
                 );
             });
 
-            it('status `Error`', function () {
-
-                sinonXhr.respondWith([
-                    200,
-                    { "Content-Type": "application/json"},
-                    JSON.stringify({
-                      status: 'Error',
-                      subs: ''
-                    })
-                ]);
-
-                assertCommand(
-                    { },
-                    function () {
-                        expect(Utils.command).toHaveBeenCalledWith(
-                            action,
-                            view.component_id,
-                            videoList,
-                            void(0)
-                        );
-                        expect(view.showError).not.toHaveBeenCalled();
-                        expect(view.render.mostRecentCall.args[0])
-                            .toEqual('not_found');
-                        expect(Utils.Storage.set).not.toHaveBeenCalled();
-                    }
-                );
-
-            });
-
             it('Fail', function () {
 
-                sinonXhr.respondWith([404, {}, '']);
+                sinonXhr.respondWith([400, {}, '']);
 
                 assertCommand(
                     { },
