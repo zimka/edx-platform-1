@@ -1,5 +1,6 @@
 import logging
 import re
+from urlparse import urlparse, urljoin
 
 from staticfiles.storage import staticfiles_storage
 from staticfiles import finders
@@ -133,7 +134,16 @@ def replace_static_urls(text, data_directory, course_id=None, static_asset_path=
             else:
                 # if not, then assume it's courseware specific content and then look in the
                 # Mongo-backed database
-                url = StaticContent.convert_legacy_static_url_with_course_id(rest, course_id)
+                
+                # Check if this is not a static asset but a url with params
+                params = urlparse(rest)[4]
+                if not params:
+                    url = StaticContent.convert_legacy_static_url_with_course_id(rest, course_id)
+                else:
+                    org, name, __ = course_id.split('/')
+                    part = '/c4x/' + org + '/' + name + '/asset/'
+                    url = urljoin(part, rest)
+
         # Otherwise, look the file up in staticfiles_storage, and append the data directory if needed
         else:
             course_path = "/".join((static_asset_path or data_directory, rest))
