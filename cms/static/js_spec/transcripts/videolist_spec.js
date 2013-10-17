@@ -8,7 +8,10 @@ define(
     ],
 function ($, _, Utils, VideoList, MessageManager, MetadataView, MetadataModel, sinon) {
     describe('CMS.Views.Metadata.VideoList', function () {
-        var correctMessanger = MessageManager,
+        var videoListEntryTemplate = readFixtures(
+                'transcripts/metadata-videolist-entry.underscore'
+            ),
+            correctMessanger = MessageManager,
             messenger = correctMessanger.prototype,
             abstractEditor = MetadataView.AbstractEditor.prototype,
             component_id = 'component_id',
@@ -63,9 +66,6 @@ function ($, _, Utils, VideoList, MessageManager, MetadataView, MetadataModel, s
                     'class': 'component',
                     'data-id': component_id
                 }),
-                videoListEntryTemplate = readFixtures(
-                    'transcripts/metadata-videolist-entry.underscore'
-                ),
                 model = new MetadataModel(modelStub),
                 videoList, $el;
 

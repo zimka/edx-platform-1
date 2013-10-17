@@ -8,7 +8,13 @@ define(
 function ($, _, Utils, MessageManager, FileUploader, sinon) {
 
     describe('Transcripts.MessageManager', function () {
-        var handlers = {
+        var videoListEntryTemplate = readFixtures(
+                'transcripts/metadata-videolist-entry.underscore'
+            ),
+            foundTemplate = readFixtures(
+                'transcripts/messages/transcripts-found.underscore'
+            ),
+            handlers = {
                 importHandler: ['replace', 'Error: Import failed.'],
                 replaceHandler: ['replace', 'Error: Replacing failed.'],
                 chooseHandler: ['choose', 'Error: Choosing failed.', 'video_id']
@@ -16,14 +22,7 @@ function ($, _, Utils, MessageManager, FileUploader, sinon) {
             view, fileUploader, sinonXhr;
 
         beforeEach(function () {
-
-            var videoListEntryTemplate = readFixtures(
-                    'transcripts/metadata-videolist-entry.underscore'
-                ),
-                foundTemplate = readFixtures(
-                    'transcripts/messages/transcripts-found.underscore'
-                ),
-                videoList, $container;
+            var videoList, $container;
 
             fileUploader = FileUploader.prototype;
 

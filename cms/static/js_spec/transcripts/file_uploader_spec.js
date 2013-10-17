@@ -6,16 +6,15 @@ define(
     ],
 function ($, _, Utils, FileUploader) {
     describe('Transcripts.FileUploader', function () {
-        var view;
+        var videoListEntryTemplate = readFixtures(
+                'transcripts/metadata-videolist-entry.underscore'
+            ),
+            fileUploadTemplate = readFixtures(
+                'transcripts/file-upload.underscore'
+            ),
+            view;
 
         beforeEach(function () {
-            var videoListEntryTemplate = readFixtures(
-                    'transcripts/metadata-videolist-entry.underscore'
-                ),
-                fileUploadTemplate = readFixtures(
-                    'transcripts/file-upload.underscore'
-                );
-
             setFixtures(
                 $("<div>", {id: "metadata-videolist-entry"})
                     .html(videoListEntryTemplate)
