@@ -1,10 +1,10 @@
 import unittest
 from xmodule.modulestore import Location
-from .import get_test_system
+from .import get_test_system, get_test_descriptor_system
 from test_util_open_ended import MockQueryDict, DummyModulestore
 from xmodule.open_ended_grading_classes.peer_grading_service import MockPeerGradingService
 from mock import Mock
-from xmodule.peer_grading_module import PeerGradingModule, InvalidLinkLocation
+from xmodule.peer_grading_module import PeerGradingModule, InvalidLinkLocation, PeerGradingDescriptor
 from xblock.field_data import DictFieldData
 from xblock.fields import ScopeIds
 from xmodule.modulestore.exceptions import ItemNotFoundError, NoPathToItem
@@ -217,6 +217,37 @@ class PeerGradingModuleLinkedTest(unittest.TestCase, DummyModulestore):
         self.test_system.open_ended_grading_interface = None
         self.setup_modulestore(COURSE)
 
+    @property
+    def field_data(self):
+        """
+        Setup the proper field data for a peer grading module.
+        """
+
+        return DictFieldData({
+            'data': '<peergrading/>',
+            'location': self.problem_location,
+            'use_for_single_location': True,
+            'link_to_location': self.coe_location.url(),
+            'graded': True,
+            })
+
+    @property
+    def scope_ids(self):
+        """
+        Return the proper scope ids for the peer grading module.
+        """
+        return ScopeIds(None, None, self.problem_location, self.problem_location)
+
+    def _create_peer_grading_descriptor_with_linked_problem(self):
+        # Initialize the peer grading module.
+        system = get_test_descriptor_system()
+
+        return system.construct_xblock_from_class(
+            PeerGradingDescriptor,
+            field_data=self.field_data,
+            scope_ids=self.scope_ids
+        )
+
     def _create_peer_grading_with_linked_problem(self, location, valid_linked_descriptor=True):
         """
         Create a peer grading problem with a linked location.
@@ -235,34 +266,56 @@ class PeerGradingModuleLinkedTest(unittest.TestCase, DummyModulestore):
         else:
             pg_descriptor.get_required_module_descriptors = lambda: []
 
-        # Setup the proper field data for the peer grading module.
-        field_data = DictFieldData({
-            'data': '<peergrading/>',
-            'location': self.problem_location,
-            'use_for_single_location': True,
-            'link_to_location': self.coe_location.url(),
-            'graded': True,
-        })
-
         # Initialize the peer grading module.
         peer_grading = PeerGradingModule(
             pg_descriptor,
             self.test_system,
-            field_data,
-            ScopeIds(None, None, self.problem_location, self.problem_location)
+            self.field_data,
+            self.scope_ids,
         )
 
         return peer_grading
 
+    def _get_descriptor_with_invalid_link(self, exception_to_raise):
+        """
+        Ensure that a peer grading descriptor with an invalid link will return an empty list.
+        """
+
+        # Create a descriptor, and make loading an item throw an error.
+        descriptor = self._create_peer_grading_descriptor_with_linked_problem()
+        descriptor.system.load_item = Mock(side_effect=exception_to_raise)
+
+        # Ensure that modules is a list of length 0.
+        modules = descriptor.get_required_module_descriptors()
+        self.assertIsInstance(modules, list)
+        self.assertEqual(len(modules), 0)
+
+    def test_descriptor_with_nopath(self):
+        """
+        Test to see if a descriptor with a NoPathToItem error when trying to get
+        its linked module behaves properly.
+        """
+
+        self._get_descriptor_with_invalid_link(NoPathToItem)
+
+    def test_descriptor_with_item_not_found(self):
+        """
+        Test to see if a descriptor with an ItemNotFound error when trying to get
+        its linked module behaves properly.
+        """
+
+        self._get_descriptor_with_invalid_link(ItemNotFoundError)
+
     def test_invalid_link(self):
         """
-        Ensure that a peer grading problem with no linked locations raises an error.
+        Ensure that a peer grading problem with no linked locations stays in panel mode.
         """
 
         # Setup the peer grading module with no linked locations.
-        with self.assertRaises(InvalidLinkLocation):
-            self._create_peer_grading_with_linked_problem(self.coe_location, valid_linked_descriptor=False)
+        peer_grading = self._create_peer_grading_with_linked_problem(self.coe_location, valid_linked_descriptor=False)
 
+        self.assertEqual(peer_grading.use_for_single_location_local, False)
+        self.assertEqual(peer_grading.use_for_single_location, True)
 
     def test_linked_problem(self):
         """
