@@ -88,6 +88,10 @@ class TestSaveSubsToStore(ModuleStoreTestCase):
             pass
 
     def setUp(self):
+
+        self.course = CourseFactory.create(
+            org=self.org, number=self.number, display_name=self.display_name)
+
         self.subs = {
             'start': [100, 200, 240, 390, 1000],
             'end': [200, 240, 380, 1000, 1500],
@@ -102,10 +106,17 @@ class TestSaveSubsToStore(ModuleStoreTestCase):
 
         self.subs_id = str(uuid4())
         filename = 'subs_{0}.srt.sjson'.format(self.subs_id)
-        self.course = CourseFactory.create(
-            org=self.org, number=self.number, display_name=self.display_name)
         self.content_location = StaticContent.compute_location(
             self.org, self.number, filename
+        )
+
+        # incorrect  subs
+        self.unjsonable_subs = set([1])  # set can't be serialized
+
+        self.unjsonable_subs_id = str(uuid4())
+        filename_unjsonable = 'subs_{0}.srt.sjson'.format(self.unjsonable_subs_id)
+        self.content_location_unjsonable = StaticContent.compute_location(
+            self.org, self.number, filename_unjsonable
         )
 
         self.clear_subs_content()
@@ -121,6 +132,22 @@ class TestSaveSubsToStore(ModuleStoreTestCase):
 
         self.assertTrue(contentstore().find(self.content_location))
         self.assertEqual(result_location, self.content_location)
+
+    def test_save_unjsonable_subs_to_store(self):
+        """
+        Assures that subs, that can't be dumped, can't be found later.
+        """
+        with self.assertRaises(NotFoundError):
+            contentstore().find(self.content_location_unjsonable)
+
+        with self.assertRaises(TypeError):
+            transcripts_utils.save_subs_to_store(
+                self.unjsonable_subs,
+                self.unjsonable_subs_id,
+                self.course)
+
+        with self.assertRaises(NotFoundError):
+            contentstore().find(self.content_location_unjsonable)
 
     def tearDown(self):
         self.clear_subs_content()
