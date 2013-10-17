@@ -483,6 +483,8 @@ def rename_transcripts(request):
     Create copies of existing subtitles with new names of HTML5 sources.
 
     Old subtitles are not deleted now, because we do not have rollback functionality.
+
+    If succeed, Item.sub will be chosen randomly from html5 video sources provided by front-end.
     """
     response = {'status': 'Error', 'subs': ''}
 

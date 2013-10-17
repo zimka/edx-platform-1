@@ -486,7 +486,7 @@ Feature: Video Component Editor
         And I see status message "not found"
         And I upload the transcripts file "test_transcripts.srt"
         Then I see status message "uploaded_successfully"
-        And I see value "video_name_1" in the field "HTML5 Transcript"
+        And I see value "video_name_1|video_name_2" in the field "HTML5 Transcript"
 
         And I clear field number 1
         Then I see status message "found"
