@@ -3,12 +3,13 @@ Test for Mock_Youtube_Server
 """
 import unittest
 import threading
-import urllib
+import requests
 from mock_youtube_server import MockYoutubeServer
+
 
 class MockYoutubeServerTest(unittest.TestCase):
     '''
-    A mock version of the Youtube provider server that listens on a local
+    A mock version of the YouTube provider server that listens on a local
     port and responds with jsonp.
 
     Used for lettuce BDD tests in lms/courseware/features/video.feature
@@ -40,41 +41,37 @@ class MockYoutubeServerTest(unittest.TestCase):
         # GET request
 
         # unused url
-        response_handle = urllib.urlopen(
+        response = requests.get(
             'http://127.0.0.1:8034/some url',
         )
-        response = response_handle.read()
-        self.assertEqual("Unused url", response)
+        self.assertEqual("Unused url", response.content)
 
         # video player test url, callback shoud be presented in url params
-        response_handle = urllib.urlopen(
+        response = requests.get(
             'http://127.0.0.1:8034/test_youtube/OEoXaMPEzfM?v=2&alt=jsonc&callback=callback_func',
         )
-        response = response_handle.read()
-        self.assertEqual("""callback_func({"message": "I\'m youtube."})""", response)
+        self.assertEqual("""callback_func({"message": "I\'m youtube."})""", response.content)
 
         # transcripts test url
-        response_handle = urllib.urlopen(
+        response = requests.get(
             'http://127.0.0.1:8034/test_transcripts_youtube/t__eq_exist',
         )
-        response = response_handle.read()
         self.assertEqual(
             '<?xml version="1.0" encoding="utf-8" ?><transcript><text start="1.0" dur="1.0">Equal transcripts</text></transcript>',
-            response
+            response.content
         )
 
         # transcripts test url
-        response_handle = urllib.urlopen(
+        response = requests.get(
             'http://127.0.0.1:8034/test_transcripts_youtube/t_neq_exist',
         )
-        response = response_handle.read()
         self.assertEqual(
             '<?xml version="1.0" encoding="utf-8" ?><transcript><text start="1.1" dur="5.5">Transcripts sample, different that on server</text></transcript>',
-            response
+            response.content
         )
 
         # transcripts test url, not trans_exist youtube_id, so 404 should be returned
-        response_handle = urllib.urlopen(
+        response = requests.get(
             'http://127.0.0.1:8034/test_transcripts_youtube/some_id',
         )
-        self.assertEqual(404, response_handle.code)
+        self.assertEqual(404, response.status_code)
