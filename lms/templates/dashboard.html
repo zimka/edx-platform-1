@@ -103,6 +103,43 @@
       });
       return false;
     });
+
+    var accessible_modal = function(trigger, close_button, tabbables, modal_id) {
+      // "tabbables" are the selectors of the modal elements you want to tab
+      // through. ".close-modal" should always be first in the list,
+      // and the selector for the submit should go last.
+      $(trigger).click(function(){
+        // when modal is open
+        $(close_button).attr("tabindex", "1");
+        $(tabbables).attr("tabindex", "2");
+        $(close_button).focus()
+        var last;
+        if ($(tabbables).length !== 0) {
+          last = $(tabbables).last();
+        } else {
+          last = $(close_button);
+        };
+        last.on('keydown', function(e){
+          var keyCode = e.keyCode || e.which;
+          var tabKey = 9;
+          if (keyCode === tabKey) {
+            e.preventDefault();
+            $(close_button).focus();
+          }
+        });
+        // return focus to trigger on close
+        $(close_button).click(function(){
+          $(trigger).focus()
+        });
+      });
+    };
+
+    accessible_modal(".edit-name", "#apply_name_change .close-modal", "#new_name_field, #name_rationale_field, #submit");
+
+    accessible_modal(".edit-email", "#change_email .close-modal", "#new_email_field, #new_email_password, #submit_email_change");
+
+    accessible_modal("#pwd_reset_button", "#password_reset_complete .close-modal", "");
+
   })(this)
   </script>
 </%block>
