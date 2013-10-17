@@ -33,7 +33,12 @@ define(["backbone", "underscore", "js/models/metadata"], function(Backbone, _, M
                         new Metadata.List(data);
                     }
                     else if(model.getType() === MetadataModel.VIDEO_LIST_TYPE) {
-                        new Metadata.VideoList(data);
+                        require(
+                            ["js/views/transcripts/metadata_videolist"],
+                            function (VideoList) {
+                                new VideoList(data);
+                            }
+                        );
                     }
                     else {
                         // Everything else is treated as GENERIC_TYPE, which uses String editor.
@@ -358,7 +363,7 @@ define(["backbone", "underscore", "js/models/metadata"], function(Backbone, _, M
             // We don't call updateModel here since it's bound to the
             // change event
             var list = this.model.get('value') || [];
-            this.setValueInEditor(list.concat(['']))
+            this.setValueInEditor(list.concat(['']));
             this.$el.find('.create-setting').addClass('is-disabled');
         },
 
