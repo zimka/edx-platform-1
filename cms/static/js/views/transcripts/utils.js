@@ -1,4 +1,4 @@
-define(["jquery", "backbone", "underscore", "jquery.ajaxQueue"], function($, Backbone, _) {
+define(["jquery", "underscore", "jquery.ajaxQueue"], function($, _) {
     var Utils = (function () {
         var Storage = {};
 

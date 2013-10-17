@@ -3,8 +3,8 @@ define(
         "jquery", "underscore",
         "js/views/transcripts/utils", "js/views/transcripts/metadata_videolist",
         "js/views/transcripts/message_manager",
-        "js/views/metadata", "js/models/metadata", "sinon", "js/collections/metadata",
-        "underscore.string", "xmodule", "jasmine-jquery"
+        "js/views/metadata", "js/models/metadata", "sinon",
+        "xmodule", "jasmine-jquery"
     ],
 function ($, _, Utils, VideoList, MessageManager, MetadataView, MetadataModel, sinon) {
     describe('CMS.Views.Metadata.VideoList', function () {

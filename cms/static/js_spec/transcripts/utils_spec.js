@@ -1,10 +1,10 @@
 define(
     [
-        "jquery", "backbone", "underscore",
+        "jquery", "underscore",
         "js/views/transcripts/utils",
         "underscore.string", "xmodule", "jasmine-jquery"
     ],
-function ($, Backbone, _, Utils, _str) {
+function ($, _, Utils, _str) {
     describe('Transcripts.Utils', function () {
         var videoId = 'OEoXaMPEzfM',
             ytLinksList = (function (id) {
