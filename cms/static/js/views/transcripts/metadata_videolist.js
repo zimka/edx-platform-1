@@ -166,11 +166,11 @@ function($, Backbone, _, Utils, MessageManager, MetadataView) {
                 val = value.filter(_.identity),
                 placeholders = this.getPlaceholders(val);
 
-            for (var i = 0; i < 3; i += 1) {
-                list.eq(i)
-                    .val(val[i] || null)
-                    .attr('placeholder', placeholders[i]);
-            }
+            list.each(function (index) {
+                $(this)
+                    .val(val[index] || null)
+                    .attr('placeholder', placeholders[index]);
+            });
         },
 
 
