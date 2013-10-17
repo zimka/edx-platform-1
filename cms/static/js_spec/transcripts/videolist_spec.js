@@ -102,6 +102,27 @@ function ($, _, Utils, VideoList, MessageManager, MetadataView, MetadataModel, s
                 el: $el,
                 model: model
             });
+
+            this.addMatchers({
+                assertValueInView: function(expected) {
+                    var actualValue = this.actual.getValueFromEditor();
+                    return this.env.equals_(actualValue, expected);
+                },
+                assertCanUpdateView: function (expected) {
+                    var actual = this.actual,
+                        actualValue;
+
+                    actual.setValueInEditor(expected);
+                    actualValue = actual.getValueFromEditor();
+
+                    return this.env.equals_(actualValue, expected);
+                },
+                assertIsCorrectVideoList: function (expected) {
+                    var actualValue = this.actual.getVideoObjectsList();
+
+                    return this.env.equals_(actualValue, expected);
+                }
+            });
         });
 
         afterEach(function () {
@@ -110,7 +131,7 @@ function ($, _, Utils, VideoList, MessageManager, MetadataView, MetadataModel, s
         });
 
 
-        var assertResponse = function (expectFunc, prep) {
+        var waitsForResponse = function (expectFunc, prep) {
             var flag = false;
 
             if (prep) {
@@ -139,7 +160,7 @@ function ($, _, Utils, VideoList, MessageManager, MetadataView, MetadataModel, s
         });
 
         describe('Render', function () {
-            var assertRendering = function (videoList) {
+            var assertToHaveBeenRendered = function (videoList) {
                     expect(abstractEditor.render).toHaveBeenCalled();
                     expect(Utils.command).toHaveBeenCalledWith(
                         'check',
@@ -157,8 +178,8 @@ function ($, _, Utils, VideoList, MessageManager, MetadataView, MetadataModel, s
                 };
 
             it('is rendered in correct way', function () {
-                assertResponse(function () {
-                    assertRendering(videoList);
+                waitsForResponse(function () {
+                    assertToHaveBeenRendered(videoList);
                 });
             });
 
@@ -186,9 +207,9 @@ function ($, _, Utils, VideoList, MessageManager, MetadataView, MetadataModel, s
                 spyOn(view, 'getVideoObjectsList').andReturn(videoListLength);
                 spyOn(view, 'openExtraVideosBar');
 
-                assertResponse(
+                waitsForResponse(
                     function () {
-                        assertRendering(videoListLength);
+                        assertToHaveBeenRendered(videoListLength);
                         view.getVideoObjectsList.andReturn(videoListLength);
                         expect(view.openExtraVideosBar).toHaveBeenCalled();
                     },
@@ -198,9 +219,9 @@ function ($, _, Utils, VideoList, MessageManager, MetadataView, MetadataModel, s
                     }
                 );
 
-                assertResponse(
+                waitsForResponse(
                     function () {
-                        assertRendering(videoListHtml5mode);
+                        assertToHaveBeenRendered(videoListHtml5mode);
                         expect(view.openExtraVideosBar).toHaveBeenCalled();
                     },
                     function () {
@@ -225,9 +246,9 @@ function ($, _, Utils, VideoList, MessageManager, MetadataView, MetadataModel, s
                 spyOn(view, 'getVideoObjectsList').andReturn(videoList);
                 spyOn(view, 'closeExtraVideosBar');
 
-                assertResponse(
+                waitsForResponse(
                     function () {
-                        assertRendering(videoList);
+                        assertToHaveBeenRendered(videoList);
                         expect(view.closeExtraVideosBar).toHaveBeenCalled();
                     },
                     function () {
@@ -363,26 +384,13 @@ function ($, _, Utils, VideoList, MessageManager, MetadataView, MetadataModel, s
             expect(view.$extraVideosBar).toHaveClass('is-visible');
         });
 
-        var assertValueInView = function (view, expectedValue) {
-            expect(view.getValueFromEditor()).toEqual(expectedValue);
-        };
-
-        var assertCanUpdateView = function (view, newValue) {
-            view.setValueInEditor(newValue);
-            expect(view.getValueFromEditor()).toEqual(newValue);
-        };
-
         it('getValueFromEditor', function () {
-            assertValueInView(view, modelStub.value);
+            expect(view).assertValueInView(modelStub.value);
         });
 
         it('setValueInEditor', function () {
-            assertCanUpdateView(view, ['abc.mp4']);
+            expect(view).assertCanUpdateView(['abc.mp4']);
         });
-
-        var assertVideoList = function (view, newValue) {
-            expect(view.getVideoObjectsList()).toEqual(newValue);
-        };
 
         it('getVideoObjectsList', function () {
             var value = [
@@ -403,7 +411,7 @@ function ($, _, Utils, VideoList, MessageManager, MetadataView, MetadataModel, s
                 'video.mp4',
                 'video'
             ]);
-            assertVideoList(view, value);
+            expect(view).assertIsCorrectVideoList(value);
         });
 
         describe('getPlaceholders', function () {
