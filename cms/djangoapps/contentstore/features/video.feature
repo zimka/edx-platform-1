@@ -48,9 +48,9 @@ Feature: CMS.Video Component
     And Make sure captions are closed
     Then Captions become "invisible" after 3 seconds
     And I hover over button "CC"
-    Then Captions are "invisible"
+    Then Captions are "visible"
     And I hover over button "volume"
-    Then Captions are "invisible"
+    Then Captions are "invisible" after 3 seconds
 
   # 8
   Scenario: Open captions never become invisible
