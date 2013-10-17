@@ -11,7 +11,7 @@ function($, Backbone, _, Utils) {
         validFileExtensions: ['srt'],
 
         events: {
-            'change .file-input': 'changeHadler',
+            'change .file-input': 'changeHandler',
             'click .setting-upload': 'clickHandler'
         },
 
@@ -92,7 +92,7 @@ function($, Backbone, _, Utils) {
         * @param {object} event Event object.
         *
         */
-        changeHadler: function (event) {
+        changeHandler: function (event) {
             event.preventDefault();
 
             this.options.messenger.hideError();
