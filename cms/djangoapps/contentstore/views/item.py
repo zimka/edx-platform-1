@@ -65,7 +65,7 @@ def save_item(request):
         old_item = modulestore().get_item(item_location)
     except (ItemNotFoundError, InvalidLocationError):
         log.error("Can't find item by location.")
-        return JsonResponse(status=404)
+        return JsonResponse({"error": "Can't find item by location"}, 404)
 
     # check permissions for this user within this course
     if not has_access(request.user, item_location):
@@ -113,14 +113,8 @@ def save_item(request):
         # commit to datastore
         store.update_metadata(item_location, own_metadata(existing_item))
 
-    try:
-        new_item = modulestore().get_item(item_location)
-    except (ItemNotFoundError, InvalidLocationError):
-        log.error("Can't find item by location.")
-        return JsonResponse(status=404)
-
-    if new_item.category == 'video':
-        manage_video_subtitles_save(old_item, new_item)
+        if existing_item.category == 'video':
+            manage_video_subtitles_save(old_item, existing_item)
 
     return JsonResponse()
 
