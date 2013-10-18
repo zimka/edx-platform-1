@@ -4,9 +4,7 @@
 Developer’s workflow for the timed transcripts in CMS.
 ======================================================
 
-**Transcripts workflow.**
-
-:download:`This is multipage pdf version. Only first page is shown. Click on image to view other pages. <transcripts_workflow.pdf>`
+:download:`Multipage pdf version of Timed Transcripts workflow. <transcripts_workflow.pdf>`
 
 :download:`Open office graph version (source for pdf). <transcripts_workflow.odg>`
 
@@ -14,7 +12,7 @@ Developer’s workflow for the timed transcripts in CMS.
 
 
 Description
-++++++++++++
+===========
 
 Timed Transcripts functionality is added in separate tab of Video module Editor, that is active by default. This tab is called `Basic`, another tab is called `Advanced` and contains default metadata fields.
 
@@ -26,7 +24,7 @@ Front-end part of `Basic` tab has 4 editors/views:
     * Display name
     * 3 editors for inserting Video URLs.
 
- Video URL fields might contain 3 kinds of URLs:
+Video URL fields might contain 3 kinds of URLs:
     * **YouTube** link. There are supported formats:
         * http://www.youtube.com/watch?v=OEoXaMPEzfM&feature=feedrec_grec_index ;
         * http://www.youtube.com/user/IngridMichaelsonVEVO#p/a/u/1/OEoXaMPEzfM ;
@@ -58,7 +56,7 @@ To remove timed transcripts file from the video just go to `Advanced` tab and cl
 
 
 Commands
-++++++++
+========
 
 Command from front-end point of view is just a reference to the needed View with possible actions that user can do depending on conditions described below (See edx-platform/cms/static/js/views/transcripts/message_manager.js:21-29).
 
@@ -74,7 +72,7 @@ So,
 
 
 Synchronization and Saving workflow
-++++++++++++++++++++++++++++++++++++
+====================================
 
 
 For now saving mechanism works as follows:
@@ -87,7 +85,7 @@ On tab switching and when save action is invoked, JavaScript code synchronize co
 
 
 API
-+++
+===
 
 We provide 7 API methods to work with timed transcripts
 (edx-platform/cms/urls.py:23-29):
@@ -235,6 +233,9 @@ After invoking this method all changes will be saved that were done before this 
             status: 'Success' or 'Error'
         }
 
+
+Transcripts modules:
+====================
 
 .. automodule:: contentstore.views.transcripts_ajax
     :members:
