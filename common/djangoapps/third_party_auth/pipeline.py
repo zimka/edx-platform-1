@@ -520,13 +520,17 @@ def ensure_user_information(
     if is_dashboard or is_profile:
         return
 
-    if dispatch_to_login:
+    if dispatch_to_login and user_inactive:
         return redirect(_create_redirect_url(AUTH_DISPATCH_URLS[AUTH_ENTRY_LOGIN], strategy))
+    elif dispatch_to_login and user_unset:
+        return redirect(_create_redirect_url(AUTH_DISPATCH_URLS[AUTH_ENTRY_REGISTER], strategy))
 
     # TODO (ECOM-369): Consolidate this with `dispatch_to_login`
     # once the A/B test completes. # pylint: disable=fixme
-    if dispatch_to_login_2:
+    if dispatch_to_login_2 and user_inactive:
         return redirect(_create_redirect_url(AUTH_DISPATCH_URLS[AUTH_ENTRY_LOGIN_2], strategy))
+    elif dispatch_to_login_2 and user_unset:
+        return redirect(_create_redirect_url(AUTH_DISPATCH_URLS[AUTH_ENTRY_REGISTER_2], strategy))
 
     if is_register and user_unset:
         return redirect(_create_redirect_url(AUTH_DISPATCH_URLS[AUTH_ENTRY_REGISTER], strategy))

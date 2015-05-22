@@ -8895,13 +8895,13 @@ msgstr "Для всех, везде, всегда"
 #. http://openedx.org for more information.
 #: lms/templates/index.html
 msgid "Welcome to Open edX!"
-msgstr "Добро пожаловать в Open edX!"
+msgstr "Будущее online обучения"
 
 #. Translators: 'Open edX' is a brand, please keep this untranslated. See
 #. http://openedx.org for more information.
 #: lms/templates/index.html
 msgid "It works! This is the default homepage for this Open edX instance."
-msgstr "Работает! Это образец домашней страницы Open edX для этой ссылки."
+msgstr "для всех, везде, в любое время"
 
 #: lms/templates/invalid_email_key.html
 msgid "Invalid email change key"
@@ -14253,7 +14253,7 @@ msgid ""
 "enrolling in courses, click the link in the message."
 msgstr ""
 "Вы успешно создали аккаунт на {platform_name}. Мы отправили сообщение об "
-"активации учетной записи в {адрес электронной почты}. Чтобы активировать "
+"активации учетной записи в {email}. Чтобы активировать "
 "свой аккаунт и начать поступления на курсы, нажмите на ссылку в сообщении."
 
 #: lms/templates/registration/activation_complete.html
