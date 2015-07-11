@@ -54,6 +54,7 @@ from openedx.core.djangoapps.course_groups.models import CourseUserGroup
 from openedx.core.djangoapps.content.course_structures.models import CourseStructure
 from opaque_keys.edx.keys import UsageKey
 from openedx.core.djangoapps.course_groups.cohorts import add_user_to_cohort, is_course_cohorted
+from openedx.core.djangoapps.grading_policy import get_grading_type
 from student.models import CourseEnrollment, CourseAccessRole
 from verify_student.models import SoftwareSecurePhotoVerification
 from util.query import use_read_replica_if_available
@@ -814,9 +815,11 @@ def _order_problems(blocks):
     assignments = dict()
     # First, sort out all the blocks into their correct assignments and all the
     # assignments into their correct types.
+    grading_type = get_grading_type()
+
     for block in blocks:
         # Put the assignments in order into the assignments list.
-        if blocks[block]['block_type'] == 'sequential':
+        if blocks[block]['block_type'] == grading_type:
             block_format = blocks[block]['format']
             if block_format not in assignments:
                 assignments[block_format] = OrderedDict()
@@ -826,7 +829,7 @@ def _order_problems(blocks):
         if blocks[block]['block_type'] == 'problem' and blocks[block]['graded'] is True:
             current = blocks[block]['parent']
             # crawl up the tree for the sequential block
-            while blocks[current]['block_type'] != 'sequential':
+            while blocks[current]['block_type'] != grading_type:
                 current = blocks[current]['parent']
 
             current_format = blocks[current]['format']

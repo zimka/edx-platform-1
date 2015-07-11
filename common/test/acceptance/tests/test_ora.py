@@ -67,32 +67,37 @@ class OpenResponseTest(UniqueCourseTest):
         course_fix.add_children(
             XBlockFixtureDesc('chapter', 'Test Section').add_children(
                 XBlockFixtureDesc('sequential', 'Test Subsection').add_children(
-
-                    XBlockFixtureDesc(
-                        'combinedopenended',
-                        'Self-Assessed',
-                        data=load_data_str('ora_self_problem.xml'),
-                        metadata={
-                            'graded': True,
-                        },
+                    XBlockFixtureDesc('vertical', 'Test Unit').add_children(
+                        XBlockFixtureDesc(
+                            'combinedopenended',
+                            'Self-Assessed',
+                            data=load_data_str('ora_self_problem.xml'),
+                            metadata={
+                                'graded': True,
+                            },
+                        ),
                     ),
 
-                    XBlockFixtureDesc(
-                        'combinedopenended',
-                        'AI-Assessed',
-                        data=load_data_str('ora_ai_problem.xml'),
-                        metadata={
-                            'graded': True,
-                        },
+                    XBlockFixtureDesc('vertical', 'Test Unit 2').add_children(
+                        XBlockFixtureDesc(
+                            'combinedopenended',
+                            'AI-Assessed',
+                            data=load_data_str('ora_ai_problem.xml'),
+                            metadata={
+                                'graded': True,
+                            },
+                        ),
                     ),
 
-                    XBlockFixtureDesc(
-                        'combinedopenended',
-                        self.peer_problem_name,
-                        data=load_data_str('ora_peer_problem.xml'),
-                        metadata={
-                            'graded': True,
-                        },
+                    XBlockFixtureDesc('vertical', 'Test Unit 3').add_children(
+                        XBlockFixtureDesc(
+                            'combinedopenended',
+                            self.peer_problem_name,
+                            data=load_data_str('ora_peer_problem.xml'),
+                            metadata={
+                                'graded': True,
+                            },
+                        ),
                     ),
 
                     # This is the interface a student can use to grade his/her peers

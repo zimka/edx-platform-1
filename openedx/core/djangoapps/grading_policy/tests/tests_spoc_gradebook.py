@@ -1,0 +1,149 @@
+"""
+lms/djangoapps/instructor/tests/test_spoc_gradebook.py
+"""
+import unittest
+from django.test.utils import override_settings
+from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
+from django.conf import settings
+from django.core.urlresolvers import reverse
+from nose.plugins.attrib import attr
+from xmodule.modulestore.tests.factories import CourseFactory, ItemFactory
+from student.tests.factories import UserFactory, CourseEnrollmentFactory, AdminFactory
+from capa.tests.response_xml_factory import StringResponseXMLFactory
+from courseware.tests.factories import StudentModuleFactory
+from xmodule.modulestore.django import modulestore
+
+FEATURES_WITH_CUSTOM_GRADING = settings.FEATURES.copy()
+FEATURES_WITH_CUSTOM_GRADING['ENABLE_CUSTOM_GRADING'] = True
+USER_COUNT = 11
+
+
+@unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')
+@attr('shard_1')
+@override_settings(FEATURES=FEATURES_WITH_CUSTOM_GRADING, GRADING_TYPE='vertical')
+class TestGradebookVertical(ModuleStoreTestCase):
+    """
+    Test functionality of the spoc gradebook. Sets up a course with assignments and
+    students who've scored various scores on these assignments. Base class for further
+    gradebook tests.
+    """
+    grading_policy = None
+
+    def setUp(self):
+        super(TestGradebookVertical, self).setUp()
+
+        instructor = AdminFactory.create()
+        self.client.login(username=instructor.username, password='test')
+
+        # remove the caches
+        modulestore().request_cache = None
+        modulestore().metadata_inheritance_cache_subsystem = None
+
+        kwargs = {}
+        if self.grading_policy is not None:
+            kwargs['grading_policy'] = self.grading_policy
+
+        self.course = CourseFactory.create(**kwargs)
+        chapter = ItemFactory.create(
+            parent_location=self.course.location,
+            category="sequential",
+        )
+        section = ItemFactory.create(
+            parent_location=chapter.location,
+            category="vertical",
+            metadata={'graded': True, 'format': 'Homework'}
+        )
+
+        self.users = [UserFactory.create() for _ in xrange(USER_COUNT)]
+
+        for user in self.users:
+            CourseEnrollmentFactory.create(user=user, course_id=self.course.id)
+
+        for i in xrange(USER_COUNT - 1):
+            category = "problem"
+            item = ItemFactory.create(
+                parent_location=section.location,
+                category=category,
+                data=StringResponseXMLFactory().build_xml(answer='foo'),
+                metadata={'rerandomize': 'always'}
+            )
+
+            for j, user in enumerate(self.users):
+                StudentModuleFactory.create(
+                    grade=1 if i < j else 0,
+                    max_grade=1,
+                    student=user,
+                    course_id=self.course.id,
+                    module_state_key=item.location
+                )
+
+        self.response = self.client.get(reverse(
+            'spoc_gradebook',
+            args=(self.course.id.to_deprecated_string(),)
+        ))
+
+    def test_response_code(self):
+        self.assertEquals(self.response.status_code, 200)
+
+
+@unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')
+@attr('shard_1')
+class TestLetterCutoffPolicy(TestGradebookVertical):
+    """
+    Tests advanced grading policy (with letter grade cutoffs). Includes tests of
+    UX display (color, etc).
+    """
+    grading_policy = {
+        "GRADER": [
+            {
+                "type": "Homework",
+                "min_count": 1,
+                "drop_count": 0,
+                "short_label": "HW",
+                "weight": 1
+            },
+        ],
+        "GRADE_CUTOFFS": {
+            'A': .9,
+            'B': .8,
+            'C': .7,
+            'D': .6,
+        }
+    }
+
+    def test_styles(self):
+        self.assertIn("grade_A {color:green;}", self.response.content)
+        self.assertIn("grade_B {color:Chocolate;}", self.response.content)
+        self.assertIn("grade_C {color:DarkSlateGray;}", self.response.content)
+        self.assertIn("grade_D {color:DarkSlateGray;}", self.response.content)
+
+    def test_assigned_grades(self):
+        # Users 9-10 have >= 90% on Homeworks [2]
+        # Users 9-10 have >= 90% on the class [2]
+        # One use at the top of the page [1]
+        self.assertEquals(5, self.response.content.count('grade_A'))
+
+        # User 8 has 80 <= Homeworks < 90 [1]
+        # User 8 has 80 <= class < 90 [1]
+        # One use at the top of the page [1]
+        self.assertEquals(3, self.response.content.count('grade_B'))
+
+        # User 7 has 70 <= Homeworks < 80 [1]
+        # User 7 has 70 <= class < 80 [1]
+        # One use at the top of the page [1]
+        self.assertEquals(3, self.response.content.count('grade_C'))
+
+        # User 6 has 60 <= Homeworks < 70 [1]
+        # User 6 has 60 <= class < 70 [1]
+        # One use at the top of the page [1]
+        self.assertEquals(3, self.response.content.count('grade_C'))
+
+        # Users 1-5 have 60% > grades > 0 on Homeworks [5]
+        # Users 1-5 have 60% > grades > 0 on the class [5]
+        # One use at top of the page [1]
+        self.assertEquals(11, self.response.content.count('grade_F'))
+
+        # User 0 has 0 on Homeworks [1]
+        # User 0 has 0 on the class [1]
+        # One use at the top of the page [1]
+        self.assertEquals(3, self.response.content.count('grade_None'))

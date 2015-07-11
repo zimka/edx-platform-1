@@ -130,18 +130,19 @@ if (xblockInfo.get('graded')) {
                 </p>
               </div>
             <% } %>
-            <% if (xblockInfo.get('due_date') || xblockInfo.get('graded')) { %>
-                <div class="status-grading">
-                    <p>
-                        <span class="sr status-grading-label"> <%= gettext('Graded as:') %> </span>
-                        <i class="icon fa fa-check"></i>
-                        <span class="status-grading-value"> <%= gradingType %> </span>
-                        <% if (xblockInfo.get('due_date')) { %>
-                            <span class="status-grading-date"> <%= gettext('Due:') %> <%= xblockInfo.get('due_date') %> </span>
-                        <% } %>
-                    </p>
-                </div>
-            <% } %>
+        <% } %>
+
+        <% if (xblockInfo.get('due_date') || xblockInfo.get('graded')) { %>
+            <div class="status-grading">
+                <p>
+                    <span class="sr status-grading-label"> <%= gettext('Graded as:') %> </span>
+                    <i class="icon fa fa-check"></i>
+                    <span class="status-grading-value"> <%= gradingType %> </span>
+                    <% if (xblockInfo.get('due_date')) { %>
+                        <span class="status-grading-date"> <%= gettext('Due:') %> <%= xblockInfo.get('due_date') %> </span>
+                    <% } %>
+                </p>
+            </div>
         <% } %>
 
         <% if (statusMessage) { %>

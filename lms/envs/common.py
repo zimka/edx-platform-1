@@ -420,6 +420,9 @@ FEATURES = {
 
     # Enable the max score cache to speed up grading
     'ENABLE_MAX_SCORE_CACHE': True,
+
+    # Enable custom grading
+    'ENABLE_CUSTOM_GRADING': True
 }
 
 # Ignore static asset files on import which match this pattern
@@ -501,7 +504,8 @@ MAKO_TEMPLATES = {}
 MAKO_TEMPLATES['main'] = [PROJECT_ROOT / 'templates',
                           COMMON_ROOT / 'templates',
                           COMMON_ROOT / 'lib' / 'capa' / 'capa' / 'templates',
-                          COMMON_ROOT / 'djangoapps' / 'pipeline_mako' / 'templates']
+                          COMMON_ROOT / 'djangoapps' / 'pipeline_mako' / 'templates',
+                          REPO_ROOT / 'openedx' / 'core' / 'djangoapps']
 
 # This is where Django Template lookup is defined. There are a few of these
 # still left lying around.
@@ -2569,3 +2573,13 @@ LTI_USER_EMAIL_DOMAIN = 'lti.example.com'
 # Number of seconds before JWT tokens expire
 JWT_EXPIRATION = 30
 JWT_ISSUER = None
+
+############################ Settings for Grading app #############################
+
+# Possible values: vertical|sequential
+GRADING_TYPE = 'vertical'
+GRADING_ALLOWED_TYPES = ('vertical', 'sequential')
+
+# If grading type is set to `vertical`, we can adjust progress view to display
+# only gradable verticals.
+DISPLAY_ONLY_GRADABLE_VERTICALS = True

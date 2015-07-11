@@ -28,6 +28,7 @@ from submissions import api as sub_api  # installed from the edx-submissions rep
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
 from openedx.core.djangoapps.signals.signals import GRADES_UPDATED
+from openedx.core.djangoapps.grading_policy import use_custom_grading
 
 
 log = logging.getLogger("edx.courseware")
@@ -458,6 +459,7 @@ def progress_summary(student, request, course, field_data_cache=None, scores_cli
 # TODO: This method is not very good. It was written in the old course style and
 # then converted over and performance is not good. Once the progress page is redesigned
 # to not have the progress summary this method should be deleted (so it won't be copied).
+@use_custom_grading('progress_summary')
 def _progress_summary(student, request, course, field_data_cache=None, scores_client=None):
     """
     Unwrapped version of "progress_summary".
@@ -569,7 +571,6 @@ def _progress_summary(student, request, course, field_data_cache=None, scores_cl
         })
 
     max_scores_cache.push_to_remote()
-
     return chapters
 
 

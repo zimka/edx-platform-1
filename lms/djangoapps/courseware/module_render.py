@@ -48,9 +48,11 @@ from openedx.core.lib.xblock_utils import (
     replace_jump_to_id_urls,
     replace_static_urls,
     add_staff_markup,
+    add_grading_markup,
     wrap_xblock,
     request_token as xblock_request_token,
 )
+from openedx.core.djangoapps.grading_policy import get_grading_type
 from psychometrics.psychoanalyze import make_psychometrics_data_update_handler
 from student.models import anonymous_id_for_user, user_by_anonymous_id
 from student.roles import CourseBetaTesterRole
@@ -585,6 +587,10 @@ def get_module_system_for_user(user, field_data_cache,  # TODO  # pylint: disabl
         if has_access(user, 'staff', descriptor, course_id):
             has_instructor_access = has_access(user, 'instructor', descriptor, course_id)
             block_wrappers.append(partial(add_staff_markup, user, has_instructor_access, disable_staff_debug_info))
+
+    grading_type = get_grading_type()
+    if grading_type == 'vertical':
+        block_wrappers.append(partial(add_grading_markup, course))
 
     # These modules store data using the anonymous_student_id as a key.
     # To prevent loss of data, we will continue to provide old modules with

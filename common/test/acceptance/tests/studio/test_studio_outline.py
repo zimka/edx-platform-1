@@ -341,19 +341,59 @@ class EditingSectionsTest(CourseOutlineTest):
 
     __test__ = True
 
+    def test_can_edit_unit(self):
+        """
+        Scenario: I can edit settings of unit.
+
+            Given that I have created a unit
+            Then I see due date and grading policy of unit in course outline
+            When I click on the configuration icon
+            Then edit modal window is shown
+            And due date and grading policy fields present
+            And they have correct initial values
+            Then I set new values for these fields
+            And I click save button on the modal
+            Then I see due date and grading policy of unit in course outline
+        """
+        self.course_outline_page.visit()
+        subsection = self.course_outline_page.section(SECTION_NAME).subsection(SUBSECTION_NAME)
+        unit = subsection.expand_subsection().unit(UNIT_NAME)
+
+        # Verify that Due date and Policy hidden by default
+        self.assertFalse(unit.due_date)
+        self.assertFalse(unit.policy)
+
+        modal = unit.edit()
+
+        # Verify fields
+        self.assertTrue(modal.has_due_date())
+        self.assertTrue(modal.has_policy())
+
+        # Verify initial values
+        self.assertEqual(modal.due_date, u'')
+        self.assertEqual(modal.policy, u'Not Graded')
+
+        # Set new values
+        modal.due_date = '7/21/2014'
+        modal.policy = 'Lab'
+
+        modal.save()
+        self.assertIn(u'Due: Jul 21, 2014', unit.due_date)
+        self.assertIn(u'Lab', unit.policy)
+
     def test_can_edit_subsection(self):
         """
         Scenario: I can edit settings of subsection.
 
             Given that I have created a subsection
-            Then I see release date, due date and grading policy of subsection in course outline
+            Then I see release date of subsection in course outline
             When I click on the configuration icon
             Then edit modal window is shown
-            And release date, due date and grading policy fields present
-            And they have correct initial values
-            Then I set new values for these fields
+            And release date field present
+            And it has correct initial value
+            Then I set new value for the field
             And I click save button on the modal
-            Then I see release date, due date and grading policy of subsection in course outline
+            Then I see release date of subsection in course outline
         """
         self.course_outline_page.visit()
         subsection = self.course_outline_page.section(SECTION_NAME).subsection(SUBSECTION_NAME)
@@ -368,23 +408,15 @@ class EditingSectionsTest(CourseOutlineTest):
 
         # Verify fields
         self.assertTrue(modal.has_release_date())
-        self.assertTrue(modal.has_due_date())
-        self.assertTrue(modal.has_policy())
 
         # Verify initial values
         self.assertEqual(modal.release_date, u'1/1/1970')
-        self.assertEqual(modal.due_date, u'')
-        self.assertEqual(modal.policy, u'Not Graded')
 
         # Set new values
         modal.release_date = '3/12/1972'
-        modal.due_date = '7/21/2014'
-        modal.policy = 'Lab'
 
         modal.save()
         self.assertIn(u'Released: Mar 12, 1972', subsection.release_date)
-        self.assertIn(u'Due: Jul 21, 2014', subsection.due_date)
-        self.assertIn(u'Lab', subsection.policy)
 
     def test_can_edit_section(self):
         """
@@ -427,18 +459,19 @@ class EditingSectionsTest(CourseOutlineTest):
         self.assertFalse(section.due_date)
         self.assertFalse(section.policy)
 
-    def test_subsection_is_graded_in_lms(self):
+    def test_unit_is_graded_in_lms(self):
         """
-        Scenario: I can grade subsection from course outline page.
+        Scenario: I can grade unit from course outline page.
 
             Given I visit progress page
-            And I see that problem in subsection has grading type "Practice"
+            And I see that problem in unit has grading type "Practice"
             Then I visit course outline page
-            And I click on the configuration icon of subsection
+            And I click on the configuration icon of unit
             And I set grading policy to "Lab"
             And I click save button on the modal
+            And I publish the unit
             Then I visit progress page
-            And I see that problem in subsection has grading type "Problem"
+            And I see that problem in unit has grading type "Problem"
         """
         progress_page = ProgressPage(self.browser, self.course_id)
         progress_page.visit()
@@ -447,11 +480,13 @@ class EditingSectionsTest(CourseOutlineTest):
         self.course_outline_page.visit()
 
         subsection = self.course_outline_page.section(SECTION_NAME).subsection(SUBSECTION_NAME)
-        modal = subsection.edit()
+        unit = subsection.expand_subsection().unit(UNIT_NAME)
+        modal = unit.edit()
         # Set new values
         modal.policy = 'Lab'
         modal.save()
 
+        unit.publish()
         progress_page.visit()
 
         self.assertEqual(u'Problem', progress_page.grading_formats[0])
