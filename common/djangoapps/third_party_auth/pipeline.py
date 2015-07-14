@@ -650,3 +650,27 @@ def associate_by_email_if_login_api(auth_entry, backend, details, user, *args, *
             # email address and the legitimate user would now login to the illegitimate
             # account.
             return association_response
+
+
+@partial.partial
+def create_user_profile(auth_entry, strategy, details, user, *args, **kwargs):
+    from student.models import UserProfile
+    u_prof = UserProfile.objects.get_or_create(user=user)
+    return
+
+from social.pipeline.user import create_user
+
+@partial.partial
+def create_user_npoed(strategy, details, response, uid, user, *args, **kwargs):
+    from django.contrib.auth.models import User
+    if user is None:
+        try:
+            user = User.objects.get(email=response['email'])
+            return {
+                'is_new': False,
+                'user': user,
+            }
+        except:
+            user = None
+    return create_user(strategy, details, response, uid, user, *args, **kwargs)
+

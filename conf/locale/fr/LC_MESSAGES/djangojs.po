@@ -70,6 +70,7 @@
 # SLOG90 <slog90@gmail.com>, 2014
 # Steven BERNARD <steven.bernard@u-paris2.fr>, 2014
 # Toreador <torrent_lover@hotmail.com>, 2014
+# yepelboin <yves.epelboin@impmc.upmc.fr>, 2015
 # #-#-#-#-#  underscore.po (edx-platform)  #-#-#-#-#
 # edX translation file
 # Copyright (C) 2015 edX
@@ -109,7 +110,7 @@ msgstr ""
 "Project-Id-Version: edx-platform\n"
 "Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
 "POT-Creation-Date: 2015-06-29 12:24+0000\n"
-"PO-Revision-Date: 2015-06-29 09:46+0000\n"
+"PO-Revision-Date: 2015-06-29 13:25+0000\n"
 "Last-Translator: yepelboin <yves.epelboin@impmc.upmc.fr>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/edx-platform/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -2856,7 +2857,7 @@ msgid ""
 msgstr ""
 "Le recalcul du score de l'exercice '<%= problem_id %>' de l'étudiant '<%= "
 "student_id %>' a commencé. Cliquez sur le bouton 'Afficher l'historique des "
-"tâches de l'étudiant' pour voir le statut de la tâche."
+"tâches de l'étudiant' pour voir l'état de la tâche."
 
 #: lms/static/coffee/src/instructor_dashboard/student_admin.js
 msgid ""
@@ -2952,7 +2953,7 @@ msgid ""
 msgstr ""
 "Démarrage de la tâche consistant à réinitialiser les tentatives pour "
 "l'exercice '<%= problem_id %>' effectué avec succès. Cliquez sur le bouton "
-"'Montrer l'historique des tâches pour l'exercice' pour voir le statut de la "
+"'Montrer l'historique des tâches pour l'exercice' pour voir l'état de la "
 "tâche."
 
 #: lms/static/coffee/src/instructor_dashboard/student_admin.js
@@ -2979,8 +2980,8 @@ msgid ""
 msgstr ""
 "Démarrage de la tâche consistant à recalculer le score de l'exercice '<%= "
 "problem_id %>' pour tous les étudiants effectué avec succès. Cliquez sur le "
-"bouton 'Montrer l'historique des tâches pour l'exercice' pour voir le statut"
-" de la tâche."
+"bouton 'Montrer l'historique des tâches pour l'exercice' pour voir l'état de"
+" la tâche."
 
 #: lms/static/coffee/src/instructor_dashboard/student_admin.js
 msgid ""
@@ -4411,9 +4412,9 @@ msgid ""
 "Only <%= fileTypes %> files can be uploaded. Please select a file ending in "
 "<%= fileExtensions %> to upload."
 msgstr ""
-"Seuls les fichiers de type <%= fileTypes %> peuvent être téléchargés. Merci "
-"de sélectionner un fichier se terminant par <%= fileExtensions %> pour le "
-"télécharger."
+"Seuls les fichiers de type <%= fileTypes %> peuvent être envoyés. Merci de "
+"sélectionner un fichier se terminant par <%= fileExtensions %> pour "
+"l'envoyer."
 
 #: cms/static/js/models/uploads.js
 msgid "or"
@@ -4547,7 +4548,7 @@ msgstr "Choisir le fichier"
 #: cms/static/js/views/assets.js cms/static/js/views/assets.js.c
 #: cms/templates/js/asset-upload-modal.underscore
 msgid "Upload New File"
-msgstr "Charger un nouveau fichier"
+msgstr "Envoyer un nouveau fichier"
 
 #: cms/static/js/views/assets.js cms/static/js/views/assets.js.c
 msgid "Load Another File"
@@ -4605,7 +4606,7 @@ msgstr "Traitement de la demande de relance"
 
 #: cms/static/js/views/edit_chapter.js
 msgid "Upload a new PDF to “<%= name %>”"
-msgstr "Charger un nouveau PDF appelé \"<%= name %>”"
+msgstr "Envoyer un nouveau PDF appelé \"<%= name %>”"
 
 #: cms/static/js/views/edit_chapter.js
 msgid "Please select a PDF file to upload."
@@ -4823,7 +4824,7 @@ msgstr ""
 #: cms/templates/js/metadata-file-uploader-item.underscore
 #: cms/templates/js/video/metadata-translations-item.underscore
 msgid "Upload"
-msgstr "Charger"
+msgstr "Envoyer"
 
 #: cms/static/js/views/uploads.js
 msgid "We're sorry, there was an error"
@@ -7068,8 +7069,8 @@ msgid ""
 msgstr ""
 "EdX dispose d'une transcription synchronisée pour cette vidéo. Si vous "
 "souhaitez éditer cette transcription, vous pouvez télécharger, éditer, et "
-"re-téléverser la transcription existante. Si vous souhaitez remplacer cette "
-"transcription, téléversez un nouveau fichier srt."
+"re-envoyerr la transcription existante. Si vous souhaitez remplacer cette "
+"transcription, envoyez un nouveau fichier srt."
 
 #: cms/templates/js/video/transcripts/messages/transcripts-found.underscore
 #: cms/templates/js/video/transcripts/messages/transcripts-import.underscore
@@ -7144,9 +7145,9 @@ msgid ""
 "transcript, you can download, edit, and re-upload the existing transcript."
 msgstr ""
 "EdX dispose d'une transcription synchronisée pour cette vidéo. Si vous "
-"souhaitez remplacer cette transcription, téléverser un nouveau fichier de "
+"souhaitez remplacer cette transcription, envoyer un nouveau fichier de "
 "transcription srt. Si vous souhaitez éditer cette transcription, vous pouvez"
-" télécharger, éditer et re-téléverser la transcription existante."
+" envoyer, éditer et re-réenvoyer la transcription existante."
 
 #: cms/templates/js/video/transcripts/messages/transcripts-use-existing.underscore
 msgid "Confirm Timed Transcript"

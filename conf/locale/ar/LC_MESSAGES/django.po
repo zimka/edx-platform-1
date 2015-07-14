@@ -126,7 +126,7 @@ msgstr ""
 "Project-Id-Version: edx-platform\n"
 "Report-Msgid-Bugs-To: openedx-translation@googlegroups.com\n"
 "POT-Creation-Date: 2015-06-29 12:25+0000\n"
-"PO-Revision-Date: 2015-05-28 20:00+0000\n"
+"PO-Revision-Date: 2015-06-30 03:58+0000\n"
 "Last-Translator: Nabeel El-Dughailib <nabeel@qordoba.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/projects/p/edx-platform/language/ar/)\n"
 "MIME-Version: 1.0\n"
@@ -5554,7 +5554,7 @@ msgstr ""
 
 #: lms/djangoapps/dashboard/sysadmin.py
 msgid "Deleted"
-msgstr "محذوف"
+msgstr "جرى الحذف"
 
 #: lms/djangoapps/dashboard/sysadmin.py
 msgid "course_id"
@@ -5796,7 +5796,7 @@ msgstr "رقم المستخدم"
 #: lms/templates/courseware/legacy_instructor_dashboard.html
 #: lms/templates/instructor/instructor_dashboard_2/generate_registarion_codes_modal.html
 msgid "Email"
-msgstr "عنوان البريد الإلكتروني"
+msgstr "البريد الإلكتروني"
 
 #: lms/djangoapps/instructor/views/api.py
 #: lms/djangoapps/instructor_task/tasks_helper.py lms/envs/devstack.py
@@ -6203,7 +6203,7 @@ msgstr "البيانات غير مكتملة"
 #: lms/djangoapps/instructor/views/legacy.py
 #: lms/templates/courseware/legacy_instructor_dashboard.html
 msgid "Course Statistics At A Glance"
-msgstr "لمحة سريعة عن إحصاءات المساق"
+msgstr "لمحة سريعة عن إحصائيات المساق"
 
 #: lms/djangoapps/instructor/views/legacy.py
 msgid "List of students enrolled in {course_key}"
@@ -6383,7 +6383,7 @@ msgstr "إعادة الضبط"
 #: lms/djangoapps/instructor_task/tasks.py
 #: lms/templates/wiki/plugins/attachments/index.html wiki/models/article.py
 msgid "deleted"
-msgstr "الحذف"
+msgstr "جرى الحذف"
 
 #. Translators: This is a past-tense verb that is inserted into task progress
 #. messages as {action}.
@@ -8727,7 +8727,7 @@ msgstr ""
 #: lms/templates/wiki/plugins/attachments/index.html
 #: wiki/plugins/attachments/wiki_plugin.py
 msgid "Attachments"
-msgstr "المرفقات"
+msgstr "الملفّات المرفقة"
 
 #: lms/templates/wiki/plugins/attachments/index.html
 msgid "Upload new file"
@@ -8807,7 +8807,7 @@ msgstr "مراجعات"
 
 #: lms/templates/wiki/plugins/attachments/index.html
 msgid "There are no attachments for this article."
-msgstr "لا توجد مرفقات لهذا المقال."
+msgstr "لا توجد ملفّات مرفقة بهذا المقال."
 
 #: openedx/core/djangoapps/course_groups/cohorts.py
 msgid "You cannot create two cohorts with the same name"
@@ -9431,7 +9431,7 @@ msgstr "غير مطلوب"
 
 #: cms/djangoapps/course_creators/models.py
 msgid "pending"
-msgstr "معلَّق"
+msgstr "مُعلَّق"
 
 #: cms/djangoapps/course_creators/models.py
 msgid "granted"
@@ -20422,7 +20422,7 @@ msgstr "ملف مرفق"
 
 #: wiki/plugins/attachments/models.py
 msgid "attachments"
-msgstr "ملفّات مرفقات"
+msgstr "الملفّات المرفقة"
 
 #: wiki/plugins/attachments/models.py
 msgid "file"
@@ -20472,7 +20472,7 @@ msgstr "أُضيف مرجع إلى \"%(att)s\" من \"%(art)s\"."
 
 #: wiki/plugins/attachments/views.py
 msgid "The file %s was deleted."
-msgstr "حُذف الملف  %s."
+msgstr "حُذِف الملف  %s."
 
 #: wiki/plugins/attachments/views.py
 msgid "This article is no longer related to the file %s."
@@ -20484,7 +20484,7 @@ msgstr "جرى تغيير أحد الملفّات: %s"
 
 #: wiki/plugins/attachments/wiki_plugin.py
 msgid "A file was deleted: %s"
-msgstr "جرى حذف أحد الملفّات: %s"
+msgstr "حُذِف أحد الملفّات: %s"
 
 #: wiki/plugins/images/forms.py
 msgid ""

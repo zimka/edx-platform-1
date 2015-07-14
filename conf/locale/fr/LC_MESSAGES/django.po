@@ -9795,7 +9795,7 @@ msgstr "Mes cours"
 
 #: lms/templates/dashboard.html
 msgid "Looks like you haven't enrolled in any courses yet."
-msgstr "Apparemment, vous êtes inscrit à aucun cours."
+msgstr "Apparemment, vous n'êtes inscrit à aucun cours."
 
 #: lms/templates/dashboard.html
 msgid "Find courses now!"
@@ -9915,7 +9915,7 @@ msgstr "A rendre pour le :"
 #: lms/templates/folditbasic.html
 #: lms/templates/instructor/instructor_dashboard_2/certificates.html
 msgid "Status:"
-msgstr "État :"
+msgstr "Statut :"
 
 #: lms/templates/folditbasic.html
 msgid "You have successfully gotten to level {goal_level}."
@@ -14278,7 +14278,7 @@ msgstr "Collectes de Dons"
 
 #: lms/templates/instructor/staff_grading.html
 msgid "{course_number} Staff Grading"
-msgstr "Notes de l'équipe pédagogique {course_number}"
+msgstr "Notation de l'équipe pédagogique {course_number}"
 
 #: lms/templates/instructor/staff_grading.html
 msgid ""
