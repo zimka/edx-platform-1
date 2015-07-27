@@ -494,6 +494,9 @@ PROFILE_IMAGE_MIN_BYTES = 100
 FEATURES['ENABLE_LTI_PROVIDER'] = True
 INSTALLED_APPS += ('lti_provider',)
 AUTHENTICATION_BACKENDS += ('lti_provider.users.LtiBackend',)
+
+######## Grading ###########
 FEATURES['ENABLE_CUSTOM_GRADING'] = False
 GRADING_TYPE = 'vertical'
-GRADING_ALLOWED_TYPES = ('vertical', 'sequential')
+
+ASSIGNMENT_GRADER = 'AssignmentFormatGrader'

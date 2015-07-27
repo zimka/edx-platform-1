@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
+This file contains some tests for Instructor Task Django app with grading by verticals enabled.
 lms/djangoapps/instructor_task/tests/test_tasks_helper.py
+python ./manage.py lms test --verbosity=1 openedx/core/djangoapps/grading_policy/tests/test_instructor_task_helpers.py /
+--traceback --settings=test
 """
 import unittest
 
@@ -22,22 +25,19 @@ FEATURES_WITH_CUSTOM_GRADING = settings.FEATURES.copy()
 FEATURES_WITH_CUSTOM_GRADING['ENABLE_CUSTOM_GRADING'] = True
 
 
-def _disconnect_course_published_event():
-    """
-    Disconnect course_published event.
-    """
+def disconnect_course_published_event():  # pylint: disable=invalid-name
+    """Disconnect course_published event."""
     # If we don't disconnect then tests are getting failed in test_crud.py
     SignalHandler.course_published.disconnect(listen_for_course_publish)
 
 
-@unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')
-@override_settings(FEATURES=FEATURES_WITH_CUSTOM_GRADING)
+@unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')  # pylint: disable=protected-access
+@override_settings(FEATURES=FEATURES_WITH_CUSTOM_GRADING, ASSIGNMENT_GRADER='WeightedAssignmentFormatGrader')
 @ddt.ddt
 class TestProblemGradeReport(TestReportMixin, InstructorTaskModuleTestCase):
     """
     Test that the problem CSV generation works.
     """
-
     def setUp(self):
         # For some reason, `listen_for_course_publish` is not called when we run
         # all (paver test_system -s cms) tests, If we run only run this file then tests run fine.
@@ -52,7 +52,7 @@ class TestProblemGradeReport(TestReportMixin, InstructorTaskModuleTestCase):
         self.csv_header_row = [u'Student ID', u'Email', u'Username',
                                u'Final Grade']
 
-        self.addCleanup(_disconnect_course_published_event)
+        self.addCleanup(disconnect_course_published_event)
 
     def add_course_content(self):
         """
@@ -65,7 +65,7 @@ class TestProblemGradeReport(TestReportMixin, InstructorTaskModuleTestCase):
         )
 
         # add a sequence to the course to which the problems can be added
-        self.problem_section = ItemFactory.create(
+        self.problem_section = ItemFactory.create(  # pylint: disable=attribute-defined-outside-init
             parent_location=chapter.location,
             category='sequential',
             display_name=TEST_SECTION_NAME
@@ -86,12 +86,12 @@ class TestProblemGradeReport(TestReportMixin, InstructorTaskModuleTestCase):
             dict(zip(
                 self.csv_header_row,
                 [unicode(self.student_1.id), self.student_1.email,
-                 self.student_1.username, '0.0']
+                 self.student_1.username, '1.0']
             )),
             dict(zip(
                 self.csv_header_row,
                 [unicode(self.student_2.id), self.student_2.email,
-                 self.student_2.username, '0.0']
+                 self.student_2.username, '1.0']
             ))
         ])
 
@@ -100,8 +100,14 @@ class TestProblemGradeReport(TestReportMixin, InstructorTaskModuleTestCase):
         vertical = ItemFactory.create(
             parent_location=self.problem_section.location,
             category='vertical',
-            metadata={'graded': True, 'format': 'Homework'},
+            metadata={'graded': True, 'format': 'Homework', 'weight': 0.8},
             display_name='Problem Vertical'
+        )
+        ItemFactory.create(
+            parent_location=self.problem_section.location,
+            category='vertical',
+            metadata={'graded': True, 'format': 'Homework', 'weight': 0.2},
+            display_name='Problem Vertical 2'
         )
         self.define_option_problem(u'Pröblem1', parent=vertical)
 
@@ -122,7 +128,11 @@ class TestProblemGradeReport(TestReportMixin, InstructorTaskModuleTestCase):
                     unicode(self.student_1.id),
                     self.student_1.email,
                     self.student_1.username,
-                    '0.01', '1.0', '2.0']
+                    #    ('Homework', percent=0.4, weight=0.15, total=0.06)
+                    #    ('Lab', percent=1.0, weight=0.15, total=0.15)
+                    #    ('Midterm Exam', percent=1.0, weight=0.3, total=0.3)
+                    #    ('Final Exam', percent=1.0, weight=0.4, total=0.4)
+                    '0.91', '1.0', '2.0']
             )),
             dict(zip(
                 header_row,
@@ -130,7 +140,11 @@ class TestProblemGradeReport(TestReportMixin, InstructorTaskModuleTestCase):
                     unicode(self.student_2.id),
                     self.student_2.email,
                     self.student_2.username,
-                    '0.0', 'N/A', 'N/A'
+                    #    ('Homework', percent=0.0, weight=0.15, total=0.0)
+                    #    ('Lab', percent=1.0, weight=0.15, total=0.15)
+                    #    ('Midterm Exam', percent=1.0, weight=0.3, total=0.3)
+                    #    ('Final Exam', percent=1.0, weight=0.4, total=0.4)
+                    '0.85', 'N/A', 'N/A'
                 ]
             ))
         ])
@@ -138,8 +152,7 @@ class TestProblemGradeReport(TestReportMixin, InstructorTaskModuleTestCase):
     @patch('instructor_task.tasks_helper._get_current_task')
     @patch('instructor_task.tasks_helper.iterate_grades_for')
     @ddt.data(u'Cannöt grade student', '')
-    def test_grading_failure(self, error_message, mock_iterate_grades_for,
-                             _mock_current_task):
+    def test_grading_failure(self, error_message, mock_iterate_grades_for, _mock_current_task):
         """
         Test that any grading errors are properly reported in the progress
         dict and uploaded to the report store.
@@ -167,13 +180,12 @@ class TestProblemGradeReport(TestReportMixin, InstructorTaskModuleTestCase):
         ])
 
 
-@unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')
-@override_settings(FEATURES=FEATURES_WITH_CUSTOM_GRADING)
+@unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')  # pylint: disable=protected-access
+@override_settings(FEATURES=FEATURES_WITH_CUSTOM_GRADING, ASSIGNMENT_GRADER='WeightedAssignmentFormatGrader')
 class TestProblemReportCohortedContent(TestReportMixin, ContentGroupTestCase, InstructorTaskModuleTestCase):
     """
     Test the problem report on a course that has cohorted content.
     """
-
     def setUp(self):
         # For some reason, `listen_for_course_publish` is not called when we run
         # all (paver test_system -s cms) tests, If we run only run this file then tests run fine.
@@ -185,8 +197,14 @@ class TestProblemReportCohortedContent(TestReportMixin, ContentGroupTestCase, In
         vertical = ItemFactory.create(
             parent_location=self.problem_section.location,
             category='vertical',
-            metadata={'graded': True, 'format': u'Homework'},
+            metadata={'graded': True, 'format': u'Homework', 'weight': 0.8},
             display_name='Problem Vertical'
+        )
+        ItemFactory.create(
+            parent_location=self.problem_section.location,
+            category='vertical',
+            metadata={'graded': True, 'format': u'Homework', 'weight': 0.2},
+            display_name='Problem Vertical 2'
         )
         self.define_option_problem(
             u"Pröblem0",
@@ -201,7 +219,7 @@ class TestProblemReportCohortedContent(TestReportMixin, ContentGroupTestCase, In
                 self.course.user_partitions[0].groups[1].id]}
         )
 
-        self.addCleanup(_disconnect_course_published_event)
+        self.addCleanup(disconnect_course_published_event)
 
     def test_cohort_content(self):
         self.submit_student_answer(self.alpha_user.username, u'Pröblem0',
@@ -247,7 +265,7 @@ class TestProblemReportCohortedContent(TestReportMixin, ContentGroupTestCase, In
                     unicode(self.alpha_user.id),
                     self.alpha_user.email,
                     self.alpha_user.username,
-                    u'1.0', u'2.0', u'2.0', u'N/A', u'N/A'
+                    u'0.8', u'2.0', u'2.0', u'N/A', u'N/A'
                 ]
             )),
             dict(zip(
@@ -256,7 +274,7 @@ class TestProblemReportCohortedContent(TestReportMixin, ContentGroupTestCase, In
                     unicode(self.beta_user.id),
                     self.beta_user.email,
                     self.beta_user.username,
-                    u'0.5', u'N/A', u'N/A', u'1.0', u'2.0'
+                    u'0.4', u'N/A', u'N/A', u'1.0', u'2.0'
                 ]
             )),
             dict(zip(

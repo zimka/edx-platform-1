@@ -1,10 +1,12 @@
+"""
+Tests for grading policy app.
+"""
 import mock
 import unittest
 from django.test.utils import override_settings
-from openedx.core.djangoapps.grading_policy import (
-    get_grading_type, settings, GradingPolicyError, get_grading_class, use_custom_grading
-)
-from openedx.core.djangoapps.grading_policy.grading import VerticalGrading
+from django.conf import settings
+from openedx.core.djangoapps.grading_policy import GradingPolicyError, get_grading_class, use_custom_grading
+from openedx.core.djangoapps.grading_policy.vertical import VerticalGrading
 
 FEATURES_WITH_CUSTOM_GRADING = settings.FEATURES.copy()
 FEATURES_WITH_CUSTOM_GRADING['ENABLE_CUSTOM_GRADING'] = True
@@ -17,12 +19,6 @@ class CustomGradingTestCase(unittest.TestCase):
     """
 
     @override_settings(GRADING_TYPE='wrong_type', FEATURES=FEATURES_WITH_CUSTOM_GRADING)
-    def test_raises_exception_in_get_grading_type_method(self):
-        """
-        Raises GradingPolicyError if in settings grading_type set wrong value
-        """
-        self.assertRaises(GradingPolicyError, get_grading_type)
-
     def test_raises_exception_in_get_grading_class_method(self):
         name = 'wrong_name'
         self.assertRaises(GradingPolicyError, get_grading_class, name=name)

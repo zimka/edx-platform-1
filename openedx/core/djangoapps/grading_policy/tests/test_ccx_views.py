@@ -1,4 +1,5 @@
 """
+This file contains some tests for CCX Django app with grading by verticals enabled.
 lms/djangoapps/ccx/tests/test_views.py
 """
 
@@ -24,10 +25,8 @@ from django.test import RequestFactory
 from edxmako.shortcuts import render_to_response  # pylint: disable=import-error
 from student.roles import CourseCcxCoachRole  # pylint: disable=import-error
 from student.tests.factories import (  # pylint: disable=import-error
-    AdminFactory,
-    CourseEnrollmentFactory,
-    UserFactory,
-    )
+    AdminFactory, CourseEnrollmentFactory, UserFactory,
+)
 
 from xmodule.x_module import XModuleMixin
 from xmodule.modulestore.tests.django_utils import (
@@ -85,11 +84,11 @@ FEATURES_WITH_CUSTOM_GRADING = settings.FEATURES.copy()
 FEATURES_WITH_CUSTOM_GRADING['ENABLE_CUSTOM_GRADING'] = True
 
 
+@unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')  # pylint: disable=protected-access
 @override_settings(
     FIELD_OVERRIDE_PROVIDERS=('ccx.overrides.CustomCoursesForEdxOverrideProvider',),
-    FEATURES=FEATURES_WITH_CUSTOM_GRADING, GRADING_TYPE='vertical'
+    FEATURES=FEATURES_WITH_CUSTOM_GRADING, ASSIGNMENT_GRADER='WeightedAssignmentFormatGrader'
 )
-@unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')
 @attr('shard_1')
 @patch('xmodule.x_module.XModuleMixin.get_children', patched_get_children, spec=True)
 class TestCCXGradesVertical(ModuleStoreTestCase, LoginEnrollmentTestCase):
@@ -100,7 +99,14 @@ class TestCCXGradesVertical(ModuleStoreTestCase, LoginEnrollmentTestCase):
 
     def setUp(self):
         """
-        Set up tests
+        Set up a course with graded problems.
+
+        Course hierarchy is as follows:
+        -> course
+            -> chapter
+                -> vertical (graded)
+                    -> problem
+                    -> problem
         """
         super(TestCCXGradesVertical, self).setUp()
         self.course = course = CourseFactory.create(enable_ccx=True)
@@ -111,14 +117,34 @@ class TestCCXGradesVertical(ModuleStoreTestCase, LoginEnrollmentTestCase):
         # Create a course outline
         self.mooc_start = start = datetime.datetime(
             2010, 5, 12, 2, 42, tzinfo=pytz.UTC)
-        chapter = ItemFactory.create(
-            start=start, parent=course, category='sequential')
-        sections = [
+        chapter = ItemFactory.create(start=start, parent=course)
+        verticals = [
             ItemFactory.create(
                 parent=chapter,
                 category="vertical",
-                metadata={'graded': True, 'format': 'Homework'})
-            for _ in xrange(4)]
+                metadata={'graded': True, 'format': 'Homework', 'weight': 0.5}
+            ),
+            ItemFactory.create(
+                parent=chapter,
+                category="vertical",
+                metadata={'graded': True, 'format': 'Homework', 'weight': 0.2}
+            ),
+            ItemFactory.create(
+                parent=chapter,
+                category="vertical",
+                metadata={'graded': True, 'format': 'Homework', 'weight': 0.2}
+            ),
+            ItemFactory.create(
+                parent=chapter,
+                category="vertical",
+                metadata={'graded': True, 'format': 'Homework', 'weight': 0.1}
+            ),
+            ItemFactory.create(
+                parent=chapter,
+                category="vertical",
+                metadata={'graded': True, 'format': 'Homework', 'weight': 1.0}
+            ),
+        ]
         # pylint: disable=unused-variable
         problems = [
             [
@@ -128,8 +154,8 @@ class TestCCXGradesVertical(ModuleStoreTestCase, LoginEnrollmentTestCase):
                     data=StringResponseXMLFactory().build_xml(answer='foo'),
                     metadata={'rerandomize': 'always'}
                 ) for _ in xrange(4)
-                ] for section in sections
-            ]
+            ] for section in verticals
+        ]
 
         # Create CCX
         role = CourseCcxCoachRole(course.id)
@@ -169,7 +195,7 @@ class TestCCXGradesVertical(ModuleStoreTestCase, LoginEnrollmentTestCase):
             'GRADE_CUTOFFS': {'Pass': 0.75},
         })
         override_field_for_ccx(
-            ccx, sections[-1], 'visible_to_staff_only', True)
+            ccx, verticals[-1], 'visible_to_staff_only', True)
 
         # create a ccx locator and retrieve the course structure using that key
         # which emulates how a student would get access.
@@ -182,8 +208,8 @@ class TestCCXGradesVertical(ModuleStoreTestCase, LoginEnrollmentTestCase):
 
         # create grades for self.student as if they'd submitted the ccx
         for chapter in self.course.get_children():
-            for i, section in enumerate(chapter.get_children()):
-                for j, problem in enumerate(section.get_children()):
+            for i, vertical in enumerate(chapter.get_children()):
+                for j, problem in enumerate(vertical.get_children()):
                     # if not problem.visible_to_staff_only:
                     StudentModuleFactory.create(
                         grade=1 if i < j else 0,
@@ -205,12 +231,12 @@ class TestCCXGradesVertical(ModuleStoreTestCase, LoginEnrollmentTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         student_info = response.mako_context['students'][0]  # pylint: disable=no-member
-        self.assertEqual(student_info['grade_summary']['percent'], 0.5)
+        self.assertEqual(student_info['grade_summary']['percent'], 0.53)
+        self.assertAlmostEqual(
+            student_info['grade_summary']['grade_breakdown'][0]['percent'], 0.525
+        )
         self.assertEqual(
-            student_info['grade_summary']['grade_breakdown'][0]['percent'],
-            0.5)
-        self.assertEqual(
-            len(student_info['grade_summary']['section_breakdown']), 4)
+            len(student_info['grade_summary']['section_breakdown']), 5)
 
     def test_grades_csv(self):
         self.course.enable_ccx = True
@@ -228,8 +254,9 @@ class TestCCXGradesVertical(ModuleStoreTestCase, LoginEnrollmentTestCase):
         self.assertEqual(data['HW 01'], '0.75')
         self.assertEqual(data['HW 02'], '0.5')
         self.assertEqual(data['HW 03'], '0.25')
-        self.assertEqual(data['HW Avg'], '0.5')
-        self.assertTrue('HW 04' not in data)
+        self.assertEqual(data['HW 04'], '0.0')
+        self.assertAlmostEqual(float(data['HW Avg']), 0.525)
+        self.assertTrue('HW 05' not in data)
 
     @patch('courseware.views.render_to_response', intercept_renderer)
     def test_student_progress(self):
@@ -247,6 +274,6 @@ class TestCCXGradesVertical(ModuleStoreTestCase, LoginEnrollmentTestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         grades = response.mako_context['grade_summary']  # pylint: disable=no-member
-        self.assertEqual(grades['percent'], 0.5)
-        self.assertEqual(grades['grade_breakdown'][0]['percent'], 0.5)
-        self.assertEqual(len(grades['section_breakdown']), 4)
+        self.assertEqual(grades['percent'], 0.53)
+        self.assertAlmostEqual(grades['grade_breakdown'][0]['percent'], 0.525)
+        self.assertEqual(len(grades['section_breakdown']), 5)

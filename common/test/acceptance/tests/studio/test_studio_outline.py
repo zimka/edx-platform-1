@@ -349,11 +349,11 @@ class EditingSectionsTest(CourseOutlineTest):
             Then I see due date and grading policy of unit in course outline
             When I click on the configuration icon
             Then edit modal window is shown
-            And due date and grading policy fields present
+            And due date, grading policy and weight fields present
             And they have correct initial values
             Then I set new values for these fields
             And I click save button on the modal
-            Then I see due date and grading policy of unit in course outline
+            Then I see due date, grading policy and weight of unit in course outline
         """
         self.course_outline_page.visit()
         subsection = self.course_outline_page.section(SECTION_NAME).subsection(SUBSECTION_NAME)
@@ -362,24 +362,29 @@ class EditingSectionsTest(CourseOutlineTest):
         # Verify that Due date and Policy hidden by default
         self.assertFalse(unit.due_date)
         self.assertFalse(unit.policy)
+        self.assertFalse(unit.weight)
 
         modal = unit.edit()
 
         # Verify fields
         self.assertTrue(modal.has_due_date())
         self.assertTrue(modal.has_policy())
+        self.assertTrue(modal.has_weight())
 
         # Verify initial values
         self.assertEqual(modal.due_date, u'')
         self.assertEqual(modal.policy, u'Not Graded')
+        self.assertEqual(modal.weight, u'1')
 
         # Set new values
         modal.due_date = '7/21/2014'
         modal.policy = 'Lab'
+        modal.weight = '0.2'
 
         modal.save()
         self.assertIn(u'Due: Jul 21, 2014', unit.due_date)
         self.assertIn(u'Lab', unit.policy)
+        self.assertIn(u'0.2', unit.weight)
 
     def test_can_edit_subsection(self):
         """

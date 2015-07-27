@@ -141,6 +141,9 @@ if (xblockInfo.get('graded')) {
                     <% if (xblockInfo.get('due_date')) { %>
                         <span class="status-grading-date"> <%= gettext('Due:') %> <%= xblockInfo.get('due_date') %> </span>
                     <% } %>
+                    <% if (xblockInfo.get('graded') && gradingType) { %>
+                        <span class="status-grading-weight"> <%= gettext('Weight:') %> <%= xblockInfo.get('weight') %> </span>
+                    <% } %>
                 </p>
             </div>
         <% } %>

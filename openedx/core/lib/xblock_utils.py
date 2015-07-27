@@ -213,8 +213,8 @@ def grade_histogram(module_id):
 
 def add_grading_markup(course, block, view, frag, context):  # pylint: disable=unused-argument
     """
-    Updates the supplied module with a new get_html function
-    that wraps the output of the old get_html function with additional grading information.
+    Updates the supplied module with a new get_html function that wraps the
+    output of the old get_html function with additional grading information.
     """
 
     if course and isinstance(block, VerticalBlock) and (not context or not context.get('child_of_vertical', False)):
