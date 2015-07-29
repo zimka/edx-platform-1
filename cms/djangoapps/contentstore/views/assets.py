@@ -4,7 +4,8 @@ import math
 import json
 
 from django.http import HttpResponseBadRequest
-from django.contrib.auth.decorators import login_required
+#from django.contrib.auth.decorators import login_required
+from .staff_req import staff_required as login_required
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_http_methods, require_POST
 from django.conf import settings

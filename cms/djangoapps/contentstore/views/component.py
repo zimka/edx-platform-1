@@ -4,7 +4,8 @@ import json
 import logging
 
 from django.http import HttpResponseBadRequest, Http404
-from django.contrib.auth.decorators import login_required
+#from django.contrib.auth.decorators import login_required
+from .staff_req import staff_required as login_required
 from django.views.decorators.http import require_GET
 from django.core.exceptions import PermissionDenied
 from django.conf import settings

@@ -103,7 +103,7 @@ if settings.FEATURES["ENABLE_COMBINED_LOGIN_REGISTRATION"]:
         url(r'^login$', 'student_account.views.login_and_registration_form',
             {'initial_mode': 'login'}, name="signin_user"),
         url(r'^register$', 'student_account.views.login_and_registration_form',
-            {'initial_mode': 'register'}, name="register_user"),
+            {'initial_mode': 'login'}, name="register_user"),
         url(r'^accounts/login$', 'student_account.views.login_and_registration_form',
             {'initial_mode': 'login'}, name="accounts_login"),
     )

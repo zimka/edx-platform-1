@@ -114,6 +114,12 @@ urlpatterns += patterns(
     url(r'^api/import_export/v1/', include('openedx.core.djangoapps.import_export.urls')),
 )
 
+urlpatterns += (
+    url(r'^api/studio/v0/course_create/create', 'contentstore.views.npoed_api.create', name='npoed_api_create'),
+    url(r'^api/studio/v0/course_create/add_author', 'contentstore.views.npoed_api.add_author', name='npoed_api_add_author'),
+    url(r'^api/studio/v0/course_create/check_user_access', 'contentstore.views.npoed_api.check_user_access', name='npoed_api_check_user_access'),
+)
+
 JS_INFO_DICT = {
     'domain': 'djangojs',
     # We need to explicitly include external Django apps that are not in LOCALE_PATHS.

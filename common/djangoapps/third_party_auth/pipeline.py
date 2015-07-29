@@ -655,6 +655,9 @@ def associate_by_email_if_login_api(auth_entry, backend, details, user, *args, *
 @partial.partial
 def create_user_profile(auth_entry, strategy, details, user, *args, **kwargs):
     from student.models import UserProfile
+    if 'author' in details['npoed_roles'] or 'admin' in details['npoed_roles']:
+        user.is_staff = True
+        user.save() 
     u_prof = UserProfile.objects.get_or_create(user=user)
     return
 

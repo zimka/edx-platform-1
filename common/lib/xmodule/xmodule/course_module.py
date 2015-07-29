@@ -542,38 +542,38 @@ class CourseFields(object):
                     },
                 ],
             },
-            {
-                "short_description": _("Explore edX's Support Tools"),
-                "items": [
-                    {
-                        "short_description": _("Explore the Studio Help Forum"),
-                        "long_description": _(
-                            "Access the Studio Help forum from the menu that appears when you click your user name "
-                            "in the top right corner of Studio."
-                        ),
-                        "is_checked": False,
-                        "action_url": "http://help.edge.edx.org/",
-                        "action_text": _("Visit Studio Help"),
-                        "action_external": True,
-                    },
-                    {
-                        "short_description": _("Enroll in edX 101"),
-                        "long_description": _("Register for edX 101, edX's primer for course creation."),
-                        "is_checked": False,
-                        "action_url": "https://edge.edx.org/courses/edX/edX101/How_to_Create_an_edX_Course/about",
-                        "action_text": _("Register for edX 101"),
-                        "action_external": True,
-                    },
-                    {
-                        "short_description": _("Download the Studio Documentation"),
-                        "long_description": _("Download the searchable Studio reference documentation in PDF form."),
-                        "is_checked": False,
-                        "action_url": "http://files.edx.org/Getting_Started_with_Studio.pdf",
-                        "action_text": _("Download Documentation"),
-                        "action_external": True,
-                    },
-                ],
-            },
+            #{
+            #    "short_description": _("Explore edX's Support Tools"),
+            #    "items": [
+            #        {
+            #            "short_description": _("Explore the Studio Help Forum"),
+            #            "long_description": _(
+            #                "Access the Studio Help forum from the menu that appears when you click your user name "
+            #                "in the top right corner of Studio."
+            #            ),
+            #            "is_checked": False,
+            #            "action_url": "http://help.edge.edx.org/",
+            #            "action_text": _("Visit Studio Help"),
+            #            "action_external": True,
+            #        },
+            #        {
+            #            "short_description": _("Enroll in edX 101"),
+            #            "long_description": _("Register for edX 101, edX's primer for course creation."),
+            #            "is_checked": False,
+            #            "action_url": "https://edge.edx.org/courses/edX/edX101/How_to_Create_an_edX_Course/about",
+            #            "action_text": _("Register for edX 101"),
+            #            "action_external": True,
+            #        },
+            #        {
+            #            "short_description": _("Download the Studio Documentation"),
+            #            "long_description": _("Download the searchable Studio reference documentation in PDF form."),
+            #            "is_checked": False,
+            #            "action_url": "http://files.edx.org/Getting_Started_with_Studio.pdf",
+            #            "action_text": _("Download Documentation"),
+            #            "action_external": True,
+            #        },
+            #    ],
+            #},
             {
                 "short_description": _("Draft Your Course About Page"),
                 "items": [

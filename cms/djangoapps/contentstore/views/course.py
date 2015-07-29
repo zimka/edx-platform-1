@@ -9,7 +9,8 @@ import logging
 import string  # pylint: disable=deprecated-module
 from django.utils.translation import ugettext as _
 import django.utils
-from django.contrib.auth.decorators import login_required
+#from django.contrib.auth.decorators import login_required
+from .staff_req import staff_required as login_required
 from django.conf import settings
 from django.views.decorators.http import require_http_methods, require_GET
 from django.core.exceptions import PermissionDenied
@@ -571,8 +572,10 @@ def get_courses_accessible_to_user(request):
     Try to get all courses by first reversing django groups and fallback to old method if it fails
     Note: overhead of pymongo reads will increase if getting courses from django groups fails
     """
-    if GlobalStaff().has_user(request.user):
-        # user has global access so no need to get courses from django groups
+    #if GlobalStaff().has_user(request.user):
+    #    # user has global access so no need to get courses from django groups
+    #    courses, in_process_course_actions = _accessible_courses_list(request)
+    if request.user.is_superuser:
         courses, in_process_course_actions = _accessible_courses_list(request)
     else:
         try:

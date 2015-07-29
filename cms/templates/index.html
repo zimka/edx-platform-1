@@ -21,13 +21,13 @@
       <h3 class="sr">${_("Page Actions")}</h3>
       <ul>
         <li class="nav-item">
-          % if course_creator_status=='granted':
+          % if course_creator_status=='granted' and user.is_superuser:
           <a href="#" class="button new-button new-course-button"><i class="icon fa fa-plus icon-inline"></i>
               ${_("New Course")}</a>
           % elif course_creator_status=='disallowed_for_this_site' and settings.FEATURES.get('STUDIO_REQUEST_EMAIL',''):
           <a href="mailto:${settings.FEATURES.get('STUDIO_REQUEST_EMAIL','')}">${_("Email staff to create course")}</a>
           % endif
-          % if show_new_library_button:
+          % if show_new_library_button and user.is_superuser:
             <a href="#" class="button new-button new-library-button"><i class="icon fa fa-plus icon-inline"></i>
             ${_("New Library")}</a>
           % endif
@@ -309,7 +309,7 @@
           </div>
         </div>
 
-        %if course_creator_status == "granted":
+        %if course_creator_status == "granted" and user.is_superuser:
         <div class="notice-item has-actions">
           <div class="msg">
             <h3 class="title">${_('Create Your First Course')}</h3>

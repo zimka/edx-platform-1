@@ -16,7 +16,8 @@ from openedx.core.lib.xblock_utils import wrap_xblock, request_token
 import dogstats_wrapper as dog_stats_api
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
-from django.contrib.auth.decorators import login_required
+#from django.contrib.auth.decorators import login_required
+from .staff_req import staff_required as login_required
 from django.http import HttpResponseBadRequest, HttpResponse, Http404
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_http_methods

@@ -31,6 +31,7 @@ import json
     <%static:css group='style-main'/>
 
     <%include file="widgets/segment-io.html" />
+    <%include file="google_analytics.html" />
 
     <%block name="header_extras"></%block>
   </head>
@@ -66,7 +67,8 @@ import json
       <%block name="content"></%block>
       </div>
 
-      % if user.is_authenticated():
+     <!-- % if user.is_authenticated():-->
+      % if False:
         <%include file="widgets/sock.html" args="online_help_token=online_help_token" />
       % endif
       <%include file="widgets/footer.html" />

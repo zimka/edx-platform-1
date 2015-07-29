@@ -323,6 +323,7 @@ MIDDLEWARE_CLASSES = (
     # Instead of AuthenticationMiddleware, we use a cache-backed version
     'cache_toolbox.middleware.CacheBackedAuthenticationMiddleware',
     'student.middleware.UserStandingMiddleware',
+    'student.middleware.UserIsStaff',
     'contentserver.middleware.StaticContentServer',
     'crum.CurrentRequestUserMiddleware',
 
@@ -351,6 +352,7 @@ MIDDLEWARE_CLASSES = (
 
     # use Django built in clickjacking protection
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'student.middleware.LoginRequiredMiddleware',    
 )
 
 # Clickjacking protection can be enabled by setting this to 'DENY'

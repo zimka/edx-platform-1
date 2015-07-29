@@ -124,11 +124,13 @@ class NpoedBackend(BaseOAuth2):
         firstname = response.get('firstname', '')
         lastname = response.get('lastname', '')
         fullname = ' '.join([firstname, lastname])
+        npoed_roles = response.get('npoed_roles','').split(',')
         return {'username': email.split('@', 1)[0],
                 'email': email,
                 'fullname': fullname,
                 'first_name': firstname,
-                'last_name': lastname}
+                'last_name': lastname,
+                'npoed_roles': npoed_roles,}
 
     def user_data(self, access_token, *args, **kwargs):
         """ Grab user profile information from NPOED. """
@@ -141,6 +143,7 @@ class NpoedBackend(BaseOAuth2):
             'email': email,
             'firstname': userinfo['name'],
             'lastname': userinfo['surname'],
+            'npoed_roles': userinfo['roles'],
         }
 
     def do_auth(self, access_token, *args, **kwargs):

@@ -1188,6 +1188,7 @@ MIDDLEWARE_CLASSES = (
     # use Django built in clickjacking protection
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
+    'courseware.middleware.LoginRequiredMiddleware',
     # to redirected unenrolled students to the course info page
     'courseware.middleware.RedirectUnenrolledMiddleware',
 

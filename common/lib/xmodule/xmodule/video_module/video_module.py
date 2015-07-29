@@ -73,7 +73,8 @@ from xmodule.mixin import LicenseMixin
 # of this particular import silliness. It's just that I haven't made one before,
 # and I was worried about trying it with my deadline constraints.
 try:
-    import edxval.api as edxval_api
+    #import edxval.api as edxval_api
+    import video_evms as edxval_api
 except ImportError:
     edxval_api = None
 
@@ -199,6 +200,7 @@ class VideoModule(VideoFields, VideoTranscriptsMixin, VideoStudentViewHandlers, 
                 val_profiles = ["youtube", "desktop_webm", "desktop_mp4"]
                 val_video_urls = edxval_api.get_urls_for_profiles(self.edx_video_id, val_profiles)
 
+                log.warning(val_video_urls)
                 # VAL will always give us the keys for the profiles we asked for, but
                 # if it doesn't have an encoded video entry for that Video + Profile, the
                 # value will map to `None`
