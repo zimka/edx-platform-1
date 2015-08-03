@@ -73,7 +73,7 @@ class WeightedAssignmentFormatGrader(CourseGrader):
             elif normalized_weight == 0:
                 aggregate_score = 1.0
             else:
-                assert("Drop count cannot be greater than assignments count.")
+                assert "Drop count cannot be greater than assignments count."
             return aggregate_score, dropped_indices
 
         # Figure the homework scores

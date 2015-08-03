@@ -30,14 +30,12 @@ from openedx.core.djangoapps.credit.api import (
 )
 from openedx.core.djangoapps.credit.models import CreditCourse, CreditProvider
 from openedx.core.djangoapps.user_api.tests.factories import UserCourseTagFactory
-
-FEATURES_WITH_CUSTOM_GRADING = settings.FEATURES.copy()
-FEATURES_WITH_CUSTOM_GRADING['ENABLE_CUSTOM_GRADING'] = True
+from openedx.core.djangoapps.grading_policy.utils import MaxScoresCache
 
 
 # pylint: disable=attribute-defined-outside-init
 @unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')  # pylint: disable=protected-access
-@override_settings(FEATURES=FEATURES_WITH_CUSTOM_GRADING, ASSIGNMENT_GRADER='WeightedAssignmentFormatGrader')
+@override_settings(GRADING_TYPE='vertical', ASSIGNMENT_GRADER='WeightedAssignmentFormatGrader')
 class TestSubmittingProblemsVerticals(TestSubmittingProblems):
     """Overrides some methods needed for testing."""
     def score_for_hw(self, hw_url_name):
@@ -128,6 +126,7 @@ class TestCourseGrader(TestSubmittingProblemsVerticals):
                 "min_count": 1,
                 "drop_count": 0,
                 "short_label": "HW",
+                "passing_grade": 0,
                 "weight": 1.0
             }],
             "GRADE_CUTOFFS": {
@@ -156,11 +155,13 @@ class TestCourseGrader(TestSubmittingProblemsVerticals):
                     "min_count": 1,
                     "drop_count": 0,
                     "short_label": "HW",
+                    "passing_grade": 0,
                     "weight": 0.25
                 }, {
                     "type": "Final",
                     "name": "Final Section",
                     "short_label": "Final",
+                    "passing_grade": 0,
                     "weight": 0.75
                 }
             ]
@@ -185,6 +186,7 @@ class TestCourseGrader(TestSubmittingProblemsVerticals):
                     "min_count": 3,
                     "drop_count": 1,
                     "short_label": "HW",
+                    "passing_grade": 0,
                     "weight": 1
                 }
             ]
@@ -285,7 +287,7 @@ class TestCourseGrader(TestSubmittingProblemsVerticals):
             ).exists()
         )
         location_to_cache = unicode(self.problem_location('p2'))
-        max_scores_cache = grades.MaxScoresCache.create_for_course(self.course)
+        max_scores_cache = MaxScoresCache.create_for_course(self.course)
 
         # problem isn't in the cache
         max_scores_cache.fetch_from_remote([location_to_cache])
@@ -1009,6 +1011,7 @@ class TestConditionalContent(TestSubmittingProblemsVerticals):
                 "min_count": 2,
                 "drop_count": 0,
                 "short_label": "HW",
+                "passing_grade": 0,
                 "weight": 1.0
             }]
         }

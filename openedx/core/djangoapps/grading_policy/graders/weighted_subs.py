@@ -33,7 +33,7 @@ class WeightedSubsectionsGrader(CourseGrader):
         section_breakdown = []
         grade_breakdown = []
 
-        for subgrader, category, weight in self.sections:
+        for subgrader, category, weight, passing_grade in self.sections:
             subgrade_result = subgrader.grade(grade_sheet, generate_random_scores)
 
             weighted_percent = subgrade_result['percent'] * weight
@@ -41,8 +41,16 @@ class WeightedSubsectionsGrader(CourseGrader):
 
             total_percent += weighted_percent
             section_breakdown += subgrade_result['section_breakdown']
-            grade_breakdown.append({'percent': weighted_percent, 'detail': section_detail, 'category': category})
+            grade_breakdown.append({
+                'percent': weighted_percent,
+                'detail': section_detail,
+                'category': category,
+                'is_passed': subgrade_result['percent'] >= passing_grade
+            })
 
-        return {'percent': total_percent,
-                'section_breakdown': section_breakdown,
-                'grade_breakdown': grade_breakdown}
+        return {
+            'percent': total_percent,
+            'section_breakdown': section_breakdown,
+            'grade_breakdown': grade_breakdown,
+            'sections_passed': all(section['is_passed'] for section in grade_breakdown)
+        }

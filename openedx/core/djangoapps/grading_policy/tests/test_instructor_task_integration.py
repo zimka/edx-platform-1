@@ -7,6 +7,7 @@ openedx/core/djangoapps/grading_policy/tests/test_instructor_task_integration.py
 import json
 import unittest
 from django.test.utils import override_settings
+from django.conf import settings
 from celery.states import FAILURE  # pylint: disable=import-error, no-name-in-module
 from lms.djangoapps.instructor_task.tests.test_base import InstructorTaskModuleTestCase
 from openedx.core.djangoapps.util.testing import TestConditionalContent
@@ -19,15 +20,11 @@ from xmodule.partitions.partitions import UserPartition, Group
 from instructor_task.tests.test_base import TestReportMixin, OPTION_1, OPTION_2
 
 from student.tests.factories import CourseEnrollmentFactory, UserFactory
-from django.conf import settings
-
-FEATURES_WITH_CUSTOM_GRADING = settings.FEATURES.copy()
-FEATURES_WITH_CUSTOM_GRADING['ENABLE_CUSTOM_GRADING'] = True
 
 
 @unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')  # pylint: disable=protected-access
 @override_settings(
-    FEATURES=FEATURES_WITH_CUSTOM_GRADING, ASSIGNMENT_GRADER='WeightedAssignmentFormatGrader'
+    GRADING_TYPE='vertical', ASSIGNMENT_GRADER='WeightedAssignmentFormatGrader'
 )
 class TestConditionalContentVertical(TestConditionalContent):
     """
@@ -72,6 +69,7 @@ class TestConditionalContentVertical(TestConditionalContent):
                     "min_count": 1,
                     "drop_count": 0,
                     "short_label": "HW",
+                    "passing_grade": 0,
                     "weight": 1.0
                 }]
             }

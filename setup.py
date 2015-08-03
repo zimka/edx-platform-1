@@ -50,6 +50,7 @@ setup(
         ],
         "openedx.grading_policy": [
             "vertical = openedx.core.djangoapps.grading_policy.vertical:VerticalGrading",
+            "sequential = openedx.core.djangoapps.grading_policy.sequential:SequentialGrading",
         ],
         "openedx.graders": [
             "WeightedSubsectionsGrader = openedx.core.djangoapps.grading_policy.graders.weighted_subs:WeightedSubsectionsGrader",

@@ -14,15 +14,13 @@ from capa.tests.response_xml_factory import StringResponseXMLFactory
 from courseware.tests.factories import StudentModuleFactory
 from xmodule.modulestore.django import modulestore
 
-FEATURES_WITH_CUSTOM_GRADING = settings.FEATURES.copy()
-FEATURES_WITH_CUSTOM_GRADING['ENABLE_CUSTOM_GRADING'] = True
 USER_COUNT = 11
 
 
 @unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')  # pylint: disable=protected-access
 @attr('shard_1')
 @override_settings(
-    FEATURES=FEATURES_WITH_CUSTOM_GRADING, ASSIGNMENT_GRADER='WeightedAssignmentFormatGrader'
+    GRADING_TYPE='vertical', ASSIGNMENT_GRADER='WeightedAssignmentFormatGrader'
 )
 class TestGradebookVertical(ModuleStoreTestCase):
     """
@@ -109,6 +107,7 @@ class TestLetterCutoffPolicy(TestGradebookVertical):
                 "min_count": 1,
                 "drop_count": 0,
                 "short_label": "HW",
+                "passing_grade": 0,
                 "weight": 1
             },
         ],
@@ -139,3 +138,34 @@ class TestLetterCutoffPolicy(TestGradebookVertical):
         self.assertEquals(20, self.response.content.count('grade_F'))
         # One use at the top of the page [1]
         self.assertEquals(15, self.response.content.count('grade_None'))
+
+
+@attr('shard_1')
+class TestPassingGradeVertical(TestGradebookVertical):
+    """
+    Tests advanced grading policy (with letter grade cutoffs and passing grades).
+    """
+    grading_policy = {
+        "GRADER": [
+            {
+                "type": "Homework",
+                "min_count": 1,
+                "drop_count": 0,
+                "short_label": "HW",
+                "passing_grade": .8,
+                "weight": 1
+            },
+        ],
+        "GRADE_CUTOFFS": {
+            'A': .9,
+            'B': .8,
+            'C': .7,
+            'D': .6,
+        }
+    }
+
+    def test_assigned_grades(self):
+        self.assertEquals(2, self.response.content.count('grade_A'))
+        self.assertEquals(3, self.response.content.count('grade_B'))
+        # All other users don't reach passing grade
+        self.assertEquals(42, self.response.content.count('grade_None'))
