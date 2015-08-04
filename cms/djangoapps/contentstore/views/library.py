@@ -227,6 +227,9 @@ def manage_library_users(request, library_key_string):
     for user in users:
         formatted_users.append(user_with_role(user, 'library_user'))
 
+    if settings.USE_PLP and not request.user.is_superuser:
+        raise Http404
+
     return render_to_response('manage_users_lib.html', {
         'context_library': library,
         'users': formatted_users,

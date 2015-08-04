@@ -149,8 +149,12 @@
         <h3 class="title-3">${_("Other Course Settings")}</h3>
         <nav class="nav-related" aria-label="${_('Other Course Settings')}">
           <ul>
+            % if not settings.USE_PLP or user.is_superuser:
             <li class="nav-item"><a href="${detailed_settings_url}">${_("Details &amp; Schedule")}</a></li>
+            % endif
+            % if not settings.USE_PLP or user.is_superuser:
             <li class="nav-item"><a href="${course_team_url}">${_("Course Team")}</a></li>
+            % endif
             <li class="nav-item"><a href="${utils.reverse_course_url('group_configurations_list_handler', context_course.id)}">${_("Group Configurations")}</a></li>
             <li class="nav-item"><a href="${advanced_settings_url}">${_("Advanced Settings")}</a></li>
           </ul>

@@ -90,15 +90,19 @@
             <div class="wrapper wrapper-nav-sub">
               <div class="nav-sub">
                 <ul>
+                  % if not settings.USE_PLP or user.is_superuser:
                   <li class="nav-item nav-course-settings-schedule">
                     <a href="${settings_url}">${_("Schedule &amp; Details")}</a>
                   </li>
+                  % endif
                   <li class="nav-item nav-course-settings-grading">
                     <a href="${grading_url}">${_("Grading")}</a>
                   </li>
+                  % if not settings.USE_PLP or user.is_superuser:
                   <li class="nav-item nav-course-settings-team">
                     <a href="${course_team_url}">${_("Course Team")}</a>
                   </li>
+                  % endif
                   <li class="nav-item nav-course-settings-group-configurations">
                     <a href="${reverse('contentstore.views.group_configurations_list_handler', kwargs={'course_key_string': unicode(course_key)})}">${_("Group Configurations")}</a>
                   </li>

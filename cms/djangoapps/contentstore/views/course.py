@@ -950,6 +950,9 @@ def settings_handler(request, course_key_string):
                         }
                     )
 
+            if settings.USE_PLP and not request.user.is_superuser:
+                raise Http404
+
             return render_to_response('settings.html', settings_context)
         elif 'application/json' in request.META.get('HTTP_ACCEPT', ''):
             if request.method == 'GET':

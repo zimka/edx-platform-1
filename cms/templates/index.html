@@ -16,6 +16,7 @@
   <header class="mast has-actions">
     <h1 class="page-header">${_("{studio_name} Home").format(studio_name=settings.STUDIO_SHORT_NAME)}</h1>
 
+    % if not settings.USE_PLP or user.is_superuser:
     % if user.is_active:
     <nav class="nav-actions" aria-label="${_('Page Actions')}">
       <h3 class="sr">${_("Page Actions")}</h3>
@@ -34,6 +35,7 @@
         </li>
       </ul>
     </nav>
+    % endif
     % endif
   </header>
 </div>
@@ -309,6 +311,7 @@
           </div>
         </div>
 
+        %if not settings.USE_PLP or user.is_superuser:
         %if course_creator_status == "granted":
         <div class="notice-item has-actions">
           <div class="msg">
@@ -325,6 +328,7 @@
           </ul>
         </div>
         % endif
+        %endif
 
       </div>
       % endif
@@ -449,6 +453,7 @@
               </div>
           </div>
         </div>
+        % if not settings.USE_PLP or user.is_superuser:
         % if show_new_library_button:
         <div class="notice-item has-actions">
           <div class="msg">
@@ -464,6 +469,7 @@
           </li>
         </ul>
         </div>
+        % endif
         % endif
       </div>
       %endif

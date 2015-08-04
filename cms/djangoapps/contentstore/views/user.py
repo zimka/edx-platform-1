@@ -1,6 +1,8 @@
 from django.core.exceptions import PermissionDenied
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 from django.views.decorators.http import require_http_methods
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_POST
@@ -90,6 +92,9 @@ def _manage_users(request, course_key):
         formatted_users.append(user_with_role(user, 'instructor'))
     for user in staff - instructors:
         formatted_users.append(user_with_role(user, 'staff'))
+
+    if settings.USE_PLP and not request.user.is_superuser:
+        raise Http404
 
     return render_to_response('manage_users.html', {
         'context_course': course_module,

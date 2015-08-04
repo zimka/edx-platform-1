@@ -93,9 +93,13 @@ from django.utils.translation import ugettext as _
       <h3 class="title-3">${_("Other Course Settings")}</h3>
         <nav class="nav-related" aria-label="${_('Other Course Settings')}">
           <ul>
+            % if not settings.USE_PLP or user.is_superuser:
             <li class="nav-item"><a href="${details_url}">${_("Details &amp; Schedule")}</a></li>
+            % endif
             <li class="nav-item"><a href="${grading_url}">${_("Grading")}</a></li>
+            % if not settings.USE_PLP or user.is_superuser:
             <li class="nav-item"><a href="${course_team_url}">${_("Course Team")}</a></li>
+            % endif
             <li class="nav-item"><a href="${advanced_settings_url}">${_("Advanced Settings")}</a></li>
           </ul>
         </nav>
