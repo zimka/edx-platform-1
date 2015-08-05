@@ -358,9 +358,9 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
             if (xblockInfo.isChapter()) {
                 editors = [ReleaseDateEditor, StaffLockEditor];
             } else if (xblockInfo.isSequential()) {
-                editors = [ReleaseDateEditor, GradingEditor, DueDateEditor, StaffLockEditor];
+                editors = [ReleaseDateEditor, StaffLockEditor];
             } else if (xblockInfo.isVertical()) {
-                editors = [StaffLockEditor];
+                editors = [GradingEditor, DueDateEditor, StaffLockEditor];
             }
 
             return new SettingsXBlockModal($.extend({

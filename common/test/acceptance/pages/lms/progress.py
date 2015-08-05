@@ -20,7 +20,7 @@ class ProgressPage(CoursePage):
 
     @property
     def grading_formats(self):
-        return [label.replace(' Scores:', '') for label in self.q(css="div.scores h3").text]
+        return [label.replace(' Scores:', '') for label in self.q(css="div.scores h4").text]
 
     def scores(self, chapter, section):
         """

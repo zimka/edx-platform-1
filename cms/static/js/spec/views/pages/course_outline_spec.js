@@ -63,7 +63,6 @@ define(["jquery", "sinon", "common/js/spec_helpers/ajax_helpers", "js/views/util
                     published: true,
                     edited_on: 'Jul 02, 2014 at 20:56 UTC',
                     edited_by: 'MockUser',
-                    course_graders: '["Lab", "Howework"]',
                     has_explicit_staff_lock: false,
                     child_info: {
                         category: 'vertical',
@@ -84,7 +83,8 @@ define(["jquery", "sinon", "common/js/spec_helpers/ajax_helpers", "js/views/util
                     published: true,
                     visibility_state: 'unscheduled',
                     edited_on: 'Jul 02, 2014 at 20:56 UTC',
-                    edited_by: 'MockUser'
+                    edited_by: 'MockUser',
+                    course_graders: '["Lab", "Howework"]'
                 }, options);
             };
 
@@ -588,10 +588,8 @@ define(["jquery", "sinon", "common/js/spec_helpers/ajax_helpers", "js/views/util
                     return getItemHeaders('subsection').find('.wrapper-xblock-field');
                 };
 
-                setEditModalValues = function (start_date, due_date, grading_type, is_locked) {
+                setEditModalValues = function (start_date, is_locked) {
                     $("#start_date").val(start_date);
-                    $("#due_date").val(due_date);
-                    $("#grading_type").val(grading_type);
                     $("#staff_lock").prop('checked', is_locked);
                 };
 
@@ -600,12 +598,8 @@ define(["jquery", "sinon", "common/js/spec_helpers/ajax_helpers", "js/views/util
                         release_date: 'Jan 01, 2970 at 05:00 UTC'
                     }, [
                         createMockSubsectionJSON({
-                            graded: true,
-                            due_date: 'Jul 10, 2014 at 00:00 UTC',
                             release_date: 'Jul 09, 2014 at 00:00 UTC',
                             start: "2014-07-09T00:00:00Z",
-                            format: "Lab",
-                            due: "2014-07-10T00:00:00Z",
                             has_explicit_staff_lock: true,
                             staff_only_message: true
                         }, [
@@ -681,15 +675,13 @@ define(["jquery", "sinon", "common/js/spec_helpers/ajax_helpers", "js/views/util
                 it('can be edited', function() {
                     createCourseOutlinePage(this, mockCourseJSON, false);
                     outlinePage.$('.outline-subsection .configure-button').click();
-                    setEditModalValues("7/9/2014", "7/10/2014", "Lab", true);
+                    setEditModalValues("7/9/2014", true);
                     $(".wrapper-modal-window .action-save").click();
                     AjaxHelpers.expectJsonRequest(requests, 'POST', '/xblock/mock-subsection', {
-                        "graderType":"Lab",
                         "publish": "republish",
                         "metadata":{
                             "visible_to_staff_only": true,
-                            "start":"2014-07-09T00:00:00.000Z",
-                            "due":"2014-07-10T00:00:00.000Z"
+                            "start":"2014-07-09T00:00:00.000Z"
                         }
                     });
                     expect(requests[0].requestHeaders['X-HTTP-Method-Override']).toBe('PATCH');
@@ -704,28 +696,19 @@ define(["jquery", "sinon", "common/js/spec_helpers/ajax_helpers", "js/views/util
                     expect($(".outline-subsection .status-release-value")).toContainText(
                         "Jul 09, 2014 at 00:00 UTC"
                     );
-                    expect($(".outline-subsection .status-grading-date")).toContainText(
-                        "Due: Jul 10, 2014 at 00:00 UTC"
-                    );
-                    expect($(".outline-subsection .status-grading-value")).toContainText(
-                        "Lab"
-                    );
                     expect($(".outline-subsection .status-message-copy")).toContainText(
                         "Contains staff only content"
                     );
 
-                    expect($(".outline-item .outline-subsection .status-grading-value")).toContainText("Lab");
                     outlinePage.$('.outline-item .outline-subsection .configure-button').click();
                     expect($("#start_date").val()).toBe('7/9/2014');
-                    expect($("#due_date").val()).toBe('7/10/2014');
-                    expect($("#grading_type").val()).toBe('Lab');
                     expect($("#staff_lock").is(":checked")).toBe(true);
                 });
 
-                it('release date, due date, grading type, and staff lock can be cleared.', function() {
+                it('release date, staff lock can be cleared.', function() {
                     createCourseOutlinePage(this, mockCourseJSON, false);
                     outlinePage.$('.outline-item .outline-subsection .configure-button').click();
-                    setEditModalValues("7/9/2014", "7/10/2014", "Lab", true);
+                    setEditModalValues("7/9/2014", true);
                     $(".wrapper-modal-window .action-save").click();
 
                     // This is the response for the change operation.
@@ -736,28 +719,17 @@ define(["jquery", "sinon", "common/js/spec_helpers/ajax_helpers", "js/views/util
                     expect($(".outline-subsection .status-release-value")).toContainText(
                         "Jul 09, 2014 at 00:00 UTC"
                     );
-                    expect($(".outline-subsection .status-grading-date")).toContainText(
-                        "Due: Jul 10, 2014 at 00:00 UTC"
-                    );
-                    expect($(".outline-subsection .status-grading-value")).toContainText(
-                        "Lab"
-                    );
                     expect($(".outline-subsection .status-message-copy")).toContainText(
                         "Contains staff only content"
                     );
 
                     outlinePage.$('.outline-subsection .configure-button').click();
                     expect($("#start_date").val()).toBe('7/9/2014');
-                    expect($("#due_date").val()).toBe('7/10/2014');
-                    expect($("#grading_type").val()).toBe('Lab');
                     expect($("#staff_lock").is(":checked")).toBe(true);
 
                     $(".wrapper-modal-window .scheduled-date-input .action-clear").click();
-                    $(".wrapper-modal-window .due-date-input .action-clear").click();
                     expect($("#start_date").val()).toBe('');
-                    expect($("#due_date").val()).toBe('');
 
-                    $("#grading_type").val('notgraded');
                     $("#staff_lock").prop('checked', false);
 
                     $(".wrapper-modal-window .action-save").click();
@@ -771,8 +743,6 @@ define(["jquery", "sinon", "common/js/spec_helpers/ajax_helpers", "js/views/util
                     expect($(".outline-subsection .status-release-value")).not.toContainText(
                         "Jul 09, 2014 at 00:00 UTC"
                     );
-                    expect($(".outline-subsection .status-grading-date")).not.toExist();
-                    expect($(".outline-subsection .status-grading-value")).not.toExist();
                     expect($(".outline-subsection .status-message-copy")).not.toContainText(
                         "Contains staff only content"
                     );
@@ -816,6 +786,30 @@ define(["jquery", "sinon", "common/js/spec_helpers/ajax_helpers", "js/views/util
 
             // Note: most tests for units can be found in Bok Choy
             describe("Unit", function() {
+                var setEditModalValues, mockServerValuesJson;
+
+                setEditModalValues = function (due_date, grading_type, is_locked) {
+                    $("#due_date").val(due_date);
+                    $("#grading_type").val(grading_type);
+                    $("#staff_lock").prop('checked', is_locked);
+                };
+
+                // Contains hard-coded dates because dates are presented in different formats.
+                mockServerValuesJson = createMockSectionJSON({
+                        release_date: 'Jan 01, 2970 at 05:00 UTC'
+                    }, [
+                        createMockSubsectionJSON({}, [
+                            createMockVerticalJSON({
+                                graded: true,
+                                due_date: 'Jul 10, 2014 at 00:00 UTC',
+                                due: "2014-07-10T00:00:00Z",
+                                format: "Lab",
+                                has_explicit_staff_lock: true,
+                                staff_only_message: true
+                            })
+                        ])
+                    ]);
+
                 it('can be deleted', function() {
                     var promptSpy = EditHelpers.createPromptSpy();
                     createCourseOutlinePage(this, mockCourseJSON);
@@ -827,6 +821,94 @@ define(["jquery", "sinon", "common/js/spec_helpers/ajax_helpers", "js/views/util
                     // Note: verification of the server response and the UI's handling of it
                     // is handled in the acceptance tests.
                     AjaxHelpers.expectJsonRequest(requests, 'GET', '/xblock/outline/mock-section');
+                });
+
+                it('can be edited', function() {
+                    createCourseOutlinePage(this, mockCourseJSON, false);
+                    expandItemsAndVerifyState('subsection');
+                    getItemHeaders('unit').find('.configure-button').click();
+                    setEditModalValues("7/10/2014", "Lab", true);
+                    $(".wrapper-modal-window .action-save").click();
+                    AjaxHelpers.expectJsonRequest(requests, 'POST', '/xblock/mock-unit', {
+                        "graderType":"Lab",
+                        "publish": "republish",
+                        "metadata":{
+                            "visible_to_staff_only": true,
+                            "due":"2014-07-10T00:00:00.000Z"
+                        }
+                    });
+                    expect(requests[0].requestHeaders['X-HTTP-Method-Override']).toBe('PATCH');
+
+                    // This is the response for the change operation.
+                    AjaxHelpers.respondWithJson(requests, {});
+                    AjaxHelpers.expectJsonRequest(requests, 'GET', '/xblock/outline/mock-section');
+                    expect(requests.length).toBe(2);
+                    // This is the response for the subsequent fetch operation for the section.
+                    AjaxHelpers.respondWithJson(requests, mockServerValuesJson);
+                    expect($(".outline-unit .status-grading-date")).toContainText(
+                        "Due: Jul 10, 2014 at 00:00 UTC"
+                    );
+                    expect($(".outline-unit .status-grading-value")).toContainText(
+                        "Lab"
+                    );
+                    expect($(".outline-unit .status-message-copy")).toContainText(
+                        "Contains staff only content"
+                    );
+
+                    expect($(".outline-item .outline-unit .status-grading-value")).toContainText("Lab");
+                    outlinePage.$('.outline-item .outline-unit .configure-button').click();
+                    expect($("#due_date").val()).toBe('7/10/2014');
+                    expect($("#grading_type").val()).toBe('Lab');
+                    expect($("#staff_lock").is(":checked")).toBe(true);
+                });
+
+                it('due date, grading type and staff lock can be cleared.', function() {
+                    createCourseOutlinePage(this, mockCourseJSON, false);
+                    expandItemsAndVerifyState('subsection');
+                    getItemHeaders('unit').find('.configure-button').click();
+                    setEditModalValues("7/10/2014", "Lab", true);
+                    $(".wrapper-modal-window .action-save").click();
+
+                    // This is the response for the change operation.
+                    AjaxHelpers.respondWithJson(requests, {});
+                    // This is the response for the subsequent fetch operation.
+                    AjaxHelpers.respondWithJson(requests, mockServerValuesJson);
+
+                    expect($(".outline-unit .status-grading-date")).toContainText(
+                        "Due: Jul 10, 2014 at 00:00 UTC"
+                    );
+                    expect($(".outline-unit .status-grading-value")).toContainText(
+                        "Lab"
+                    );
+                    expect($(".outline-unit .status-message-copy")).toContainText(
+                        "Contains staff only content"
+                    );
+
+                    outlinePage.$('.outline-unit .configure-button').click();
+                    expect($("#due_date").val()).toBe('7/10/2014');
+                    expect($("#grading_type").val()).toBe('Lab');
+                    expect($("#staff_lock").is(":checked")).toBe(true);
+
+                    $(".wrapper-modal-window .scheduled-date-input .action-clear").click();
+                    $(".wrapper-modal-window .due-date-input .action-clear").click();
+                    expect($("#due_date").val()).toBe('');
+
+                    $("#grading_type").val('notgraded');
+                    $("#staff_lock").prop('checked', false);
+
+                    $(".wrapper-modal-window .action-save").click();
+
+                    // This is the response for the change operation.
+                    AjaxHelpers.respondWithJson(requests, {});
+                    // This is the response for the subsequent fetch operation.
+                    AjaxHelpers.respondWithJson(requests,
+                        createMockSectionJSON({}, [createMockSubsectionJSON()])
+                    );
+                    expect($(".outline-unit .status-grading-date")).not.toExist();
+                    expect($(".outline-unit .status-grading-value")).not.toExist();
+                    expect($(".outline-unit .status-message-copy")).not.toContainText(
+                        "Contains staff only content"
+                    );
                 });
 
                 it('has a link to the unit page', function() {
