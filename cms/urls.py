@@ -112,6 +112,9 @@ urlpatterns += patterns(
 
     # Import/Export API
     url(r'^api/import_export/v1/', include('openedx.core.djangoapps.import_export.urls')),
+
+    # Npoed Course API
+    url(r'^api/npoed_course_api/', include('npoed_course_api.urls')),
 )
 
 JS_INFO_DICT = {
