@@ -1009,7 +1009,7 @@ class MongoModuleStore(ModuleStoreDraftAndPublished, ModuleStoreWriteBase, Mongo
             ],
             []
         )
-        return [course for course in base_list if not isinstance(course, ErrorDescriptor)]
+        return [course for course in base_list if not isinstance(course, ErrorDescriptor) and not course.course_is_hidden_in_lms]
 
     def _find_one(self, location):
         '''Look for a given location in the collection. If the item is not present, raise

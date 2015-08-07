@@ -12,7 +12,7 @@ from opaque_keys.edx.keys import CourseKey
 
 from xmodule.modulestore.django import modulestore
 
-from .api import create_course
+from .api import create_course, delete_course
 
 log = logging.getLogger(__name__)
 
@@ -94,5 +94,8 @@ class CourseManagement(CourseViewMixin, ListCreateAPIView):
         # create course
         if data['mode'] == 'create':
             response_data = create_course(course_details)
+            return Response(data=json.dumps(response_data), content_type="application/json")
+        if data['mode'] == 'delete':
+            response_data = delete_course(course_details)
             return Response(data=json.dumps(response_data), content_type="application/json")
         return Response(status=status.HTTP_204_NO_CONTENT)

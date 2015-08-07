@@ -910,6 +910,12 @@ class CourseFields(object):
         scope=Scope.settings,
     )
 
+    course_is_hidden_in_lms = Boolean(
+        display_name=_("Course is hidden in lms"),
+        default=None,
+        scope=Scope.settings,
+    )
+
 
 class CourseModule(CourseFields, SequenceModule):  # pylint: disable=abstract-method
     """
