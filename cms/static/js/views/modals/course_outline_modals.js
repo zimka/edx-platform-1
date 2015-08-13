@@ -13,7 +13,7 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
 ) {
     'use strict';
     var CourseOutlineXBlockModal, SettingsXBlockModal, PublishXBlockModal, AbstractEditor, BaseDateEditor,
-        ReleaseDateEditor, DueDateEditor, GradingEditor, PublishEditor, StaffLockEditor;
+        ReleaseDateEditor, DueDateEditor, GradingEditor, PublishEditor, StaffLockEditor, WeightEditor;
 
     CourseOutlineXBlockModal = BaseModal.extend({
         events : {
@@ -339,9 +339,27 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
             return {
                 hasExplicitStaffLock: this.isModelLocked(),
                 ancestorLocked: this.isAncestorLocked()
-            }
+            };
         }
     });
+
+    WeightEditor = AbstractEditor.extend({
+        templateName: 'weight-editor',
+
+        setValue: function (value) {
+            this.$('#weight').val(value);
+        },
+
+        getValue: function () {
+            return this.$('#weight').val();
+        },
+
+        getRequestData: function () {
+            return {
+                'metadata': {'weight': this.getValue()}
+            };
+         }
+     });
 
     return {
         getModal: function (type, xblockInfo, options) {
@@ -360,7 +378,7 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
             } else if (xblockInfo.isSequential()) {
                 editors = [ReleaseDateEditor, StaffLockEditor];
             } else if (xblockInfo.isVertical()) {
-                editors = [GradingEditor, DueDateEditor, StaffLockEditor];
+                editors = [GradingEditor, DueDateEditor, WeightEditor, StaffLockEditor];
             }
 
             return new SettingsXBlockModal($.extend({

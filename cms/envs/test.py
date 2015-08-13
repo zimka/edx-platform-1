@@ -285,5 +285,3 @@ SECRET_KEY = '85920908f28904ed733fe576320db18cabd7b6cd'
 
 FEATURES['ENABLE_CUSTOM_GRADING'] = False
 GRADING_TYPE = 'vertical'
-GRADING_ALLOWED_TYPES = ('vertical', 'sequential')
-

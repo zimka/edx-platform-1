@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
+This file contains some tests for Courseware Django app with grading by verticals enabled.
 lms/djangoapps/courseware/tests/test_submitting_problems.py
+python ./manage.py lms test --verbosity=1 \
+openedx/core/djangoapps/grading_policy/tests/test_courseware_submitting_problems.py --traceback --settings=test
 """
 import unittest
 from django.test.utils import override_settings
@@ -32,9 +35,11 @@ FEATURES_WITH_CUSTOM_GRADING = settings.FEATURES.copy()
 FEATURES_WITH_CUSTOM_GRADING['ENABLE_CUSTOM_GRADING'] = True
 
 
-@unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')
-@override_settings(FEATURES=FEATURES_WITH_CUSTOM_GRADING, GRADING_TYPE='vertical')
+# pylint: disable=attribute-defined-outside-init
+@unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')  # pylint: disable=protected-access
+@override_settings(FEATURES=FEATURES_WITH_CUSTOM_GRADING, ASSIGNMENT_GRADER='WeightedAssignmentFormatGrader')
 class TestSubmittingProblemsVerticals(TestSubmittingProblems):
+    """Overrides some methods needed for testing."""
     def score_for_hw(self, hw_url_name):
         """
         Returns list of scores for a given url.
@@ -46,20 +51,20 @@ class TestSubmittingProblemsVerticals(TestSubmittingProblems):
         # list of grade summaries for each section
         sections_list = []
         blocks = self.get_progress_summary()['blocks']
-        for name, value in blocks.iteritems():
+        for name, value in blocks.iteritems():  # pylint: disable=unused-variable
             if value['block_type'] == 'vertical':
                 sections_list.append(value)
         # get the first section that matches the url (there should only be one)
         hw_section = next(section for section in sections_list if section.get('url_name') == hw_url_name)
         return [s.earned for s in hw_section['scores']]
 
-    def add_graded_section_to_course(self, name, section_format='Homework', late=False, reset=False, showanswer=False):
+    def add_graded_section_to_course(self, name, section_format='Homework', late=False, reset=False, showanswer=False, weight=1.0):  # pylint: disable=line-too-long, arguments-differ
         """
         Creates a graded homework section within a chapter and returns the section.
         """
 
         # if we don't already have a chapter create a new one
-        if not (hasattr(self, 'chapter')):
+        if not hasattr(self, 'chapter'):
             self.chapter = ItemFactory.create(
                 parent_location=self.course.location,
                 category='chapter'
@@ -70,7 +75,7 @@ class TestSubmittingProblemsVerticals(TestSubmittingProblems):
                 parent_location=self.chapter.location,
                 display_name=name,
                 category='vertical',
-                metadata={'graded': True, 'format': section_format, 'due': '2013-05-20T23:30'}
+                metadata={'graded': True, 'format': section_format, 'due': '2013-05-20T23:30', 'weight': weight}
             )
         elif reset:
             section = ItemFactory.create(
@@ -78,10 +83,7 @@ class TestSubmittingProblemsVerticals(TestSubmittingProblems):
                 display_name=name,
                 category='vertical',
                 rerandomize='always',
-                metadata={
-                    'graded': True,
-                    'format': section_format,
-                }
+                metadata={'graded': True, 'format': section_format, 'weight': weight}
             )
 
         elif showanswer:
@@ -90,10 +92,7 @@ class TestSubmittingProblemsVerticals(TestSubmittingProblems):
                 display_name=name,
                 category='vertical',
                 showanswer='never',
-                metadata={
-                    'graded': True,
-                    'format': section_format,
-                }
+                metadata={'graded': True, 'format': section_format, 'weight': weight}
             )
 
         else:
@@ -101,7 +100,7 @@ class TestSubmittingProblemsVerticals(TestSubmittingProblems):
                 parent_location=self.chapter.location,
                 display_name=name,
                 category='vertical',
-                metadata={'graded': True, 'format': section_format}
+                metadata={'graded': True, 'format': section_format, 'weight': weight}
             )
 
         # now that we've added the problem and section to the course
@@ -111,6 +110,7 @@ class TestSubmittingProblemsVerticals(TestSubmittingProblems):
         return section
 
 
+# pylint: disable=attribute-defined-outside-init
 @attr('shard_1')
 class TestCourseGrader(TestSubmittingProblemsVerticals):
     """
@@ -199,13 +199,13 @@ class TestCourseGrader(TestSubmittingProblemsVerticals):
         self.hw2_names = ['h2p1', 'h2p2']
         self.hw3_names = ['h3p1', 'h3p2']
 
-        self.homework1 = self.add_graded_section_to_course('homework1')
+        self.homework1 = self.add_graded_section_to_course('homework1', weight=0.5)
         self.add_dropdown_to_section(self.homework1.location, self.hw1_names[0], 1)
         self.add_dropdown_to_section(self.homework1.location, self.hw1_names[1], 1)
-        self.homework2 = self.add_graded_section_to_course('homework2')
+        self.homework2 = self.add_graded_section_to_course('homework2', weight=0.3)
         self.add_dropdown_to_section(self.homework2.location, self.hw2_names[0], 1)
         self.add_dropdown_to_section(self.homework2.location, self.hw2_names[1], 1)
-        self.homework3 = self.add_graded_section_to_course('homework3')
+        self.homework3 = self.add_graded_section_to_course('homework3', weight=0.2)
         self.add_dropdown_to_section(self.homework3.location, self.hw3_names[0], 1)
         self.add_dropdown_to_section(self.homework3.location, self.hw3_names[1], 1)
 
@@ -442,7 +442,7 @@ class TestCourseGrader(TestSubmittingProblemsVerticals):
         self.assertEqual(self.score_for_hw('homework1'), [1.0, 0.0])
         self.assertEqual(self.score_for_hw('homework2'), [1.0, 1.0])
         self.assertEqual(self.earned_hw_scores(), [1.0, 2.0, 0])  # Order matters
-        self.check_grade_percent(0.75)
+        self.check_grade_percent(0.69)  # (0.5 * 0.5 + 0.3 * 1.0) / (1.0 + 0.2)
 
     def test_dropping_nochange(self):
         """
@@ -456,7 +456,7 @@ class TestCourseGrader(TestSubmittingProblemsVerticals):
         self.assertEqual(self.score_for_hw('homework2'), [1.0, 1.0])
         self.assertEqual(self.score_for_hw('homework3'), [1.0, 0.0])
         self.assertEqual(self.earned_hw_scores(), [1.0, 2.0, 1.0])  # Order matters
-        self.check_grade_percent(0.75)
+        self.check_grade_percent(0.69)  # (0.5 * 0.5 + 0.3 * 1.0) / (1.0 + 0.2)
 
     def test_dropping_all_correct(self):
         """
@@ -468,7 +468,8 @@ class TestCourseGrader(TestSubmittingProblemsVerticals):
         for name in self.hw3_names:
             self.submit_question_answer(name, {'2_1': 'Correct'})
 
-        self.check_grade_percent(1.0)
+        #  HW3 is a lowest dropped weighted score 0.2 * 1.0 (HW3) < 0.5 * 0.5 (HW1) < 0.3 * 1.0 (HW2)
+        self.check_grade_percent(0.69)
         self.assertEqual(self.earned_hw_scores(), [1.0, 2.0, 2.0])  # Order matters
         self.assertEqual(self.score_for_hw('homework3'), [1.0, 1.0])
 
@@ -482,7 +483,7 @@ class TestCourseGrader(TestSubmittingProblemsVerticals):
         self.submit_question_answer('p2', {'2_1': 'Correct'})
 
         # Enable the course for credit
-        credit_course = CreditCourse.objects.create(
+        credit_course = CreditCourse.objects.create(  # pylint: disable=unused-variable
             course_key=self.course.id,
             enabled=True,
         )
@@ -508,6 +509,7 @@ class TestCourseGrader(TestSubmittingProblemsVerticals):
         self.assertEqual(req_status[0]["status"], 'satisfied')
 
 
+# pylint: disable=attribute-defined-outside-init
 @attr('shard_1')
 class ProblemWithUploadedFilesTest(TestSubmittingProblemsVerticals):
     """Tests of problems with uploaded files."""
@@ -540,7 +542,7 @@ class ProblemWithUploadedFilesTest(TestSubmittingProblemsVerticals):
         fileobjs = [
             open(os.path.join(settings.COMMON_TEST_DATA_ROOT, "capa", filename))
             for filename in filenames.split()
-            ]
+        ]
         for fileobj in fileobjs:
             self.addCleanup(fileobj.close)
 
@@ -561,6 +563,7 @@ class ProblemWithUploadedFilesTest(TestSubmittingProblemsVerticals):
         self.assertItemsEqual(kwargs['files'].keys(), filenames.split())
 
 
+# pylint: disable=attribute-defined-outside-init
 @attr('shard_1')
 class TestPythonGradedResponse(TestSubmittingProblemsVerticals):
     """
@@ -810,6 +813,7 @@ class TestPythonGradedResponse(TestSubmittingProblemsVerticals):
         self._check_ireset(name)
 
 
+# pylint: disable=attribute-defined-outside-init
 @attr('shard_1')
 class TestAnswerDistributions(TestSubmittingProblemsVerticals):
     """Check that we can pull answer distributions for problems."""
@@ -966,6 +970,7 @@ class TestAnswerDistributions(TestSubmittingProblemsVerticals):
             )
 
 
+# pylint: disable=attribute-defined-outside-init
 @attr('shard_1')
 class TestConditionalContent(TestSubmittingProblemsVerticals):
     """
@@ -1009,10 +1014,10 @@ class TestConditionalContent(TestSubmittingProblemsVerticals):
         }
         self.add_grading_policy(grading_policy)
 
-        self.homework_all = self.add_graded_section_to_course('homework1')
+        self.homework_all = self.add_graded_section_to_course('homework1', weight=0.8)
         self.p1_all_html_id = self.add_dropdown_to_section(self.homework_all.location, 'H1P1', 2).location.html_id()
 
-        self.homework_conditional = self.add_graded_section_to_course('homework2')
+        self.homework_conditional = self.add_graded_section_to_course('homework2', weight=0.2)
 
     def split_setup(self, user_partition_group):
         """
@@ -1098,10 +1103,10 @@ class TestConditionalContent(TestSubmittingProblemsVerticals):
         self.assertEqual(self.score_for_hw('homework2'), [1.0, 2.0])
         self.assertEqual(self.earned_hw_scores(), [1.0, 3.0])
 
-        # Grade percent is .63. Here is the calculation
-        homework_1_score = 1.0 / 2
-        homework_2_score = (1.0 + 2.0) / 4
-        self.check_grade_percent(round((homework_1_score + homework_2_score) / 2, 2))
+        # Grade percent is .55. Here is the calculation
+        homework_1_score = (1.0 / 2) * 0.8
+        homework_2_score = ((1.0 + 2.0) / 4) * 0.2
+        self.check_grade_percent(round((homework_1_score + homework_2_score), 2))
 
     def test_split_different_problems_group_1(self):
         """
@@ -1116,10 +1121,10 @@ class TestConditionalContent(TestSubmittingProblemsVerticals):
         self.assertEqual(self.score_for_hw('homework2'), [1.0])
         self.assertEqual(self.earned_hw_scores(), [1.0, 1.0])
 
-        # Grade percent is .75. Here is the calculation
-        homework_1_score = 1.0 / 2
-        homework_2_score = 1.0 / 1
-        self.check_grade_percent(round((homework_1_score + homework_2_score) / 2, 2))
+        # Grade percent is .6. Here is the calculation
+        homework_1_score = (1.0 / 2) * 0.8
+        homework_2_score = (1.0 / 1) * 0.2
+        self.check_grade_percent(round((homework_1_score + homework_2_score), 2))
 
     def split_one_group_no_problems_setup(self, user_partition_group):
         """
@@ -1149,10 +1154,10 @@ class TestConditionalContent(TestSubmittingProblemsVerticals):
         self.assertEqual(self.score_for_hw('homework2'), [])
         self.assertEqual(self.earned_hw_scores(), [1.0, 0.0])
 
-        # Grade percent is .25. Here is the calculation.
-        homework_1_score = 1.0 / 2
+        # Grade percent is .4. Here is the calculation.
+        homework_1_score = (1.0 / 2) * 0.8
         homework_2_score = 0.0
-        self.check_grade_percent(round((homework_1_score + homework_2_score) / 2, 2))
+        self.check_grade_percent(round((homework_1_score + homework_2_score), 2))
 
     def test_split_one_group_no_problems_group_1(self):
         """
@@ -1166,7 +1171,7 @@ class TestConditionalContent(TestSubmittingProblemsVerticals):
         self.assertEqual(self.score_for_hw('homework2'), [1.0])
         self.assertEqual(self.earned_hw_scores(), [1.0, 1.0])
 
-        # Grade percent is .75. Here is the calculation.
-        homework_1_score = 1.0 / 2
-        homework_2_score = 1.0 / 1
-        self.check_grade_percent(round((homework_1_score + homework_2_score) / 2, 2))
+        # Grade percent is .6. Here is the calculation.
+        homework_1_score = (1.0 / 2) * 0.8
+        homework_2_score = (1.0 / 1) * 0.2
+        self.check_grade_percent(round((homework_1_score + homework_2_score), 2))

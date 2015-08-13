@@ -1,3 +1,6 @@
+"""
+Contains useful methods to work with custom grading types.
+"""
 from stevedore.extension import ExtensionManager
 from django.conf import settings
 
@@ -12,8 +15,8 @@ class GradingPolicyError(Exception):
 
 def use_custom_grading(method_name):
     """Uses a custom grading algorithm or native depends on settings."""
-    def decorator(func):
-        def wrapper(*args, **kwargs):
+    def decorator(func):  # pylint: disable=missing-docstring
+        def wrapper(*args, **kwargs):  # pylint: disable=missing-docstring
             if settings.FEATURES['ENABLE_CUSTOM_GRADING']:
                 grader = get_grading_class(settings.GRADING_TYPE)
                 return getattr(grader, method_name)(*args, **kwargs)
@@ -29,20 +32,11 @@ def get_grading_class(name):
     try:
         return extension[name].plugin
     except KeyError:
-        raise GradingPolicyError("Unrecognized grader {0}".format(name))
+        raise GradingPolicyError("Unrecognized grading type `{0}`".format(name))
 
 
 def get_grading_type():
     """Returns grading type depends on settings."""
     if settings.FEATURES['ENABLE_CUSTOM_GRADING']:
-        allowed_types = settings.GRADING_ALLOWED_TYPES
-        grading_type = settings.GRADING_TYPE
-        if grading_type in allowed_types:
-            return grading_type
-        else:
-            raise GradingPolicyError(
-                "You must define valid GRADING_TYPE, your type {}, allowed_types are {}".format(
-                    grading_type, allowed_types
-                )
-            )
+        return settings.GRADING_TYPE
     return 'sequential'

@@ -846,7 +846,8 @@ def create_xblock_info(xblock, data=None, metadata=None, include_ancestor_info=F
         "course_graders": json.dumps([grader.get('type') for grader in graders]),
         "has_changes": has_changes,
         "actions": xblock_actions,
-        "explanatory_message": explanatory_message
+        "explanatory_message": explanatory_message,
+        "weight": getattr(xblock, 'weight', None),
     }
 
     # Entrance exam subsection should be hidden. in_entrance_exam is inherited metadata, all children will have it.

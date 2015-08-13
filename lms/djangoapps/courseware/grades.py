@@ -267,6 +267,7 @@ def grade(student, request, course, keep_raw_scores=False, field_data_cache=None
         return grade_summary
 
 
+@use_custom_grading('grade')
 def _grade(student, request, course, keep_raw_scores, field_data_cache, scores_client):
     """
     Unwrapped version of "grade"

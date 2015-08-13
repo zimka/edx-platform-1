@@ -1,10 +1,13 @@
 """
+This file contains some tests for Instructor Task Django app with grading by verticals enabled.
 lms/djangoapps/instructor_task/tests/test_integration.py
+python ./manage.py lms test --verbosity=1 \
+openedx/core/djangoapps/grading_policy/tests/test_instructor_task_integration.py --traceback --settings=test
 """
 import json
 import unittest
 from django.test.utils import override_settings
-from celery.states import FAILURE
+from celery.states import FAILURE  # pylint: disable=import-error, no-name-in-module
 from lms.djangoapps.instructor_task.tests.test_base import InstructorTaskModuleTestCase
 from openedx.core.djangoapps.util.testing import TestConditionalContent
 from mock import patch
@@ -22,9 +25,14 @@ FEATURES_WITH_CUSTOM_GRADING = settings.FEATURES.copy()
 FEATURES_WITH_CUSTOM_GRADING['ENABLE_CUSTOM_GRADING'] = True
 
 
-@unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')
-@override_settings(FEATURES=FEATURES_WITH_CUSTOM_GRADING, GRADING_TYPE='vertical')
+@unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')  # pylint: disable=protected-access
+@override_settings(
+    FEATURES=FEATURES_WITH_CUSTOM_GRADING, ASSIGNMENT_GRADER='WeightedAssignmentFormatGrader'
+)
 class TestConditionalContentVertical(TestConditionalContent):
+    """
+    Base mixin that prepares testind data for grading by verticals logic.
+    """
     def setUp(self):
         """
         Set up a course with graded problems within a split test.
@@ -33,13 +41,12 @@ class TestConditionalContentVertical(TestConditionalContent):
         are created in studio):
         -> course
             -> chapter
-                -> sequential (graded)
-                    -> vertical
-                        -> split_test
-                            -> vertical (Group A)
-                                -> problem
-                            -> vertical (Group B)
-                                -> problem
+                -> vertical (graded)
+                    -> split_test
+                        -> vertical (Group A)
+                            -> problem
+                        -> vertical (Group B)
+                            -> problem
         """
         super(TestConditionalContentVertical, self).setUp()
 
@@ -76,8 +83,15 @@ class TestConditionalContentVertical(TestConditionalContent):
         self.problem_section = ItemFactory.create(
             parent_location=chapter.location,
             category='vertical',
-            metadata={'graded': True, 'format': 'Homework'},
+            metadata={'graded': True, 'format': 'Homework', 'weight': 0.8},
             display_name=self.TEST_SECTION_NAME)
+
+        ItemFactory.create(
+            parent_location=chapter.location,
+            category='vertical',
+            metadata={'graded': True, 'format': 'Homework', 'weight': 0.2},
+            display_name="New Section"
+        )
 
         # Create users and partition them
         self.student_a = UserFactory.create(username='student_a',
@@ -103,21 +117,13 @@ class TestConditionalContentVertical(TestConditionalContent):
                 self.partition.id),  # pylint: disable=no-member
             value=str(self.user_partition_group_b)
         )
-
-        # Create a vertical to contain our split test
-        problem_vertical = ItemFactory.create(
-            parent_location=self.problem_section.location,
-            category='vertical',
-            display_name='Problem Unit'
-        )
-
         # Create the split test and child vertical containers
         vertical_a_url = self.course.id.make_usage_key('vertical',
                                                        'split_test_vertical_a')
         vertical_b_url = self.course.id.make_usage_key('vertical',
                                                        'split_test_vertical_b')
         self.split_test = ItemFactory.create(
-            parent_location=problem_vertical.location,
+            parent_location=self.problem_section.location,
             category='split_test',
             display_name='Split Test',
             user_partition_id=self.partition.id,  # pylint: disable=no-member
@@ -138,7 +144,7 @@ class TestConditionalContentVertical(TestConditionalContent):
         )
 
 
-@unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')
+@unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')  # pylint: disable=protected-access
 class TestGradeReportConditionalContent(TestReportMixin, TestConditionalContentVertical, InstructorTaskModuleTestCase):
     """
     Test grade report in cases where there are problems contained within split tests.
@@ -197,25 +203,20 @@ class TestGradeReportConditionalContent(TestReportMixin, TestConditionalContentV
             """Return a dict having single key with value equals to students group in partition"""
             group_config_hdr_tpl = 'Experiment Group ({})'
             return {
-                group_config_hdr_tpl.format(
-                    self.partition.name): self.partition.scheme.get_group_for_user(
-                    # pylint: disable=E1101
-                    self.course.id, user, self.partition, track_function=None
+                group_config_hdr_tpl.format(self.partition.name): self.partition.scheme.get_group_for_user(
+                    self.course.id, user, self.partition, track_function=None  # pylint: disable=E1101
                 ).name
             }
 
         self.verify_rows_in_csv(
             [
                 merge_dicts(
-                    {'id': str(student.id), 'username': student.username,
-                     'email': student.email},
-                    grades,
-                    user_partition_group(student)
+                    {'id': str(student.id), 'username': student.username, 'email': student.email},
+                    grades, user_partition_group(student)
                 )
                 for student_grades in students_grades for student, grades in
                 student_grades.iteritems()
-                ],
-            ignore_other_columns=ignore_other_columns
+            ], ignore_other_columns=ignore_other_columns
         )
 
     def test_both_groups_problems(self):
@@ -242,8 +243,8 @@ class TestGradeReportConditionalContent(TestReportMixin, TestConditionalContentV
             self.verify_csv_task_success(result)
             self.verify_grades_in_csv(
                 [
-                    {self.student_a: {'grade': '1.0', 'HW': '1.0'}},
-                    {self.student_b: {'grade': '0.5', 'HW': '0.5'}}
+                    {self.student_a: {'grade': '0.8', 'HW 01': '1.0', 'HW 02': '0.0', 'HW Avg': '0.8'}},
+                    {self.student_b: {'grade': '0.4', 'HW 01': '0.5', 'HW 02': '0.0', 'HW Avg': '0.4'}}
                 ],
                 ignore_other_columns=True
             )
@@ -267,8 +268,8 @@ class TestGradeReportConditionalContent(TestReportMixin, TestConditionalContentV
             self.verify_csv_task_success(result)
             self.verify_grades_in_csv(
                 [
-                    {self.student_a: {'grade': '1.0', 'HW': '1.0'}},
-                    {self.student_b: {'grade': '0.0', 'HW': '0.0'}}
+                    {self.student_a: {'grade': '0.8', 'HW 01': '1.0', 'HW 02': '0.0', 'HW Avg': '0.8'}},
+                    {self.student_b: {'grade': '0.0', 'HW 01': '0.0', 'HW 02': '0.0', 'HW Avg': '0.0'}}
                 ],
                 ignore_other_columns=True
             )

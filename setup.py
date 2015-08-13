@@ -18,6 +18,7 @@ setup(
         "lms",
         "cms",
     ],
+    # pylint: disable=line-too-long
     entry_points={
         "openedx.course_tab": [
             "ccx = lms.djangoapps.ccx.plugins:CcxCourseTab",
@@ -48,8 +49,13 @@ setup(
             "cohort = openedx.core.djangoapps.course_groups.partition_scheme:CohortPartitionScheme",
         ],
         "openedx.grading_policy": [
-            "vertical = openedx.core.djangoapps.grading_policy.grading:VerticalGrading",
-            "sequential = openedx.core.djangoapps.grading_policy.grading:SequentialGrading",
+            "vertical = openedx.core.djangoapps.grading_policy.vertical:VerticalGrading",
+        ],
+        "openedx.graders": [
+            "WeightedSubsectionsGrader = openedx.core.djangoapps.grading_policy.graders.weighted_subs:WeightedSubsectionsGrader",
+            "SingleSectionGrader = openedx.core.djangoapps.grading_policy.graders.single_section:SingleSectionGrader",
+            "AssignmentFormatGrader = openedx.core.djangoapps.grading_policy.graders.assignment_format:AssignmentFormatGrader",
+            "WeightedAssignmentFormatGrader = openedx.core.djangoapps.grading_policy.graders.weighted_assignment_format:WeightedAssignmentFormatGrader",
         ]
     }
 )

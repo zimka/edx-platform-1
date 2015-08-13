@@ -1131,7 +1131,7 @@ def dump_grading_context(course):
 
     msg += '%s\n' % course.grader.__class__
     graders = {}
-    if isinstance(course.grader, xmgraders.WeightedSubsectionsGrader):
+    if isinstance(course.grader, xmgraders.get_grader('WeightedSubsectionsGrader')):
         msg += '\n'
         msg += "Graded sections:\n"
         for subgrader, category, weight in course.grader.sections:
@@ -1150,6 +1150,7 @@ def dump_grading_context(course):
         for sec in gsvals:
             sdesc = sec['section_descriptor']
             grade_format = getattr(sdesc, 'grade_format', None)
+            weight = getattr(sdesc, 'weight', 1.0)
             aname = ''
             if grade_format in graders:
                 gfmt = graders[grade_format]
@@ -1161,7 +1162,9 @@ def dump_grading_context(course):
             notes = ''
             if getattr(sdesc, 'score_by_attempt', False):
                 notes = ', score by attempt!'
-            msg += "      %s (grade_format=%s, Assignment=%s%s)\n" % (sdesc.display_name, grade_format, aname, notes)
+            msg += "      %s (grade_format=%s, Assignment=%s%s, weight=%s\n)\n" % (
+                sdesc.display_name, grade_format, aname, notes, weight
+            )
     msg += "all descriptors:\n"
     msg += "length=%d\n" % len(gcontext['all_descriptors'])
     msg = '<pre>%s</pre>' % msg.replace('<', '&lt;')

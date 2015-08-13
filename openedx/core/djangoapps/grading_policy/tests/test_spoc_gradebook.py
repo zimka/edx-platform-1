@@ -1,4 +1,5 @@
 """
+This file contains some tests for Instructor Django app with grading by verticals enabled.
 lms/djangoapps/instructor/tests/test_spoc_gradebook.py
 """
 import unittest
@@ -18,9 +19,11 @@ FEATURES_WITH_CUSTOM_GRADING['ENABLE_CUSTOM_GRADING'] = True
 USER_COUNT = 11
 
 
-@unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')
+@unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')  # pylint: disable=protected-access
 @attr('shard_1')
-@override_settings(FEATURES=FEATURES_WITH_CUSTOM_GRADING, GRADING_TYPE='vertical')
+@override_settings(
+    FEATURES=FEATURES_WITH_CUSTOM_GRADING, ASSIGNMENT_GRADER='WeightedAssignmentFormatGrader'
+)
 class TestGradebookVertical(ModuleStoreTestCase):
     """
     Test functionality of the spoc gradebook. Sets up a course with assignments and
@@ -51,7 +54,13 @@ class TestGradebookVertical(ModuleStoreTestCase):
         section = ItemFactory.create(
             parent_location=chapter.location,
             category="vertical",
-            metadata={'graded': True, 'format': 'Homework'}
+            metadata={'graded': True, 'format': 'Homework', 'weight': 0.8}
+        )
+
+        ItemFactory.create(
+            parent_location=chapter.location,
+            category="vertical",
+            metadata={'graded': True, 'format': 'Homework', 'weight': 0.2}
         )
 
         self.users = [UserFactory.create() for _ in xrange(USER_COUNT)]
@@ -86,7 +95,7 @@ class TestGradebookVertical(ModuleStoreTestCase):
         self.assertEquals(self.response.status_code, 200)
 
 
-@unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')
+@unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')  # pylint: disable=protected-access
 @attr('shard_1')
 class TestLetterCutoffPolicy(TestGradebookVertical):
     """
@@ -118,32 +127,15 @@ class TestLetterCutoffPolicy(TestGradebookVertical):
         self.assertIn("grade_D {color:DarkSlateGray;}", self.response.content)
 
     def test_assigned_grades(self):
-        # Users 9-10 have >= 90% on Homeworks [2]
-        # Users 9-10 have >= 90% on the class [2]
         # One use at the top of the page [1]
-        self.assertEquals(5, self.response.content.count('grade_A'))
-
-        # User 8 has 80 <= Homeworks < 90 [1]
-        # User 8 has 80 <= class < 90 [1]
+        self.assertEquals(3, self.response.content.count('grade_A'))
         # One use at the top of the page [1]
-        self.assertEquals(3, self.response.content.count('grade_B'))
-
-        # User 7 has 70 <= Homeworks < 80 [1]
-        # User 7 has 70 <= class < 80 [1]
+        self.assertEquals(4, self.response.content.count('grade_B'))
         # One use at the top of the page [1]
-        self.assertEquals(3, self.response.content.count('grade_C'))
-
-        # User 6 has 60 <= Homeworks < 70 [1]
-        # User 6 has 60 <= class < 70 [1]
+        self.assertEquals(4, self.response.content.count('grade_C'))
         # One use at the top of the page [1]
-        self.assertEquals(3, self.response.content.count('grade_C'))
-
-        # Users 1-5 have 60% > grades > 0 on Homeworks [5]
-        # Users 1-5 have 60% > grades > 0 on the class [5]
+        self.assertEquals(4, self.response.content.count('grade_D'))
         # One use at top of the page [1]
-        self.assertEquals(11, self.response.content.count('grade_F'))
-
-        # User 0 has 0 on Homeworks [1]
-        # User 0 has 0 on the class [1]
+        self.assertEquals(20, self.response.content.count('grade_F'))
         # One use at the top of the page [1]
-        self.assertEquals(3, self.response.content.count('grade_None'))
+        self.assertEquals(15, self.response.content.count('grade_None'))
