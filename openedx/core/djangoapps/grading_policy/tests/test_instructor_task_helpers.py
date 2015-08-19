@@ -21,9 +21,6 @@ from instructor_task.models import ReportStore
 from instructor_task.tasks_helper import upload_problem_grade_report
 from openedx.core.djangoapps.util.testing import ContentGroupTestCase
 
-FEATURES_WITH_CUSTOM_GRADING = settings.FEATURES.copy()
-FEATURES_WITH_CUSTOM_GRADING['ENABLE_CUSTOM_GRADING'] = True
-
 
 def disconnect_course_published_event():  # pylint: disable=invalid-name
     """Disconnect course_published event."""
@@ -32,7 +29,7 @@ def disconnect_course_published_event():  # pylint: disable=invalid-name
 
 
 @unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')  # pylint: disable=protected-access
-@override_settings(FEATURES=FEATURES_WITH_CUSTOM_GRADING, ASSIGNMENT_GRADER='WeightedAssignmentFormatGrader')
+@override_settings(GRADING_TYPE='vertical', ASSIGNMENT_GRADER='WeightedAssignmentFormatGrader')
 @ddt.ddt
 class TestProblemGradeReport(TestReportMixin, InstructorTaskModuleTestCase):
     """
@@ -181,7 +178,7 @@ class TestProblemGradeReport(TestReportMixin, InstructorTaskModuleTestCase):
 
 
 @unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')  # pylint: disable=protected-access
-@override_settings(FEATURES=FEATURES_WITH_CUSTOM_GRADING, ASSIGNMENT_GRADER='WeightedAssignmentFormatGrader')
+@override_settings(GRADING_TYPE='vertical', ASSIGNMENT_GRADER='WeightedAssignmentFormatGrader')
 class TestProblemReportCohortedContent(TestReportMixin, ContentGroupTestCase, InstructorTaskModuleTestCase):
     """
     Test the problem report on a course that has cohorted content.

@@ -27,7 +27,8 @@ var GraderView = ValidatingView.extend({
         'short_label' : 'course-grading-assignment-shortname',
         'min_count' : 'course-grading-assignment-totalassignments',
         'drop_count' : 'course-grading-assignment-droppable',
-        'weight' : 'course-grading-assignment-gradeweight'
+        'weight' : 'course-grading-assignment-gradeweight',
+        'passing_grade' : 'course-grading-assignment-passing-grade'
     },
     updateModel: function(event) {
         // HACK to fix model sometimes losing its pointer to the collection [I think I fixed this but leaving

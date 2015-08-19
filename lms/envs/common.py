@@ -420,9 +420,6 @@ FEATURES = {
 
     # Enable the max score cache to speed up grading
     'ENABLE_MAX_SCORE_CACHE': True,
-
-    # Enable custom grading
-    'ENABLE_CUSTOM_GRADING': True
 }
 
 # Ignore static asset files on import which match this pattern
@@ -2578,10 +2575,6 @@ JWT_ISSUER = None
 
 # Possible values: vertical|sequential
 GRADING_TYPE = 'vertical'
-# If grading type is set to `vertical`, we can adjust progress view to display
-# only gradable verticals.
-DISPLAY_ONLY_GRADABLE_VERTICALS = True
-
 # Computes a final grade for the course.
 COURSE_GRADER = 'WeightedSubsectionsGrader'
 # Computes a grade for the category (Assignment Type).

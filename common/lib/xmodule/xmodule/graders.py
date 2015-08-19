@@ -88,6 +88,7 @@ def grader_from_conf(conf):
     for subgraderconf in conf:
         subgraderconf = subgraderconf.copy()
         weight = subgraderconf.pop("weight", 0)
+        passing_grade = subgraderconf.pop("passing_grade", 0)
         # NOTE: 'name' used to exist in SingleSectionGrader. We are deprecating SingleSectionGrader
         # and converting everything into an AssignmentFormatGrader by adding 'min_count' and
         # 'drop_count'. AssignmentFormatGrader does not expect 'name', so if it appears
@@ -115,7 +116,7 @@ def grader_from_conf(conf):
                     del subgraderconf[key]
 
             subgrader = subgrader_class(**subgraderconf)
-            subgraders.append((subgrader, subgrader.category, weight))
+            subgraders.append((subgrader, subgrader.category, weight, passing_grade))
 
         except (TypeError, ValueError) as error:
             # Add info and re-raise

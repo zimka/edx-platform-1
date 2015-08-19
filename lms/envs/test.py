@@ -496,7 +496,6 @@ INSTALLED_APPS += ('lti_provider',)
 AUTHENTICATION_BACKENDS += ('lti_provider.users.LtiBackend',)
 
 ######## Grading ###########
-FEATURES['ENABLE_CUSTOM_GRADING'] = False
-GRADING_TYPE = 'vertical'
+GRADING_TYPE = 'sequential'
 
 ASSIGNMENT_GRADER = 'AssignmentFormatGrader'

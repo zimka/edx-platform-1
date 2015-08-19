@@ -2,7 +2,6 @@
 import unittest
 
 from django.test.utils import override_settings
-from django.conf import settings
 from xmodule import graders
 from xmodule.graders import Score, aggregate_scores
 

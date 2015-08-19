@@ -80,14 +80,10 @@ def patched_get_children(self, usage_key_filter=None):
     return list(iter_children())
 
 
-FEATURES_WITH_CUSTOM_GRADING = settings.FEATURES.copy()
-FEATURES_WITH_CUSTOM_GRADING['ENABLE_CUSTOM_GRADING'] = True
-
-
 @unittest.skipIf(settings._SYSTEM == 'cms', 'Test for lms')  # pylint: disable=protected-access
 @override_settings(
     FIELD_OVERRIDE_PROVIDERS=('ccx.overrides.CustomCoursesForEdxOverrideProvider',),
-    FEATURES=FEATURES_WITH_CUSTOM_GRADING, ASSIGNMENT_GRADER='WeightedAssignmentFormatGrader'
+    GRADING_TYPE='vertical', ASSIGNMENT_GRADER='WeightedAssignmentFormatGrader'
 )
 @attr('shard_1')
 @patch('xmodule.x_module.XModuleMixin.get_children', patched_get_children, spec=True)
@@ -190,6 +186,7 @@ class TestCCXGradesVertical(ModuleStoreTestCase, LoginEnrollmentTestCase):
                  'min_count': 2,
                  'short_label': 'HW',
                  'type': 'Homework',
+                 'passing_grade': 0,
                  'weight': 1}
             ],
             'GRADE_CUTOFFS': {'Pass': 0.75},
