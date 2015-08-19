@@ -1081,6 +1081,7 @@ def _progress(request, course_key, student_id):
         'passed': is_course_passed(course, grade_summary),
         'show_generate_cert_btn': show_generate_cert_btn,
         'credit_course_requirements': _credit_course_requirements(course_key, student),
+        'progress_summary_template': getattr(course.grading, 'PROGRESS_SUMMARY_TEMPLATE', ''),
     }
 
     if show_generate_cert_btn:
@@ -1361,7 +1362,7 @@ def is_course_passed(course, grade_summary=None, student=None, request=None):
     if grade_summary is None:
         grade_summary = grades.grade(student, request, course)
 
-    return success_cutoff and grade_summary['percent'] >= success_cutoff
+    return success_cutoff and grade_summary['percent'] >= success_cutoff and grade_summary['sections_passed']
 
 
 @require_POST

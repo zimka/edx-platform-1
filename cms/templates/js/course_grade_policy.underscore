@@ -17,6 +17,12 @@
     <span class="tip tip-inline"><%= gettext("as a percent, e.g. 40") %></span>
   </div>
 
+  <div class="field text" id="field-course-grading-assignment-passing-grade">
+    <label for="course-grading-assignment-passing-grade"><%= gettext("Passing Grade") %></label>
+    <input type="text" class="short" id="course-grading-assignment-passing-grade" value = "<%= model.get('passing_grade') %>" />
+    <span class="tip tip-inline"><%= gettext("as a percent, e.g. 60") %></span>
+  </div>
+
   <div class="field text" id="field-course-grading-assignment-totalassignments">
     <label for="course-grading-assignment-totalassignments"><%= gettext("Total Number") %></label>
     <input type="text" class="short" id="course-grading-assignment-totalassignments" value = "<%= model.get('min_count') %>" />

@@ -67,9 +67,12 @@ class CoursewareTest(UniqueCourseTest):
         """
 
         """
-        self.course_outline.q(css=".subsection-header-actions .configure-button").first.click()
+        subsection = self.course_outline.section('Test Section 1').subsection('Test Subsection 1')
+        modal = subsection.edit()
         self.course_outline.q(css="#start_date").fill("01/01/2030")
-        self.course_outline.q(css=".action-save").first.click()
+        # Set the date again by clicking on datepicker to close it.
+        modal.release_date = '01/01/2030'
+        modal.save()
 
     def _auto_auth(self, username, email, staff):
         """
