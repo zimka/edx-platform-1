@@ -200,8 +200,9 @@ class VerticalGrading(object):
                     format_scores.append(graded_total)
                 else:
                     log.info(
-                        "Unable to grade a section with a total possible score of zero. " +
-                        str(section_descriptor.location)
+                        "Unable to grade a section with a total possible score of zero. {}".format(
+                            section_descriptor.location
+                        )
                     )
 
             totaled_scores[section_format] = format_scores

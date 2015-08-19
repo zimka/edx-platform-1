@@ -1135,8 +1135,9 @@ def dump_grading_context(course):
         msg += '\n'
         msg += "Graded sections:\n"
         for subgrader, category, weight, passing_grade in course.grader.sections:
-            msg += "  subgrader=%s, type=%s, category=%s, weight=%s\n, passing_grade=%s\n" %\
-                   (subgrader.__class__, subgrader.type, category, weight, passing_grade)
+            msg += "  subgrader=%s, type=%s, category=%s, weight=%s\n, passing_grade=%s\n" % (
+                subgrader.__class__, subgrader.type, category, weight, passing_grade
+            )
             subgrader.index = 1
             graders[subgrader.type] = subgrader
     msg += "-----------------------------------------------------------------------------\n"

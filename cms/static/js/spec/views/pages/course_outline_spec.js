@@ -83,8 +83,8 @@ define(["jquery", "sinon", "common/js/spec_helpers/ajax_helpers", "js/views/util
                     published: true,
                     visibility_state: 'unscheduled',
                     edited_on: 'Jul 02, 2014 at 20:56 UTC',
-                    edited_by: 'MockUser',
-                    course_graders: '["Lab", "Howework"]'
+                    course_graders: '["Lab", "Howework"]',
+                    edited_by: 'MockUser'
                 }, options);
             };
 
@@ -214,7 +214,8 @@ define(["jquery", "sinon", "common/js/spec_helpers/ajax_helpers", "js/views/util
                     'course-outline', 'xblock-string-field-editor', 'modal-button',
                     'basic-modal', 'course-outline-modal', 'release-date-editor',
                     'due-date-editor', 'grading-editor', 'publish-editor',
-                    'staff-lock-editor', 'weight-editor'
+                    'weight-editor',
+                    'staff-lock-editor'
                 ]);
                 appendSetFixtures(mockOutlinePage);
                 mockCourseJSON = createMockCourseJSON({}, [

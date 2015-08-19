@@ -43,8 +43,8 @@ class CourseGradingModel(object):
                     "min_count": 0,
                     "drop_count": 0,
                     "short_label": None,
-                    "weight": 0,
-                    "passing_grade": 0
+                    "passing_grade": 0,
+                    "weight": 0
                     }
 
     @staticmethod
@@ -221,8 +221,8 @@ class CourseGradingModel(object):
                   "min_count": int(json_grader.get('min_count', 0)),
                   "drop_count": int(json_grader.get('drop_count', 0)),
                   "short_label": json_grader.get('short_label', None),
-                  "weight": float(json_grader.get('weight', 0)) / 100.0,
                   "passing_grade": float(json_grader.get('passing_grade', 0)) / 100.0,
+                  "weight": float(json_grader.get('weight', 0)) / 100.0
                   }
 
         return result

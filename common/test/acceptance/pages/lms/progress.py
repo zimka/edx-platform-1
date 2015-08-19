@@ -158,7 +158,7 @@ class PassingInformationTable(PageObject):
         [('Homework', '50', '25', 'Not pass'), ('Lab', '50', '75', 'Pass')]
         """
         rows = self.find_css('tbody tr')
-        # Unfortunetly rows.text returns us information in appropriate fromat.
-        # That's why we need to get the text of each nested <td> manualy.
+        # Unfortunately rows.text returns us information in appropriate fromat.
+        # That's why we need to get the text of each nested <td> manually.
         assignments_info = rows.map(lambda el: [x.text for x in el.find_elements_by_css_selector('td')])
         return [tuple(info) for info in assignments_info]

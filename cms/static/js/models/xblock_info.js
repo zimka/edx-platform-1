@@ -142,14 +142,13 @@ function(Backbone, _, str, ModuleUtils) {
              */
             'is_header_visible': null,
             /**
-             * Optional explanatory message about the xblock.
-             */
-            'explanatory_message': null,
-            /**
              * Weight of the xblock if available.
              */
-            'weight': null
-
+            'weight': null,
+            /**
+             * Optional explanatory message about the xblock.
+             */
+            'explanatory_message': null
         },
 
         initialize: function () {
