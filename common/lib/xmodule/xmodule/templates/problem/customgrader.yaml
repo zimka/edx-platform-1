@@ -1,32 +1,23 @@
 ---
 metadata:
-    display_name: Custom Python-Evaluated Input
+    display_name: Специальная задача (оценивание скриптом Python)
     markdown: !!null
 data: |
       <problem>
       <p>    
-      In custom Python-evaluated input (also called "write-your-own-grader"
-      problems), the grader uses a Python script that you create and embed in
-      the problem to evaluate a learner's response or provide hints. These
-      problems can be any type. Numerical input and text input problems are
-      the most common write-your-own-grader problems.
+      В задачах этого типа (также называемых  задачами write-your-own-grader ("напиши-свой-скрипт-оценивания"), для оценивания используется скрипт, встраиваемый в текст задачи для оценки ответа учащегося. Задача может принадлежать к любому типу. Чаще всего скриптом оцениваются задачи с открытым ответом на ввод числа или текста.
       </p>
       <p>
-      You can use script tag format or answer tag format to create these problems. 
+      Вы можете использовать разметку тегов скрипта в вопросе и в ответе. 
       </p>
       <p>
-      You can create custom Python-evaluated input problems that provide
-      partial credit or that randomize variables in the Python code. You can
-      also add images to the solution by using an HTML "img" tag. Note that
-      the "img" tag must be between the "div" tags that are inside the
-      "solution" tags, and that learners do not see these images until they
-      click the "Show Answer" button.      
+      С помощью скриптов Python вы можете создать задачи с частичным присваиванем балла (partical credit), задачи с открытым ответов и задачи, в тексте которых содержатся переменные, знаение которых присваивается с рандомизацией. Добавлять к ответам изображения можно с помощью тега "img". Заметьте, что тег "img" обязательно должен стоять внутри контейнера "div" (а он - в свою очередь, содержится внутри контейнера "solution" ) и что учащиеся увидят эти изображения только нажав на кнопку "Показать ответ".      
       </p>
-      <p> For more information, see <a
+      <p> Для получения дополнительной информации обратитесь к разделу <a
       href="http://edx.readthedocs.org/projects/edx-partner-course-staff/en/latest/exercises_tools/custom_python.html" target="_blank">
-      Write-Your-Own-Grader Problem</a> in <i>Building and Running an edX Course</i>.
+      Write-Your-Own-Grader Problem</a> в руководстве <i>Building and Running an edX Course</i>.
       </p>      
-      <p>When you add the problem, be sure to select <strong>Settings</strong> 
+      <p>Когда вы добавляется проблемы, убедитесь, что  you add the problem, be sure to select <strong>Settings</strong> 
         to specify a <strong>Display Name</strong> and other values that apply.</p>
       <p>You can use the following example problem as a model.</p>
       <p>______________________________________________________________________________</p>
