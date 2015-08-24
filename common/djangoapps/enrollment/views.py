@@ -364,12 +364,19 @@ class EnrollmentListView(APIView, ApiKeyPermissionMixIn):
     @method_decorator(ensure_csrf_cookie_cross_domain)
     def get(self, request):
         """Gets a list of all course enrollments for the currently logged in user."""
-        username = request.GET.get('user', request.user.username)
-        if request.user.username != username and not self.has_api_key_permissions(request):
+        username = request.GET.get('user', request.user.is_staff and None or request.user.username)
+        try:
+            course_key = CourseKey.from_string(request.GET.get('course'))
+        except InvalidKeyError:
+            course_key = None
+
+        if (not request.user.is_staff and request.user.username != username) and not self.has_api_key_permissions(request):
             # Return a 404 instead of a 403 (Unauthorized). If one user is looking up
             # other users, do not let them deduce the existence of an enrollment.
             return Response(status=status.HTTP_404_NOT_FOUND)
         try:
+            if course_key:
+                return Response(api.get_enrollments(username, course_id=course_key))
             return Response(api.get_enrollments(username))
         except CourseEnrollmentError:
             return Response(

@@ -40,6 +40,7 @@ urlpatterns = (
         name="disable_account_ajax"),
 
     url(r'^logout$', 'student.views.logout_user', name='logout'),
+    url(r'^social-logout', 'sso_edx_npoed.views.logout', name='social-logout'),
     url(r'^create_account$', 'student.views.create_account', name='create_account'),
     url(r'^activate/(?P<key>[^/]*)$', 'student.views.activate_account', name="activate"),
 
@@ -717,4 +718,9 @@ handler500 = 'static_template_view.views.render_500'
 urlpatterns += (
     url(r'^404$', handler404),
     url(r'^500$', handler500),
+)
+
+urlpatterns += (
+    # Extend API
+    url(r'^api/extended/', include('open_edx_api_extension.urls', namespace='api_extension')),
 )

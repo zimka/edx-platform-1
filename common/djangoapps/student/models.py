@@ -10,6 +10,7 @@ file and check it in at the same time as your model changes. To do that,
 2. ./manage.py lms schemamigration student --auto description_of_your_change
 3. Add the migration file created in edx-platform/common/djangoapps/student/migrations/
 """
+import os
 from datetime import datetime, timedelta
 import hashlib
 import json
@@ -19,6 +20,7 @@ import uuid
 from collections import defaultdict, OrderedDict
 import dogstats_wrapper as dog_stats_api
 from urllib import urlencode
+import requests
 
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
@@ -28,7 +30,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.db import models, IntegrityError
 from django.db.models import Count
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver, Signal
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_noop
@@ -1916,3 +1918,52 @@ class CourseEnrollmentAttribute(models.Model):
             }
             for attribute in cls.objects.filter(enrollment=enrollment)
         ]
+
+
+sso_api_url = os.path.join(settings.SSO_API_URL, 'enrollment/')
+sso_api_headers = {'Authorization': 'Token {}'.format(settings.SSO_API_TOKEN)}
+
+@receiver(post_save, sender=CourseEnrollment)
+def push_enrollment_to_sso(sender, instance, **kwargs):
+    if not hasattr(settings, 'SSO_API_URL'):
+        log.error('settings.SSO_API_URL is not defined')
+        return 
+
+    if not hasattr(settings, 'SSO_API_TOKEN'):
+        log.error('SSO_API_TOKEN is not defined') 
+        return
+
+    data = {
+        'mode': instance.mode,
+        'is_active': instance.is_active,
+        'course_id': str(instance.course.id),
+        'course_run': instance.course.id.run,
+        'user': instance.user.username
+    }
+    r = requests.post(sso_api_url, headers=sso_api_headers, data=data)
+    if r.ok:
+        return r.text
+    log.error('API "{}" returned: {}'.format(sso_api_url, r.status_code))
+
+
+
+@receiver(post_delete, sender=CourseEnrollment)
+def delete_enrollment_from_sso(sender, instance, **kwargs):
+    if not hasattr(settings, 'SSO_API_URL'):
+        log.error('settings.SSO_API_URL is not defined')
+        return 
+
+    if not hasattr(settings, 'SSO_API_TOKEN'):
+        log.error('SSO_API_TOKEN is not defined') 
+        return
+
+    data = {
+        'course_id': str(instance.course.id),
+        'course_run': instance.course.id.run,
+        'user': instance.user.username
+    }
+
+    r = requests.delete(sso_api_url, sso_api_headers=headers, data=data)
+    if r.ok:
+        return r.text
+    log.error('API "{}" returned: {}'.format(sso_api_url, r.status_code))
