@@ -158,6 +158,6 @@ mailsnake==1.6.2
 jsonfield==1.0.3
 
 # npoed
-raven=5.5.0
+raven==5.5.0
 -e git+https://github.com/miptliot/npoed-sso-edx-client@ad53aeefb6f170eff5b93aa754c507a8f3ae6e5a#egg=sso_edx_npoed
 -e git+https://github.com/raccoongang/open_edx_api_extension.git@e488297c28f0a675f135f73745793b97ac3ce588#egg=open_edx_api_extension
