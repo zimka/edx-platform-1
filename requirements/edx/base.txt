@@ -158,4 +158,4 @@ mailsnake==1.6.2
 jsonfield==1.0.3
 
 # npoed
-raven=5.5.0
+raven==5.5.0
