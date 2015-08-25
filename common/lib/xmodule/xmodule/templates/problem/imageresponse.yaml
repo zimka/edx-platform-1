@@ -1,0 +1,36 @@
+﻿---
+metadata:
+    display_name: Image Mapped Input
+    markdown: !!null
+data: |
+  <problem>
+  <p>
+  В задачах "работа с картой",которые также известны как "укажи на картинку"
+  студенты ждолжны кликнуть на определённой области графического изображения.
+  Эта область определяется включением координат в тело задачи. Вы можете
+  определить одну прямоугольную область, несколько прямоугольных областей или  or one non-rectangular
+  одне непрямоугольную область. Для более детальной информации см. 
+  <a href="http://edx.readthedocs.org/projects/edx-partner-course-staff/en/latest/exercises_tools/image_mapped_input.html" target="_blank">Image Mapped Input
+  Problem</a> в <i>Building and Running an edx Course</i>.
+  </p>
+  <p>Добавляя задачу, убедитесь, что вы выбрали <strong>Settings</strong> -
+  <strong>Настройки</strong>, чтобы определить <strong>Display Name</strong> -
+  <strong>Отображаемое Имя</strong> и другие используемые значения.</p>
+  <p>Вы можете использовать следующий пример задачи в качестве образца.</p>
+  
+  <p>В какой стране находятся пирамиды Гизы и города Каир и Мэмфис?
+  Кликните на изображении страны на карте.</p>
+    <imageresponse>
+      <imageinput src="https://studio.edx.org/c4x/edX/DemoX/asset/Africa.png"
+      width="600" height="638" rectangle="(338,98)-(412,168)" alt="Map of
+      Africa"/>
+    </imageresponse>
+  <solution>
+    <div class="detailed-solution">
+      <p>Объяснение</p>
+      <p>В Египте находятся не только пирамиды, Каири Мэмфис, но также сфинкс и
+      древняя библиотека Александрии.</p>
+    </div>
+  </solution>
+  </problem>
+

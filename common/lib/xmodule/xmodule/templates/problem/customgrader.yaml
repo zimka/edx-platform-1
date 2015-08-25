@@ -1,0 +1,60 @@
+---
+metadata:
+    display_name: Специальная задача (оценивание скриптом Python)
+    markdown: !!null
+data: |
+      <problem>
+      <p>    
+      В задачах этого типа (также называемых  задачами write-your-own-grader ("напиши-свой-скрипт-оценивания"), для оценивания используется скрипт, встраиваемый в текст задачи для оценки ответа учащегося. Задача может принадлежать к любому типу. Чаще всего скриптом оцениваются задачи с открытым ответом на ввод числа или текста.
+      </p>
+      <p>
+      Вы можете использовать разметку тегов скрипта в вопросе и в ответе. 
+      </p>
+      <p>
+      С помощью скриптов Python вы можете создать задачи с частичным присваиванем балла (partical credit), задачи с открытым ответов и задачи, в тексте которых содержатся переменные, знаение которых присваивается с рандомизацией. Добавлять к ответам изображения можно с помощью тега "img". Заметьте, что тег "img" обязательно должен стоять внутри контейнера "div" (а он - в свою очередь, содержится внутри контейнера "solution" ) и что учащиеся увидят эти изображения только нажав на кнопку "Показать ответ".      
+      </p>
+      <p> Для получения дополнительной информации обратитесь к разделу <a
+      href="http://edx.readthedocs.org/projects/edx-partner-course-staff/en/latest/exercises_tools/custom_python.html" target="_blank">
+      Write-Your-Own-Grader Problem</a> в руководстве <i>Building and Running an edX Course</i>.
+      </p>      
+      <p>Когда вы добавляется проблемы, убедитесь, что  you add the problem, be sure to select <strong>Settings</strong> 
+        to specify a <strong>Display Name</strong> and other values that apply.</p>
+      <p>You can use the following example problem as a model.</p>
+      <p>______________________________________________________________________________</p>
+
+      <script type="loncapa/python">
+
+      def test_add(expect, ans):
+          try:
+              a1=int(ans[0])
+              a2=int(ans[1])
+              return (a1+a2) == int(expect)
+          except ValueError:
+              return False
+
+      def test_add_to_ten(expect, ans):
+          return test_add(10, ans)
+
+      </script>
+        <p>Enter two integers that sum to 10.</p>
+        <customresponse cfn="test_add_to_ten">
+          <textline size="40" correct_answer="3" label="Integer #1"/><br/>
+          <textline size="40" correct_answer="7" label="Integer #2"/>
+        </customresponse>
+        <p>Enter two integers that sum to 20.</p>
+        <customresponse cfn="test_add" expect="20">
+          <textline size="40" correct_answer="11" label="Integer #1"/><br/>
+          <textline size="40" correct_answer="9" label="Integer #2"/>
+        </customresponse>
+      <solution>
+        <div class="detailed-solution">
+          <p>Explanation</p>
+          <p>Any set of integers on the line \(y = 10 - x\) and \(y = 20 - x\) satisfy these constraints.</p>
+          <p>To add an image to the solution, use an HTML "img" tag. Make sure to include alt text.</p>
+          <img src="/static/images/placeholder-image.png" width="400" 
+          alt="Description of image, with a primary goal of explaining its 
+          relevance to the problem or concept being illustrated for someone 
+          who is unable to see the image."/>
+        </div>
+      </solution>
+      </problem>

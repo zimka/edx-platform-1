@@ -1,0 +1,61 @@
+---
+metadata:
+    display_name: Пользовательские задачи с Javascript
+    markdown: !!null
+data: |
+      <problem>
+      <p>
+      Этот вид задач (также называемых задачами типа "Custom JavaScript" или задачами "JS Input")
+      ), позволяет добавить в Студии задачу или инструмент, использующий JavaScript.
+      Студия встраивает задачу во фрейм IFrame. Таким образом обеспечивается интерактивное взаимодействие между учащимися  и Системой обучения (LMS). Оценивать работу учащихся можно с использованием
+      JavaScript и некоторых базовых выражений на языкеPython, при этом оценивание интегрировано с системой оценивания edX.
+      </p>
+      <p>
+      В задачах JS Input должны использоваться HTML, JavaScript и CSS. Для создания задач этого типа можно использовать
+      Google Web Toolkit (GWT).
+      </p>
+      <p>      
+      За дополнительной информацией обратитесь к ресурсу 
+      <a href="http://edx.readthedocs.org/projects/edx-partner-course-staff/en/latest/exercises_tools/custom_javascript.html" target="_blank">, раздел
+      Custom JavaScript Problem</a> в главе <i>Building and Running an edX Course</i>.
+      </p>
+      <p>Разработчикам JavaScript также следует обратиться к главе <a href="http://edx.readthedocs.org/projects/edx-developer-guide/en/latest/extending_platform/javascript.html" target="_blank">
+      Custom JavaScript Applications</a> руководства разработчика <i>EdX Developer's Guide</i>.</p>
+      <p>При добавлении этой задачи обязательно выберите <strong>Настройки</strong> для отображения правильного названия вопроса и других значений.</p>
+      <p> Используйте приведенный ниже пример как образец..</p>
+
+      <script type="loncapa/python">
+      <![CDATA[
+      import json
+      def vglcfn(e, ans):
+        '''
+        par словарь, в котором два ключа: "answer" и "state".
+        Значение ключа "answer" (ответ) - это строка JSON, возвращаемая методом "getGrade".
+        Значение ключа "state" (состояние) - это строка JSON, возвращаемая методом "getState".
+        Текущее состояние записывается при нажатии "Check" (проверить)  или "Save" (Сохранить).
+
+        '''
+        par = json.loads(ans)
+        # Вы можете использовать указанное в ключе ответа значение для оценивания:
+        answer = json.loads(par["answer"])
+        return answer["cylinder"] and not answer["cube"]
+        '''
+        # Или же вы можете использовать для оценивания значение ключа состояния:
+        state = json.loads(par["state"])
+        selectedObjects = state["selectedObjects"]
+        return selectedObjects["cylinder"] and not selectedObjects["cube"]
+        '''
+      ]]>
+      </script>
+      <p>Нажимайте на изображение ниже, пока конус не станет желтым, а куб - синим.</p>
+      <customresponse cfn="vglcfn">
+        <jsinput gradefn="WebGLDemo.getGrade"
+          get_statefn="WebGLDemo.getState"
+          set_statefn="WebGLDemo.setState"
+          initial_state='{"selectedObjects":{"cube":true,"cylinder":false}}'
+          width="400"
+          height="400"
+          html_file="https://studio.edx.org/c4x/edX/DemoX/asset/webGLDemo.html"
+          sop="false"/>
+      </customresponse>
+      </problem>

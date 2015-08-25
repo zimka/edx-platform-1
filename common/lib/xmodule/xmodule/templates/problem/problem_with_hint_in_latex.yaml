@@ -1,0 +1,93 @@
+---
+metadata:
+    display_name: Задача с адаптивной подсказкой в Latex
+    source_code: |
+        \subsection{Problem With Adaptive Hint}
+
+        % Адаптивные подсказки - это сообщения,
+        % показываемые учащимся в зависимости от данного ответа.
+        % Вывод подсказок обеспечивается скриптом, встроенным
+        % в задачу (написанным на языке Python).
+        % Вот пример. В качестве высокоуровневого языка здесь
+        % использован LaTeX. Для разметки задачи можно также
+        % использовать непосредственно XML.
+        
+        Эта задача содержит пример с подсказками, основанными на использовании метода
+
+        {\tt hintfn}.
+
+        \begin{edXscript}
+        def test_str(expect, ans):
+          print expect, ans
+          ans = ans.strip("'")
+          ans = ans.strip('"')
+          return expect == ans.lower()
+
+        def hint_fn(answer_ids, student_answers, new_cmap, old_cmap):
+          aid = answer_ids[0]
+          ans = str(student_answers[aid]).lower()
+          print 'hint_fn called, ans=', ans
+          hint = ''
+          if 'java' in ans:
+             hint = 'пригодно только для питья'
+          elif 'perl' in ans:
+             hint = 'не очень богат'
+          elif 'pascal' in ans:
+             hint = 'это язык для битников'
+          elif 'fortran' in ans:
+             hint = 'в старые добрые времена'
+          elif 'clu' in ans:
+             hint = 'помните про инварианты'
+          if hint:
+            hint = "<font color='blue'>Подсказка: {0}</font>".format(hint)
+            new_cmap.set_hint_and_mode(aid,hint,'always')
+        \end{edXscript}
+
+        Какой язык программирования является самым лучшим из существующих на сегодняшний день?
+        Можете ввести ответ большими или маленькими буквами, с кавычками или без.
+
+        \edXabox{type="custom" cfn='test_str' expect='python' hintfn='hint_fn'}
+    markdown: !!null
+data: |
+    <problem>
+      <text>
+        <p>
+          <h4>Задача с адаптивной подсказкой</h4>
+        </p>
+        <p>
+    Эта задача содержит пример с подсказками, основанными на использовании метода <tt class="tt">hintfn</tt>. </p>
+        <script type="text/python" system_path="python_lib">
+    def test_str(expect, ans):
+      print expect, ans
+      ans = ans.strip("'")
+      ans = ans.strip('"')
+      return expect == ans.lower()
+
+    def hint_fn(answer_ids, student_answers, new_cmap, old_cmap):
+      aid = answer_ids[0]
+      ans = str(student_answers[aid]).lower()
+      print 'hint_fn called, ans=', ans
+      hint = ''
+      if 'java' in ans:
+             hint = 'пригодно только для питья'
+      elif 'perl' in ans:
+             hint = 'не очень богат'
+      elif 'pascal' in ans:
+             hint = 'это язык для битников'
+      elif 'fortran' in ans:
+             hint = 'в старые добрые времена'
+      elif 'clu' in ans:
+             hint = 'помните про инварианты'
+      if hint:
+        hint = "&lt;font color='blue'&gt;Hint: {0}&lt;/font&gt;".format(hint)
+        new_cmap.set_hint_and_mode(aid,hint,'always')
+    </script>
+        <label>
+     Какой язык программирования является самым лучшим из существующих на сегодняшний день?
+          <customresponse cfn="test_str" expect="python">
+            <textline correct_answer="python"/>
+            <hintgroup hintfn="hint_fn"/>
+          </customresponse>
+        </label>
+      </text>
+    </problem>

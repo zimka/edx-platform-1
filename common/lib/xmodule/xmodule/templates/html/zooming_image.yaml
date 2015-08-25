@@ -1,0 +1,57 @@
+---
+metadata:
+    display_name: Увеличительное стекло
+data: |
+      <h2>Увеличительное стекло</h2>
+      <p>Увеличительное стекло позволяет учащимся разглядеть мелкие детали большого, сложного изображения.</p>
+      <p>Испольщзуя этот инструмент учащийся может наводить курсор мыши на разные части изображения, чтобы увеличить его и рассмотреть более подробно.</p>
+      <p>Прежде чем использовать Увеличительное стекло,небходимо сначала добавить к курсу файл JavaScript<a href="http://files.edx.org/jquery.loupeAndLightbox.js" target="_blank">jquery.loupeAndLightbox.js JavaScript file</a>.</p>
+      <p>Необходимо добавить в курс как крупное изображение, так и его уменьшенный аналог.</p>
+      <p>Приведенный ниже HTML код показывает формат, необходимый для использования Увеличительного стекла. Заменить в приведенном шаблоне значения, выделенные <i>курсивом</i>.</p>
+        <pre>
+        &lt;div class="zooming-image-place" style="position: relative;"&gt;
+          &lt;a class="loupe" href="<i>путь к крупной версии изображения</i>"&gt;
+            &lt;img alt="<i>Текст для голосовых программ, воспроизводящих текст на экране</i>" 
+              src="<i>путь к версии изображения, которую вы хотите включить в блок (на страницу)</i>" /&gt;
+          &lt;/a>
+          &lt;div class="script_placeholder" 
+            data-src="<i>путь к файлуjquery.loupeAndLightbox.js на вашем компьютере</i>"/&gt;
+        &lt;/div&gt;
+        &lt;script type="text/javascript"&gt;// &gt;![CDATA[
+        JavascriptLoader.executeModuleScripts($('.zooming-image-place').eq(0), function() {
+          $('.loupe').loupeAndLightbox({
+            width: 350,
+            height: 350,
+            lightbox: false
+          });
+        });
+        // ]]&gt;&lt;/script&gt;
+        &lt;div id="ap_listener_added"&gt;&lt;/div&gt;
+        </pre>
+
+      <p>Можете заменить приведенный ниже пример своим текстом.</p>
+      <ol>
+        <li>Замените значение атрибута <strong>alt</strong> текстом, описывающим изображение и неоходимые действия или область для нажатия. <strong>Обязательно</strong> включите текст всплывающей подсказки, чтобы обеспечить доступность материалов.</li>
+        <li>Замените значение атрибута <strong>data-src</strong> контейнера div на путь к файлу jquery.loupeAndLightbox.js в материалах вашего курса.</li>
+        <li>Замените значение параметра <strong>href</strong> приведенной ниже ссылки а путь к увеличенной версии изображения. Не изменяйте значение атрибута "class".</li>
+        <li>Замените значение атрибута <strong>src</strong> на путь к изображению для отображения в блоке.</li>
+      </ol>  
+      <p>Пример ниже показывает несколько биохимических реакций, происходящих в клетках.</p>
+      <p>Нажав на молекуле, вы можете просмотреть ее химическую структуру. Увеличенное изображение также содержит список энзимов, участвующих в каждом шаге.</p>
+      <p class="sr">Нажмите пробел, чтобы открыть увеличенное изображение.</p>
+      <div class="zooming-image-place" style="position: relative;">
+        <a class="loupe" href="https://studio.edx.org/c4x/edX/DemoX/asset/pathways_detail_01.png">
+            <img alt="magnify" src="https://studio.edx.org/c4x/edX/DemoX/asset/pathways_overview_01.png" />
+          </a>
+        <div class="script_placeholder" data-src="https://studio.edx.org/c4x/edX/DemoX/asset/jquery.loupeAndLightbox.js" />
+      </div>
+      <script type="text/javascript">// <![CDATA[
+      JavascriptLoader.executeModuleScripts($('.zooming-image-place').eq(0), function() {
+        $('.loupe').loupeAndLightbox({
+          width: 350,
+          height: 350,
+          lightbox: false
+        });
+      });
+      // ]]></script>
+      <div id="ap_listener_added"></div>
