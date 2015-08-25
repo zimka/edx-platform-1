@@ -1,19 +1,20 @@
 ---
 metadata:
-    display_name: Problem with Adaptive Hint in Latex
+    display_name: Задача с адаптивной подсказкой в Latex
     source_code: |
         \subsection{Problem With Adaptive Hint}
 
-        % Adaptive hints are messages provided to students which depend on
-        % student input.  These hints are produced using a script embedded
-        % within the problem (written in Python).
-        %
-        % Here is an example.  This example uses LaTeX as a high-level
-        % soure language for the problem.  The problem can also be coded
-        % directly in XML.
+        % Адаптивные подсказки - это сообщения,
+        % показываемые учащимся в зависимости от данного ответа.
+        % Вывод подсказок обеспечивается скриптом, встроенным
+        % в задачу (написанным на языке Python).
+        % Вот пример. В качестве высокоуровневого языка здесь
+        % использован LaTeX. Для разметки задачи можно также
+        % использовать непосредственно XML.
+        
+        Эта задача содержит пример с подсказками, основанными на использовании метода
 
-        This problem demonstrates a question with hints, based on using the
-        {\tt hintfn} method.
+        {\tt hintfn}.
 
         \begin{edXscript}
         def test_str(expect, ans):
@@ -28,22 +29,22 @@ metadata:
           print 'hint_fn called, ans=', ans
           hint = ''
           if 'java' in ans:
-             hint = 'that is only good for drinking'
+             hint = 'пригодно только для питья'
           elif 'perl' in ans:
-             hint = 'not that rich'
+             hint = 'не очень богат'
           elif 'pascal' in ans:
-             hint = 'that is a beatnick language'
+             hint = 'это язык для битников'
           elif 'fortran' in ans:
-             hint = 'those were the good days'
+             hint = 'в старые добрые времена'
           elif 'clu' in ans:
-             hint = 'you must be invariant'
+             hint = 'помните про инварианты'
           if hint:
-            hint = "<font color='blue'>Hint: {0}</font>".format(hint)
+            hint = "<font color='blue'>Подсказка: {0}</font>".format(hint)
             new_cmap.set_hint_and_mode(aid,hint,'always')
         \end{edXscript}
 
-        What is the best programming language that exists today?   You may
-        enter your answer in upper or lower case, with or without quotes.
+        Какой язык программирования является самым лучшим из существующих на сегодняшний день?
+        Можете ввести ответ большими или маленькими буквами, с кавычками или без.
 
         \edXabox{type="custom" cfn='test_str' expect='python' hintfn='hint_fn'}
     markdown: !!null
@@ -51,10 +52,10 @@ data: |
     <problem>
       <text>
         <p>
-          <h4>Problem With Adaptive Hint</h4>
+          <h4>Задача с адаптивной подсказкой</h4>
         </p>
         <p>
-    This problem demonstrates a question with hints, based on using the <tt class="tt">hintfn</tt> method. </p>
+    Эта задача содержит пример с подсказками, основанными на использовании метода <tt class="tt">hintfn</tt>. </p>
         <script type="text/python" system_path="python_lib">
     def test_str(expect, ans):
       print expect, ans
@@ -68,21 +69,21 @@ data: |
       print 'hint_fn called, ans=', ans
       hint = ''
       if 'java' in ans:
-         hint = 'that is only good for drinking'
+             hint = 'пригодно только для питья'
       elif 'perl' in ans:
-         hint = 'not that rich'
+             hint = 'не очень богат'
       elif 'pascal' in ans:
-         hint = 'that is a beatnick language'
+             hint = 'это язык для битников'
       elif 'fortran' in ans:
-         hint = 'those were the good days'
+             hint = 'в старые добрые времена'
       elif 'clu' in ans:
-         hint = 'you must be invariant'
+             hint = 'помните про инварианты'
       if hint:
         hint = "&lt;font color='blue'&gt;Hint: {0}&lt;/font&gt;".format(hint)
         new_cmap.set_hint_and_mode(aid,hint,'always')
     </script>
         <label>
-    What is the best programming language that exists today? You may enter your answer in upper or lower case, with or without quotes.
+     Какой язык программирования является самым лучшим из существующих на сегодняшний день?
           <customresponse cfn="test_str" expect="python">
             <textline correct_answer="python"/>
             <hintgroup hintfn="hint_fn"/>

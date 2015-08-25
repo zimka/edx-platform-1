@@ -1,54 +1,56 @@
 ---
 metadata:
-    display_name: Text Input with Hints and Feedback
+    display_name: Ввод ответа текстом (с подсказками)
     markdown: | 
 
-        You can provide feedback for the correct answer in text input problems, as well as for specific incorrect answers.
+        Комментарии. Вы можете показывать учащемуся отдельный комментарий при верном ответе или неверном ответе (на каждый вариант ответа - свой комментарий).
 
-        Use feedback on expected incorrect answers to address common misconceptions and to provide guidance on how to arrive at the correct answer.
+        В комментарии на неверные ответы можно указывать на типичные ошибки, чтобы помочь ему прийти к правильному заключению.
 
-        Be sure to select Settings to specify a Display Name and other values that apply.
+        Обязательно выберите Настройки для отображения правильного названия вопроса и других значений.
 
-        Use the following example problem as a model.
+        Используйте приведенный ниже пример как образец.
 
-        >>Which U.S. state has the largest land area?<<
+        >>Какой штат США имеет самую большую площадь?<<
 
-        =Alaska {{Alaska is 576,400 square miles, more than double the land area
-        of the second largest state, Texas.}}
+        =Аляска {{Аляска занимает 576400 квадратных миль: ее площадь более чем в два раза превыает площадь второго по размера штата - Техаса.}}
 
-        not=Texas {{While many people think Texas is the largest state, it is actually the second largest, with 261,797 square miles.}}
+        not=Техас {{Хотя многие полагают, что Техас - самый большой по размеру штат, на самом деле он занимает лишь второе место. Его площадь составляет 261797 квадратных миль.}}
 
-        not=California {{California is the third largest state, with 155,959 square miles.}}
+        not=Калифорния {{Калифорния - третий по размеру штат США. Ее площадь составляет 155959 квадратных мили.}}
 
-        ||Consider the square miles, not population.||
-        ||Consider all 50 states, not just the continental United States.||
+        ||Думайте о площади, а не о населении.||
+        ||Думайте о всех 50 штатах, а не только о тех, которые расположены на основной континентальной территории США.||
+
+
 
 hinted: true
-data: |
-  <problem>
+ <problem>
 
-    <p>You can provide feedback for the correct answer in text input problems, as well as for specific incorrect answers.</p>
+    <p>Здесь можно привести подсказку для конкретных верных или неверных ответов.</p>
 
-    <p>Use feedback on expected incorrect answers to address common misconceptions and to provide guidance on how to arrive at the correct answer.</p>
+    <p>Используйте подсказки для того, чтобы прокомментировать частые заблуждения и помочь учащемуся прийти к правильному ответу.</p>
 
-    <p>Use the following example problem as a model.</p>
- 
-    <p>Which U.S. state has the largest land area?</p>
+    <p>Используйте приведенный ниже пример как модель.</p>
 
-    <stringresponse answer="Alaska" type="ci" >
+    <p>Какой штат США имеет самую большую площадь?</p>
 
-    <correcthint>Alaska is 576,400 square miles, more than double the land area of the second largest state, Texas.</correcthint>
+    <stringresponse answer="Аляска" type="ci" >
 
-    <stringequalhint answer="Texas">While many people think Texas is the largest state, it is actually the second largest, with 261,797 square miles.</stringequalhint>
+    <correcthint>Аляска занимает 576400 квадратных миль -- ее площадь более чем в два раза превыает площадь второго по размера штата - Техаса.</correcthint>
 
-    <stringequalhint answer="California">California is the third largest state, with 155,959 square miles.</stringequalhint>
+    <stringequalhint answer="Техас">Хотя многие полагают, что Техас - самый большой по размеру штат, на самом деле он занимает лишь второе место. Его площадь составляет 261797 квадратных миль.</stringequalhint>
 
-    <textline label="Which U.S. state has the largest land area?" size="20"/>
+    <stringequalhint answer="Калифорния">Хотя многие полагают, что Техас - самый большой по размеру штат, на самом деле он занимает лишь второе место. Его площадь составляет 261797 квадратных миль.</stringequalhint>
+
+    <textline label="Какой штат США имеет самую большую площадь?" size="20"/>
     </stringresponse>
 
     <demandhint>
-      <hint>Consider the square miles, not population.</hint>
-      <hint>Consider all 50 states, not just the continental United States.</hint>
+      <hint>Думайте о площади, а не о населении.</hint>
+      <hint>Думайте о всех 50 штатах, а не только о тех, которые расположены на основной континентальной территории США.</hint>
     </demandhint>
 
   </problem>
+
+
