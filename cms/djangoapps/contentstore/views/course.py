@@ -9,7 +9,7 @@ import logging
 import string  # pylint: disable=deprecated-module
 from django.utils.translation import ugettext as _
 import django.utils
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.conf import settings
 from django.views.decorators.http import require_http_methods, require_GET
 from django.core.exceptions import PermissionDenied
@@ -878,6 +878,7 @@ def course_info_update_handler(request, course_key_string, provided_id=None):
 
 
 @login_required
+@permission_required("is_staff", raise_exception="You have to be global staff to access this page")
 @ensure_csrf_cookie
 @require_http_methods(("GET", "PUT", "POST"))
 @expect_json
@@ -1106,6 +1107,7 @@ def _refresh_course_tabs(request, course_module):
 
 
 @login_required
+@permission_required("is_staff", raise_exception="You have to be global staff to access this page")
 @ensure_csrf_cookie
 @require_http_methods(("GET", "POST", "PUT"))
 @expect_json
