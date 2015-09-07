@@ -1,6 +1,6 @@
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.http import require_http_methods
 from django.utils.translation import ugettext as _
 from django.views.decorators.http import require_POST
@@ -36,6 +36,7 @@ def request_course_creator(request):
 
 # pylint: disable=unused-argument
 @login_required
+@permission_required("is_staff", raise_exception="You have to be global staff to access this page")
 @ensure_csrf_cookie
 @require_http_methods(("GET", "POST", "PUT", "DELETE"))
 def course_team_handler(request, course_key_string=None, email=None):
