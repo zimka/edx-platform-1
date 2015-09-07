@@ -67,3 +67,6 @@ git+https://github.com/edx/ecommerce-api-client.git@1.1.0#egg=ecommerce-api-clie
 
 # IFMO HTMLAcademy
 -e git+http://vcs.de.ifmo.ru/scm/git/ifmo-xblock-htmlacademy#egg=ifmo-xblock-htmlacademy
+
+# URFU MultiEngine
+-e git+https://github.com/vesloguzov/MultiEngineXBlock.git#egg=MultiEngineXBlock
