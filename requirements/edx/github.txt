@@ -64,3 +64,6 @@ git+https://github.com/edx/ecommerce-api-client.git@1.1.0#egg=ecommerce-api-clie
 # Npoed specific repos:
 -e git+https://github.com/raccoongang/open_edx_api_extension.git#egg=open_edx_api_extension
 -e git+https://github.com/miptliot/npoed-sso-edx-client.git#egg=sso_edx_npoed
+
+# IFMO HTMLAcademy
+-e git+http://vcs.de.ifmo.ru/scm/git/ifmo-xblock-htmlacademy#egg=ifmo-xblock-htmlacademy
