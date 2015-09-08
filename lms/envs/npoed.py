@@ -40,3 +40,5 @@ MAKO_TEMPLATES['main'] = NPOED_MAKO_TEMPLATES + MAKO_TEMPLATES['main']
 
 #OAUTH_OIDC_ISSUER = "https://rnoep.raccoongang.com/oauth2"
 
+EVMS_URL = ENV_TOKENS.get('EVMS_URL')
+EVMS_API_KEY = AUTH_TOKENS.get('EVMS_API_KEY')
