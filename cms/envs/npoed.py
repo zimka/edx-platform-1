@@ -59,5 +59,5 @@ if FEATURES.get('ENABLE_THIRD_PARTY_AUTH'):
             'schedule': datetime.timedelta(hours=ENV_TOKENS.get('THIRD_PARTY_AUTH_SAML_FETCH_PERIOD_HOURS', 24)),
         }
 
+EVMS_URL = ENV_TOKENS.get('EVMS_URL')
 EVMS_API_KEY = AUTH_TOKENS.get('EVMS_API_KEY')
-
