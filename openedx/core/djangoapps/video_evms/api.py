@@ -58,8 +58,9 @@ def get_urls_for_profiles(edx_video_id, val_profiles):
     if raw_data is None:
         raw_data = {}
     else:
-        raw_data = raw_data[0]
-    log.warning(raw_data)
+        if isinstance(raw_data, list):
+            raw_data = raw_data[0]
+    log.info(raw_data)
     profile_data = {}
     for profile in val_profiles:
         url = ''
