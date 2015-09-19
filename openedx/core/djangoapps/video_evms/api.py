@@ -94,7 +94,8 @@ def export_to_xml(edx_video_id):
     if video is None:
         return Element('video_asset')
     else:
-        video = video[0]
+        if isinstance(video, list):
+            video = video[0]
     video_el = Element(
         'video_asset',
         attrib={
