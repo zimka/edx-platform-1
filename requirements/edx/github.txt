@@ -60,3 +60,13 @@ git+https://github.com/edx/ecommerce-api-client.git@1.1.0#egg=ecommerce-api-clie
 # Third Party XBlocks
 -e git+https://github.com/mitodl/edx-sga@172a90fd2738f8142c10478356b2d9ed3e55334a#egg=edx-sga
 -e git+https://github.com/open-craft/xblock-poll@v1.0#egg=xblock-poll
+
+# Npoed specific repos:
+-e git+https://github.com/raccoongang/open_edx_api_extension.git#egg=open_edx_api_extension
+-e git+https://github.com/miptliot/npoed-sso-edx-client.git@release#egg=sso_edx_npoed
+
+# IFMO HTMLAcademy
+-e git+http://vcs.de.ifmo.ru/scm/git/ifmo-xblock-htmlacademy#egg=ifmo-xblock-htmlacademy
+
+# URFU MultiEngine
+-e git+https://github.com/vesloguzov/MultiEngineXBlock.git#egg=MultiEngineXBlock
