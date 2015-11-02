@@ -6,6 +6,7 @@ import logging
 from cStringIO import StringIO
 from datetime import datetime
 
+from django.conf import settings
 import requests
 from lazy import lazy
 from lxml import etree
@@ -31,6 +32,14 @@ CATALOG_VISIBILITY_CATALOG_AND_ABOUT = "both"
 CATALOG_VISIBILITY_ABOUT = "about"
 CATALOG_VISIBILITY_NONE = "none"
 
+
+def get_proctoring_list():
+    proctoring_providers = settings.PROCTORING_BACKEND_PROVIDERS
+    return ",".join(proctoring_providers.keys())
+
+class GradingTypeError(Exception):
+    """An error occurred when grading type is unrecognized."""
+    pass
 
 class StringOrDate(Date):
     def from_json(self, value):
@@ -756,6 +765,21 @@ class CourseFields(object):
         ),
         default=False,
         scope=Scope.settings
+    )
+    available_proctoring_services = String(
+        display_name=_("Available Proctoring services"),
+        help=_("Comma-separated list of services available for this course."),
+        default="",
+        scope=Scope.settings,
+    )
+
+    proctoring_service = String(
+        display_name=_("Proctoring service"),
+        help=_(
+            "Defines the proctoring Service for this Course"
+        ),
+        scope=Scope.settings,
+        values=get_proctoring_list()
     )
 
     minimum_grade_credit = Float(
