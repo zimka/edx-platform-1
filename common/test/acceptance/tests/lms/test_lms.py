@@ -571,9 +571,15 @@ class HighLevelTabTest(UniqueCourseTest):
             XBlockFixtureDesc('static_tab', 'Test Static Tab'),
             XBlockFixtureDesc('chapter', 'Test Section').add_children(
                 XBlockFixtureDesc('sequential', 'Test Subsection').add_children(
-                    XBlockFixtureDesc('problem', 'Test Problem 1', data=load_data_str('multiple_choice.xml')),
-                    XBlockFixtureDesc('problem', 'Test Problem 2', data=load_data_str('formula_problem.xml')),
-                    XBlockFixtureDesc('html', 'Test HTML'),
+                    XBlockFixtureDesc('vertical', 'Test Unit').add_children(
+                        XBlockFixtureDesc('problem', 'Test Problem 1', data=load_data_str('multiple_choice.xml')),
+                    ),
+                    XBlockFixtureDesc('vertical', 'Test Unit 2').add_children(
+                        XBlockFixtureDesc('problem', 'Test Problem 2', data=load_data_str('formula_problem.xml')),
+                    ),
+                    XBlockFixtureDesc('vertical', 'Test Unit 3').add_children(
+                        XBlockFixtureDesc('html', 'Test HTML'),
+                    )
                 )
             ),
             XBlockFixtureDesc('chapter', 'Test Section 2').add_children(

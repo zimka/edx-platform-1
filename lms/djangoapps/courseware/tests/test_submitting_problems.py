@@ -32,6 +32,7 @@ from openedx.core.djangoapps.credit.api import (
 )
 from openedx.core.djangoapps.credit.models import CreditCourse, CreditProvider
 from openedx.core.djangoapps.user_api.tests.factories import UserCourseTagFactory
+from openedx.core.djangoapps.grading_policy.utils import MaxScoresCache
 
 
 class ProblemSubmissionTestMixin(TestCase):
@@ -486,7 +487,7 @@ class TestCourseGrader(TestSubmittingProblems):
             ).exists()
         )
         location_to_cache = unicode(self.problem_location('p2'))
-        max_scores_cache = grades.MaxScoresCache.create_for_course(self.course)
+        max_scores_cache = MaxScoresCache.create_for_course(self.course)
 
         # problem isn't in the cache
         max_scores_cache.fetch_from_remote([location_to_cache])

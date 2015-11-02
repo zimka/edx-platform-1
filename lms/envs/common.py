@@ -505,7 +505,8 @@ MAKO_TEMPLATES = {}
 MAKO_TEMPLATES['main'] = [PROJECT_ROOT / 'templates',
                           COMMON_ROOT / 'templates',
                           COMMON_ROOT / 'lib' / 'capa' / 'capa' / 'templates',
-                          COMMON_ROOT / 'djangoapps' / 'pipeline_mako' / 'templates']
+                          COMMON_ROOT / 'djangoapps' / 'pipeline_mako' / 'templates',
+                          REPO_ROOT / 'openedx' / 'core' / 'djangoapps']
 
 # This is where Django Template lookup is defined. There are a few of these
 # still left lying around.
@@ -2635,6 +2636,15 @@ LTI_USER_EMAIL_DOMAIN = 'lti.example.com'
 # Number of seconds before JWT tokens expire
 JWT_EXPIRATION = 30
 JWT_ISSUER = None
+
+############################ Settings for Grading app #############################
+
+# Possible values: vertical|sequential
+GRADING_TYPE = 'vertical'
+# Computes a final grade for the course.
+COURSE_GRADER = 'WeightedSubsectionsGrader'
+# Computes a grade for the category (Assignment Type).
+ASSIGNMENT_GRADER = 'WeightedAssignmentFormatGrader'
 
 # Credit notifications settings
 NOTIFICATION_EMAIL_CSS = "templates/credit_notifications/credit_notification.css"
