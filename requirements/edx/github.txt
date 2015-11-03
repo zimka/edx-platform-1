@@ -40,6 +40,7 @@ git+https://github.com/edx/rfc6266.git@v0.0.5-edx#egg=rfc6266==0.0.5-edx
 -e git+https://github.com/edx-solutions/django-splash.git@7579d052afcf474ece1239153cffe1c89935bc4f#egg=django-splash
 -e git+https://github.com/edx/acid-block.git@e46f9cda8a03e121a00c7e347084d142d22ebfb7#egg=acid-xblock
 # -e git+https://github.com/edx/edx-ora2.git@release-2015-08-21T16.14#egg=edx-ora2
+# Ora with localization
 -e git+https://github.com/miptliot/edx-ora2.git@npoed-trans#egg=edx-ora2
 -e git+https://github.com/edx/edx-submissions.git@906c7b7a27e1a8684834334a4bf7fb50a3aede30#egg=edx-submissions
 -e git+https://github.com/edx/opaque-keys.git@27dc382ea587483b1e3889a3d19cbd90b9023a06#egg=opaque-keys
@@ -64,3 +65,13 @@ git+https://github.com/edx/ecommerce-api-client.git@1.1.0#egg=ecommerce-api-clie
 # Third Party XBlocks
 -e git+https://github.com/mitodl/edx-sga@172a90fd2738f8142c10478356b2d9ed3e55334a#egg=edx-sga
 -e git+https://github.com/open-craft/xblock-poll@e7a6c95c300e95c51e42bfd1eba70489c05a6527#egg=xblock-poll
+
+# Npoed specific repos:
+-e git+https://github.com/raccoongang/open_edx_api_extension.git#egg=open_edx_api_extension
+-e git+https://github.com/miptliot/npoed-sso-edx-client.git@release#egg=sso_edx_npoed
+
+# IFMO HTMLAcademy
+-e git+http://vcs.de.ifmo.ru/scm/git/ifmo-xblock-htmlacademy#egg=ifmo-xblock-htmlacademy
+
+# URFU MultiEngine
+-e git+https://github.com/vesloguzov/MultiEngineXBlock.git#egg=MultiEngineXBlock

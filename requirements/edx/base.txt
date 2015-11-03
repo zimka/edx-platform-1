@@ -159,3 +159,6 @@ jsonfield==1.0.3
 
 # Inlines CSS styles into HTML for email notifications.
 pynliner==0.5.2
+
+# npoed
+raven==5.5.0

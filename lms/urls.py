@@ -710,3 +710,14 @@ urlpatterns += (
 urlpatterns += (
     url(r'^api/', include('edx_proctoring.urls')),
 )
+
+urlpatterns += (
+    # Extend API
+    url(r'^api/extended/', include('open_edx_api_extension.urls', namespace='api_extension')),
+    url(r'^social-logout', 'sso_edx_npoed.views.logout', name='social-logout'),
+)
+
+import openassessment.fileupload.urls
+urlpatterns += (
+    url(r'^openassessment/storage', include(openassessment.fileupload.urls)),
+)
