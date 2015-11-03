@@ -1,24 +1,26 @@
 ---
 metadata:
-    display_name: Электрическая схема
+    display_name: Circuit Schematic Builder
     markdown: !!null
 data: |
-    <problem>
+      <problem>
         <p>
-        Задачи с электрической схемой позволяют перемещать элементы,например, источники напряжения, резисторы и 
-        транзисторы. Система проводит анализ тока.
+        Circuit schematic problems allow students to create virtual circuits by 
+        arranging elements such as voltage sources, capacitors, resistors, and 
+        MOSFETs on an interactive grid. The system evaluates a DC, AC, or 
+        transient analysis of the circuit.
         </p>
         <p>
-        За дополнительной информацией обратитесь к разделу
+        For more information, see 
         <a href="http://edx.readthedocs.org/projects/edx-partner-course-staff/en/latest/exercises_tools/circuit_schematic_builder.html" target="_blank">
-        Circuit Schematic Builder Problem</a> в руководстве <i>Building and Running an edX Course</i>.
+        Circuit Schematic Builder Problem</a> in <i>Building and Running an edX Course</i>.
         </p>
         <p>
-        При добавлении задачи выберите <strong>Настройки</strong> 
-        для того, чтобы указать <strong>Название</strong> и другие применимые значения.
+        When you add the problem, be sure to select <strong>Settings</strong> 
+        to specify a <strong>Display Name</strong> and other values that apply.
         </p>
-        <p>Можно использовать приведенную ниже задачу как образец.</p>
-        <p>Необходимо разделить напряжение равномерно.</p>
+        <p>You can use the following example problems as models.</p>
+        <p>Make a voltage divider that splits the provided voltage evenly.</p>
         <schematicresponse>
         <center>
           <schematic height="500" width="600" parts="g,r" analyses="dc"
@@ -37,7 +39,7 @@ data: |
         correct = ['incorrect']
       </answer>
       </schematicresponse>
-      <p>Сделайте фильтр.</p>
+      <p>Make a high-pass filter.</p>
       <schematicresponse>
       <center>
       <schematic height="500" width="600" parts="g,r,s,c" analyses="ac"
@@ -62,18 +64,20 @@ data: |
     
       <solution>
           <div class="detailed-solution">
-              <p>Объяснение</p>
+              <p>Explanation</p>
               <p>
-              Схема 
-              с двумя одинаковыми резисторами, где 
-              разделитель  делит входящее напряжение поровну. 
+              You can form a voltage divider that evenly divides the input
+              voltage with two identically valued resistors, with the sampled
+              voltage taken in between the two. 
               </p>
               <p><img src="/static/images/voltage_divider.png" alt=""/></p>
               <p>
-              Сделать простой  фильтр высоких частот без каких-либо ограничений
-              можно просто разместив несколько резисторов с
-              кодненсатором. </p>
+              You can form a simple high-pass filter without any further
+              constraints by simply putting a resistor in series with a
+              capacitor. The actual values of the components do not really
+              matter in this problem.
+              </p>
               <p><img src="/static/images/high_pass_filter.png" alt=""/></p>
           </div>
       </solution>
-    </problem>
+      </problem>
