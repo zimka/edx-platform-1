@@ -37,7 +37,7 @@ $body-line-height: golden-ratio(.875em, 1);
 $base-font-color: rgb(60,60,60);
 $baseFontColor: rgb(60,60,60);
 $base-font-color: rgb(60,60,60);
-$lighter-base-font-color: rgb(100,100,100);
+$lighter-base-font-color: #646464;
 $very-light-text: rgb(255,255,255); // #ffffff
 
 // ====================
@@ -234,7 +234,7 @@ $m-base-font-size: em(15);
 
 $base-font-color: rgb(60,60,60);
 $baseFontColor: rgb(60,60,60);
-$lighter-base-font-color: rgb(100,100,100);
+$lighter-base-font-color: #646464;
 $text-color: $dark-gray;
 
 $dark-trans-bg: rgba(0, 0, 0, .75);
