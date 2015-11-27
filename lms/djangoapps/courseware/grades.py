@@ -164,7 +164,7 @@ def grade(student, request, course, keep_raw_scores=False, field_data_cache=None
     Send a signal to update the minimum grade requirement status.
     """
     with manual_transaction():
-        grade_summary = course.gradeg.grade(student, request, course, keep_raw_scores, field_data_cache, scores_client)
+        grade_summary = course.grading.grade(student, request, course, keep_raw_scores, field_data_cache, scores_client)
         responses = GRADES_UPDATED.send_robust(
             sender=None,
             username=request.user.username,
