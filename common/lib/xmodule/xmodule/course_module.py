@@ -944,7 +944,7 @@ class CourseFields(object):
     proctoring_service = String(
         display_name=_("Proctoring service"),
         help=_(
-            "Defines the proctoring Service for this Course. Choose on of the following"
+            "Defines the proctoring Service for this Course. Choose one of the following"
             " services: {}".format(get_proctoring_list())
         ),
         default="",
