@@ -39,13 +39,8 @@ CATALOG_VISIBILITY_NONE = "none"
 
 
 def get_proctoring_list():
-    result = []
     proctoring_providers = settings.PROCTORING_BACKEND_PROVIDERS
-    for proctoring_key, proctoring_settings in proctoring_providers.items():
-        result.append(
-            {"display_name": proctoring_key,
-             "value": proctoring_key}
-        )
+    return ",".join(proctoring_providers.keys())
 
 
 class GradingTypeError(Exception):
@@ -938,13 +933,20 @@ class CourseFields(object):
         scope=Scope.settings
     )
 
+    available_proctoring_services = String(
+        display_name=_("Available Proctoring services"),
+        help=_("Comma-separated list of services available for this course. "
+               "For example: \"{}\"".format(get_proctoring_list())),
+        scope=Scope.settings,
+    )
+
     proctoring_service = String(
         display_name=_("Proctoring service"),
         help=_(
-            "Defines the proctoring Service for this Course"
+            "Defines the proctoring Service for this Course. Choose on of the following"
+            " services: {}".format(get_proctoring_list())
         ),
         scope=Scope.settings,
-        values=get_proctoring_list()
     )
 
     minimum_grade_credit = Float(
