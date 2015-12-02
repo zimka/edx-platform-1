@@ -23,7 +23,7 @@ SOCIAL_AUTH_RAISE_EXCEPTIONS = True
 MIDDLEWARE_CLASSES += ('sso_edx_npoed.middleware.PLPRedirection',
                        'sso_edx_npoed.middleware.SeamlessAuthorization')
 
-PLP_URL = ENV_TOKENS.get('PLP_URL')
+PLP_URL = ENV_TOKENS.get('PLP_URL').rstrip('/')
 
 # We should login always with npoed-sso
 # from sso_edx_npoed.backends.npoed import NpoedBackend
