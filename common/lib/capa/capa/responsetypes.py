@@ -1724,7 +1724,7 @@ class OptionResponse(LoncapaResponse):
                         if target in ['point_values']:
                             small_map[answer_id][index] = float(word.strip())
                         else:
-                            small_map[answer_id][index] = str(word.strip().encode('utf-8'))
+                            small_map[answer_id][index] = str(word.strip().encode('utf-8')).decode('utf-8')
                 # If we find nothing and we're looking for points, return the default.
                 elif target == 'point_values':
                     if problem_map['partial'][answer_id] is not None:
