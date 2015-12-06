@@ -12,7 +12,7 @@ if RAVEN_DSN:
         'dsn': RAVEN_DSN,
     }
 
-SSO_NPOED_URL = ENV_TOKENS.get('SSO_NPOED_URL') #'http://sso.rnoep.raccoongang.com'
+SSO_NPOED_URL = ENV_TOKENS.get('SSO_NPOED_URL').rstrip('/') #'http://sso.rnoep.raccoongang.com'
 
 SSO_API_URL = "%s/api-edx/" % SSO_NPOED_URL  #'http://sso.rnoep.raccoongang.com/api-edx/'
 SSO_API_TOKEN = AUTH_TOKENS.get('SSO_API_TOKEN') #'b4c2b895087d457b86fc9096f344a687947b70fb'
