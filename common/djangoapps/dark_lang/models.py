@@ -29,3 +29,6 @@ class DarkLangConfig(ConfigurationModel):
         # Put in alphabetical order
         languages.sort()
         return languages
+
+    def unaffected_url_paths_list(self):
+        return []

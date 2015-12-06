@@ -74,7 +74,10 @@ class DarkLangMiddleware(object):
         """
         Current list of released languages
         """
-        language_options = DarkLangConfig.current().released_languages_list
+        try:
+            language_options = DarkLangConfig.current().released_languages_list
+        except AttributeError:
+            language_options = []
         if settings.LANGUAGE_CODE not in language_options:
             language_options.append(settings.LANGUAGE_CODE)
         return language_options
