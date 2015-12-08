@@ -69,7 +69,7 @@ git+https://github.com/edx/ecommerce-api-client.git@1.1.0#egg=ecommerce-api-clie
 -e git+https://github.com/open-craft/xblock-poll@e7a6c95c300e95c51e42bfd1eba70489c05a6527#egg=xblock-poll
 
 # Npoed specific repos:
--e git+https://github.com/raccoongang/open_edx_api_extension.git#egg=open_edx_api_extension
+-e git+https://github.com/raccoongang/open_edx_api_extension.git@49f026c485213ca34d5bf65085fe737521460da6#egg=open_edx_api_extension
 -e git+https://github.com/miptliot/npoed-sso-edx-client.git@60d7ddbf3d1e131c42d19eec08907a83c213a435#egg=sso_edx_npoed
 
 # IFMO HTMLAcademy
