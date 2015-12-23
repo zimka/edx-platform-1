@@ -21564,7 +21564,7 @@ msgstr "Статья «%s и её дочерние статьи были вос�
 #: wiki/views/article.py
 #, python-format
 msgid "The article %s is now set to display revision #%d"
-msgstr "Отображается версия #%d статьи %s  "
+msgstr "Для статьи %s отображается версия #%d"
 
 #: wiki/views/article.py
 msgid "New title"
@@ -21581,4 +21581,965 @@ msgid ""
 "A new revision was created: Merge between Revision #%(r1)d and Revision "
 "#%(r2)d"
 msgstr "Создана новая версия: слияние версий #%(r1)d и #%(r2)d"
+
+#: edx_proctoring/admin.py:83
+msgid "internally reviewed"
+msgstr "прошло внутреннее рассмотрение"
+
+#: edx_proctoring/admin.py:92
+msgid "All Unreviewed"
+msgstr "Все нерассмотренные"
+
+#: edx_proctoring/admin.py:93
+msgid "All Unreviewed Failures"
+msgstr "Все нерассмотренные отклонённые"
+
+#: edx_proctoring/api.py:720
+msgid "your course"
+msgstr "ваш курс"
+
+#: edx_proctoring/api.py:763
+msgid "Proctoring Session Results Update for {course_name} {exam_name}"
+msgstr "Результаты прокторинга обновлены для {exam_name}"
+
+#: edx_proctoring/api.py:954
+msgid "Taking As Proctored Exam"
+msgstr "Прохождение с прокторингом"
+
+#: edx_proctoring/api.py:959
+msgid "Proctored Option Available"
+msgstr "Доступно прохождение с подтверждением личности"
+
+#: edx_proctoring/api.py:964
+msgid "Taking As Open Exam"
+msgstr "Прохождение без прокторинга"
+
+#: edx_proctoring/api.py:969
+msgid "Pending Session Review"
+msgstr "В ожидании проверки"
+
+#: edx_proctoring/api.py:974
+msgid "Passed Proctoring"
+msgstr "Прокторинг пройден"
+
+#: edx_proctoring/api.py:979 edx_proctoring/api.py:984
+msgid "Failed Proctoring"
+msgstr "Прокторинг отклонён"
+
+#: edx_proctoring/api.py:993
+msgid "Ungraded Practice Exam"
+msgstr "Тренировочное контрольное задание (не оценивается)"
+
+#: edx_proctoring/api.py:998
+msgid "Practice Exam Completed"
+msgstr "Пробное контрольное задание выполнено"
+
+#: edx_proctoring/api.py:1003
+msgid "Practice Exam Failed"
+msgstr "Тестовое контрольное задание не выполнено"
+
+#: edx_proctoring/api.py:1011
+msgid "Timed Exam"
+msgstr "Контрольное задание с ограничением по времени выполнения"
+
+# already in edx
+#: edx_proctoring/models.py:151
+#msgid "pending"
+#msgstr "ожидание"
+
+#: edx_proctoring/models.py:152
+msgid "satisfactory"
+msgstr "одобрено"
+
+#: edx_proctoring/models.py:153
+msgid "unsatisfactory"
+msgstr "отклонено"
+
+#: edx_proctoring/models.py:590
+msgid "Additional Time (minutes)"
+msgstr "Дополнительное время (в минутах)"
+
+#: edx_proctoring/models.py:591
+msgid "Review Policy Exception"
+msgstr "Исключения из правил проверки"
+
+#: edx_proctoring/utils.py:68
+msgid "{num_of_hours} hour"
+msgstr "{num_of_hours} ч."
+
+#: edx_proctoring/utils.py:71
+msgid "{num_of_hours} hours"
+msgstr "{num_of_hours} ч."
+
+#: edx_proctoring/utils.py:79 edx_proctoring/utils.py:89
+msgid "{num_of_minutes} minutes"
+msgstr "{num_of_minutes} мин."
+
+#: edx_proctoring/utils.py:82
+msgid " and {num_of_minutes} minute"
+msgstr " и {num_of_minutes} мин."
+
+#: edx_proctoring/utils.py:84
+msgid "{num_of_minutes} minute"
+msgstr "{num_of_minutes} мин."
+
+#: edx_proctoring/utils.py:87
+msgid " and {num_of_minutes} minutes"
+msgstr " и {num_of_minutes} мин."
+
+#: edx_proctoring/views.py:310 edx_proctoring/views.py:513
+msgid "you have {remaining_time} remaining"
+msgstr "у вас осталось {remaining_time}"
+
+#: edx_proctoring/views.py:316
+msgid "you have less than a minute remaining"
+msgstr "у вас осталось менее минуты"
+
+#: edx_proctoring/views.py:505
+msgid "proctored"
+msgstr "с прокторингом"
+
+#: edx_proctoring/views.py:505
+msgid "timed"
+msgstr "ограничено по времени"
+
+#: edx_proctoring/templates/emails/proctoring_attempt_status_email.html:3
+#, python-format
+msgid ""
+"\n"
+"\n"
+"This email is to let you know that the status of your proctoring session "
+"review for {{ exam_name }} in\n"
+"<a href=\"{{ course_url }}\">{{ course_name }} </a> is {{ status }}. If you have "
+"any questions about proctoring,\n"
+"contact {{ platform }} support at {{ contact_email }}.\n"
+"\n"
+msgstr ""
+"\n"
+"\n"
+"Этим письмом мы извещаем вас, что ваша сессия прохождения контрольного задания"
+"{{ exam_name }} в\n"
+"<a href=\"{{ course_url }}\">{{ course_name }} </a> имеет статус {{ status }}. Если у вас есть "
+"вопросы по прокторингу и идентификации личности,\n"
+"свяжитесь со службой поддержки платоформы {{ platform }} по адресу {{ contact_email }}.\n"
+"\n"
+
+#: edx_proctoring/templates/proctoring/proctoring_launch_callback.html:164
+msgid " Your Proctoring Session Has Started "
+msgstr "Ваша сессия прокторинга началась "
+
+#: edx_proctoring/templates/proctoring/proctoring_launch_callback.html:165
+#, python-format
+msgid ""
+" From this point in time, you must follow the <a href="
+"\"{{link_urls.online_proctoring_rules}}\" target=\"_blank\">online "
+"proctoring rules</a> to pass the proctoring review for your exam. "
+msgstr ""
+" Теперь вам необходимо следовать <a href="
+"\"{{link_urls.online_proctoring_rules}}\" target=\"_blank\">правилам "
+"онлайн прокторинга</a> для выполнения контрольного задания. "
+
+#: edx_proctoring/templates/proctoring/proctoring_launch_callback.html:168
+msgid ""
+"\n"
+"            Do not close this window before you finish your exam. if you "
+"close this window, your proctoring session ends, and you will not "
+"successfully complete the proctored exam.\n"
+"          "
+msgstr ""
+"\n"
+"            Не закрывайте эту вкладку до окнчания выполнения контрольного задания. Если "
+"вы закроете вкладку, сессия прокторинга завершится, и вы не сможете "
+"успешно завершить контрольное задание в режиме прокторинга.\n"
+"          "
+
+#: edx_proctoring/templates/proctoring/proctoring_launch_callback.html:173
+#, python-format
+msgid ""
+"\n"
+"            Return to the {{platform_name}} course window to start your "
+"exam. When you have finished your exam and\n"
+"            have marked it as complete, you can close this window to end the "
+"proctoring session\n"
+"            and upload your proctoring session data for review.\n"
+"          "
+msgstr ""
+"\n"
+"            Вернуться на платформу {{platform_name}} для начала "
+"выполнения контрольного задания. Когда вы закончите и пометите\n"
+"            контрольное задание выполненным, вы можете закрыть вкладку для "
+"окончания сессии прокторинга\n"
+"            и отправить данные сессии прокторинга на проверку.\n"
+"          "
+
+#: edx_proctoring/templates/proctoring/proctoring_launch_callback.html:183
+msgid " Go to my exam "
+msgstr " Перейти к контрольному заданию "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_entrance.html:4
+msgid ""
+"\n"
+"      This exam is proctored.\n"
+"    "
+msgstr ""
+"\n"
+"      Это контрольное задание требует идентификации личности.\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_entrance.html:9
+msgid ""
+"\n"
+"      To be eligible to earn credit for this course, you must take and pass "
+"the proctoring review for this exam.\n"
+"    "
+msgstr ""
+"\n"
+"      Чтобы иметь возможность получить подтвержденный сертификат по данному курсу, вы должны пройти "
+"это контрольное задание в режиме идентификации личности (под контролем проктора).\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_entrance.html:15
+msgid "Continue to my proctored exam. I want to be eligible for credit."
+msgstr "Продолжить - перейти к контрольному заданию в режиме идентификации личности."
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_entrance.html:18
+msgid ""
+"\n"
+"        You will be guided through steps to set up online proctoring "
+"software and to perform various checks.</br>\n"
+"      "
+msgstr ""
+"\n"
+"        Вам нужно пройти несколько шагов для "
+"настройки приложения для прокторинга.</br>\n"
+"      "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_entrance.html:27
+msgid "Take this exam without proctoring."
+msgstr "Выполнить контрольное задание без идентификации личности."
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_entrance.html:31
+msgid ""
+"\n"
+"        I am not interested in academic credit.\n"
+"      "
+msgstr ""
+"\n"
+"        Мне не нужен подтвержденный сертификат.\n"
+"      "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_entrance.html:40
+msgid ""
+"\n"
+"        Are you sure you want to take this exam without proctoring?\n"
+"      "
+msgstr ""
+"\n"
+"        Вы уверены, что хотите пройти это контрольное задание без прокторинга?\n"
+"      "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_entrance.html:45
+msgid ""
+"\n"
+"        If you take this exam without proctoring, you will <strong> no "
+"longer be eligible for academic credit. </strong>\n"
+"      "
+msgstr ""
+"\n"
+"        Если вы пройдёте контрольное задание без прокторинга, вы <strong> не "
+"сможете получить сертификат с подтверждением личности. </strong>\n"
+"      "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_entrance.html:51
+msgid "Continue Exam Without Proctoring"
+msgstr "Продолжить без прокторинга"
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_entrance.html:54
+#msgid "Go Back"
+#msgstr ""
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_error.html:4
+msgid ""
+"\n"
+"      There was a problem with your proctoring session\n"
+"    "
+msgstr ""
+"\n"
+"      Возникла проблема при выполнении контрольного задания\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_error.html:10
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_rejected.html:10
+msgid ""
+"\n"
+"      Your proctoring session results: <b class=\"failure\"> Unsatisfactory "
+"</b>\n"
+"    "
+msgstr ""
+"\n"
+"      Результат вашей сессии прокторинга: отклонено"
+"</b>\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_error.html:16
+msgid ""
+"\n"
+"      Your proctoring session ended before you completed this exam, so your "
+"proctoring results are incomplete.\n"
+"      You will not be eligible to use this course for academic credit, even "
+"if you achieve a passing grade.\n"
+"    "
+msgstr ""
+"\n"
+"      Ваша сессия прокторинга прервалась до того, как вы завершили выполнение контрольного задания, "
+"и ваши результаты не полностью завершены. \n"
+"      У вас не будет возможности получить подтвержденный сертификат, даже "
+"если вы наберете необходимое число баллов за этот курс.\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_error.html:23
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_rejected.html:23
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_submitted.html:28
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_verified.html:24
+#, python-format
+msgid ""
+"\n"
+"      View your credit eligibility status on your <a href="
+"\"{{progress_page_url)}}\">Progress</a> page.\n"
+"    "
+msgstr ""
+"\n"
+"      Вы можете ознакомиться с вашим текущим статусом по курсу на странице <a href="
+"\"{{progress_page_url}}\">Прогресс</a>.\n"
+"    "
+
+msgid "View your credit eligibility status on your"
+msgstr "Вы можете ознакомиться с вашим текущим статусом по курсу на странице"
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_error.html:30
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_rejected.html:30
+msgid ""
+"\n"
+"      If you have concerns about your proctoring session results, contact "
+"your course team.\n"
+"    "
+msgstr ""
+"\n"
+"      Если у вас есть сомнения относительно результатов вашей прокторинговой сессии - обратитесь "
+"к персоналу вашего курса.\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_footer.html:5
+#: edx_proctoring/templates/proctoring/seq_proctored_practice_exam_footer.html:5
+msgid ""
+"\n"
+"        About Proctored Exams\n"
+"        "
+msgstr ""
+"\n"
+"        О прохождении контрольных заданий с подтверждением личности\n"
+"        "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_instructions.html:6
+msgid ""
+"\n"
+"      Follow these steps to set up and start your proctored exam.\n"
+"    "
+msgstr ""
+"\n"
+"      Выполняйте следующие шаги для настройки и начала прохождения контрольного задания.\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_instructions.html:11
+msgid ""
+"\n"
+"        1. Copy this unique exam code. You will be prompted to paste this "
+"code later before you start the exam.\n"
+"      "
+msgstr ""
+"\n"
+"        1. Скопируйте уникальный код контрольного задания. Позднее вам предложат вставить этот "
+"код в приложение прокторинга для начала выполнения контрольного задания.\n"
+"      "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_instructions.html:19
+msgid ""
+"\n"
+"        Select the exam code, then copy it using Command+C (Mac) or Control"
+"+C (Windows).\n"
+"      "
+msgstr ""
+"\n"
+"        Выберите код, затем нажмите Command+C (на устройстве Mac Apple) или Control+C "
+"(на устройстве под управлением ОС Windows).\n"
+"      "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_instructions.html:24
+msgid ""
+"\n"
+"        2. Follow the link below to set up proctoring.\n"
+"      "
+msgstr ""
+"\n"
+"        Перейдите по ссылке ниже, чтобы установить и настроить приложение для прокторинга.\n"
+"      "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_instructions.html:32
+msgid ""
+"\n"
+"        A new window will open. You will run a system check before "
+"downloading the proctoring application.\n"
+"      "
+msgstr ""
+"\n"
+"        В новом окне запустится проверка вашей системы, прежде чем "
+"загрузится приложение для прокторинга.\n"
+"      "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_instructions.html:37
+msgid ""
+"\n"
+"        You will be asked to verify your identity before you begin the exam. "
+"Make sure you have valid photo identification, such as a driver's license or "
+"passport, before you continue.\n"
+"      "
+msgstr ""
+"\n"
+"        Вам нужно будет подтвердить свою личность до того, как вы сможете начать выполнение контрольного задания. "
+"Перед тем, как продолжить, приготовьте действующий документ с вашей фотографией. "
+"Это может быть паспорт или водительские права.\n"
+"      "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_instructions.html:47
+msgid "Don't want to take this exam with online proctoring?"
+msgstr "Не желаете проходить это контрольное задание в режиме идентификации личности?"
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_instructions.html:48
+msgid "Take this exam as an open exam instead."
+msgstr "Пройти это контрольное задание без прокторинга."
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_ready_to_start.html:5
+msgid ""
+"\n"
+"      Follow these instructions\n"
+"    "
+msgstr ""
+"\n"
+"      Следуйте этим инструкциям\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_ready_to_start.html:10
+#, python-format
+msgid ""
+"\n"
+"        &#8226; Do not close the proctoring window until you have completed "
+"and submitted your exam. </br>\n"
+"        &#8226; When you start your exam you will have {{ total_time }} to "
+"complete it. </br>\n"
+"        &#8226; If the allotted time expires before your end your exam, the "
+"answers you have completed up\n"
+"        to that point are submitted for grading and your proctoring session "
+"is uploaded for review. </br>\n"
+"      "
+msgstr ""
+"\n"
+"        &#8226; Не закрывайте окно с контрольным заданием, пока вы не завершите его выполнение "
+"и не отправите на проверку. </br>\n"
+"        &#8226; Когда вы начнете выполнение задания, у вас будет {{total_time}} "
+"для его завершения. </br>\n"
+"        &#8226; Если выделенное время закончится до завершения вами контрольного задания, "
+"ответы, которые вы успели \n"
+"        дать, отправятся на проверку "
+"автоматически. </br>\n"
+"      "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_ready_to_start.html:19
+msgid ""
+"\n"
+"          Start my exam\n"
+"        "
+msgstr ""
+"\n"
+"          Начать выполнение задания\n"
+"        "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_ready_to_submit.html:4
+msgid ""
+"\n"
+"      Are you sure you want to end your proctored exam?\n"
+"    "
+msgstr ""
+"\n"
+"      Вы уверены, что хотите завершить выполнение контрольного задания?\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_ready_to_submit.html:9
+msgid ""
+"\n"
+"      After you submit your exam, your responses are graded and your "
+"proctoring session is reviewed.\n"
+"      You might be eligible to earn academic credit for this course if you "
+"complete all required exams\n"
+"      as well as achieve a final grade that meets credit requirements for "
+"the course.\n"
+"    "
+msgstr ""
+"\n"
+"      После отправки вашего задания на проверку, ваши ответы будут оценены, "
+"а ваша сессия прокторинга проверена.\n"
+"      Вы получите подтвержденный сертификат по этому курсу, если успешно "
+"выполните все контрольные задания\n"
+"      и наберете необходимое для аттестации "
+"число баллов.\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_ready_to_submit.html:17
+msgid ""
+"\n"
+"        Yes, end my proctored exam\n"
+"      "
+msgstr ""
+"\n"
+"        Да, завершить выполнение задания\n"
+"      "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_ready_to_submit.html:25
+msgid ""
+"\n"
+"          No, I'd like to continue working\n"
+"        "
+msgstr ""
+"\n"
+"          Нет, я продолжу выполнение задания\n"
+"        "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_rejected.html:4
+msgid ""
+"\n"
+"      Your proctoring session was reviewed and did not pass requirements\n"
+"    "
+msgstr ""
+"\n"
+"      Ваша сессия прохождения контрольного задания была проверена и не удовлетворяет требованиям\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_rejected.html:16
+msgid ""
+"\n"
+"      You are not eligible to purchase academic credit for this course, "
+"regardless of your final grade in the course.\n"
+"      If you have concerns about your proctoring session results, contact "
+"your course team.\n"
+"    "
+msgstr ""
+"\n"
+"      У вас не будет возможности получить подтвержденный сертификат, "
+"даже если вы наберете необходимое число баллов за этот курс.\n"
+"      Если у вас есть сомнения относительно результатов вашей прокторинговой сессии - обратитесь "
+"к персоналу вашего курса.\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_submitted.html:4
+msgid ""
+"\n"
+"      You have submitted this proctored exam for review\n"
+"    "
+msgstr ""
+"\n"
+"      Вы отправили сессию прохождения контрольного задания на проверку\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_submitted.html:9
+#: edx_proctoring/templates/proctoring/seq_proctored_practice_exam_submitted.html:9
+msgid ""
+"\n"
+"      Make sure you return to the proctoring software and select "
+"<strong>Quit</strong> to end the proctoring session.\n"
+"    "
+msgstr ""
+"\n"
+"      Убедитесь, что вы также <strong>завершили</strong> "
+"сессию в приложении прокторинга.\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_submitted.html:14
+msgid ""
+"\n"
+"      Your proctoring session results: <b> Pending </b>\n"
+"    "
+msgstr ""
+"\n"
+"      Результат вашей сессии прокторинга:  <b>Ожидает проверки </b>\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_submitted.html:20
+#, python-format
+msgid ""
+"\n"
+"      After you have ended the proctoring session, the recorded data is "
+"uploaded for review. Proctoring session results are usually available 24-48 "
+"hours after you submit your exam.\n"
+"      If you have questions about the status of your session review\n"
+"      after that time, contact <a href=\"{{link_urls.contact_us}}\" target="
+"\"_blank\">{{platform_name}}</a> Support.\n"
+"    "
+msgstr ""
+"\n"
+"      После завершения сессии прокторинга, запись вашего прохождения контрольного задания "
+"будет отправлена на проверку. Результат проверки прокторинговой сессии обычно становится известен "
+"в течение 24-48 часов после отправки.\n"
+"      Если по истечении этого времени у вас останутся вопросы по статусу проверки вашей сессии,\n"
+"      напишите в службу поддержки платформы<a href=\"{{link_urls.contact_us}}\" target="
+"\"_blank\">{{platform_name}}</a>\n"
+"    "
+
+msgid "After you have ended the proctoring session, the recorded data is uploaded for review. Proctoring session results are usually available 24-48 hours after you submit your exam. If you have questions about the status of your session review after that time, contact"
+msgstr "После завершения сессии прокторинга, запись вашего прохождения контрольного задания будет отправлена на проверку. Результат проверки прокторинговой сессии обычно становится известен в течение 24-48 часов после отправки. Если по истечении этого времени у вас останутся вопросы по статусу проверки вашей сессии напишите в службу поддержки платформы"
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_verified.html:4
+msgid ""
+"\n"
+"      Your proctoring session was reviewed and passed all requirements\n"
+"    "
+msgstr ""
+"\n"
+"      Ваша сессия была проверена и удовлетворяет всем требованиям\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_verified.html:10
+msgid ""
+"\n"
+"      Your proctoring session results: <b class=\"success\"> Satisfactory </"
+"b>\n"
+"    "
+msgstr ""
+"\n"
+"      Результат вашей сессии прокторинга: <b class=\"success\"> одобрено </"
+"b>\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_exam_verified.html:16
+msgid ""
+"\n"
+"      You have completed a proctored exam with a <strong>Satisfactory</"
+"strong> proctoring session result.\n"
+"      You are eligible to purchase academic credit for this course if you "
+"complete all required exams\n"
+"      and also achieve a final grade that meets the credit requirements for "
+"the course.\n"
+"    "
+msgstr ""
+"\n"
+"      Результаты выполненного вами контрольного задания <strong>приняты</"
+"strong>.\n"
+"      Вы получите подтвержденный сертификат по этому курсу, если успешно "
+"выполните все контрольные задания\n"
+"      и наберете необходимое для аттестации "
+"число баллов.\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_practice_exam_entrance.html:4
+msgid ""
+"\n"
+"      Try a proctored exam\n"
+"    "
+msgstr ""
+"\n"
+"      Попроьовать выполнить к контрольному задание с подтверждением личности\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_practice_exam_entrance.html:9
+msgid ""
+"\n"
+"      Get familiar with proctoring for real exams later in the course. This "
+"practice exam has no impact\n"
+"      on your grade in the course.\n"
+"    "
+msgstr ""
+"\n"
+"      Познакомьтесь с режимом прокторинга, который появится в последующих контрольных заданиях на курсе. Это "
+"пробное контрольное задание не повлияет\n"
+"      на вашу оценку.\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_practice_exam_entrance.html:16
+msgid "Continue to my practice exam"
+msgstr "Перейти к пробному контрольному заданию с подтверждением личности"
+
+#: edx_proctoring/templates/proctoring/seq_proctored_practice_exam_entrance.html:19
+msgid ""
+"\n"
+"        You will be guided through steps to set up online proctoring "
+"software and to perform various checks.\n"
+"      "
+msgstr ""
+"\n"
+"        Вы пройдёте некоторые шаги по настройке онлайн прокторинга "
+"и выполнению необходимых проверок.\n"
+"      "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_practice_exam_error.html:4
+msgid ""
+"\n"
+"      There was a problem with your practice proctoring session\n"
+"    "
+msgstr ""
+"\n"
+"      Возникла проблема при выполнении тренировочного контрольного задания\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_practice_exam_error.html:10
+msgid ""
+"\n"
+"      Your practice proctoring results: <b class=\"failure\"> Unsatisfactory "
+"</b>\n"
+"    "
+msgstr ""
+"\n"
+"      Результат вашей тренировочной сессии прокторинга: отклонено"
+"\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_practice_exam_error.html:16
+msgid ""
+"\n"
+"      Your proctoring session ended before you completed this practice "
+"exam.\n"
+"      You can retry this practice exam if you had problems setting up the "
+"online proctoring software.\n"
+"    "
+msgstr ""
+"\n"
+"      Ваша сессия прокторинга завершилась до того, как вы закончили выполнение тренировочного "
+"контрольного задания.\n"
+"      Если у вас возникли проблемы с настройками онлайн прокторинга, вы сможете "
+"попробовать пройти задание ещё раз.\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_practice_exam_error.html:25
+msgid "Try this practice exam again"
+msgstr "Попробовать пройти тренировочное задание ещё раз"
+
+#: edx_proctoring/templates/proctoring/seq_proctored_practice_exam_submitted.html:4
+msgid ""
+"\n"
+"      You have submitted this practice proctored exam\n"
+"    "
+msgstr ""
+"\n"
+"      Вы отправили сессию прохождения тренировочного контрольного задания на проверку\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_practice_exam_submitted.html:14
+msgid ""
+"\n"
+"      Your practice proctoring session: <b> Completed </b>\n"
+"    "
+msgstr ""
+"\n"
+"      Ваша тренировачная прокторинг сессия: <b> завершена </b>\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_practice_exam_submitted.html:20
+msgid ""
+"\n"
+"      Practice exams do not affect your grade or your credit eligibility.\n"
+"      You have completed this practice exam and can continue with your "
+"course.\n"
+"    "
+msgstr ""
+"\n"
+"      Тренировочные проверочные задания никак не влияют на вашу финальную оценку.\n"
+"      Вы выполнили тренировочное задание и можете вернуться к материалам "
+"курса.\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_proctored_practice_exam_submitted.html:28
+msgid "You can also retry this practice exam"
+msgstr "Вы можете попробовать пройти тренировочный контрольное задание ещё раз"
+
+#: edx_proctoring/templates/proctoring/seq_timed_exam_entrance.html:4
+#, python-format
+msgid ""
+"\n"
+"    {{display_name}} is a Timed Exam ({{total_time}})\n"
+"    "
+msgstr ""
+"\n"
+"    Выполнение контрольного задания {{display_name}} ограничено по времени ({{total_time}})\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_timed_exam_entrance.html:9
+msgid "This exam has a time limit associated with it."
+msgstr "Это контрольное задание ограничено по времени на выполнение."
+
+#: edx_proctoring/templates/proctoring/seq_timed_exam_entrance.html:11
+msgid "To pass this exam you must complete the problems in the time allowed."
+msgstr "Для прохождения контрольного задния вам будет выделено определённое время."
+
+#: edx_proctoring/templates/proctoring/seq_timed_exam_entrance.html:13
+msgid ""
+"As soon as you indicate that you are ready to start the exam, you will have "
+msgstr ""
+"Как только вы укажите, что готовы начать выполнение контрольного задания, вы должны "
+
+#: edx_proctoring/templates/proctoring/seq_timed_exam_entrance.html:13
+msgid " to complete the exam."
+msgstr " будете пройти его полностью."
+
+#: edx_proctoring/templates/proctoring/seq_timed_exam_entrance.html:17
+msgid ""
+"\n"
+"        I'm ready! Start this timed exam.\n"
+"      "
+msgstr ""
+"\n"
+"        Я готов! Начать выполнение контрольного задания.\n"
+"      "
+
+#: edx_proctoring/templates/proctoring/seq_timed_exam_expired.html:4
+msgid ""
+"\n"
+"      You did not complete the exam in the allotted time\n"
+"    "
+msgstr ""
+"\n"
+"      Вы не закончили выполнение контрольного задания за выделенное время\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_timed_exam_expired.html:9
+#, python-format
+msgid ""
+"\n"
+"      You are not eligible to receive credit for this exam because you did "
+"not submit\n"
+"      your exam responses before time expired. Other work that you have "
+"completed in this\n"
+"      course contributes to your final grade. See the <a href="
+"\"{{progress_page_url}}\">Progress page</a>\n"
+"      for your current grade in the course.\n"
+"    "
+msgstr ""
+"\n"
+"      У вас не будет возможности получить баллы за это контрольное задание, "
+"так как вы не завершили его выполнение за отведенное время.\n"
+"      Другие контрольные задания, выполненные вами в этом курсе, внесут вклад в вашу "
+"итоговую оценку.\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_timed_exam_expired.html:18
+msgid ""
+"\n"
+"        Other work that you have completed in this course contributes to "
+"your final grade.\n"
+"      "
+msgstr ""
+"\n"
+"        Другие контрольные задания, выполненные вами в этом курсе, внесут вклад в "
+"вашу итоговую оценку.\n"
+"      "
+
+#: edx_proctoring/templates/proctoring/seq_timed_exam_footer.html:3
+msgid "Can I request additional time to complete my exam? "
+msgstr "Могу я запросить дополнительное время для завершения контрольного задания?"
+
+#: edx_proctoring/templates/proctoring/seq_timed_exam_footer.html:4
+msgid ""
+"\n"
+"      If you have disabilities or are taking the exam in difficult "
+"conditions,\n"
+"      you might be eligible for an additional time allowance on timed "
+"exams.\n"
+"      Ask your instructor or course staff for information about additional "
+"time allowances.\n"
+"    "
+msgstr ""
+"\n"
+"      Если вы имеете ограничения по состоянию здоровья или выполняете контрольное задание "
+"в затруднительных условиях,\n"
+"      вам может быть предложено дополнительное время для контрольных заданий с ограничением "
+"времени выполнения.\n"
+"      Запросите у своего преподавателя или команды курса информацию о "
+"дополнительном времени.\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_timed_exam_ready_to_submit.html:4
+msgid ""
+"\n"
+"      This is the end of your timed exam\n"
+"    "
+msgstr ""
+"\n"
+"      Окончание контрольного задания с ограничением по времени\n"
+"    "
+
+#: edx_proctoring/templates/proctoring/seq_timed_exam_ready_to_submit.html:9
+msgid ""
+"\n"
+"      Make sure your responses and work are ready to be submitted. Once they "
+"are, you may end the exam below\n"
+"      and your worked will then be graded.\n"
+"    "
+msgstr ""
+
+#: edx_proctoring/templates/proctoring/seq_timed_exam_ready_to_submit.html:15
+msgid ""
+"\n"
+"      I'm ready! Submit my answers and end my timed exam\n"
+"    "
+msgstr ""
+"\n"
+"      Я закончил! Отправить мои ответы на проверку и завершить выполнение задания.\n"
+"    "
+
+msgid "Start System Check"
+msgstr "Начать проверку системы"
+
+msgid "Do not close the proctoring window until you have completed and submitted your exam."
+msgstr "Не закрывайте окно с контрольным заданием, пока вы не завершите его выполнение и не отправите на проверку."
+
+msgid "When you start your exam you will have"
+msgstr "Когда вы начнете выполнение задания, у вас будет"
+
+msgid "to complete it."
+msgstr "для его завершения."
+
+msgid "If the allotted time expires before your end your exam, the answers you have completed up to that point are submitted for grading and your proctoring session is uploaded for review."
+msgstr "Если выделенное время закончится до завершения вами контрольного задания, ответы, которые вы успели дать, отправятся на проверку автоматически."
+
+msgid "End My Exam"
+msgstr "Завершить экзамен"
+
+msgid "You are taking \"{exam_link}\" as a proctored exam. The timer on the right shows the time remaining in the exam."
+msgstr "Вы проходите контрольное задание \"{exam_link}\" с прокторингом. Таймер справа показывает оставшееся у вас время."
+
+msgid "This email is to let you know that the status of your proctoring session review for {{exam_name}} in <a href=\"{{course_url}}\">{{course_name}}</a> is {{status}}. If you have any questions about proctoring, contact {{platform}} support at {{contact_email}}."
+msgstr "Этим письмом мы извещаем вас, что ваша сессия прохождения контрольного задания {{exam_name}} в <a href=\"{{course_url}}\">{{course_name}}</a> имеет статус {{status}}. Если у вас есть вопросы по прокторингу и идентификации личности свяжитесь со службой поддержки платоформы {{platform}} по адресу {{contact_email}}."
+
+msgid "This email is to let you know that the status of your proctoring session review for"
+msgstr "Уважаемый слушатель курса!<br><br>Этим письмом мы уведомляем вас о том, что сессия контрольного мероприятия  <br><b> «"
+
+msgid "proctoring1"
+msgstr "» </b> в рамках курса "
+
+msgid "proctoring2"
+msgstr ", проводившаяся в режиме подтверждения личности, получила статус <b>«"
+
+msgid "proctoring3"
+msgstr "»</b> <br><br> Если у вас возникли вопросы по статусу сессии, работе службы прокторинга и идентификации личности, пожалуйста, свяжитесь со службой поддержки Национальной платформы открытого образования по адресу "
+
+msgid "proctoring4"
+msgstr " или разместите сообщение через <a href=\"https://openedu.ru/feedback\">форму</a> обратной связи."
+
+msgid "proctoring5"
+msgstr "С уважением,<br>Служба поддержки НПОО<br>"
+
+msgid "If you have any questions about proctoring, contact"
+msgstr "Если у вас есть вопросы по прокторингу и идентификации личности свяжитесь со службой поддержки платоформы"
+
+msgid "support at"
+msgstr "по адресу"
+
+msgid "Final Exam"
+msgstr "Контрольное задание"
 

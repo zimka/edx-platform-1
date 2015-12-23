@@ -6856,6 +6856,14 @@ msgid "as a percent, e.g. 40"
 msgstr "в процентах, например, 40"
 
 #: cms/templates/js/course_grade_policy.underscore
+msgid "as a percent, e.g. 60"
+msgstr "в процентах, например, 60"
+
+#: cms/templates/js/course_grade_policy.underscore
+msgid "Passing Grade"
+msgstr "Проходная оценка"
+
+#: cms/templates/js/course_grade_policy.underscore
 msgid "Total Number"
 msgstr "Общее количество"
 
@@ -7600,4 +7608,17 @@ msgstr ""
 #: cms/templates/js/video/transcripts/messages/transcripts-use-existing.underscore
 msgid "Use Current Transcript"
 msgstr "Использовать текущие субтитры."
+
+#: PROCTORING
+msgid "End My Exam"
+msgstr "Завершить экзамен"
+
+msgid "You are taking \"{exam_link}\" as a proctored exam. The timer on the right shows the time remaining in the exam."
+msgstr "Вы проходите контрольное задание \"{exam_link}\" с прокторингом. Таймер справа показывает оставшееся у вас время."
+
+msgid "Start System Check"
+msgstr "Начать проверку системы"
+
+msgid "Final Exam"
+msgstr "Контрольное задание"
 
