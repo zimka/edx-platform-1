@@ -164,5 +164,5 @@ pynliner==0.5.2
 raven==5.5.0
 
 # SNI support (python-2.7.3 lacks one)
-pyOpenSSL
-ndg-httpsclient
+pyOpenSSL==0.15.1
+ndg-httpsclient==0.4.0
