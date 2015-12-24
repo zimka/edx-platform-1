@@ -63,6 +63,7 @@ git+https://github.com/edx/ecommerce-api-client.git@1.1.0#egg=ecommerce-api-clie
 -e git+https://github.com/raccoongang/edx-proctoring.git@master#egg=edx_proctoring
 -e git+https://github.com/raccoongang/examus_edx_backend.git@master#egg=examus_edx_backend
 -e git+https://github.com/raccoongang/itmo_edx_backend.git@master#egg=itmo_edx_backend
+-e git+https://github.com/raccoongang/edx_proctor_webassistant_backend.git@master#egg=edx_proctor_webassistant_backend
 
 # Third Party XBlocks
 -e git+https://github.com/mitodl/edx-sga@172a90fd2738f8142c10478356b2d9ed3e55334a#egg=edx-sga
