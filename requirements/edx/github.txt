@@ -60,7 +60,7 @@ git+https://github.com/edx/ecommerce-api-client.git@1.1.0#egg=ecommerce-api-clie
 -e git+https://github.com/edx/edx-organizations.git@release-2015-08-03#egg=edx-organizations
 
 # git+https://github.com/edx/edx-proctoring.git@0.9.16#egg=edx-proctoring==0.9.16
--e git+https://github.com/raccoongang/edx-proctoring.git@master#egg=edx_proctoring
+-e git+https://github.com/raccoongang/edx-proctoring.git@edx_proctoring_npoed#egg=edx_proctoring
 -e git+https://github.com/raccoongang/examus_edx_backend.git@master#egg=examus_edx_backend
 -e git+https://github.com/raccoongang/itmo_edx_backend.git@master#egg=itmo_edx_backend
 -e git+https://github.com/raccoongang/edx_proctor_webassistant_backend.git@master#egg=edx_proctor_webassistant_backend
