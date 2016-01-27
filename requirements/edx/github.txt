@@ -74,7 +74,7 @@ git+https://github.com/edx/ecommerce-api-client.git@1.1.0#egg=ecommerce-api-clie
 -e git+https://github.com/miptliot/npoed-sso-edx-client.git@5ae9cb76f1b874d7087aa61bbaf57199f9a910f4#egg=sso_edx_npoed
 
 # IFMO HTMLAcademy
--e git+http://vcs.de.ifmo.ru/scm/git/ifmo-xblock-htmlacademy#egg=ifmo-xblock-htmlacademy
+-e git+https://de.ifmo.ru/scm/git/ifmo-xblock-htmlacademy@npoed/release#egg=ifmo-xblock-htmlacademy
 
 # URFU MultiEngine
 -e git+https://github.com/MasterGowen/MultiEngineXBlock.git#egg=multiengine-xblock
