@@ -1631,7 +1631,7 @@ def create_comments_service_user(user):
 def log_successful_login(sender, request, user, **kwargs):  # pylint: disable=unused-argument
     """Handler to log when logins have occurred successfully."""
     if settings.FEATURES['SQUELCH_PII_IN_LOGS']:
-        AUDIT_LOG.info(u"Login success - user.id: {0}".format(user.id))
+        AUDIT_LOG.info(u"Login success - user.id: {0}; username: {1}; email: {2}; ip: {3}".format(user.id, user.username, user.email, request.META.get('REMOTE_ADDR', 'unknown')))
     else:
         AUDIT_LOG.info(u"Login success - {0} ({1})".format(user.username, user.email))
 
@@ -1640,7 +1640,10 @@ def log_successful_login(sender, request, user, **kwargs):  # pylint: disable=un
 def log_successful_logout(sender, request, user, **kwargs):  # pylint: disable=unused-argument
     """Handler to log when logouts have occurred successfully."""
     if settings.FEATURES['SQUELCH_PII_IN_LOGS']:
-        AUDIT_LOG.info(u"Logout - user.id: {0}".format(request.user.id))
+        if request.user.id == None:
+            AUDIT_LOG.info(u"Logout - user.id: {0}; ip: {1}; uri: {2}".format(request.user.id, request.META.get('REMOTE_ADDR', 'unknown'), request.META.get('RAW_URI', 'unknown')))
+        else:
+            AUDIT_LOG.info(u"Logout - user.id: {0}; username: {1}; email: {2}; ip: {3}".format(request.user.id, request.user.username, request.user.email, request.META.get('REMOTE_ADDR', 'unknown')))
     else:
         AUDIT_LOG.info(u"Logout - {0}".format(request.user))
 
