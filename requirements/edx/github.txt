@@ -60,7 +60,7 @@ git+https://github.com/edx/ecommerce-api-client.git@1.1.0#egg=ecommerce-api-clie
 -e git+https://github.com/edx/edx-organizations.git@release-2015-08-03#egg=edx-organizations
 
 # git+https://github.com/edx/edx-proctoring.git@0.9.16#egg=edx-proctoring==0.9.16
--e git+https://github.com/raccoongang/edx-proctoring.git@edx_proctoring_npoed#egg=edx_proctoring
+-e git+https://github.com/miptliot/edx-proctoring.git@master#egg=edx_proctoring
 -e git+https://github.com/raccoongang/examus_edx_backend.git@master#egg=examus_edx_backend
 -e git+https://github.com/raccoongang/itmo_edx_backend.git@master#egg=itmo_edx_backend
 -e git+https://github.com/raccoongang/edx_proctor_webassistant_backend.git@master#egg=edx_proctor_webassistant_backend
@@ -73,8 +73,9 @@ git+https://github.com/edx/ecommerce-api-client.git@1.1.0#egg=ecommerce-api-clie
 -e git+https://github.com/raccoongang/open_edx_api_extension.git@d28f0f6bebd842e2d3684ba9f49605c7e9a20658#egg=open_edx_api_extension
 -e git+https://github.com/miptliot/npoed-sso-edx-client.git@5ae9cb76f1b874d7087aa61bbaf57199f9a910f4#egg=sso_edx_npoed
 
-# IFMO HTMLAcademy
+# IFMO HTMLAcademy, Ant
 -e git+https://de.ifmo.ru/scm/git/ifmo-xblock-htmlacademy@npoed/release#egg=ifmo-xblock-htmlacademy
+-e git+https://de.ifmo.ru/scm/git/ifmo-xblock-ant@npoed/release#egg=ifmo-xblock-ant
 
 # URFU MultiEngine
 -e git+https://github.com/MasterGowen/MultiEngineXBlock.git#egg=multiengine-xblock
