@@ -200,6 +200,16 @@ div.problem {
         }
       }
 
+      &.choicegroup_unknown {
+        @include status-icon($blue, "\f128");
+        border: 2px solid $blue;
+
+        // keep red for incorrect answers on hover.
+        &:hover {
+          border-color: $blue;
+        }
+      }
+
       &:hover {
         border: 2px solid $blue;
       }
@@ -251,6 +261,10 @@ div.problem {
       // CASE: incorrect answer
       &.incorrect {
         @include status-icon($incorrect, "\f00d");
+      }
+
+      &.unknown {
+        @include status-icon($blue, "\f128");
       }
 
       // CASE: unanswered
@@ -409,6 +423,19 @@ div.problem {
 
       input {
         border-color: $incorrect;
+      }
+    }
+
+    &.unknown {
+
+      p.status {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+      }
+
+      input {
+        border-color: $blue;
       }
     }
 
@@ -747,7 +774,7 @@ div.problem {
       height: 46px;
     }
 
-    > .incorrect, .partially-correct, .correct, .unanswered {
+    > .incorrect, .unknown, .partially-correct, .correct, .unanswered {
 
       .status {
         display: inline-block;
@@ -765,6 +792,18 @@ div.problem {
 
       .status {
         @include status-icon($incorrect, "\f00d");
+      }
+    }
+
+    // CASE: unknown answer
+    > .unknown {
+
+      input {
+        border: 2px solid $blue;
+      }
+
+      .status {
+        @include status-icon($blue, "\f128");
       }
     }
 
@@ -821,7 +860,7 @@ div.problem {
     .indicator-container {
       display: inline-block;
 
-      .status.correct:after, .status.partially-correct:after, .status.incorrect:after, .status.unanswered:after {
+      .status.correct:after, .status.partially-correct:after, .status.incorrect:after, .status.unknown:after, .status.unanswered:after {
         @include margin-left(0);
       }
     }

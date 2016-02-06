@@ -201,6 +201,11 @@ class CapaFields(object):
              "or to report an issue, please contact moocsupport@mathworks.com",
         scope=Scope.settings
     )
+    show_is_answer_correct = Boolean(
+        display_name=_("Show the correctness of the student answer"),
+        default=True,
+        scope=Scope.settings
+    )
 
 
 class CapaMixin(CapaFields):
@@ -657,6 +662,11 @@ class CapaMixin(CapaFields):
         else:
             check_button = False
             check_button_checking = False
+
+        if not self.show_is_answer_correct:
+            html = html.replace("incorrect", "unknown")
+            html = html.replace("correct", "unknown")
+            html = html.replace("Inunknown", "Incorrect")
 
         content = {
             'name': self.display_name_with_default,
