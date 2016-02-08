@@ -667,6 +667,15 @@ class CapaMixin(CapaFields):
             html = html.replace("incorrect", "unknown")
             html = html.replace("correct", "unknown")
             html = html.replace("Inunknown", "Incorrect")
+            if 'data-tooltip=' in html:
+                new_parts = []
+                parts = html.split('data-tooltip="')
+                new_parts.append(parts[0])
+                for part in parts[1:]:
+                    sub = part.split('"')
+                    sub[0] = ''
+                    new_parts.append('"'.join(sub))
+                html = 'data-tooltip="'.join(new_parts)
 
         content = {
             'name': self.display_name_with_default,
