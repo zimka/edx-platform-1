@@ -201,7 +201,7 @@ div.problem {
       }
 
       &.choicegroup_unknown {
-        @include status-icon($blue, "\f128");
+        @include status-icon($blue, "\f069");
         border: 2px solid $blue;
 
         // keep red for incorrect answers on hover.
@@ -264,7 +264,7 @@ div.problem {
       }
 
       &.unknown {
-        @include status-icon($blue, "\f128");
+        @include status-icon($blue, "\f069");
       }
 
       // CASE: unanswered
@@ -803,7 +803,7 @@ div.problem {
       }
 
       .status {
-        @include status-icon($blue, "\f128");
+        @include status-icon($blue, "\f069");
       }
     }
 

@@ -676,6 +676,15 @@ class CapaMixin(CapaFields):
                     sub[0] = ''
                     new_parts.append('"'.join(sub))
                 html = 'data-tooltip="'.join(new_parts)
+            if '<span class="sr status">' in html:
+                new_parts = []
+                parts = html.split('<span class="sr status">')
+                new_parts.append(parts[0])
+                for part in parts[1:]:
+                    sub=part.split("</span>")
+                    sub[0] = ''
+                    new_parts.append("</span>".join(sub))
+                html = '<span class="sr status">'.join(new_parts)
 
         content = {
             'name': self.display_name_with_default,
