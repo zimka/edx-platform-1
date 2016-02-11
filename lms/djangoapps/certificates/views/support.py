@@ -44,7 +44,7 @@ def require_certificate_permission(func):
 
 
 @require_GET
-@require_certificate_permission
+#@require_certificate_permission
 def search_by_user(request):
     """
     Search for certificates for a particular user.

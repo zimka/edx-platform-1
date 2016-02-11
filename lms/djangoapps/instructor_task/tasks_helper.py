@@ -1292,7 +1292,8 @@ def generate_students_certificates(
     that are enrolled.
     """
     start_time = time()
-    enrolled_students = CourseEnrollment.objects.users_enrolled_in(course_id)
+    #enrolled_students = CourseEnrollment.objects.users_enrolled_in(course_id)
+    enrolled_students = CourseEnrollment.objects.users_enrolled_in_spec_mode(course_id)
     task_progress = TaskProgress(action_name, enrolled_students.count(), start_time)
 
     current_step = {'step': 'Calculating students already have certificates'}
