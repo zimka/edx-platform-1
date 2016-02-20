@@ -55,7 +55,7 @@ from openedx.core.djangoapps.course_groups.models import CourseUserGroup
 from openedx.core.djangoapps.content.course_structures.models import CourseStructure
 from opaque_keys.edx.keys import UsageKey
 from openedx.core.djangoapps.course_groups.cohorts import add_user_to_cohort, is_course_cohorted
-from student.models import CourseEnrollment, CourseAccessRole
+from student.models import CourseEnrollment, CourseAccessRole, UserProfile
 from verify_student.models import SoftwareSecurePhotoVerification
 
 # define different loggers for use within tasks and on client side
@@ -723,9 +723,15 @@ def upload_grades_csv(_xmodule_instance_args, _entry_id, course_id, _task_input,
             if not header:
                 header = [section['label'] for section in gradeset[u'section_breakdown']]
                 rows.append(
-                    ["id", "email", "username", "grade"] + header + cohorts_header +
+                    ["id", "email", "username", "profile_name", "grade"] + header + cohorts_header +
                     group_configs_header + ['Enrollment Track', 'Verification Status'] + certificate_info_header
                 )
+
+            try:
+                profile = UserProfile.objects.get(user=student)
+                profile_name = profile.name
+            except:
+                profile_name = student.get_full_name()
 
             percents = {
                 section['label']: section.get('percent', 0.0)
@@ -764,7 +770,7 @@ def upload_grades_csv(_xmodule_instance_args, _entry_id, course_id, _task_input,
             # still have 100% for the course.
             row_percents = [percents.get(label, 0.0) for label in header]
             rows.append(
-                [student.id, student.email, student.username, gradeset['percent']] +
+                [student.id, student.email, student.username, profile_name, gradeset['percent']] +
                 row_percents + cohorts_group_name + group_configs_group_names +
                 [enrollment_mode] + [verification_status] + certificate_info
             )
