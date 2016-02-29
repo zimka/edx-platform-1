@@ -29,7 +29,7 @@ from django.dispatch import receiver
 from django.db import models, transaction, IntegrityError
 from django.utils.translation import ugettext as _, ugettext_lazy
 
-from boto.s3.connection import S3Connection
+from boto.s3.connection import S3Connection, NoHostProvided
 from boto.s3.key import Key
 from simple_history.models import HistoricalRecords
 from config_models.models import ConfigurationModel
@@ -747,7 +747,8 @@ class SoftwareSecurePhotoVerification(PhotoVerification):
         """
         conn = S3Connection(
             settings.VERIFY_STUDENT["SOFTWARE_SECURE"]["AWS_ACCESS_KEY"],
-            settings.VERIFY_STUDENT["SOFTWARE_SECURE"]["AWS_SECRET_KEY"]
+            settings.VERIFY_STUDENT["SOFTWARE_SECURE"]["AWS_SECRET_KEY"],
+            host=settings.VERIFY_STUDENT["SOFTWARE_SECURE"].get('AWS_HOSTNAME') or NoHostProvided
         )
         bucket = conn.get_bucket(settings.VERIFY_STUDENT["SOFTWARE_SECURE"]["S3_BUCKET"])
 

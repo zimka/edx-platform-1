@@ -431,6 +431,7 @@ def get_module_system_for_user(user, student_data,  # TODO  # pylint: disable=to
         open_ended_grading_interface['mock_staff_grading'] = settings.MOCK_STAFF_GRADING
     if needs_s3_interface:
         s3_interface = {
+            'hostname': getattr(settings, 'AWS_HOSTNAME'),
             'access_key': getattr(settings, 'AWS_ACCESS_KEY_ID', ''),
             'secret_access_key': getattr(settings, 'AWS_SECRET_ACCESS_KEY', ''),
             'storage_bucket_name': getattr(settings, 'AWS_STORAGE_BUCKET_NAME', 'openended')

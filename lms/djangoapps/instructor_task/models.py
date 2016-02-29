@@ -21,7 +21,7 @@ import hashlib
 import os.path
 import urllib
 
-from boto.s3.connection import S3Connection
+from boto.s3.connection import S3Connection, NoHostProvided
 from boto.s3.key import Key
 
 from django.conf import settings
@@ -236,7 +236,8 @@ class S3ReportStore(ReportStore):
 
         conn = S3Connection(
             settings.AWS_ACCESS_KEY_ID,
-            settings.AWS_SECRET_ACCESS_KEY
+            settings.AWS_SECRET_ACCESS_KEY,
+            host=settings.AWS_HOSTNAME or NoHostProvided
         )
 
         self.bucket = conn.get_bucket(bucket_name)

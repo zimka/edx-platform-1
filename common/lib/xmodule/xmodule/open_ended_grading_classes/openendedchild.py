@@ -11,7 +11,7 @@ import controller_query_service
 
 from datetime import datetime
 from pytz import UTC
-from boto.s3.connection import S3Connection
+from boto.s3.connection import S3Connection, NoHostProvided
 from boto.s3.key import Key
 
 log = logging.getLogger("edx.courseware")
@@ -34,7 +34,8 @@ def upload_to_s3(file_to_upload, keyname, s3_interface):
         public_url: URL to access uploaded file
     '''
 
-    conn = S3Connection(s3_interface['access_key'], s3_interface['secret_access_key'])
+    conn = S3Connection(s3_interface['access_key'], s3_interface['secret_access_key'],
+                        host=s3_interface.get('hostname') or NoHostProvided)
     bucketname = str(s3_interface['storage_bucket_name'])
     bucket = conn.lookup(bucketname.lower())
     if not bucket:

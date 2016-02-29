@@ -343,7 +343,8 @@ def storage_service_bucket():
     """
     conn = s3.connection.S3Connection(
         settings.AWS_ACCESS_KEY_ID,
-        settings.AWS_SECRET_ACCESS_KEY
+        settings.AWS_SECRET_ACCESS_KEY,
+        host=settings.AWS_HOSTNAME or s3.connection.NoHostProvided
     )
     return conn.get_bucket(settings.VIDEO_UPLOAD_PIPELINE["BUCKET"])
 
