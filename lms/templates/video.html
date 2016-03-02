@@ -42,13 +42,13 @@
   <ul class="wrapper-downloads">
     % if download_video_link:
         <li class="video-sources video-download-button">
-            <a href="${download_video_link}">${_('Download video')}</a>
+            <a href="${download_video_link}" download>${_('Download video')}</a>
         </li>
     % endif
     % if track:
         <li class="video-tracks video-download-button">
           % if transcript_download_format:
-            <a href="${track}">${_('Download transcript')}</a>
+            <a href="${track}" download>${_('Download transcript')}</a>
             <div class="a11y-menu-container">
                 <a class="a11y-menu-button" href="#" title="${'.' + transcript_download_format}" role="button" aria-disabled="false">${'.' + transcript_download_format}</a>
                 <ol class="a11y-menu-list" role="menu">
@@ -68,7 +68,7 @@
                 </ol>
             </div>
           % else:
-            <a href="${track}" class="external-track">${_('Download transcript')}</a>
+            <a href="${track}" class="external-track" download>${_('Download transcript')}</a>
           % endif
         </li>
     % endif
