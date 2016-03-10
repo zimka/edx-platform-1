@@ -4,7 +4,6 @@ django admin pages for courseware model
 from django import forms
 from config_models.admin import ConfigurationModelAdmin
 from django.contrib.auth.models import User
-from django.contrib.auth.admin import UserAdmin
 
 from student.models import UserProfile, UserTestGroup, CourseEnrollmentAllowed, DashboardConfiguration
 from student.models import (
@@ -135,12 +134,6 @@ class LinkedInAddToProfileConfigurationAdmin(admin.ModelAdmin):
     # Exclude deprecated fields
     exclude = ('dashboard_tracking_code',)
 
-
-class UserEdxAdmin(UserAdmin):
-    readonly_fields = ('username',)
-
-
-admin.site.register(User, UserEdxAdmin)
 
 admin.site.register(UserProfile)
 
