@@ -1649,7 +1649,7 @@ def log_successful_logout(sender, request, user, **kwargs):  # pylint: disable=u
     """Handler to log when logouts have occurred successfully."""
     if settings.FEATURES['SQUELCH_PII_IN_LOGS']:
         if request.user.id == None:
-            AUDIT_LOG.info(u"Logout - user.id: {0}; ip: {1}; uri: {2}".format(request.user.id, request.META.get('REMOTE_ADDR', 'unknown'), request.META.get('RAW_URI', 'unknown')))
+            AUDIT_LOG.info(u"Logout - user.id: {0}; ip: {1}; uri: {2}".format(request.user.id, request.META.get('REMOTE_ADDR', 'unknown'), request.META.get('RAW_URI', 'unknown').split('?')[0]))
         else:
             AUDIT_LOG.info(u"Logout - user.id: {0}; username: {1}; email: {2}; ip: {3}".format(request.user.id, request.user.username, request.user.email, request.META.get('REMOTE_ADDR', 'unknown')))
     else:
