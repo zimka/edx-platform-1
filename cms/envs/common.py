@@ -799,7 +799,7 @@ COURSES_WITH_UNSAFE_CODE = []
 
 ############################## EVENT TRACKING #################################
 
-TRACK_MAX_EVENT = 200000
+TRACK_MAX_EVENT = 327680
 
 TRACKING_BACKENDS = {
     'logger': {

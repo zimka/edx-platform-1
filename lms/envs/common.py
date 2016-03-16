@@ -609,7 +609,7 @@ USAGE_ID_PATTERN = r'(?P<usage_id>(?:i4x://?[^/]+/[^/]+/[^/]+/[^@]+(?:@[^/]+)?)|
 ############################## EVENT TRACKING #################################
 
 # FIXME: Should we be doing this truncation?
-TRACK_MAX_EVENT = 200000
+TRACK_MAX_EVENT = 327680
 
 DEBUG_TRACK_LOG = False
 
