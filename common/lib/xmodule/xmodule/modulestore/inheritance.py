@@ -210,6 +210,14 @@ class InheritanceMixin(XBlockMixin):
         default=False
     )
 
+    show_is_answer_correct = Boolean(
+        display_name=_("Show the correctness of the student answer"),
+        help=_("Enter true or false. If false, student will see blue question mark "
+               "instead of green check mark and red cross."),
+        default=True,
+        scope=Scope.settings
+    )
+
 
 def compute_inherited_metadata(descriptor):
     """Given a descriptor, traverse all of its descendants and do metadata

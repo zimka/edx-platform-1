@@ -200,6 +200,11 @@ class CapaFields(object):
                "or to report an issue, please contact moocsupport@mathworks.com"),
         scope=Scope.settings
     )
+    show_is_answer_correct = Boolean(
+        display_name=_("Show the correctness of the student answer"),
+        default=True,
+        scope=Scope.settings
+    )
 
 
 class CapaMixin(CapaFields):
@@ -656,6 +661,39 @@ class CapaMixin(CapaFields):
         else:
             check_button = False
             check_button_checking = False
+
+        # TODO: refactor
+        if not self.show_is_answer_correct:
+            html = html.replace("incorrect", "unknown")
+            html = html.replace("correct", "unknown")
+            html = html.replace("Inunknown", "Incorrect")
+            if 'data-tooltip=' in html:
+                new_parts = []
+                parts = html.split('data-tooltip="')
+                new_parts.append(parts[0])
+                for part in parts[1:]:
+                    sub = part.split('"')
+                    sub[0] = ''
+                    new_parts.append('"'.join(sub))
+                html = 'data-tooltip="'.join(new_parts)
+            if '<span class="sr status">' in html:
+                new_parts = []
+                parts = html.split('<span class="sr status">')
+                new_parts.append(parts[0])
+                for part in parts[1:]:
+                    sub=part.split("</span>")
+                    sub[0] = ''
+                    new_parts.append("</span>".join(sub))
+                html = '<span class="sr status">'.join(new_parts)
+            if '<span class="sr">' in html:
+                new_parts = []
+                parts = html.split('<span class="sr">')
+                new_parts.append(parts[0])
+                for part in parts[1:]:
+                    sub=part.split("</span>")
+                    sub[0] = ''
+                    new_parts.append("</span>".join(sub))
+                html = '<span class="sr">'.join(new_parts)
 
         content = {
             'name': self.display_name_with_default,

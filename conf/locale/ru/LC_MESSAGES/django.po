@@ -22482,3 +22482,15 @@ msgid ""
 "A new revision was created: Merge between Revision #%(r1)d and Revision "
 "#%(r2)d"
 msgstr "Создана новая версия: слияние версий #%(r1)d и #%(r2)d"
+
+#: common/lib/xmodule/xmodule/capa_base.py
+msgid "Show the correctness of the student answer"
+msgstr "Отображать правильность ответа студента"
+
+#: common/lib/xmodule/xmodule/modulestore/inheritance.py
+msgid ""
+"Enter true or false. If false, student will see blue question mark "
+" instead of green check mark and red cross."
+msgstr ""
+"Введите true или false. При установке значения false, студент вместо зеленой"
+"галочки и красного крестика будет видеть синий знак вопроса."
