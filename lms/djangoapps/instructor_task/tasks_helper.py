@@ -1409,7 +1409,7 @@ def generate_students_certificates(
     json column, otherwise generate certificates for all enrolled students.
     """
     start_time = time()
-    enrolled_students = CourseEnrollment.objects.users_enrolled_in(course_id)
+    enrolled_students = CourseEnrollment.objects.users_enrolled_in_special_mode(course_id)
 
     students = task_input.get('students', None)
 

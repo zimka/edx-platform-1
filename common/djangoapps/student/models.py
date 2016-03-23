@@ -848,6 +848,14 @@ class CourseEnrollmentManager(models.Manager):
             courseenrollment__is_active=True
         )
 
+    def users_enrolled_in_special_mode(self, course_id, mode="honor"):
+        """Return a queryset of User for every user enrolled in the course."""
+        return User.objects.filter(
+            courseenrollment__course_id=course_id,
+            courseenrollment__is_active=True,
+            courseenrollment__mode=mode
+        )
+
     def enrollment_counts(self, course_id):
         """
         Returns a dictionary that stores the total enrollment count for a course, as well as the
