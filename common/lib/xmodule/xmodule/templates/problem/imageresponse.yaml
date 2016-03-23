@@ -1,24 +1,25 @@
----
+﻿---
 metadata:
     display_name: Image Mapped Input
     markdown: !!null
 data: |
   <problem>
   <p>
-  In an image mapped input problem, also known as a "pointing on a picture"
-  problem, students click inside a defined region in an image. You define this
-  region by including coordinates in the body of the problem. You can define
-  one rectangular region, multiple rectangular regions, or one non-rectangular
-  region. For more information, see 
+  В задачах "работа с картой",которые также известны как "укажи на картинку"
+  студенты ждолжны кликнуть на определённой области графического изображения.
+  Эта область определяется включением координат в тело задачи. Вы можете
+  определить одну прямоугольную область, несколько прямоугольных областей или  or one non-rectangular
+  одне непрямоугольную область. Для более детальной информации см. 
   <a href="http://edx.readthedocs.org/projects/edx-partner-course-staff/en/latest/exercises_tools/image_mapped_input.html" target="_blank">Image Mapped Input
-  Problem</a> in <i>Building and Running an edx Course</i>.
+  Problem</a> в <i>Building and Running an edx Course</i>.
   </p>
-  <p>When you add the problem, be sure to select <strong>Settings</strong> 
-  to specify a <strong>Display Name</strong> and other values that apply.</p>
-  <p>You can use the following example problem as a model.</p>
+  <p>Добавляя задачу, убедитесь, что вы выбрали <strong>Settings</strong> -
+  <strong>Настройки</strong>, чтобы определить <strong>Display Name</strong> -
+  <strong>Отображаемое Имя</strong> и другие используемые значения.</p>
+  <p>Вы можете использовать следующий пример задачи в качестве образца.</p>
   
-  <p>What country is home to the Great Pyramid of Giza as well as the cities
-  of Cairo and Memphis? Click the country on the map below.</p>
+  <p>В какой стране находятся пирамиды Гизы и города Каир и Мэмфис?
+  Кликните на изображении страны на карте.</p>
     <imageresponse>
       <imageinput src="https://studio.edx.org/c4x/edX/DemoX/asset/Africa.png"
       width="600" height="638" rectangle="(338,98)-(412,168)" alt="Map of
@@ -26,9 +27,9 @@ data: |
     </imageresponse>
   <solution>
     <div class="detailed-solution">
-      <p>Explanation</p>
-      <p>Egypt is home to not only the Pyramids, Cairo, and Memphis, but also
-      the Sphinx and the ancient Royal Library of Alexandria.</p>
+      <p>Объяснение</p>
+      <p>В Египте находятся не только пирамиды, Каири Мэмфис, но также сфинкс и
+      древняя библиотека Александрии.</p>
     </div>
   </solution>
   </problem>

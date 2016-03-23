@@ -1,25 +1,24 @@
 ---
 metadata:
-    display_name: Перетаскивание (Drag and Drop)
+    display_name: Drag and Drop
     markdown: !!null
+    showanswer: never
 data: |
     <problem>
       <p>
-      В задачах "drag and drop" учащиеся отвечают на вопросы, перетаскивая текст или объект на определённое место графического изображения.
+      In drag and drop problems, students respond to a question by dragging text or objects to a specific location on an image.
       </p>
       <p>
-      Для более детальной информации см. 
+      For more information, see 
       <a href="http://edx.readthedocs.org/projects/edx-partner-course-staff/en/latest/exercises_tools/drag_and_drop.html" target="_blank">
-      Drag and Drop Problem</a> в <i>Building and Running an edX Course</i>.</p>
-      <p>Добавляя задачу, убедитесь, что вы выбрали <strong>Settings</strong> - 
-      <strong>Настройки</strong>, чтобы определить <strong>Display Name</strong> -
-      <strong>Отображаемое Имя</strong> и другие используемые значения.</p>
-      <p>Вы можете использовать следующий пример задачи в качестве образца.</p>
-
+      Drag and Drop Problem</a> in <i>Building and Running an edX Course</i>.</p>
+      <p>When you add the problem, be sure to select <strong>Settings</strong> 
+        to specify a <strong>Display Name</strong> and other values that apply.</p>
+      <p>You can use the following example problems as models.</p>
        <p>_____________________________________________________________________________</p>
        <customresponse>
-         <h3>Простой Drag and Drop</h3>
-        <p>Перетащите слова из списка в вёдра с подходящим количсеством букв.</p>
+         <h3>Simple Drag and Drop</h3>
+        <p>Drag each word in the scrollbar to the bucket that matches the number of letters in the word.</p>
                 <drag_and_drop_input img="https://studio.edx.org/c4x/edX/DemoX/asset/L9_buckets.png">
                   <draggable id="1" label="a"/>
                   <draggable id="2" label="bog"/>
@@ -53,8 +52,8 @@ data: |
         </answer>
     </customresponse>
         <customresponse>
-          <h3>Drag and Drop в структурах</h3>
-          <p>Отметьте атомы водорода, связанные с оставшимся атомом углерода.</p>
+          <h3>Drag and Drop with Outline</h3>
+          <p>Label the hydrogen atoms connected with the left carbon atom.</p>
             <drag_and_drop_input img="https://studio.edx.org/c4x/edX/DemoX/asset/ethglycol.jpg" target_outline="true" one_per_target="true" no_labels="true" label_bg_color="rgb(222, 139, 238)">
                 <draggable id="1" label="Hydrogen" />
                 <draggable id="2" label="Hydrogen" />

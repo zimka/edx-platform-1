@@ -1,35 +1,35 @@
 ---
 metadata:
-    display_name: Dropdown
+    display_name: Выпадающий список
     markdown: |
-         Dropdown problems allow learners to select only one option from a list of options.
+         Задачи с выпадающим списком позволяют учащимся выбрать только один ответ и представленного списка.
 
-         When you add the problem, be sure to select Settings to specify a Display Name and other values that apply.
+         При добавлении этой задачи обязательно выберите Настройки для отображения правильного названия вопроса и других значений.
 
-         You can use the following example problem as a model.
+         Используйте приведенный ниже пример как образец.
 
-          >>Which of the following countries celebrates its independence on August 15?<<
+          >>В каком государстве день независимости отмечается 15-го августа?<<
 
-          [[(India), Spain, China, Bermuda]]
+          [[(Индия), Испания, Китай, Бермудские острова]]
 
           [explanation]
-          India became an independent nation on August 15, 1947.
+          Индия стала независимым государством 15-го августа 1947 года.
           [explanation]
 data: |
   <problem>
-    <p>Dropdown problems allow learners to select only one option from a list of options.</p>
-    <p>When you add the problem, be sure to select <strong>Settings</strong> 
-    to specify a <strong>Display Name</strong> and other values that apply.</p>
-    <p>You can use the following example problem as a model.</p>
-      <p>Which of the following countries celebrates its independence on August 15?</p>
+    <p>Задачи с выпадающим списком позволяют учащимся выбрать только один вариант из списка предложенных ответов.</p>
+    <p>При добавлении этой задачи обязательно выберите <strong>Настройки</strong> 
+    для того, чтобы указать <strong>Названия</strong> и других значений.</p>
+    <p>Используйте приведенный ниже пример как модель.</p>
+      <p>В каком государстве день независимости отмечается 15-го августа?</p>
       <br/>
       <optionresponse>
-        <optioninput options="('India','Spain','China','Bermuda')" correct="India"></optioninput>
+        <optioninput options="('Индия','Бермудские острова','Испания','Китай')" correct="Индия"></optioninput>
       </optionresponse>
     <solution>
       <div class="detailed-solution">
-        <p>Explanation</p>
-        <p>India became an independent nation on August 15, 1947.</p>
+        <p>Объяснение</p>
+        <p>Индия стала независимым государством 15-го августа 1947 года</p>
       </div>
     </solution>
   </problem>
