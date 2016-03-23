@@ -811,16 +811,9 @@
         .field {
           display: inline-block;
           vertical-align: top;
-          width: flex-grid(3, 6);
+          width: flex-grid(2, 6);
           margin-bottom: ($baseline/2);
           margin-right: flex-gutter();
-        }
-
-        #field-course-grading-assignment-shortname,
-        #field-course-grading-assignment-totalassignments,
-        #field-course-grading-assignment-gradeweight,
-        #field-course-grading-assignment-droppable {
-          width: flex-grid(2, 6);
         }
       }
 

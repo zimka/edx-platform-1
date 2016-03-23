@@ -945,11 +945,11 @@ def _progress(request, course_key, student_id):
         field_data_cache = grades.field_data_cache_for_grading(course, student)
         scores_client = ScoresClient.from_field_data_cache(field_data_cache)
 
-    courseware_summary = grades.progress_summary(
+    courseware_summary = course.grading.progress_summary(
         student, request, course, field_data_cache=field_data_cache, scores_client=scores_client
     )
-    grade_summary = grades.grade(
-        student, request, course, field_data_cache=field_data_cache, scores_client=scores_client
+    grade_summary = course.grading.grade(
+        student, request, course, keep_raw_scores=False, field_data_cache=field_data_cache, scores_client=scores_client
     )
     studio_url = get_studio_url(course, 'settings/grading')
 
@@ -970,6 +970,7 @@ def _progress(request, course_key, student_id):
         'passed': is_course_passed(course, grade_summary),
         'show_generate_cert_btn': show_generate_cert_btn,
         'credit_course_requirements': _credit_course_requirements(course_key, student),
+        'progress_summary_template': getattr(course.grading, 'PROGRESS_SUMMARY_TEMPLATE', ''),
     }
 
     if show_generate_cert_btn:
@@ -1258,9 +1259,9 @@ def is_course_passed(course, grade_summary=None, student=None, request=None):
     success_cutoff = min(nonzero_cutoffs) if nonzero_cutoffs else None
 
     if grade_summary is None:
-        grade_summary = grades.grade(student, request, course)
+        grade_summary = course.grading.grade(student, request, course)
 
-    return success_cutoff and grade_summary['percent'] >= success_cutoff
+    return success_cutoff and grade_summary['percent'] >= success_cutoff and grade_summary['sections_passed']
 
 
 # Grades can potentially be written - if so, let grading manage the transaction.

@@ -5,7 +5,6 @@ from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from util.date_utils import get_time_display, DEFAULT_SHORT_DATE_FORMAT
 from django.conf import settings
-from django.utils.http import urlquote_plus
 %>
 <%block name="bodyclass">view-in-course view-progress</%block>
 
@@ -16,6 +15,7 @@ from django.utils.http import urlquote_plus
 
 
 <%namespace name="progress_graph" file="/courseware/progress_graph.js"/>
+<%namespace name="progress_table" file="/courseware/progress_table.html"/>
 
 <%block name="pagetitle">${_("{course_number} Progress").format(course_number=course.display_number_with_default) | h}</%block>
 <%block name="nav_skip">#course-info-progress</%block>
@@ -97,6 +97,9 @@ from django.utils.http import urlquote_plus
 
       %if not course.disable_progress_graph:
         <div class="grade-detail-graph" id="grade-detail-graph" aria-hidden="true"></div>
+        %if not course.no_grade and any(grader_conf.get('passing_grade') for grader_conf in course.raw_grader):
+          ${progress_table.body(grade_summary, course)}
+        %endif
       %endif
 
       % if credit_course_requirements:
@@ -159,69 +162,8 @@ from django.utils.http import urlquote_plus
         </section>
       %endif
 
-      <div class="chapters">
-        %for chapter in courseware_summary:
-        %if not chapter['display_name'] == "hidden":
-        <section>
-          <h2>${ chapter['display_name'] | h}</h2>
-
-          <div class="sections">
-            %for section in chapter['sections']:
-            <div>
-              <%
-              earned = section['section_total'].earned
-              total = section['section_total'].possible
-              percentageString = "{0:.0%}".format( float(earned)/total) if earned > 0 and total > 0 else ""
-              %>
-
-              <h3><a href="${reverse('courseware_section', kwargs=dict(course_id=course.id.to_deprecated_string(), chapter=chapter['url_name'], section=section['url_name'])) | h}">
-                ${ section['display_name'] | h}
-                %if total > 0 or earned > 0:
-                  <span class="sr">
-                    ${_("{earned} of {total} possible points").format(earned='{:.3n}'.format(float(earned)), total='{:.3n}'.format(float(total))) | h}
-                  </span>
-                %endif
-                </a>
-                %if total > 0 or earned > 0:
-                  <span> ${"({0:.3n}/{1:.3n}) {2}".format( float(earned), float(total), percentageString ) | h}</span>
-                %endif
-              </h3>
-              <p>
-                ${section['format'] | h}
-
-                %if section.get('due') is not None:
-                  <%
-                      formatted_string = get_time_display(section['due'], course.due_date_display_format, coerce_tz=settings.TIME_ZONE_DISPLAYED_FOR_DEADLINES)
-                      due_date = '' if len(formatted_string)==0 else _(u'due {date}').format(date=formatted_string)
-                  %>
-                  <em>
-                  ${due_date | h}
-                  </em>
-                %endif
-              </p>
-
-              <div class="scores">
-                %if len(section['scores']) > 0:
-                  <h3> ${ _("Problem Scores: ") if section['graded'] else _("Practice Scores: ")} </h3>
-                  <ol>
-                    %for score in section['scores']:
-                    <li>${"{0:.3n}/{1:.3n}".format(float(score.earned),float(score.possible)) | h}</li>
-                    %endfor
-                  </ol>
-                %else:
-                  <h3 class="no-scores"> ${_("No problem scores in this section")} </h3>
-                %endif
-              </div>
-
-
-            </div> <!--End section-->
-            %endfor
-          </div> <!--End sections-->
-        </section> <!--End chapter-->
-        %endif
-        %endfor
-      </div> <!--End chapters-->
-
+      <%namespace name="progress_summary" file="${context['progress_summary_template']}"/>
+      ${progress_summary.body(courseware_summary)}
     </div>
   </div>
 </div>

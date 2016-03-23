@@ -151,6 +151,14 @@ class CourseOutlineItem(object):
         element = self.q(css=self._bounded_selector(".status-grading-value"))
         return element.first.text[0] if element.present else None
 
+    @property
+    def weight(self):
+        """
+        Returns weight for the unit.
+        """
+        element = self.q(css=self._bounded_selector(".status-grading-weight"))  # pylint: disable=no-member
+        return element.first.text[0] if element.present else None
+
     def publish(self):
         """
         Publish the unit.
@@ -781,6 +789,12 @@ class CourseOutlineModal(object):
     def has_policy(self):
         return self.find_css("#grading_type").present
 
+    def has_weight(self):
+        """
+        Indicates whether the item has a weight field.
+        """
+        return self.find_css("#weight").present
+
     def set_date(self, property_name, input_selector, date):
         """
         Set `date` value to input pointed by `selector` and `property_name`.
@@ -901,7 +915,7 @@ class CourseOutlineModal(object):
 
     def shows_staff_lock_warning(self):
         """
-        Returns true iff the staff lock warning is visible.
+        Returns true if the staff lock warning is visible.
         """
         return self.find_css('.staff-lock .tip-warning').visible
 
@@ -914,3 +928,17 @@ class CourseOutlineModal(object):
             return select.first_selected_option.text
         else:
             return None
+
+    @property
+    def weight(self):
+        """
+        Returns the weight.
+        """
+        return self.find_css('#weight').first.attrs('value')[0]
+
+    @weight.setter
+    def weight(self, value):
+        """
+        Sets the weight.
+        """
+        set_input_value(self.page, self._bounded_selector('#weight'), value)

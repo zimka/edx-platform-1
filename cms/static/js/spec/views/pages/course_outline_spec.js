@@ -8,7 +8,7 @@ define(["jquery", "common/js/spec_helpers/ajax_helpers", "common/js/components/u
                 getItemsOfType, getItemHeaders, verifyItemsExpanded, expandItemsAndVerifyState,
                 collapseItemsAndVerifyState, createMockCourseJSON, createMockSectionJSON, createMockSubsectionJSON,
                 verifyTypePublishable, mockCourseJSON, mockEmptyCourseJSON, mockSingleSectionCourseJSON,
-                createMockVerticalJSON, createMockIndexJSON, mockCourseEntranceExamJSON
+                createMockVerticalJSON, createMockIndexJSON, mockCourseEntranceExamJSON,
                 mockOutlinePage = readFixtures('mock/mock-course-outline-page.underscore'),
                 mockRerunNotification = readFixtures('mock/mock-course-rerun-notification.underscore');
 
@@ -65,7 +65,6 @@ define(["jquery", "common/js/spec_helpers/ajax_helpers", "common/js/components/u
                     published: true,
                     edited_on: 'Jul 02, 2014 at 20:56 UTC',
                     edited_by: 'MockUser',
-                    course_graders: ["Lab", "Howework"],
                     has_explicit_staff_lock: false,
                     child_info: {
                         category: 'vertical',
@@ -86,6 +85,7 @@ define(["jquery", "common/js/spec_helpers/ajax_helpers", "common/js/components/u
                     published: true,
                     visibility_state: 'unscheduled',
                     edited_on: 'Jul 02, 2014 at 20:56 UTC',
+                    course_graders: ["Lab", "Howework"],
                     edited_by: 'MockUser'
                 }, options);
             };
@@ -216,6 +216,7 @@ define(["jquery", "common/js/spec_helpers/ajax_helpers", "common/js/components/u
                     'course-outline', 'xblock-string-field-editor', 'modal-button',
                     'basic-modal', 'course-outline-modal', 'release-date-editor',
                     'due-date-editor', 'grading-editor', 'publish-editor',
+                    'weight-editor',
                     'staff-lock-editor', 'timed-examination-preference-editor'
                 ]);
                 appendSetFixtures(mockOutlinePage);

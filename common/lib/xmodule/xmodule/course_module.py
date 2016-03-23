@@ -8,10 +8,10 @@ from path import Path as path
 import requests
 from datetime import datetime
 from lazy import lazy
+from stevedore.extension import ExtensionManager
 
 from xmodule import course_metadata_utils
 from xmodule.course_metadata_utils import DEFAULT_START_DATE
-from xmodule.exceptions import UndefinedContext
 from xmodule.seq_module import SequenceDescriptor, SequenceModule
 from xmodule.graders import grader_from_conf
 from xmodule.tabs import CourseTabList, InvalidTabsException
@@ -22,6 +22,7 @@ from xblock.core import XBlock
 from xblock.fields import Scope, List, String, Dict, Boolean, Integer, Float
 from .fields import Date
 from django.utils.timezone import UTC
+from django.conf import settings
 
 
 log = logging.getLogger(__name__)
@@ -33,6 +34,11 @@ _ = lambda text: text
 CATALOG_VISIBILITY_CATALOG_AND_ABOUT = "both"
 CATALOG_VISIBILITY_ABOUT = "about"
 CATALOG_VISIBILITY_NONE = "none"
+
+
+class GradingTypeError(Exception):
+    """An error occurred when grading type is unrecognized."""
+    pass
 
 
 class StringOrDate(Date):
@@ -222,12 +228,14 @@ class CourseFields(object):
                     "drop_count": 2,
                     "short_label": "HW",
                     "weight": 0.15,
+                    "passing_grade": 0,
                 },
                 {
                     "type": "Lab",
                     "min_count": 12,
                     "drop_count": 2,
                     "weight": 0.15,
+                    "passing_grade": 0,
                 },
                 {
                     "type": "Midterm Exam",
@@ -235,6 +243,7 @@ class CourseFields(object):
                     "min_count": 1,
                     "drop_count": 0,
                     "weight": 0.3,
+                    "passing_grade": 0,
                 },
                 {
                     "type": "Final Exam",
@@ -242,6 +251,7 @@ class CourseFields(object):
                     "min_count": 1,
                     "drop_count": 0,
                     "weight": 0.4,
+                    "passing_grade": 0,
                 }
             ],
             "GRADE_CUTOFFS": {
@@ -1087,6 +1097,19 @@ class CourseDescriptor(CourseFields, SequenceDescriptor, LicenseMixin):
         return course_metadata_utils.sorting_score(self.start, self.advertised_start, self.announcement)
 
     @lazy
+    def grading(self):
+        """
+        Returns current grading strategy for the course. It is a class that
+        contains methods used for the grading.
+        """
+        name = settings.GRADING_TYPE
+        extension = ExtensionManager(namespace='openedx.grading_policy')
+        try:
+            return extension[name].plugin
+        except KeyError:
+            raise GradingTypeError("Unrecognized grading type `{0}`".format(name))
+
+    @lazy
     def grading_context(self):
         """
         This returns a dictionary with keys necessary for quickly grading
@@ -1113,46 +1136,7 @@ class CourseDescriptor(CourseFields, SequenceDescriptor, LicenseMixin):
         """
         # If this descriptor has been bound to a student, return the corresponding
         # XModule. If not, just use the descriptor itself
-        try:
-            module = getattr(self, '_xmodule', None)
-            if not module:
-                module = self
-        except UndefinedContext:
-            module = self
-
-        def possibly_scored(usage_key):
-            """Can this XBlock type can have a score or children?"""
-            return usage_key.block_type in self.block_types_affecting_grading
-
-        all_descriptors = []
-        graded_sections = {}
-
-        def yield_descriptor_descendents(module_descriptor):
-            for child in module_descriptor.get_children(usage_key_filter=possibly_scored):
-                yield child
-                for module_descriptor in yield_descriptor_descendents(child):
-                    yield module_descriptor
-
-        for chapter in self.get_children():
-            for section in chapter.get_children():
-                if section.graded:
-                    xmoduledescriptors = list(yield_descriptor_descendents(section))
-                    xmoduledescriptors.append(section)
-
-                    # The xmoduledescriptors included here are only the ones that have scores.
-                    section_description = {
-                        'section_descriptor': section,
-                        'xmoduledescriptors': [child for child in xmoduledescriptors if child.has_score]
-                    }
-
-                    section_format = section.format if section.format is not None else ''
-                    graded_sections[section_format] = graded_sections.get(section_format, []) + [section_description]
-
-                    all_descriptors.extend(xmoduledescriptors)
-                    all_descriptors.append(section)
-
-        return {'graded_sections': graded_sections,
-                'all_descriptors': all_descriptors, }
+        return self.grading.grading_context(self)
 
     @lazy
     def block_types_affecting_grading(self):

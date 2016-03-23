@@ -167,6 +167,14 @@ $sequence--border-color: #C8C8C8;
           }
         }
 
+        //graded
+        &.seq_graded {
+
+          .icon:before {
+            content: "\f19d"; // .fa-graduation-cap
+          }
+        }
+
         //vertical & problems
         &.seq_vertical, &.seq_problem {
 

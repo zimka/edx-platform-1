@@ -1,0 +1,114 @@
+<%page args="courseware_summary, **kwargs"/>
+<%!
+from django.utils.translation import ugettext as _
+from django.core.urlresolvers import reverse
+from util.date_utils import get_time_display
+from django.conf import settings
+%>
+<%
+  DISPLAY_ONLY_GRADABLE_VERTICALS = True
+  root_id = courseware_summary['root']
+  blocks = courseware_summary['blocks']
+  curr_block = blocks[root_id]
+%>
+${build_summary(curr_block['children'], curr_block['block_type'])}
+
+<%def name="build_summary(items, type)" filter="trim">
+  <div class="${get_class_name(type)}">
+    %for block_id in items:
+      <% block = blocks[block_id] %>
+      <%
+        has_scores = block.get('scores')
+        has_children = len(block['children']) > 0
+      %>
+      ## Display only verticals with scores
+      %if DISPLAY_ONLY_GRADABLE_VERTICALS and block['block_type'] == 'vertical' and not has_scores:
+        <% continue %>
+      %endif
+
+      <%
+        seq_with_no_scores = False
+        if block['block_type'] == 'sequential':
+          children = [blocks[child_id] for child_id in block['children']]
+          seq_with_no_scores = not any(child.get('scores') for child in children)
+      %>
+      <%self:block_wrapper type="${block['block_type']}">
+        ${get_title(block, show_scores=has_scores)}
+        %if has_scores:
+          ${grading_info(block)}
+        %elif has_children and not seq_with_no_scores:
+          ${build_summary(block['children'], block['block_type'])}
+        %else:
+          <div class="scores"><h4 class="no-scores">${_("No problem scores in this section")}</h4></div>
+        %endif
+      </%self:block_wrapper>
+    %endfor
+  </div>
+</%def>
+
+<%def name="block_wrapper(type)">
+  %if type == 'chapter':
+    <section>${caller.body()}</section>
+  %else:
+    <div>${caller.body()}</div>
+  %endif
+</%def>
+
+<%def name="get_class_name(type)" filter="trim">
+  <% mapping = {'course': 'chapters', 'chapter': 'sections', 'sequential': 'verticals'}  %>
+  ${ mapping.get(type) }
+</%def>
+
+<%def name="get_title(block, show_scores=False)">
+  <%def name="get_scores(block)" filter="trim">
+    %if show_scores:
+      <%
+        earned = block['total'].earned
+        total = block['total'].possible
+        percentageString = "{0:.0%}".format( float(earned)/total) if earned > 0 and total > 0 else ""
+      %>
+      %if total > 0 or earned > 0:
+        <span class="sr">
+          ${_("{earned:.3n} of {total:.3n} possible points").format( earned = float(earned), total = float(total) )}
+        </span>
+        <span> ${"({0:.3n}/{1:.3n}) {2}".format( float(earned), float(total), percentageString )}</span>
+      %endif
+    %endif
+  </%def>
+  %if block['block_type'] == 'chapter':
+    <h2>${block['display_name']} ${get_scores(block)}</h2>
+  %elif block['block_type'] == 'sequential':
+    <h3>
+      <a href="${reverse('jump_to_id', kwargs=dict(course_id=course.id.to_deprecated_string(), module_id=block['url_name']))}">
+        ${block['display_name']} ${get_scores(block)}
+      </a>
+    </h3>
+  %else:
+    <h4>
+      <a href="${reverse('jump_to_id', kwargs=dict(course_id=course.id.to_deprecated_string(), module_id=block['url_name']))}">
+      ${block['display_name']} ${get_scores(block)}
+      </a>
+    </h4>
+  %endif
+</%def>
+
+<%def name="grading_info(block)">
+  <p>
+    ${block['format']}
+    %if block.get('due') is not None:
+      <%
+        formatted_string = get_time_display(block['due'], course.due_date_display_format, coerce_tz=settings.TIME_ZONE_DISPLAYED_FOR_DEADLINES)
+        due_date = '' if len(formatted_string)==0 else _(u'due {date}').format(date=formatted_string)
+      %>
+      <em>${due_date}</em>
+    %endif
+  </p>
+  <div class="scores">
+    <h4> ${ _("Problem Scores: ") if block['graded'] else _("Practice Scores: ")} </h4>
+    <ol>
+      %for score in block['scores']:
+      <li>${"{0:.3n}/{1:.3n}".format(float(score.earned),float(score.possible))}</li>
+      %endfor
+    </ol>
+  </div>
+</%def>
