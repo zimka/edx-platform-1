@@ -246,8 +246,7 @@ class XQueueCertInterface(object):
             # for every student
             if course is None:
                 course = modulestore().get_course(course_id, depth=0)
-            profile = UserProfile.objects.get(user=student)
-            profile_name = profile.name
+            profile_name = student.get_full_name()
 
             # Needed
             self.request.user = student
