@@ -8,6 +8,7 @@ import random
 import string  # pylint: disable=deprecated-module
 
 from django.conf import settings
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
@@ -866,6 +867,7 @@ def course_info_handler(request, course_key_string):
 
 # pylint: disable=unused-argument
 @login_required
+@staff_member_required
 @ensure_csrf_cookie
 @require_http_methods(("GET", "POST", "PUT", "DELETE"))
 @expect_json
@@ -1154,6 +1156,7 @@ def _refresh_course_tabs(request, course_module):
 
 
 @login_required
+@staff_member_required
 @ensure_csrf_cookie
 @require_http_methods(("GET", "POST", "PUT"))
 @expect_json

@@ -143,7 +143,7 @@
       </div>
 
       <div class="bit">
-      % if context_course:
+      % if context_course and user.is_staff:
         <%
           detailed_settings_url = utils.reverse_course_url('settings_handler', context_course.id)
           course_team_url = utils.reverse_course_url('course_team_handler', context_course.id)

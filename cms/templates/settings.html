@@ -469,7 +469,7 @@ CMS.URL.UPLOAD_ASSET = '${upload_asset_url}';
      </div>
 
      <div class="bit">
-     % if context_course:
+     % if context_course and user.is_staff:
           <%
             course_team_url = utils.reverse_course_url('course_team_handler', context_course.id)
             grading_config_url = utils.reverse_course_url('grading_handler', context_course.id)
