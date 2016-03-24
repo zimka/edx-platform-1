@@ -1209,14 +1209,23 @@ courseware_js = (
 
 proctoring_js = (
     [
+        'proctoring/js/views/Backbone.ModalDialog.js',
+    ] +
+    [
         'proctoring/js/models/proctored_exam_allowance_model.js',
         'proctoring/js/models/proctored_exam_attempt_model.js',
         'proctoring/js/models/proctored_exam_model.js'
     ] +
     [
+        'proctoring/js/models/proctoring_services_model.js',
+    ] +
+    [
         'proctoring/js/collections/proctored_exam_allowance_collection.js',
         'proctoring/js/collections/proctored_exam_attempt_collection.js',
         'proctoring/js/collections/proctored_exam_collection.js'
+    ] +
+    [
+        'proctoring/js/collections/proctoring_services_collection.js',
     ] +
     [
         'proctoring/js/views/Backbone.ModalDialog.js',
@@ -1226,9 +1235,13 @@ proctoring_js = (
         'proctoring/js/views/proctored_exam_view.js'
     ] +
     [
+        'proctoring/js/views/proctoring_services_view.js',
+    ] +
+    [
         'proctoring/js/proctored_app.js'
     ]
 )
+
 
 # Before a student accesses courseware, we do not
 # need many of the JS dependencies.  This includes
@@ -1942,6 +1955,9 @@ INSTALLED_APPS = (
     'openedx.core.djangoapps.self_paced',
 
     'sorl.thumbnail',
+
+    # Api extension for openedu
+    'open_edx_api_extension',
 )
 
 # Migrations which are not in the standard module "migrations"
@@ -2673,6 +2689,12 @@ NOTIFICATION_EMAIL_EDX_LOGO = "templates/credit_notifications/edx-logo-header.pn
 PROCTORING_BACKEND_PROVIDER = {
     'class': 'edx_proctoring.backends.null.NullBackendProvider',
     'options': {},
+}
+PROCTORING_BACKEND_PROVIDERS = {
+    'default': {
+        'class': 'edx_proctoring.backends.null.NullBackendProvider',
+        'options': {},
+    }
 }
 PROCTORING_SETTINGS = {}
 
