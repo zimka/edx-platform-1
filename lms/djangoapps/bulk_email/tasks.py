@@ -517,12 +517,22 @@ def _send_course_email(entry_id, email_id, to_list, global_email_context, subtas
             plaintext_msg = course_email_template.render_plaintext(course_email.text_message, email_context)
             html_msg = course_email_template.render_htmltext(course_email.html_message, email_context)
 
+            import base64
+            unsub_headers = {}
+            username = User.objects.filter(email=email)[0].username
+            unsub_hash = base64.b64encode("{0}+{1}".format(username, course_email.course_id.html_id()))
+            unsub_url = '%s%s' % ("https://testb.npoed.ru/unsubscribe/", unsub_hash)
+            unsub_headers['List-Unsubscribe'] = '<{0}>'.format(unsub_url)
+            html_msg = u'{0}<br/><p>Для отписки от рассылки курса перейдите <a href="{1}">по ссылке</a></p>'.format(html_msg, unsub_url)
+            plaintext_msg = u'{0}Для отписки от рассылки курса перейдите по ссылке {1}'.format(plaintext_msg, unsub_url)
+
             # Create email:
             email_msg = EmailMultiAlternatives(
                 course_email.subject,
                 plaintext_msg,
                 from_addr,
                 [email],
+                headers = unsub_headers,
                 connection=connection
             )
             email_msg.attach_alternative(html_msg, 'text/html')
@@ -824,3 +834,4 @@ def _statsd_tag(course_title):
     The tag also gets modified by our dogstats_wrapper code.
     """
     return u"course_email:{0}".format(course_title)
+
