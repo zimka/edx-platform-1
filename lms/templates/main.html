@@ -57,6 +57,8 @@ from branding import api as branding_api
   % endif
 
   <script type="text/javascript" src="/i18n.js"></script>
+  ## EDX jquery=1.7.2; we have to use it >= 1.91 and < 3
+  <link rel="stylesheet" href="/static/themes/default/css/bootstrap.min.css">
 
   <link rel="icon" type="image/x-icon" href="${static.url(microsite.get_value('favicon_path', settings.FAVICON_PATH))}" />
 
