@@ -66,8 +66,14 @@ class WeightedAssignmentFormatGrader(CourseGrader):
                 dropped_breakdown = [x[1] for x in sorted_breakdown[-drop_count:]]
                 dropped_indices = [x[0] for x in sorted_breakdown[-drop_count:]]
 
-            normalized_weight = sum(x['weight'] for x in breakdown) - sum(x['weight'] for x in dropped_breakdown)
-            aggregate_score = sum(m['percent'] * m['weight'] for m in breakdown if m not in dropped_breakdown)
+            normalized_weight = 0
+            if breakdown:
+                normalized_weight = sum(x.get('weight', 1) for x in breakdown)
+            if dropped_breakdown:
+                normalized_weight -= sum(x.get('weight', 1) for x in dropped_breakdown)
+            aggregate_score = 0
+            if len(breakdown) > len(dropped_breakdown):
+                aggregate_score = sum(m['percent'] * m.get('weight', 1) for m in breakdown if m not in dropped_breakdown)
             if len(breakdown) - drop_count > 0 and normalized_weight > 0:
                 aggregate_score /= normalized_weight
             elif normalized_weight == 0:
