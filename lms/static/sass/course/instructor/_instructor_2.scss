@@ -1937,7 +1937,7 @@ input[name="subject"] {
       th {
         text-align: left;
         border-bottom: 1px solid $border-color-1;
-        font-size: 16px;
+        font-size: 10px;
         &.attempt-allowed-time {
             width: 140px;
             word-wrap: break-word;
@@ -1978,7 +1978,7 @@ input[name="subject"] {
         padding: ($baseline/2) 0;
         position: relative;
         line-height: normal;
-        font-size: 14px;
+        font-size: 10px;
       }
       td:nth-child(5),td:first-child{
         @include padding-left($baseline);
