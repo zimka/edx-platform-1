@@ -111,8 +111,9 @@ git+https://github.com/edx/xblock-lti-consumer.git@v1.0.0#egg=xblock-lti-consume
 -e git+https://github.com/miptliot/npoed-sso-edx-client.git@5ae9cb76f1b874d7087aa61bbaf57199f9a910f4#egg=sso_edx_npoed
 
 # IFMO HTMLAcademy, Ant
--e git+https://de.ifmo.ru/scm/git/ifmo-xblock-htmlacademy@npoed/release#egg=ifmo-xblock-htmlacademy
--e git+https://de.ifmo.ru/scm/git/ifmo-xblock-ant@npoed/release#egg=ifmo-xblock-ant
+-e git+https://de.ifmo.ru/scm/git/ifmo-edx-celery-grader@v4.0#egg=ifmo-edx-celery-grader==4.0
+-e git+https://de.ifmo.ru/scm/git/ifmo-xblock-htmlacademy@v4.0-npoed#egg=ifmo-xblock-htmlacademy==4.0
+-e git+https://de.ifmo.ru/scm/git/ifmo-xblock-ant@v4.0-npoed#egg=ifmo-xblock-ant==4.0
 
 # URFU MultiEngine
 -e git+https://github.com/MasterGowen/MultiEngineXBlock.git#egg=multiengine-xblock
