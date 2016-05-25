@@ -988,12 +988,6 @@ class ScoresClient(object):
         client.fetch_scores(scorable_locations)
         return client
 
-    @classmethod
-    def from_field_data_cache(cls, fd_cache):
-        """Create a ScoresClient from a populated FieldDataCache."""
-        client = cls(fd_cache.course_id, fd_cache.user.id)
-        client.fetch_scores(fd_cache.scorable_locations)
-
 
 # @contract(user_id=int, usage_key=UsageKey, score="number|None", max_score="number|None")
 def set_score(user_id, usage_key, score, max_score):

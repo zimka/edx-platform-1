@@ -146,12 +146,18 @@ class CourseEnrollmentAdmin(admin.ModelAdmin):
     list_filter = ('mode', 'is_active',)
     raw_id_fields = ('user',)
     search_fields = ('course_id', 'mode', 'user__username',)
-
     def queryset(self, request):
         return super(CourseEnrollmentAdmin, self).queryset(request).select_related('user')
 
     class Meta(object):
         model = CourseEnrollment
+
+
+from django.contrib.auth.admin import UserAdmin
+class CustomUserAdmin(UserAdmin):
+    readonly_fields = ("username", "email", "first_name", "last_name", "is_staff", "is_superuser")
+
+admin.site.register(User, CustomUserAdmin)
 
 
 class UserProfileInline(admin.StackedInline):
@@ -161,7 +167,7 @@ class UserProfileInline(admin.StackedInline):
     verbose_name_plural = _('User profile')
 
 
-class UserAdmin(BaseUserAdmin):
+class UserAdmin(CustomUserAdmin):
     """ Admin interface for the User model. """
     inlines = (UserProfileInline,)
 
@@ -187,4 +193,4 @@ admin.site.register(LogoutViewConfiguration, ConfigurationModelAdmin)
 
 
 # We must first un-register the User model since it may also be registered by the auth app.
-admin.site.register(User, UserAdmin)
+# admin.site.register(User, UserAdmin)

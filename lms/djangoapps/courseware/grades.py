@@ -3,114 +3,25 @@ from __future__ import division
 
 import json
 import logging
-import random
 from collections import defaultdict
-from functools import partial
-
-from contextlib import contextmanager
-from django.test.client import RequestFactory
 
 import dogstats_wrapper as dog_stats_api
-from course_blocks.api import get_course_blocks
 from courseware import courses
-from django.conf import settings
-from django.core.cache import cache
 from django.test.client import RequestFactory
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
 from opaque_keys.edx.locator import BlockUsageLocator
-from openedx.core.djangoapps.content.block_structure.api import get_course_in_cache
-from openedx.core.lib.cache_utils import memoized
-from openedx.core.lib.gating import api as gating_api
 from courseware.model_data import FieldDataCache, ScoresClient
 from openedx.core.djangoapps.signals.signals import GRADES_UPDATED
-from student.models import anonymous_id_for_user
-from util.db import outer_atomic
 from util.module_utils import yield_dynamic_descriptor_descendants
 from xblock.core import XBlock
-from xmodule import graders, block_metadata_utils
-from xmodule.graders import Score
 from xmodule.modulestore.django import modulestore
 from xmodule.modulestore.exceptions import ItemNotFoundError
 from .models import StudentModule
 from .module_render import get_module_for_descriptor
-from .transformers.grades import GradesTransformer
-from courseware.model_data import FieldDataCache
-from xmodule.modulestore.django import modulestore
-from xmodule.modulestore.exceptions import ItemNotFoundError
-from .models import StudentModule
-from opaque_keys import InvalidKeyError
-from opaque_keys.edx.keys import CourseKey
-from openedx.core.djangoapps.signals.signals import GRADES_UPDATED
 
 
 log = logging.getLogger("edx.courseware")
-
-
-def descriptor_affects_grading(block_types_affecting_grading, descriptor):
-    """
-    Returns True if the descriptor could have any impact on grading, else False.
-    Something might be a scored item if it is capable of storing a score
-    (has_score=True). We also have to include anything that can have children,
-    since those children might have scores. We can avoid things like Videos,
-    which have state but cannot ever impact someone's grade.
-    """
-    return descriptor.location.block_type in block_types_affecting_grading
-
-
-def field_data_cache_for_grading(course, user):
-    """
-    Given a CourseDescriptor and User, create the FieldDataCache for grading.
-    This will generate a FieldDataCache that only loads state for those things
-    that might possibly affect the grading process, and will ignore things like
-    Videos.
-    """
-    descriptor_filter = partial(descriptor_affects_grading, course.block_types_affecting_grading)
-    return FieldDataCache.cache_for_descriptor_descendents(
-        course.id,
-        user,
-        course,
-        depth=None,
-        descriptor_filter=descriptor_filter
-    )
-
-
-@memoized
-def block_types_with_scores():
-    pass
-
-
-def descriptor_affects_grading(block_types_affecting_grading, descriptor):
-    """
-    Returns the block types that could have a score.
-
-    Something might be a scored item if it is capable of storing a score
-    (has_score=True). We also have to include anything that can have children,
-    since those children might have scores. We can avoid things like Videos,
-    which have state but cannot ever impact someone's grade.
-    """
-    return frozenset(
-        cat for (cat, xblock_class) in XBlock.load_classes() if (
-            getattr(xblock_class, 'has_score', False) or getattr(xblock_class, 'has_children', False)
-        )
-    )
-
-
-def possibly_scored(usage_key):
-    """
-    Returns whether the given block could impact grading (i.e. scored, or has children).
-    """
-    return usage_key.block_type in block_types_with_scores()
-
-
-def grading_context_for_course(course):
-    """
-    Same as grading_context, but takes in a course object.
-    """
-    course_structure = get_course_in_cache(course.id)
-    if settings.GRADING_TYPE == 'vertical':
-        course.grading.grading_context(course)
-    return course.grading.grading_context(course_structure)
 
 
 def answer_distributions(course_key):
@@ -206,16 +117,13 @@ def answer_distributions(course_key):
     return answer_counts
 
 
-def grade(student, course, request=None, keep_raw_scores=False):
+def grade(student, course, keep_raw_scores=False):
     """
     Returns the grade of the student.
 
     Also sends a signal to update the minimum grade requirement status.
     """
-    if settings.GRADING_TYPE == 'vertical':
-        grade_summary = course.grading.grade(student, request, course, keep_raw_scores)
-    else:
-        grade_summary = course.grading.grade(student, course, keep_raw_scores)
+    grade_summary = course.grading.grade(student, course, keep_raw_scores)
     responses = GRADES_UPDATED.send_robust(
         sender=None,
         username=student.username,
@@ -230,38 +138,24 @@ def grade(student, course, request=None, keep_raw_scores=False):
     return grade_summary
 
 
-def grade_for_percentage(grade_cutoffs, percentage):
-    """
-    Returns a letter grade as defined in grading_policy (e.g. 'A' 'B' 'C' for 6.002x) or None.
-
-    Arguments
-    - grade_cutoffs is a dictionary mapping a grade to the lowest
-        possible percentage to earn that grade.
-    - percentage is the final percent across all problems in a course
-    """
-
-    letter_grade = None
-
-    # Possible grades, sorted in descending order of score
-    descending_grades = sorted(grade_cutoffs, key=lambda x: grade_cutoffs[x], reverse=True)
-    for possible_grade in descending_grades:
-        if percentage >= grade_cutoffs[possible_grade]:
-            letter_grade = possible_grade
-            break
-
-    return letter_grade
-
-
 def progress_summary(student, course):
     """
     Returns progress summary for all chapters in the course.
     """
 
-    progress = course.grading.progress_summuary(student, course)
+    progress = course.grading.progress_summary(student, course)
     if progress:
         return progress.chapters
     else:
         return None
+
+
+def get_weighted_scores(student, course):
+    """
+    Uses the _progress_summary method to return a ProgressSummary object
+    containing details of a students weighted scores for the course.
+    """
+    return course.grading.progress_summary(student, course)
 
 
 def iterate_grades_for(course_or_id, students, keep_raw_scores=False):
@@ -385,5 +279,3 @@ def get_module_score(user, course, module):
         inner_get_module
     )
     return _calculate_score_for_modules(user.id, course, modules)
-
-

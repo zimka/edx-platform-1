@@ -1,38 +1,19 @@
 # Compute grades using real division, with no integer truncation
 from __future__ import division
 
-import json
 import logging
 import random
 from collections import defaultdict
-from functools import partial
-from course_blocks.api import get_course_blocks
 
-import dogstats_wrapper as dog_stats_api
 from django.conf import settings
-from django.core.cache import cache
-from django.test.client import RequestFactory
-from opaque_keys import InvalidKeyError
-from opaque_keys.edx.keys import CourseKey
-from opaque_keys.edx.locator import BlockUsageLocator
-from openedx.core.lib.cache_utils import memoized
 
 from openedx.core.lib.gating import api as gating_api
-from courseware import courses
-from courseware.access import has_access
-from courseware.model_data import FieldDataCache, ScoresClient
-from openedx.core.djangoapps.signals.signals import GRADES_UPDATED
+from course_blocks.api import get_course_blocks
+from courseware.model_data import ScoresClient
 from student.models import anonymous_id_for_user
 from util.db import outer_atomic
-from util.module_utils import yield_dynamic_descriptor_descendants
 from xmodule import graders, block_metadata_utils
-from xmodule.exceptions import UndefinedContext
-from xmodule.graders import Score
-from xmodule.modulestore.django import modulestore
-from xmodule.modulestore.exceptions import ItemNotFoundError
-from courseware.models import StudentModule
-from courseware.module_render import get_module_for_descriptor
-from .utils import MaxScoresCache, get_score, ProgressSummary
+from .utils import MaxScoresCache, get_score, ProgressSummary, grade_for_percentage, possibly_scored
 
 log = logging.getLogger("openedx.grading_policy")
 
@@ -40,6 +21,62 @@ log = logging.getLogger("openedx.grading_policy")
 class SequentialGrading(object):
     """Contains the logic to grade courses by sequentials."""
     PROGRESS_SUMMARY_TEMPLATE = '/grading_policy/templates/summary/sequential.html'
+
+    def grading_context(course_structure):
+        """
+        This returns a dictionary with keys necessary for quickly grading
+        a student. They are used by grades.grade()
+
+        The grading context has two keys:
+        graded_sections - This contains the sections that are graded, as
+            well as all possible children modules that can affect the
+            grading. This allows some sections to be skipped if the student
+            hasn't seen any part of it.
+
+            The format is a dictionary keyed by section-type. The values are
+            arrays of dictionaries containing
+                "section_block" : The section block
+                "scored_descendant_keys" : An array of usage keys for blocks
+                    could possibly be in the section, for any student
+
+        all_graded_blocks - This contains a list of all blocks that can
+            affect grading a student. This is used to efficiently fetch
+            all the xmodule state for a FieldDataCache without walking
+            the descriptor tree again.
+
+        """
+        all_graded_blocks = []
+        all_graded_sections = defaultdict(list)
+
+        for chapter_key in course_structure.get_children(course_structure.root_block_usage_key):
+            for section_key in course_structure.get_children(chapter_key):
+                section = course_structure[section_key]
+                scored_descendants_of_section = [section]
+                if section.graded:
+                    for descendant_key in course_structure.post_order_traversal(
+                            filter_func=possibly_scored,
+                            start_node=section_key,
+                    ):
+                        scored_descendants_of_section.append(
+                            course_structure[descendant_key],
+                        )
+
+                    # include only those blocks that have scores, not if they are just a parent
+                    section_info = {
+                        'section_block': section,
+                        'scored_descendants': [
+                            child for child in scored_descendants_of_section
+                            if getattr(child, 'has_score', None)
+                        ]
+                    }
+                    section_format = getattr(section, 'format', '')
+                    all_graded_sections[section_format].append(section_info)
+                    all_graded_blocks.extend(scored_descendants_of_section)
+
+        return {
+            'all_graded_sections': all_graded_sections,
+            'all_graded_blocks': all_graded_blocks,
+        }
 
     @staticmethod
     def grade(student, course, keep_raw_scores):
@@ -108,6 +145,117 @@ class SequentialGrading(object):
 
         return grade_summary
 
+    def progress_summary(student, course):
+        """
+        Unwrapped version of "progress_summary".
+
+        This pulls a summary of all problems in the course.
+
+        Returns
+        - courseware_summary is a summary of all sections with problems in the course.
+        It is organized as an array of chapters, each containing an array of sections,
+        each containing an array of scores. This contains information for graded and
+        ungraded problems, and is good for displaying a course summary with due dates,
+        etc.
+        - None if the student does not have access to load the course module.
+
+        Arguments:
+            student: A User object for the student to grade
+            course: A Descriptor containing the course to grade
+
+        """
+        course_structure = get_course_blocks(student, course.location)
+        if not len(course_structure):
+            return None
+        scorable_locations = [block_key for block_key in course_structure if possibly_scored(block_key)]
+
+        with outer_atomic():
+            scores_client = ScoresClient.create_for_locations(course.id, student.id, scorable_locations)
+
+        # We need to import this here to avoid a circular dependency of the form:
+        # XBlock --> submissions --> Django Rest Framework error strings -->
+        # Django translation --> ... --> courseware --> submissions
+        from submissions import api as sub_api  # installed from the edx-submissions repository
+        with outer_atomic():
+            submissions_scores = sub_api.get_scores(
+                unicode(course.id), anonymous_id_for_user(student, course.id)
+            )
+
+            max_scores_cache = MaxScoresCache.create_for_course(course)
+            # For the moment, scores_client is ignorant of scorable_locations
+            # in the submissions API. As a further refactoring step, submissions should
+            # be hidden behind the ScoresClient.
+            max_scores_cache.fetch_from_remote(scorable_locations)
+
+        # Check for gated content
+        gated_content = gating_api.get_gated_content(course, student)
+
+        chapters = []
+        locations_to_weighted_scores = {}
+
+        for chapter_key in course_structure.get_children(course_structure.root_block_usage_key):
+            chapter = course_structure[chapter_key]
+            sections = []
+            for section_key in course_structure.get_children(chapter_key):
+                if unicode(section_key) in gated_content:
+                    continue
+
+                section = course_structure[section_key]
+
+                graded = getattr(section, 'graded', False)
+                scores = []
+
+                for descendant_key in course_structure.post_order_traversal(
+                        filter_func=possibly_scored,
+                        start_node=section_key,
+                ):
+                    descendant = course_structure[descendant_key]
+
+                    (correct, total) = get_score(
+                        student,
+                        descendant,
+                        scores_client,
+                        submissions_scores,
+                        max_scores_cache,
+                    )
+                    if correct is None and total is None:
+                        continue
+
+                    weighted_location_score = graders.Score(
+                        correct,
+                        total,
+                        graded,
+                        block_metadata_utils.display_name_with_default_escaped(descendant),
+                        descendant.location
+                    )
+
+                    scores.append(weighted_location_score)
+                    locations_to_weighted_scores[descendant.location] = weighted_location_score
+
+                escaped_section_name = block_metadata_utils.display_name_with_default_escaped(section)
+                section_total, _ = graders.aggregate_scores(scores, escaped_section_name)
+
+                sections.append({
+                    'display_name': escaped_section_name,
+                    'url_name': block_metadata_utils.url_name_for_block(section),
+                    'scores': scores,
+                    'section_total': section_total,
+                    'format': getattr(section, 'format', ''),
+                    'due': getattr(section, 'due', None),
+                    'graded': graded,
+                })
+
+            chapters.append({
+                'course': course.display_name_with_default_escaped,
+                'display_name': block_metadata_utils.display_name_with_default_escaped(chapter),
+                'url_name': block_metadata_utils.url_name_for_block(chapter),
+                'sections': sections
+            })
+
+        max_scores_cache.push_to_remote()
+
+        return ProgressSummary(chapters, locations_to_weighted_scores, course_structure.get_children)
+
     def calculate_totaled_scores(
             student,
             grading_context_result,
@@ -171,7 +319,7 @@ class SequentialGrading(object):
                                 graded = False
 
                             scores.append(
-                                Score(
+                                graders.Score(
                                     correct,
                                     total,
                                     graded,
@@ -184,7 +332,7 @@ class SequentialGrading(object):
                         if keep_raw_scores:
                             raw_scores += scores
                     else:
-                        graded_total = Score(0.0, 1.0, True, section_name, None)
+                        graded_total = graders.Score(0.0, 1.0, True, section_name, None)
 
                     # Add the graded total to totaled_scores
                     if graded_total.possible > 0:
@@ -198,182 +346,3 @@ class SequentialGrading(object):
             totaled_scores[section_format] = format_scores
 
         return totaled_scores, raw_scores
-
-    @staticmethod
-    def grading_context(course_structure):
-        """
-        This returns a dictionary with keys necessary for quickly grading
-        a student. They are used by grades.grade()
-
-        The grading context has two keys:
-        graded_sections - This contains the sections that are graded, as
-            well as all possible children modules that can affect the
-            grading. This allows some sections to be skipped if the student
-            hasn't seen any part of it.
-
-            The format is a dictionary keyed by section-type. The values are
-            arrays of dictionaries containing
-                "section_block" : The section block
-                "scored_descendant_keys" : An array of usage keys for blocks
-                    could possibly be in the section, for any student
-
-        all_graded_blocks - This contains a list of all blocks that can
-            affect grading a student. This is used to efficiently fetch
-            all the xmodule state for a FieldDataCache without walking
-            the descriptor tree again.
-
-        """
-        all_graded_blocks = []
-        all_graded_sections = defaultdict(list)
-
-        for chapter_key in course_structure.get_children(course_structure.root_block_usage_key):
-            for section_key in course_structure.get_children(chapter_key):
-                section = course_structure[section_key]
-                scored_descendants_of_section = [section]
-                if section.graded:
-                    for descendant_key in course_structure.post_order_traversal(
-                            filter_func=possibly_scored,
-                            start_node=section_key,
-                    ):
-                        scored_descendants_of_section.append(
-                            course_structure[descendant_key],
-                        )
-
-                    # include only those blocks that have scores, not if they are just a parent
-                    section_info = {
-                        'section_block': section,
-                        'scored_descendants': [
-                            child for child in scored_descendants_of_section
-                            if getattr(child, 'has_score', None)
-                        ]
-                    }
-                    section_format = getattr(section, 'format', '')
-                    all_graded_sections[section_format].append(section_info)
-                    all_graded_blocks.extend(scored_descendants_of_section)
-
-        return {
-            'all_graded_sections': all_graded_sections,
-            'all_graded_blocks': all_graded_blocks,
-        }
-
-    @memoized
-    def block_types_with_scores(self):
-        pass
-
-    def possibly_scored(course, usage_key):
-        """
-        Returns whether the given block could impact grading (i.e. scored, or has children).
-        """
-        return usage_key.block_type in course.grading.block_types_with_scores()
-
-
-    def progress_summary(student, course):
-        """
-        Unwrapped version of "progress_summary".
-
-        This pulls a summary of all problems in the course.
-
-        Returns
-        - courseware_summary is a summary of all sections with problems in the course.
-        It is organized as an array of chapters, each containing an array of sections,
-        each containing an array of scores. This contains information for graded and
-        ungraded problems, and is good for displaying a course summary with due dates,
-        etc.
-        - None if the student does not have access to load the course module.
-
-        Arguments:
-            student: A User object for the student to grade
-            course: A Descriptor containing the course to grade
-
-        """
-        course_structure = get_course_blocks(student, course.location)
-        if not len(course_structure):
-            return None
-        scorable_locations = [block_key for block_key in course_structure if course.grading.possibly_scored(course, block_key)]
-
-        with outer_atomic():
-            scores_client = ScoresClient.create_for_locations(course.id, student.id, scorable_locations)
-
-        # We need to import this here to avoid a circular dependency of the form:
-        # XBlock --> submissions --> Django Rest Framework error strings -->
-        # Django translation --> ... --> courseware --> submissions
-        from submissions import api as sub_api  # installed from the edx-submissions repository
-        with outer_atomic():
-            submissions_scores = sub_api.get_scores(
-                unicode(course.id), anonymous_id_for_user(student, course.id)
-            )
-
-            max_scores_cache = MaxScoresCache.create_for_course(course)
-            # For the moment, scores_client is ignorant of scorable_locations
-            # in the submissions API. As a further refactoring step, submissions should
-            # be hidden behind the ScoresClient.
-            max_scores_cache.fetch_from_remote(scorable_locations)
-
-        # Check for gated content
-        gated_content = gating_api.get_gated_content(course, student)
-
-        chapters = []
-        locations_to_weighted_scores = {}
-
-        for chapter_key in course_structure.get_children(course_structure.root_block_usage_key):
-            chapter = course_structure[chapter_key]
-            sections = []
-            for section_key in course_structure.get_children(chapter_key):
-                if unicode(section_key) in gated_content:
-                    continue
-
-                section = course_structure[section_key]
-
-                graded = getattr(section, 'graded', False)
-                scores = []
-
-                for descendant_key in course_structure.post_order_traversal(
-                        filter_func=possibly_scored,
-                        start_node=section_key,
-                ):
-                    descendant = course_structure[descendant_key]
-
-                    (correct, total) = get_score(
-                        student,
-                        descendant,
-                        scores_client,
-                        submissions_scores,
-                        max_scores_cache,
-                    )
-                    if correct is None and total is None:
-                        continue
-
-                    weighted_location_score = Score(
-                        correct,
-                        total,
-                        graded,
-                        block_metadata_utils.display_name_with_default_escaped(descendant),
-                        descendant.location
-                    )
-
-                    scores.append(weighted_location_score)
-                    locations_to_weighted_scores[descendant.location] = weighted_location_score
-
-                escaped_section_name = block_metadata_utils.display_name_with_default_escaped(section)
-                section_total, _ = graders.aggregate_scores(scores, escaped_section_name)
-
-                sections.append({
-                    'display_name': escaped_section_name,
-                    'url_name': block_metadata_utils.url_name_for_block(section),
-                    'scores': scores,
-                    'section_total': section_total,
-                    'format': getattr(section, 'format', ''),
-                    'due': getattr(section, 'due', None),
-                    'graded': graded,
-                })
-
-            chapters.append({
-                'course': course.display_name_with_default_escaped,
-                'display_name': block_metadata_utils.display_name_with_default_escaped(chapter),
-                'url_name': block_metadata_utils.url_name_for_block(chapter),
-                'sections': sections
-            })
-
-        max_scores_cache.push_to_remote()
-
-        return ProgressSummary(chapters, locations_to_weighted_scores, course_structure.get_children)

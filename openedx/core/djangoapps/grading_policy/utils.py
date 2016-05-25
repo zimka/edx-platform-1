@@ -4,6 +4,11 @@ The file contains utils
 from django.conf import settings
 from django.core.cache import cache
 
+from courseware.transformers.grades import GradesTransformer
+from openedx.core.lib.cache_utils import memoized
+from openedx.core.djangoapps.content.block_structure.api import get_course_in_cache
+from xblock.core import XBlock
+
 
 class MaxScoresCache(object):
     """
@@ -144,6 +149,38 @@ class ProgressSummary(object):
         return earned, possible
 
 
+@memoized
+def block_types_with_scores():
+    """
+    Returns the block types that could have a score.
+
+    Something might be a scored item if it is capable of storing a score
+    (has_score=True). We also have to include anything that can have children,
+    since those children might have scores. We can avoid things like Videos,
+    which have state but cannot ever impact someone's grade.
+    """
+    return frozenset(
+        cat for (cat, xblock_class) in XBlock.load_classes() if (
+            getattr(xblock_class, 'has_score', False) or getattr(xblock_class, 'has_children', False)
+        )
+    )
+
+
+def possibly_scored(usage_key):
+    """
+    Returns whether the given block could impact grading (i.e. scored, or has children).
+    """
+    return usage_key.block_type in block_types_with_scores()
+
+
+def grading_context_for_course(course):
+    """
+    Same as grading_context, but takes in a course object.
+    """
+    course_structure = get_course_in_cache(course.id)
+    return course.grading.grading_context(course_structure)
+
+
 def weighted_score(raw_correct, raw_total, weight):
     """Return a tuple that represents the weighted (correct, total) score."""
     # If there is no weighting, or weighting can't be applied, return input.
@@ -212,21 +249,17 @@ def get_score(user, block, scores_client, submissions_scores_cache, max_scores_c
     return weighted_score(correct, total, block.weight)
 
 
-def grade_for_percentage(grade_cutoffs, percentage, is_passed=True):
+def grade_for_percentage(grade_cutoffs, percentage):
     """
     Returns a letter grade as defined in grading_policy (e.g. 'A' 'B' 'C' for 6.002x) or None.
 
     Arguments
     - grade_cutoffs is a dictionary mapping a grade to the lowest
         possible percentage to earn that grade.
-    - percentage is the final percent across all problems in a course/section
-    - is_passed indicates whether section/sections passed
+    - percentage is the final percent across all problems in a course
     """
 
     letter_grade = None
-
-    if not is_passed:
-        return letter_grade
 
     # Possible grades, sorted in descending order of score
     descending_grades = sorted(grade_cutoffs, key=lambda x: grade_cutoffs[x], reverse=True)
@@ -236,3 +269,6 @@ def grade_for_percentage(grade_cutoffs, percentage, is_passed=True):
             break
 
     return letter_grade
+
+
+
