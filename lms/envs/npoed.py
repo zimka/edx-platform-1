@@ -21,7 +21,8 @@ SOCIAL_AUTH_LOGOUT_URL = "%s/logout/" % SSO_NPOED_URL #'http://sso.rnoep.raccoon
 SOCIAL_AUTH_RAISE_EXCEPTIONS = True
 
 MIDDLEWARE_CLASSES += ('sso_edx_npoed.middleware.PLPRedirection',
-                       'sso_edx_npoed.middleware.SeamlessAuthorization')
+                       'sso_edx_npoed.middleware.SeamlessAuthorization',
+                       'sso_edx_npoed.middleware.CheckHonorAccepted')
 
 PLP_URL = ENV_TOKENS.get('PLP_URL').rstrip('/')
 
@@ -49,3 +50,5 @@ ORA2_FILEUPLOAD_ROOT = ENV_TOKENS.get('ORA2_FILEUPLOAD_ROOT', '/edx/var/edxapp/o
 ORA2_FILEUPLOAD_CACHE_NAME = ENV_TOKENS.get('ORA2_FILEUPLOAD_CACHE_NAME', 'ora2_cache')
 
 ROOT_URLCONF = 'sso_edx_npoed.lms_urls'
+
+PLP_API_KEY = AUTH_TOKENS.get('PLP_API_KEY')
