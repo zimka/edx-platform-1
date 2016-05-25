@@ -216,3 +216,9 @@ if settings.FEATURES.get('ENABLE_THIRD_PARTY_AUTH'):
         url(r'^login_oauth_token/(?P<backend>[^/]+)/$', 'student.views.login_oauth_token'),
         url(r'^social-logout', 'sso_edx_npoed.views.logout', name='social-logout'),
     )
+
+import openassessment.fileupload.urls
+urlpatterns += (
+    url(r'^openassessment/storage', include(openassessment.fileupload.urls)),
+)
+
