@@ -135,6 +135,12 @@ class LinkedInAddToProfileConfigurationAdmin(admin.ModelAdmin):
     exclude = ('dashboard_tracking_code',)
 
 
+from django.contrib.auth.admin import UserAdmin
+class CustomUserAdmin(UserAdmin):
+    readonly_fields = ("username", "email", "first_name", "last_name", "is_staff", "is_superuser")
+
+admin.site.register(User, CustomUserAdmin)
+
 admin.site.register(UserProfile)
 
 admin.site.register(UserTestGroup)
