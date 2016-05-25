@@ -289,14 +289,34 @@ def get_course_info_section(request, course, section_key):
 
     html = ''
     if info_module is not None:
+        good = False
         try:
             html = info_module.render(STUDENT_VIEW).content
+            good = True
         except Exception:  # pylint: disable=broad-except
             html = render_to_string('courseware/error-message.html', None)
             log.exception(
                 u"Error rendering course=%s, section_key=%s",
                 course, section_key
             )
+        if good:
+            try:
+                parts = html.split("<article><h2>")
+                if len(parts) > 0:
+                    concat = False
+                    new_parts = [parts[0]]
+                    for part in parts[1:]:
+                        dt = part.split("</h2>")[0]
+                        date_object = datetime.strptime("{0}".format(dt), "%b %d, %Y")
+                        if date_object <= datetime.now():
+                            new_parts.append(part)
+                            concat = True
+                    if concat:
+                        html = "<article><h2>".join(new_parts)
+                    else:
+                        html = ""
+            except:
+                pass
 
     return html
 
