@@ -16,9 +16,15 @@
               active_class = ''
       %>
       <h3 ${active_class} aria-label="${aria_label}">
+        <span data-tooltip="
+            %for section in chapter['sections']:
+                ${section['display_name']}<br>
+            %endfor
+        ">
         <a href="#">
           ${chapter['display_name']}
         </a>
+      </span>
       </h3>
 
     <ul>
