@@ -15,6 +15,7 @@ from util.module_utils import yield_dynamic_descriptor_descendants
 from student.models import anonymous_id_for_user
 from xmodule.graders import Score, aggregate_scores
 from xmodule.exceptions import UndefinedContext
+from xmodule.modulestore.django import modulestore
 from openedx.core.djangoapps.grading_policy.utils import MaxScoresCache, grade_for_percentage, get_score
 from submissions import api as sub_api  # installed from the edx-submissions repository
 
@@ -151,7 +152,7 @@ class VerticalGrading(object):
                             student, request, descriptor, field_data_cache, course.id, course=course
                         )
 
-                    descendants = yield_dynamic_descriptor_descendants(section_descriptor, student.id, create_module)
+                    descendants = yield_dynamic_descriptor_descendants(section_descriptor, student.id, create_module, True)
                     for module_descriptor in descendants:
                         (correct, total) = get_score(
                             student,
@@ -285,7 +286,7 @@ class VerticalGrading(object):
                     continue
 
                 key = unicode(curr_block.scope_ids.usage_id)
-                children = curr_block.get_display_items() if curr_block.category != grading_type else []
+                children = [modulestore().get_item(item) for item in getattr(curr_block, 'children', []) if curr_block.category != grading_type]
                 block = {
                     'display_name': curr_block.display_name_with_default,
                     'block_type': curr_block.category,
@@ -297,10 +298,15 @@ class VerticalGrading(object):
                     graded = curr_block.graded
                     scores = []
 
-                    module_creator = curr_block.xmodule_runtime.get_module
-                    for module_descriptor in yield_dynamic_descriptor_descendants(
-                            curr_block, student.id, module_creator
-                    ):
+                    def module_creator(descriptor):
+                        '''creates an XModule instance given a descriptor'''
+                        # TODO: We need the request to pass into here. If we could forego that, our arguments
+                        # would be simpler
+                        return get_module_for_descriptor(
+                            student, request, descriptor, field_data_cache, course.id, course=course
+                        )
+                    descendants = yield_dynamic_descriptor_descendants(curr_block, student.id, module_creator, True)
+                    for module_descriptor in descendants:
                         (correct, total) = get_score(
                             student,
                             module_descriptor,
@@ -388,7 +394,11 @@ class VerticalGrading(object):
         graded_sections = {}
 
         def yield_descriptor_descendents(module_descriptor):  # pylint: disable=missing-docstring
-            for child in module_descriptor.get_children(usage_key_filter=possibly_scored):
+            children = module_descriptor.get_children(usage_key_filter=possibly_scored)
+            children_2 = getattr(module_descriptor, 'children', [])
+            if len(children_2) > len(children):
+                children = (modulestore().get_item(item) for item in children_2)
+            for child in children:
                 yield child
                 for module_descriptor in yield_descriptor_descendents(child):
                     yield module_descriptor
@@ -413,7 +423,7 @@ class VerticalGrading(object):
                 all_descriptors.extend(xmoduledescriptors)
                 all_descriptors.append(curr_block)
             else:
-                children = curr_block.get_children() if curr_block.has_children else []
+                children = [modulestore().get_item(item) for item in getattr(curr_block, 'children', [])]
                 # Add this blocks children to the stack so that we can traverse them as well.
                 blocks_stack.extend(children)
         return {'graded_sections': graded_sections,
