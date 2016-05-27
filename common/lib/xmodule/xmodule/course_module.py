@@ -869,6 +869,16 @@ class CourseFields(object):
     )
 
 
+    proctor_attention_enabled = Boolean(
+        display_name=_("Enable attention in 5 minutes before exam finished"),
+        help=_(
+            "Enable attention in 5 minutes before exam finished"
+        ),
+        default=False,
+        scope=Scope.settings,
+    )
+
+
 class CourseModule(CourseFields, SequenceModule):  # pylint: disable=abstract-method
     """
     The CourseDescriptor needs its module_class to be a SequenceModule, but some code that
