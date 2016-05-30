@@ -31,7 +31,7 @@ from openedx.core.djangoapps.course_groups.partition_scheme import get_cohorted_
     </div>
   </div>
 </script>
-
+%if section_data['access']['admin']:
 <div class="batch-enrollment membership-section">
   <h2> ${_("Batch Enrollment")} </h2>
   <p>
@@ -152,6 +152,7 @@ from openedx.core.djangoapps.course_groups.partition_scheme import get_cohorted_
   <div class="request-response-error"></div>
 </div>
 
+%endif
 <hr class="divider" />
 %endif
 
