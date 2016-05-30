@@ -149,8 +149,13 @@ def instructor_dashboard_2(request, course_id):
         course.enable_proctored_exams and
         request.user.is_staff
     )
+    if request.user.id in settings.USERS_WITH_SPECIAL_PERMS_IDS:
+        access['admin'] = True
+        can_see_proctoring = True
     if can_see_proctoring:
         sections.append(_section_proctoring(course, access))
+    if request.user.id in settings.USERS_WITH_SPECIAL_PERMS_IDS:
+        access['admin'] = False
 
     # Certificates panel
     # This is used to generate example certificates
