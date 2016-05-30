@@ -6814,11 +6814,11 @@ msgstr "Срок:"
 
 #: cms/templates/js/course-outline.underscore
 msgid "Proctored Exam"
-msgstr "Очный экзамен"
+msgstr "Контрольное задание с подтверждением личности"
 
 #: cms/templates/js/course-outline.underscore
 msgid "Timed and Proctored Exam"
-msgstr "Очный экзамен с ограничением по времени"
+msgstr "Контрольное задание с подтверждением личности и ограничением по времени"
 
 #: cms/templates/js/course-outline.underscore
 #: cms/templates/js/xblock-outline.underscore
@@ -7407,8 +7407,22 @@ msgstr ""
 " дополнительное время для выполнения экзаменационных заданий."
 
 #: cms/templates/js/timed-examination-preference-editor.underscore
+msgid "This exam is for practice only"
+msgstr "Экзамен для тренировки"
+
+#: cms/templates/js/timed-examination-preference-editor.underscore
+msgid ""
+"Learners can experience the proctoring software setup process and try some "
+"example problems. Make sure this practice exam is set up as an ungraded "
+"exam."
+msgstr ""
+"Обучающиеся могут ознакомиться  с тем, как проходят контрольные мероприятия "
+"в режиме подтверждения личности, на примере этого задания. Пожалуйста, убедитесь "
+"в том, что вы  не используете его результаты в итоговой оценке за курс."
+
+#: cms/templates/js/timed-examination-preference-editor.underscore
 msgid "This exam is proctored"
-msgstr "Это очный экзамен"
+msgstr "Требует подтверждение личности"
 
 #: cms/templates/js/timed-examination-preference-editor.underscore
 msgid ""
@@ -7416,9 +7430,10 @@ msgid ""
 " only students who choose the proctored option are eligible for credit. "
 "Proctored exams must also be timed exams."
 msgstr ""
-"Студенты сами решают, сдавать ли этот экзамен очно или нет, но курс может "
-"быть зачтён только студентам, выбравшим очную форму экзамена.  Очные "
-"экзамены должны проводиться с ограничением по времени."
+"Прохождение контрольных мероприятий в режиме подтверждения личности "
+"требуется для получения подтвержденного сертификата об окончании курса. "
+"Контрольные мероприятия в режиме подтверждения личности должны "
+"проводиться с ограничением по времени."
 
 #: cms/templates/js/upload-dialog.underscore
 msgid "File upload succeeded"
