@@ -32,3 +32,6 @@ class DarkLangConfig(ConfigurationModel):
 
     def unaffected_url_paths_list(self):
         return []
+
+    def get_setting(self, name):
+        raise KeyError
