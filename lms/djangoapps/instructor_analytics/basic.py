@@ -406,6 +406,16 @@ def list_problem_responses(course_key, problem_location):
     )
     smdat = smdat.order_by('student')
 
+    try:
+        hook_types = ('poll', 'survey')
+        type_ = smdat[0].module_type
+        if type_ in hook_types:
+            from xmodule.modulestore.django import modulestore
+            problem = modulestore().get_item(problem_key)
+            return problem.list_problem_responses(smdat)
+    except:
+            pass
+
     return [
         {'username': response.student.username, 'state': response.state}
         for response in smdat
