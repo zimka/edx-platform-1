@@ -5,6 +5,7 @@ from ratelimitbackend import admin
 
 from cms.djangoapps.contentstore.views.program import ProgramAuthoringView, ProgramsIdTokenView
 from cms.djangoapps.contentstore.views.organization import OrganizationListView
+from course_validator import course_validator
 
 admin.autodiscover()
 
@@ -97,6 +98,9 @@ urlpatterns += patterns(
         name='course_search_index_handler'
     ),
     url(r'^course/{}?$'.format(settings.COURSE_KEY_PATTERN), 'course_handler', name='course_handler'),
+    #TODO is it ok?
+    url(r'^course/{}?/check_course$'.format(settings.COURSE_KEY_PATTERN), course_validator, name='course_validator'),
+
     url(r'^course_notifications/{}/(?P<action_state_id>\d+)?$'.format(settings.COURSE_KEY_PATTERN),
         'course_notifications_handler'),
     url(r'^course_rerun/{}$'.format(settings.COURSE_KEY_PATTERN), 'course_rerun_handler', name='course_rerun_handler'),
