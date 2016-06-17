@@ -1,1 +1,2 @@
-from .course_validator import CourseValidator, course_validator
+from .course_validator import CourseValidator
+from .course_validator import course_validator_handler as course_validator
