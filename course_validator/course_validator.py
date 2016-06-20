@@ -19,6 +19,10 @@ from xml.dom.minidom import parseString
 from collections import Counter, namedtuple
 from datetime import datetime, timedelta
 from openedx.core.djangoapps.course_groups.partition_scheme import get_cohorted_user_partition
+import urllib
+import json
+import re
+from openedx.core.djangoapps.course_groups.cohorts import get_course_cohort_settings, get_course_cohorts
 
 
 def _print_all(item):
@@ -35,74 +39,6 @@ def _print_all(item):
 
 @login_required
 def course_validator(request, course_key_string=None):
-    """
-    Checks consistency of courses according to the scenario rules
-    """
-    """
-    try:
-        course_key = CourseKey.from_string(course_key_string)
-        items = modulestore().get_items(course_key)
-
-        video_items = [i for i in items if i.category == "video"]
-        video_strs = [u"{} - {}".format(i.display_name, i.youtube_id_1_0) for i in video_items]
-
-        course_details = CourseGradingModel.fetch(course_key)
-        graders = course_details.graders
-        grade_strs = []
-        grade_keys = ["type", "min_count", "drop_count", "weight"]
-        for g in graders:
-            grade_strs.append(u" - ".join(unicode(g[k]) for k in grade_keys))
-
-        store = modulestore()
-        with store.bulk_operations(course_key):
-            course = get_course_and_check_access(course_key, request.user)
-            content_group_configuration = GroupConfiguration.get_or_create_content_group(store, course)
-        groups = content_group_configuration['groups']
-        is_g_used = lambda x: bool(len(x['usage']))
-        group_strs = [u"{} - {}".format(g["name"], is_g_used(g)) for g in groups]
-
-        xmodule_counts = Counter([i.category for i in items])
-        categories = ["course",
-                "chapter",
-                "sequential",
-                "vertical",
-                ]
-        categorized_dict = {c: xmodule_counts[c] for c in categories}
-        ordered_categorized_pairs = [(k, categorized_dict[k]) for k in categories]
-        xmodule_strs = ["{} - {}".format(k,v) for k,v in ordered_categorized_pairs]
-        uncat_keys = set(xmodule_counts.keys()) - set(categories)
-        uncategorized_dict = {c: xmodule_counts[c] for c in uncat_keys}
-        others_sum = sum(uncategorized_dict.values())
-        xmodule_strs.append("others - {}".format(others_sum))
-
-    except:
-        print("exception!")
-        return redirect(reverse("home"))
-
-    #for i in items:
-     #   try:
-      #      print(i.display_name, i.category, i.graded, i.format)
-       # except Exception as e:
-        #    print(i.category, e.message)
-    output = []
-    subsections = ['video_id - video_duration',
-                   'grade_name - grade_count - grade_kicked - grade_weight',
-                   'group_name - group_used',
-                   'xmodule_type - xmodule_count',
-                    ]
-    strings = [video_strs,
-               grade_strs,
-               group_strs,
-               xmodule_strs,
-               ]
-    for sect, strs in zip(subsections, strings):
-        output.append(sect)
-        output.extend(strs)
-        output.append(" ")
-    response = HttpResponse()
-    for s in output:
-        response.write('<p>'+s+'</p>')
-    """
     return course_validator_handler(request, course_key_string)
 
 
@@ -110,6 +46,38 @@ def course_validator_handler(request, course_key_string=None):
     CV = CourseValid(request, course_key_string)
     CV.validate()
     return CV.report()
+
+def _youtube_duration(video_id):
+    if not video_id:
+        return None
+    api_key = 'AIzaSyCnxGGegKJ1_R-cEVseGUrAcFff5VHXgZ0'
+    searchUrl = "https://www.googleapis.com/youtube/v3/videos?id=" + video_id + "&key=" + api_key + "&part=contentDetails"
+    response = urllib.urlopen(searchUrl).read()
+    data = json.loads(response)
+    if data.get('error', False):
+        return u"Error while video duration check:{}".format(data['error'])
+    all_data = data['items']
+    if len(all_data):
+        contentDetails = all_data[0]['contentDetails']
+        duration = contentDetails['duration']
+        temp = re.split(r'(\d+)', duration)
+        times = filter(lambda x: x.isdigit(), temp)
+        if len(times) > 3:
+            return u"Is this video longer than one 24 hours?"
+        return unicode(sum([int(x)*60**num for num, x in enumerate(reversed(times))]))
+    else:
+        return u"Can't find video with such id on youtube."
+
+def _edx_id_duration(edx_video_id):
+    if not edx_video_id:
+        return None
+    try:
+        from openedx.core.djangoapps.video_evms.api import get_video_info
+    except ImportError:
+        return "Can't check edx video id"
+    temp = get_video_info(edx_video_id).get('duration', "Error: didn't get duration from server")
+    num = round(float(temp))
+    return unicode(num)
 
 
 class CourseValid():
@@ -133,18 +101,27 @@ class CourseValid():
         items = self.items
 
         video_items = [i for i in items if i.category=="video"]
-        video_strs = [u"{} - {}".format(i.display_name, i.youtube_id_1_0) for i in video_items]
+
+        video_strs = []
+        for v in video_items:
+            mes = ""
+            if v.youtube_id_1_0:
+                mes += _youtube_duration(v.youtube_id_1_0) +' '
+            if v.edx_video_id:
+                mes += _edx_id_duration(v.edx_video_id)
+            video_strs.append(u"{} - {}".format(v.display_name, mes))
         report = []
         for v in video_items:
-            if not (v.youtube_id_1_0):
-                s = "Looks like video '{}' in '{}' is broken".format(v.display_name, v.get_parent().display_name)
-                report.append(s)
+            if not (v.youtube_id_1_0) and not (v.edx_video_id):
+                report.append("Looks like video '{}' in '{}' "
+                              "is broken".format(v.display_name, v.get_parent().display_name))
 
         results = {"head": "video_id - video_duration",
                    "body":video_strs,
                    "report":report,
                    }
         self.results["video"] = results
+
 
     def val_grade(self):
         report = []
@@ -251,9 +228,8 @@ class CourseValid():
 
         if all([x.start>now for x in items]):
             report.append("All course release dates are later than {}".format(now))
-        elif all([x.visible_to_staff_only for x in items if x.start<now]):
+        elif all([x.visible_to_staff_only for x in items if x.start<now and x.category!='course']):
             report.append("All released stuff is invisible for students")
-        print([[x.visible_to_staff_only, x.category] for x in items if x.start<now and x.category!='course'])
         result = {
             "head":"dates",
             "body": "",
@@ -261,12 +237,27 @@ class CourseValid():
         }
         self.results["dates"] = result
 
-
     def val_cohorts(self):
         course = modulestore().get_course(self.course_key)
         content_group_configuration = get_cohorted_user_partition(course)
         item = [i for i in self.items if i.display_name=='Final'][0]
-        #_print_all(item)
+
+        #_print_all(course = modulestore().get_course(self.course_key))#get_course_cohort_settings(self.course_key))
+        course = modulestore().get_course(self.course_key)
+        cohs = get_course_cohorts(course)
+        names = [getattr(x,'name',"NONAME") for x in cohs]
+        users = [getattr(x, 'users', "NONAME").all() for x in cohs]
+        report = []
+        cohort_strs = []
+        for num, x in enumerate(names):
+            print(x,  len(users[num]))
+            cohort_strs.append("{} - {}".format(x, len(users[num])))
+        result = {
+            "head": "cohorts",
+            "body": cohort_strs,
+            "report": report
+        }
+        self.results["cohorts"] = result
 
     def build_items_tree(self):
         items = self.items
