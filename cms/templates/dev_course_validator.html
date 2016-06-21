@@ -1,0 +1,52 @@
+<%page expression_filter="h"/>
+<%inherit file="base.html" />
+<%!
+from django.utils.translation import ugettext as _
+from django.core.urlresolvers import reverse
+from django.conf import settings
+%>
+<%block name="title">
+    ${_("Course Validation")}
+</%block>
+
+<%block name="content">
+<div class="wrapper-mast wrapper">
+  <div class="status-release-label">
+    <div class="wrapper-content wrapper">
+    % for r in sections:
+      % if r['passed']:
+        <h2 class="title" style="color:#55ee66; font-size: 26px">${r['name']}</h2>
+      % else:
+        <h2  class="title" style="color:#ff2200; font-size: 26px;">${r['name']}</h2>
+      % endif
+
+      % if r['output']:
+           <table style="width:50%; frame:'box'">
+            <tr style = "font-size: 20px;">
+              % for h in r['head']:
+              <th>${h}</th>
+              % endfor
+            </tr>
+             % for line in r['body']:
+            <tr>
+              % for item in line:
+                <td style="text-align: center">${item}</td>
+              % endfor
+            </tr>
+             % endfor
+          </table>
+      % endif
+
+      % for s in r['warnings']:
+        % if r['passed']:
+          <p style="color:#99ee77">${s}</p>
+        % else :
+          <p style="color:#ff8833">${s}</p>
+        % endif
+      % endfor
+      <br>
+    % endfor
+    </div>
+  </div>
+</div>
+</%block>
