@@ -280,3 +280,5 @@ if os.path.isfile(join(dirname(abspath(__file__)), 'private.py')):
 MODULESTORE = convert_module_store_setting_if_needed(MODULESTORE)
 
 SECRET_KEY = '85920908f28904ed733fe576320db18cabd7b6cd'
+EVMS_URL = "https://evms.openedu.ru"
+EVMS_API_KEY =  "bfuiy3748y5hgfurgh3ri28h"
