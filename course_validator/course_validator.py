@@ -13,9 +13,10 @@ from opaque_keys.edx.keys import CourseKey
 from openedx.core.djangoapps.course_groups.cohorts import get_course_cohorts, get_course_cohort_settings
 from xmodule.modulestore.django import modulestore
 from xblock.core import XBlock
-from .utils import Report, _youtube_duration, _edx_id_duration, _print_all, _build_items_tree
+from .utils import Report, youtube_duration, edx_id_duration, _print_all, _build_items_tree
 from edxmako.shortcuts import render_to_response
-
+import time
+from datetime import timedelta
 
 @login_required
 def course_validator_handler(request, course_key_string=None):
@@ -25,8 +26,13 @@ def course_validator_handler(request, course_key_string=None):
     CV = CourseValid(request, course_key_string)
     CV.validate()
     CV.send_log()
+    course_key = CourseKey.from_string(course_key_string)
+    course_module = modulestore().get_course(course_key)
+
     return render_to_response("dev_course_validator.html", {
-            "sections":CV.get_template_sections(),
+
+            "sections":CV.get_sections_for_rendering(),
+            "context_course":course_module
             })
 
 
@@ -45,14 +51,18 @@ class CourseValid():
         scenarios = [
             "video", "grade", "group", "xmodule",
             "dates", "cohorts", "proctoring",
+            "group_visibility",
         ]
         results = []
         for sc in scenarios:
-            f = "val_{}".format(sc)
-            results.append(getattr(self, f)())
+            val_name = "val_{}".format(sc)
+            validation = getattr(self, val_name)
+            report = validation()
+            if report is not None:
+                results.append(report)
         self.reports = results
 
-    def get_template_sections(self):
+    def get_sections_for_rendering(self):
         sections = []
         for r in self.reports:
             sec = {"name":r.name, "passed":not bool(len(r.warnings))}
@@ -129,18 +139,34 @@ class CourseValid():
         for v in video_items:
             mes = ""
             if v.youtube_id_1_0:
-                mes += _youtube_duration(v.youtube_id_1_0) + ' '
+                mes += youtube_duration(v.youtube_id_1_0)
             if v.edx_video_id:
-                mes += _edx_id_duration(v.edx_video_id)
+                mes += edx_id_duration(v.edx_video_id)
             video_strs.append(u"{} - {}".format(v.display_name, mes))
         report = []
         for v in video_items:
             if not (v.youtube_id_1_0) and not (v.edx_video_id):
-                report.append("Looks like video '{}' in '{}' "
-                              "is broken".format(v.display_name, v.get_parent().display_name))
+                report.append("No source for video '{}' "
+                              "in '{}' ".format(v.display_name, v.get_parent().display_name))
+        #Суммирование длительностей всех видео
+        total = timedelta()
+        # Если нет соединения с видеосервером - писать репорт
+        for vstr in video_strs:
+            vtime = vstr.split(' - ')[-1]
+            if (not (':' in vtime)) and vtime:
+                report.append("Can't get response from video {}".format(vstr.split(' - ')[0]))
+                continue
+            if not vtime:
+                continue
+            if len(vtime.split(':'))>2:
+                t = time.strptime(vtime,"%H:%M:%S")
+            else:
+                t = time.strptime(vtime,"%M:%S")
+            total += timedelta(hours=t.tm_hour, minutes=t.tm_min, seconds=t.tm_sec)
 
+        head = "video_id - video_duration(sum: {})".format(str(total))
         results = Report(name="Video",
-            head="video_id - video_duration",
+            head=head,
             body=video_strs,
             warnings=report,
         )
@@ -181,7 +207,7 @@ class CourseValid():
         grade_items = [i for i in self.items if i.format is not None]
         for num, key in enumerate(grade_types):
             cur_items = [i for i in grade_items if unicode(i.format)==key]
-            if len(cur_items) != grade_nums[num]:
+            if len(cur_items) != int(grade_nums[num]):
                 r = u"Task type '{}': supposed to be {} " \
                     u", found in course {}".format(key, grade_nums[num], len(cur_items))
                 report.append(r)
@@ -257,7 +283,7 @@ class CourseValid():
         primary_items = [i for i in self.items if i.category in check_empty_cat]
         for i in primary_items:
             if not len(i.get_children()):
-                s = "Block '{}' doesn't have any inner blocks or tasks".format(i.display_name)
+                s = "Block '{}'({}) doesn't have any inner blocks or tasks".format(i.display_name, i.category)
                 report.append(s)
         results = Report(name="Module",
             head = head,
@@ -336,6 +362,62 @@ class CourseValid():
             warnings =  [],
         )
         return result
+
+    def val_group_visibility(self):
+        """Составление таблицы видимости элементов для групп"""
+        store = modulestore()
+        with store.bulk_operations(self.course_key):
+            course = modulestore().get_course(self.course_key)
+            content_group_configuration = GroupConfiguration.get_or_create_content_group(store, course)
+        groups = content_group_configuration["groups"]
+        group_names = [g["name"]for g in groups]
+        name = "Items visibility by group"
+        head = "item type - student - " + " - ".join(group_names)
+        checked_cats = ["chapter",
+                       "sequential",
+                       "vertical",
+                       "problem",
+                       "video",
+                        ]
+
+        get_items_by_type = lambda x: [y for y in self.items if y.category == x]
+
+        #Словарь (категория - итемы)
+        cat_items = dict([(t, get_items_by_type(t)) for t in checked_cats])
+
+        # Словарь id группы - название группы
+        group_id_dict = dict([(g['id'],g['name']) for g in groups])
+
+        conf_id = content_group_configuration['id']
+        gv_strs = []
+        for cat in checked_cats:
+            items = cat_items[cat]
+            vis = dict((g,0) for g in group_names)
+            vis["student"] = 0
+            for it in items:
+                if conf_id not in it.group_access:
+                    for key in group_names:
+                        vis[key] += 1
+                else:
+                    ids = it.group_access[conf_id]
+                    vis_gn_for_itme = [group_id_dict[i] for i in ids]
+                    for gn in vis_gn_for_itme:
+                        vis[gn] += 1
+                if not it.visible_to_staff_only:
+                    vis["student"] += 1
+
+            item_category = "{}({})".format(cat, len(items))
+            stud_vis_for_cat = str(vis["student"])
+
+            cat_list = [item_category] + [stud_vis_for_cat] + [str(vis[gn]) for gn in group_names]
+            cat_str = " - ".join(cat_list)
+            gv_strs.append(cat_str)
+
+        return Report(name=name,
+                   head=head,
+                   body=gv_strs,
+                   warnings=[]
+            )
 
 class CourseValidator(XBlock):
     pass
