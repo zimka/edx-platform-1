@@ -51,7 +51,7 @@ class CourseValid():
         scenarios = [
             "video", "grade", "group", "xmodule",
             "dates", "cohorts", "proctoring",
-            "group_visibility",
+            "group_visibility", "response_types",
         ]
         results = []
         for sc in scenarios:
@@ -418,6 +418,46 @@ class CourseValid():
                    body=gv_strs,
                    warnings=[]
             )
+
+    def val_response_types(self):
+        """Считает по всем problem тэги, соответствующие ответам определенной категории"""
+        problems = [i for i in self.items if i.category == 'problem']
+        #Типы ответов. Взяты из common/lib/capa/capa/tests/test_responsetypes.py
+        response_types = ["multiplechoiceresponse",
+                         "truefalseresponse",
+                         "imageresponse",
+                         "symbolicresponse",
+                         "optionresponse",
+                         "formularesponse",
+                         "stringresponse",
+                         "coderesponse",
+                         "choiceresponse",
+                         "javascriptresponse",
+                         "numericalresponse",
+                         "customresponse",
+                         "schematicresponse",
+                         "annotationresponse",
+                         "choicetextresponse",
+                         ]
+        response_counts = dict((t, 0) for t in response_types)
+        for prob in problems:
+            text = prob.get_html()
+            for resp in response_types:
+                count = text.count("&lt;"+resp) + text.count("<"+resp)
+                if count:
+                    response_counts[resp] += count
+        name = "Response types"
+        head = "type - counts"
+        rt_strs = []
+        for resp in response_types:
+            if response_counts[resp]:
+                rt_strs.append("{} - {}".format(resp, response_counts[resp]))
+        warnings = []
+        return Report(name=name,
+                      head=head,
+                      body=rt_strs,
+                      warnings=warnings
+                )
 
 class CourseValidator(XBlock):
     pass
