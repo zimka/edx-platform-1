@@ -6789,8 +6789,12 @@ msgid "Mark Exam As Completed"
 msgstr "Отметить экзамен, как завершённый"
 
 #: lms/templates/courseware/proctored-exam-status.underscore
+msgid "You are taking \"{exam_link}\" as a {exam_type} exam. The timer on the right shows the time remaining in the exam."
+msgstr "Вы проходите контрольное задание \"{exam_link}\" с прокторингом ({exam_type}). Таймер справа показывает оставшееся у вас время."
+
+#: lms/templates/courseware/proctored-exam-status.underscore
 msgid "timed"
-msgstr "приурочен"
+msgstr "ограничен по времени"
 
 #: lms/templates/courseware/proctored-exam-status.underscore
 msgid ""
