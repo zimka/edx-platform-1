@@ -15,6 +15,12 @@ html.video-fullscreen {
   }
 }
 
+.grading-info.vertical-grading-info {
+  text-align: right;
+  font-style: italic;
+  margin-bottom: 30px;
+}
+
 .wrap-instructor-info {
   @extend %ui-print-excluded;
 

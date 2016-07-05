@@ -201,6 +201,23 @@ if (is_proctored_exam) {
                 </div>
             <% } %>
         <% } %>
+        <% if (xblockInfo.isVertical()) { %>
+            <% if (xblockInfo.get('due_date') || xblockInfo.get('graded')) { %>
+                <div class="status-grading">
+                    <p>
+                        <span class="sr status-grading-label"> <%= gettext('Graded as:') %> </span>
+                        <i class="icon fa fa-check"></i>
+                        <span class="status-grading-value"> <%= gradingType %> </span>
+                        <% if (xblockInfo.get('due_date')) { %>
+                            <span class="status-grading-date"> <%= gettext('Due:') %> <%= xblockInfo.get('due_date') %> </span>
+                        <% } %>
+                        <% if (xblockInfo.get('graded') && gradingType) { %>
+                            <span class="status-grading-weight"> <%= gettext('Weight:') %> <%= xblockInfo.get('weight') %> </span>
+                        <% } %>
+                    </p>
+                </div>
+            <% } %>
+        <% } %>
         <% if (statusMessage) { %>
         <div class="status-message">
             <span class="icon fa <%- statusIconClass %>" aria-hidden="true"></span>

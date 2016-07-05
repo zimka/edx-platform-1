@@ -11,7 +11,7 @@ import re
 from time import sleep
 
 import dogstats_wrapper as dog_stats_api
-from smtplib import SMTPServerDisconnected, SMTPDataError, SMTPConnectError, SMTPException
+from smtplib import SMTPServerDisconnected, SMTPDataError, SMTPConnectError, SMTPException, SMTPRecipientsRefused
 from boto.ses.exceptions import (
     SESAddressNotVerifiedError,
     SESIdentityNotVerifiedError,
@@ -63,6 +63,7 @@ SINGLE_EMAIL_FAILURE_ERRORS = (
     SESDomainEndsWithDotError,  # Recipient's email address' domain ends with a period/dot.
     SESIllegalAddressError,  # Raised when an illegal address is encountered.
     SESLocalAddressCharacterError,  # An address contained a control or whitespace character.
+    SMTPRecipientsRefused, # code 501 from SMTP server
 )
 
 # Exceptions that, if caught, should cause the task to be re-tried.
@@ -407,6 +408,12 @@ def _get_source_address(course_id, course_title, truncate=True):
     if len(escaped_encoded_from_addr) >= 320 and truncate:
         from_addr = format_address(course_name)
 
+    # TODO: Курс -> Course + translation
+    # Only "from" default bulk email
+    from_addr = u'"Курс {0}" <{1}>'.format(
+            course_title_no_quotes,
+            settings.BULK_EMAIL_DEFAULT_FROM_EMAIL
+    )
     return from_addr
 
 

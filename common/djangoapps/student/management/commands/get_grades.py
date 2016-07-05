@@ -117,7 +117,7 @@ class Command(BaseCommand):
                     count, total, hours, minutes)
                 start = datetime.datetime.now()
             request.user = student
-            grade = grades.grade(student, request, course)
+            grade = grades.grade(student, course, request)
             if not header:
                 header = [section['label'] for section in grade[u'section_breakdown']]
                 rows.append(["email", "username", "certificate-grade", "grade"] + header)

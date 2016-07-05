@@ -80,12 +80,14 @@ class FieldOverridePerformanceTestCase(FieldOverrideTestMixin, ProceduralCourseT
                     "min_count": 12,
                     "short_label": "HW",
                     "type": "Homework",
+                    "passing_grade": 0,
                     "weight": 0.15
                 },
                 {
                     "drop_count": 2,
                     "min_count": 12,
                     "type": "Lab",
+                    "passing_grade": 0,
                     "weight": 0.15
                 },
                 {
@@ -93,6 +95,7 @@ class FieldOverridePerformanceTestCase(FieldOverrideTestMixin, ProceduralCourseT
                     "min_count": 1,
                     "short_label": "Midterm",
                     "type": "Midterm Exam",
+                    "passing_grade": 0,
                     "weight": 0.3
                 },
                 {
@@ -100,6 +103,7 @@ class FieldOverridePerformanceTestCase(FieldOverrideTestMixin, ProceduralCourseT
                     "min_count": 1,
                     "short_label": "Final",
                     "type": "Final Exam",
+                    "passing_grade": 0,
                     "weight": 0.4
                 }
             ],

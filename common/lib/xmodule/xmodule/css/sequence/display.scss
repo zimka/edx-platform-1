@@ -191,6 +191,14 @@ $link-color: rgb(26, 161, 222) !default;
           }
         }
 
+        //graded
+        &.seq_graded {
+
+          .icon:before {
+            content: "\f19d"; // .fa-graduation-cap
+          }
+        }
+
         //vertical & problems
         &.seq_vertical, &.seq_problem {
 

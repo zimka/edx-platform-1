@@ -4,6 +4,7 @@ import os
 import platform
 import sys
 from logging.handlers import SysLogHandler
+from django.conf import settings
 
 LOG_LEVELS = ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
 
@@ -58,6 +59,9 @@ def get_logger_config(log_dir,
     handlers = ['console', 'local']
     if syslog_addr:
         handlers.append('syslogger-remote')
+
+    if hasattr(settings, 'RAVEN_DSN'):
+        handlers.append('sentry')
 
     logger_config = {
         'version': 1,
@@ -155,6 +159,26 @@ def get_logger_config(log_dir,
                 'address': '/dev/log',
                 'facility': SysLogHandler.LOG_LOCAL1,
                 'formatter': 'raw',
+            },
+        })
+
+    if hasattr(settings, 'RAVEN_DSN'):
+        logger_config['handlers'].update({
+            'sentry': {
+                'level': 'ERROR',
+                'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
+            },
+        })
+        logger_config['loggers'].update({
+            'raven': {
+                'level': 'DEBUG',
+                'handlers': ['console', 'sentry'],
+                'propagate': False,
+            },
+            'sentry.errors': {
+                'level': 'DEBUG',
+                'handlers': ['console'],
+                'propagate': False,
             },
         })
 

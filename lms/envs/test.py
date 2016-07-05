@@ -565,6 +565,11 @@ FEATURES['ENABLE_LTI_PROVIDER'] = True
 INSTALLED_APPS += ('lti_provider',)
 AUTHENTICATION_BACKENDS += ('lti_provider.users.LtiBackend',)
 
+######## Grading ###########
+GRADING_TYPE = 'sequential'
+
+ASSIGNMENT_GRADER = 'AssignmentFormatGrader'
+
 # ORGANIZATIONS
 FEATURES['ORGANIZATIONS_APP'] = True
 

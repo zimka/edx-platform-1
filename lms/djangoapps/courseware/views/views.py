@@ -716,8 +716,21 @@ def _progress(request, course_key, student_id):
     # additional DB lookup (this kills the Progress page in particular).
     student = User.objects.prefetch_related("groups").get(id=student.id)
 
-    courseware_summary = grades.progress_summary(student, course)
-    grade_summary = grades.grade(student, course)
+    if settings.GRADING_TYPE == 'vertical':
+        with outer_atomic():
+            field_data_cache = grades.field_data_cache_for_grading(course, student)
+            scores_client = ScoresClient.from_field_data_cache(field_data_cache)
+
+        courseware_summary = course.grading.progress_summary(
+            student, request, course, field_data_cache=field_data_cache, scores_client=scores_client
+        )
+        grade_summary = course.grading.grade(
+            student, request, course, keep_raw_scores=False, field_data_cache=field_data_cache, scores_client=scores_client
+        )
+    else:
+        courseware_summary = course.grading.progress_summary(student, course)
+        grade_summary = course.grading.grade(student, course)
+
     studio_url = get_studio_url(course, 'settings/grading')
 
     if courseware_summary is None:
@@ -749,6 +762,7 @@ def _progress(request, course_key, student_id):
         'credit_course_requirements': _credit_course_requirements(course_key, student),
         'missing_required_verification': missing_required_verification,
         'certificate_invalidated': False,
+        'progress_summary_template': getattr(course.grading, 'PROGRESS_SUMMARY_TEMPLATE', ''),
     }
 
     if show_generate_cert_btn:
@@ -1050,9 +1064,9 @@ def is_course_passed(course, grade_summary=None, student=None, request=None):
     success_cutoff = min(nonzero_cutoffs) if nonzero_cutoffs else None
 
     if grade_summary is None:
-        grade_summary = grades.grade(student, course)
+        grade_summary = course.grading.grade(student, course)
 
-    return success_cutoff and grade_summary['percent'] >= success_cutoff
+    return success_cutoff and grade_summary['percent'] >= success_cutoff and grade_summary['sections_passed']
 
 
 # Grades can potentially be written - if so, let grading manage the transaction.

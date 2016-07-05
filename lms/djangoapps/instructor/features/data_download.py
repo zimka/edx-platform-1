@@ -52,13 +52,13 @@ def find_grading_config(step):  # pylint: disable=unused-argument
     # expected config is the default grading configuration from common/lib/xmodule/xmodule/course_module.py
     expected_config = u"""-----------------------------------------------------------------------------
 Course grader:
-<class 'xmodule.graders.WeightedSubsectionsGrader'>
+<class 'openedx.core.djangoapps.grading_policy.graders.weighted_subs.WeightedSubsectionsGrader'>
 
 Graded sections:
-  subgrader=<class 'xmodule.graders.AssignmentFormatGrader'>, type=Homework, category=Homework, weight=0.15
-  subgrader=<class 'xmodule.graders.AssignmentFormatGrader'>, type=Lab, category=Lab, weight=0.15
-  subgrader=<class 'xmodule.graders.AssignmentFormatGrader'>, type=Midterm Exam, category=Midterm Exam, weight=0.3
-  subgrader=<class 'xmodule.graders.AssignmentFormatGrader'>, type=Final Exam, category=Final Exam, weight=0.4
+  subgrader=<class 'openedx.core.djangoapps.grading_policy.graders.assignment_format.AssignmentFormatGrader'>, type=Homework, category=Homework, weight=0.15
+  subgrader=<class 'openedx.core.djangoapps.grading_policy.graders.assignment_format.AssignmentFormatGrader'>, type=Lab, category=Lab, weight=0.15
+  subgrader=<class 'openedx.core.djangoapps.grading_policy.graders.assignment_format.AssignmentFormatGrader'>, type=Midterm Exam, category=Midterm Exam, weight=0.3
+  subgrader=<class 'openedx.core.djangoapps.grading_policy.graders.assignment_format.AssignmentFormatGrader'>, type=Final Exam, category=Final Exam, weight=0.4
 -----------------------------------------------------------------------------
 Listing grading context for course {}
 graded sections:

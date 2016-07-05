@@ -330,3 +330,6 @@ INSTALLED_APPS += ('openedx.core.djangoapps.api_admin',)
 # Set the default Oauth2 Provider Model so that migrations can run in
 # verbose mode
 OAUTH2_PROVIDER_APPLICATION_MODEL = 'oauth2_provider.Application'
+
+GRADING_TYPE = 'sequential'
+

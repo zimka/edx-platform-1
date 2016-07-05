@@ -60,6 +60,7 @@ from openedx.core.lib.xblock_utils import (
     replace_jump_to_id_urls,
     replace_static_urls,
     add_staff_markup,
+    add_grading_markup,
     wrap_xblock,
     request_token as xblock_request_token,
 )
@@ -690,6 +691,9 @@ def get_module_system_for_user(user, student_data,  # TODO  # pylint: disable=to
             instructor_access = bool(has_access(user, 'instructor', descriptor, course_id))
         if staff_access:
             block_wrappers.append(partial(add_staff_markup, user, instructor_access, disable_staff_debug_info))
+
+    if settings.GRADING_TYPE == 'vertical':
+        block_wrappers.append(partial(add_grading_markup, course))
 
     # These modules store data using the anonymous_student_id as a key.
     # To prevent loss of data, we will continue to provide old modules with

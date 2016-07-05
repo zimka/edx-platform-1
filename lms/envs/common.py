@@ -468,7 +468,8 @@ MAKO_TEMPLATES = {}
 MAKO_TEMPLATES['main'] = [PROJECT_ROOT / 'templates',
                           COMMON_ROOT / 'templates',
                           COMMON_ROOT / 'lib' / 'capa' / 'capa' / 'templates',
-                          COMMON_ROOT / 'djangoapps' / 'pipeline_mako' / 'templates']
+                          COMMON_ROOT / 'djangoapps' / 'pipeline_mako' / 'templates',
+                          REPO_ROOT / 'openedx' / 'core' / 'djangoapps']
 
 # Django templating
 TEMPLATES = [
@@ -594,7 +595,7 @@ USERNAME_PATTERN = r'(?P<username>[\w.@+-]+)'
 LMS_SEGMENT_KEY = None
 
 # FIXME: Should we be doing this truncation?
-TRACK_MAX_EVENT = 50000
+TRACK_MAX_EVENT = 327680
 
 DEBUG_TRACK_LOG = False
 
@@ -1185,7 +1186,6 @@ STATICFILES_STORAGE = 'openedx.core.storage.ProductionStorage'
 # List of finder classes that know how to find static files in various locations.
 # Note: the pipeline finder is included to be able to discover optimized files
 STATICFILES_FINDERS = [
-    'openedx.core.djangoapps.theming.finders.ComprehensiveThemeFinder',
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'openedx.core.lib.xblock_pipeline.finder.XBlockPipelineFinder',
@@ -1217,14 +1217,23 @@ courseware_js = (
 
 proctoring_js = (
     [
+        'proctoring/js/views/Backbone.ModalDialog.js',
+    ] +
+    [
         'proctoring/js/models/proctored_exam_allowance_model.js',
         'proctoring/js/models/proctored_exam_attempt_model.js',
         'proctoring/js/models/proctored_exam_model.js'
     ] +
     [
+        'proctoring/js/models/proctoring_services_model.js',
+    ] +
+    [
         'proctoring/js/collections/proctored_exam_allowance_collection.js',
         'proctoring/js/collections/proctored_exam_attempt_collection.js',
         'proctoring/js/collections/proctored_exam_collection.js'
+    ] +
+    [
+        'proctoring/js/collections/proctoring_services_collection.js',
     ] +
     [
         'proctoring/js/views/Backbone.ModalDialog.js',
@@ -1234,9 +1243,13 @@ proctoring_js = (
         'proctoring/js/views/proctored_exam_view.js'
     ] +
     [
+        'proctoring/js/views/proctoring_services_view.js',
+    ] +
+    [
         'proctoring/js/proctored_app.js'
     ]
 )
+
 
 # Before a student accesses courseware, we do not
 # need many of the JS dependencies.  This includes
@@ -2080,6 +2093,9 @@ INSTALLED_APPS = (
 
     # Email marketing integration
     'email_marketing',
+
+    # Api extension for openedu
+    'open_edx_api_extension',
 )
 
 # Migrations which are not in the standard module "migrations"
@@ -2831,6 +2847,15 @@ LTI_AGGREGATE_SCORE_PASSBACK_DELAY = 15 * 60
 PUBLIC_RSA_KEY = None
 PRIVATE_RSA_KEY = None
 
+############################ Settings for Grading app #############################
+
+# Possible values: vertical|sequential
+GRADING_TYPE = 'vertical'
+# Computes a final grade for the course.
+COURSE_GRADER = 'WeightedSubsectionsGrader'
+# Computes a grade for the category (Assignment Type).
+ASSIGNMENT_GRADER = 'WeightedAssignmentFormatGrader'
+
 # Credit notifications settings
 NOTIFICATION_EMAIL_CSS = "templates/credit_notifications/credit_notification.css"
 NOTIFICATION_EMAIL_EDX_LOGO = "templates/credit_notifications/edx-logo-header.png"
@@ -2859,6 +2884,12 @@ RSS_PROXY_CACHE_TIMEOUT = 3600  # The length of time we cache RSS retrieved from
 PROCTORING_BACKEND_PROVIDER = {
     'class': 'edx_proctoring.backends.null.NullBackendProvider',
     'options': {},
+}
+PROCTORING_BACKEND_PROVIDERS = {
+    'default': {
+        'class': 'edx_proctoring.backends.null.NullBackendProvider',
+        'options': {},
+    }
 }
 PROCTORING_SETTINGS = {}
 

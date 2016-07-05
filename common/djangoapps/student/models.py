@@ -927,6 +927,14 @@ class CourseEnrollmentManager(models.Manager):
             courseenrollment__is_active=True
         )
 
+    def users_enrolled_in_special_mode(self, course_id, mode="honor"):
+        """Return a queryset of User for every user enrolled in the course."""
+        return User.objects.filter(
+            courseenrollment__course_id=course_id,
+            courseenrollment__is_active=True,
+            courseenrollment__mode=mode
+        )
+
     def enrollment_counts(self, course_id):
         """
         Returns a dictionary that stores the total enrollment count for a course, as well as the
@@ -1820,17 +1828,21 @@ def log_successful_login(sender, request, user, **kwargs):  # pylint: disable=un
     if settings.FEATURES['SQUELCH_PII_IN_LOGS']:
         AUDIT_LOG.info(u"Login success - user.id: {0}".format(user.id))
     else:
-        AUDIT_LOG.info(u"Login success - {0} ({1})".format(user.username, user.email))
+        AUDIT_LOG.info(u"Login success - user.id: {0}; username: {1}; email: {2}; ip: {3}".format(user.id, user.username, user.email, request.META.get('REMOTE_ADDR', 'unknown')))
 
 
 @receiver(user_logged_out)
 def log_successful_logout(sender, request, user, **kwargs):  # pylint: disable=unused-argument
     """Handler to log when logouts have occurred successfully."""
+
     if hasattr(request, 'user'):
         if settings.FEATURES['SQUELCH_PII_IN_LOGS']:
-            AUDIT_LOG.info(u"Logout - user.id: {0}".format(request.user.id))  # pylint: disable=logging-format-interpolation
+            AUDIT_LOG.info(u"Logout - user.id: {0}".format(request.user.id))
         else:
-            AUDIT_LOG.info(u"Logout - {0}".format(request.user))  # pylint: disable=logging-format-interpolation
+            if request.user.id:
+                AUDIT_LOG.info(u"Logout - user.id: {0}; username: {1}; email: {2}; ip: {3}".format(request.user.id, request.user.username, request.user.email, request.META.get('REMOTE_ADDR', 'unknown')))  # pylint: disable=logging-format-interpolation
+            else:
+                AUDIT_LOG.info(u"Logout - user.id: None; ip: {0}; uri: {1}".format(request.META.get('REMOTE_ADDR', 'unknown'), request.META.get('RAW_URI', 'unknown').split('?')[0]))  # pylint: disable=logging-format-interpolation
 
 
 @receiver(user_logged_in)

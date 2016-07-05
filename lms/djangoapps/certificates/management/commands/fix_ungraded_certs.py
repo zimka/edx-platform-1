@@ -8,6 +8,7 @@ from courseware import grades, courses
 from django.test.client import RequestFactory
 from django.core.management.base import BaseCommand
 from optparse import make_option
+from django.conf import settings
 
 
 class Command(BaseCommand):
@@ -51,7 +52,10 @@ class Command(BaseCommand):
 
         for cert in ungraded:
             # grade the student
-            grade = grades.grade(cert.user, course)
+            if settings.GRADING_TYPE == 'vertical':
+                grade = grades.grade(cert.user, course, request)
+            else:
+                grade = grades.grade(cert.user, course)
             print "grading {0} - {1}".format(cert.user, grade['percent'])
             cert.grade = grade['percent']
             if not options['noop']:

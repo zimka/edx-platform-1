@@ -3,7 +3,6 @@ Test grade calculation.
 """
 from django.http import Http404
 from django.test import TestCase
-from django.test.client import RequestFactory
 
 from mock import patch, MagicMock
 from nose.plugins.attrib import attr
@@ -15,7 +14,8 @@ from courseware.grades import (
     iterate_grades_for,
     MaxScoresCache,
     ProgressSummary,
-    get_module_score
+    get_module_score,
+    field_data_cache_for_grading
 )
 from courseware.module_render import get_module
 from courseware.model_data import FieldDataCache, set_score
@@ -24,6 +24,7 @@ from courseware.tests.helpers import (
     get_request_for_user
 )
 from capa.tests.response_xml_factory import MultipleChoiceResponseXMLFactory
+from openedx.core.djangoapps.grading_policy.sequentual import ProgressSummary
 from student.tests.factories import UserFactory
 from student.models import CourseEnrollment
 from xmodule.modulestore.tests.factories import CourseFactory, ItemFactory

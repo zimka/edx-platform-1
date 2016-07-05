@@ -83,6 +83,7 @@ git+https://github.com/edx/edx-val.git@0.0.9#egg=edxval==0.0.9
 git+https://github.com/pmitros/RecommenderXBlock.git@v1.1#egg=recommender-xblock==1.1
 git+https://github.com/solashirai/crowdsourcehinter.git@518605f0a95190949fe77bd39158450639e2e1dc#egg=crowdsourcehinter-xblock==0.1
 -e git+https://github.com/pmitros/RateXBlock.git@367e19c0f6eac8a5f002fd0f1559555f8e74bfff#egg=rate-xblock
+
 -e git+https://github.com/pmitros/DoneXBlock.git@857bf365f19c904d7e48364428f6b93ff153fabd#egg=done-xblock
 git+https://github.com/edx/edx-milestones.git@v0.1.8#egg=edx-milestones==0.1.8
 git+https://github.com/edx/xblock-utils.git@v1.0.2#egg=xblock-utils==1.0.2
@@ -90,9 +91,29 @@ git+https://github.com/edx/xblock-utils.git@v1.0.2#egg=xblock-utils==1.0.2
 -e git+https://github.com/edx/edx-reverification-block.git@0.0.5#egg=edx-reverification-block==0.0.5
 git+https://github.com/edx/edx-user-state-client.git@1.0.1#egg=edx-user-state-client==1.0.1
 git+https://github.com/edx/xblock-lti-consumer.git@v1.0.9#egg=xblock-lti-consumer==1.0.9
-git+https://github.com/edx/edx-proctoring.git@0.12.21#egg=edx-proctoring==0.12.21
+# git+https://github.com/edx/edx-proctoring.git@0.12.21#egg=edx-proctoring==0.12.21
+
+-e git+https://github.com/raccoongang/edx-proctoring.git@dorosh/multi-proctoring-0.12.21#egg=edx_proctoring
+
+-e git+https://github.com/raccoongang/examus_edx_backend.git@master#egg=examus_edx_backend
+-e git+https://github.com/raccoongang/itmo_edx_backend.git@master#egg=itmo_edx_backend
+-e git+https://github.com/raccoongang/edx_proctor_webassistant_backend.git@master#egg=edx_proctor_webassistant_backend
 
 # Third Party XBlocks
 -e git+https://github.com/mitodl/edx-sga@172a90fd2738f8142c10478356b2d9ed3e55334a#egg=edx-sga
+
 -e git+https://github.com/open-craft/xblock-poll@v1.1#egg=xblock-poll==1.1
 git+https://github.com/edx-solutions/xblock-drag-and-drop-v2@v2.0.7#egg=xblock-drag-and-drop-v2==2.0.7
+
+ # Npoed specific repos:
+-e git+https://github.com/miptliot/open_edx_api_extension.git@dogwood#egg=open_edx_api_extension
+-e git+https://github.com/miptliot/npoed-sso-edx-client.git@dogwood#egg=sso_edx_npoed
+
+# IFMO HTMLAcademy, Ant
+-e git+https://de.ifmo.ru/scm/git/ifmo-edx-celery-grader@v4.0#egg=ifmo-edx-celery-grader==4.0
+-e git+https://de.ifmo.ru/scm/git/ifmo-xblock-htmlacademy@v4.0-npoed#egg=ifmo-xblock-htmlacademy==4.0
+-e git+https://de.ifmo.ru/scm/git/ifmo-xblock-ant@v4.0-npoed#egg=ifmo-xblock-ant==4.0
+
+# URFU MultiEngine
+-e git+https://github.com/MasterGowen/MultiEngineXBlock.git#egg=multiengine-xblock
+

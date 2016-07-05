@@ -251,13 +251,17 @@ class XQueueCertInterface(object):
 
         profile = UserProfile.objects.get(user=student)
         profile_name = profile.name
+        profile_name = student.get_full_name()
 
         # Needed for access control in grading.
         self.request.user = student
         self.request.session = {}
 
         is_whitelisted = self.whitelist.filter(user=student, course_id=course_id, whitelist=True).exists()
-        grade = grades.grade(student, course)
+        if settings.GRADING_TYPE == 'vertical':
+            grade = grades.grade(student, course, self.request)
+        else:
+            grade = grades.grade(student, course)
         enrollment_mode, __ = CourseEnrollment.enrollment_mode_for_user(student, course_id)
         mode_is_verified = enrollment_mode in GeneratedCertificate.VERIFIED_CERTS_MODES
         user_is_verified = SoftwareSecurePhotoVerification.user_is_verified(student)

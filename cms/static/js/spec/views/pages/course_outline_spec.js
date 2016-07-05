@@ -66,7 +66,6 @@ define(["jquery", "edx-ui-toolkit/js/utils/spec-helpers/ajax-helpers", "common/j
                     published: true,
                     edited_on: 'Jul 02, 2014 at 20:56 UTC',
                     edited_by: 'MockUser',
-                    course_graders: ["Lab", "Howework"],
                     has_explicit_staff_lock: false,
                     is_prereq: false,
                     prereqs: [],
@@ -91,6 +90,7 @@ define(["jquery", "edx-ui-toolkit/js/utils/spec-helpers/ajax-helpers", "common/j
                     published: true,
                     visibility_state: 'unscheduled',
                     edited_on: 'Jul 02, 2014 at 20:56 UTC',
+                    course_graders: ["Lab", "Howework"],
                     edited_by: 'MockUser'
                 }, options);
             };
@@ -231,7 +231,8 @@ define(["jquery", "edx-ui-toolkit/js/utils/spec-helpers/ajax-helpers", "common/j
                     'basic-modal', 'course-outline-modal', 'release-date-editor',
                     'due-date-editor', 'grading-editor', 'publish-editor',
                     'staff-lock-editor', 'settings-modal-tabs', 'timed-examination-preference-editor',
-                    'access-editor'
+                    'access-editor',
+                    'weight-editor'
                 ]);
                 appendSetFixtures(mockOutlinePage);
                 mockCourseJSON = createMockCourseJSON({}, [

@@ -738,7 +738,7 @@ def upload_grades_csv(_xmodule_instance_args, _entry_id, course_id, _task_input,
             if not header:
                 header = [section['label'] for section in gradeset[u'section_breakdown']]
                 rows.append(
-                    ["id", "email", "username", "grade"] + header + cohorts_header +
+                    ["id", "email", "username", "full_name", "grade"] + header + cohorts_header +
                     group_configs_header + teams_header +
                     ['Enrollment Track', 'Verification Status'] + certificate_info_header
                 )
@@ -788,7 +788,7 @@ def upload_grades_csv(_xmodule_instance_args, _entry_id, course_id, _task_input,
             # still have 100% for the course.
             row_percents = [percents.get(label, 0.0) for label in header]
             rows.append(
-                [student.id, student.email, student.username, gradeset['percent']] +
+                [student.id, student.email, student.username, student.get_full_name(), gradeset['percent']] +
                 row_percents + cohorts_group_name + group_configs_group_names + team_name +
                 [enrollment_mode] + [verification_status] + certificate_info
             )
@@ -837,11 +837,12 @@ def _order_problems(blocks):
     """
     problems = OrderedDict()
     assignments = OrderedDict()
+    grading_type = settings.GRADING_TYPE
     # First, sort out all the blocks into their correct assignments and all the
     # assignments into their correct types.
     for block in blocks:
         # Put the assignments in order into the assignments list.
-        if blocks[block]['block_type'] == 'sequential':
+        if blocks[block]['block_type'] == grading_type:
             block_format = blocks[block]['format']
             if block_format not in assignments:
                 assignments[block_format] = OrderedDict()
@@ -850,8 +851,8 @@ def _order_problems(blocks):
         # Put the problems into the correct order within their assignment.
         if blocks[block]['block_type'] == 'problem' and blocks[block]['graded'] is True:
             current = blocks[block]['parent']
-            # crawl up the tree for the sequential block
-            while blocks[current]['block_type'] != 'sequential':
+            # crawl up the tree for the block with type == grading_type
+            while blocks[current]['block_type'] != grading_type:
                 current = blocks[current]['parent']
 
             current_format = blocks[current]['format']
@@ -1409,7 +1410,7 @@ def generate_students_certificates(
     json column, otherwise generate certificates for all enrolled students.
     """
     start_time = time()
-    students_to_generate_certs_for = CourseEnrollment.objects.users_enrolled_in(course_id)
+    students_to_generate_certs_for = CourseEnrollment.objects.users_enrolled_in_special_mode(course_id)
 
     student_set = task_input.get('student_set')
     if student_set == 'all_whitelisted':

@@ -52,6 +52,16 @@ from pipeline_mako import render_require_js_path_overrides
       </script>
   % endif
 
+  <script type="text/javascript" src="/i18n.js"></script>
+  ## EDX jquery=1.7.2; we have to use it >= 1.91 and < 3
+  <link rel="stylesheet" href="/static/themes/default/css/bootstrap.min.css">
+
+  <%static:css group='style-vendor'/>
+  ## We could do <%static:css group='style-main'/>, but that's only useful
+  ## if the group contains multiple files, and the 'style-main' group doesn't.
+  ## Instead, we'll construct this <link> element manually, to improve clarity.
+  ## When nothing in the system is referencing the 'style-main' group, it can
+  ## be removed from the environment file.
   <%
     jsi18n_path = "js/i18n/{language}/djangojs.js".format(language=LANGUAGE_CODE)
   %>

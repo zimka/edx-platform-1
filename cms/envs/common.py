@@ -522,7 +522,6 @@ STATICFILES_STORAGE = 'openedx.core.storage.ProductionStorage'
 # List of finder classes that know how to find static files in various locations.
 # Note: the pipeline finder is included to be able to discover optimized files
 STATICFILES_FINDERS = [
-    'openedx.core.djangoapps.theming.finders.ComprehensiveThemeFinder',
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'openedx.core.lib.xblock_pipeline.finder.XBlockPipelineFinder',
@@ -931,7 +930,7 @@ COURSES_WITH_UNSAFE_CODE = []
 
 ############################## EVENT TRACKING #################################
 
-TRACK_MAX_EVENT = 50000
+TRACK_MAX_EVENT = 327680
 
 TRACKING_BACKENDS = {
     'logger': {
@@ -1170,6 +1169,12 @@ MICROSITE_DATABASE_TEMPLATE_CACHE_TTL = 5 * 60
 PROCTORING_BACKEND_PROVIDER = {
     'class': 'edx_proctoring.backends.null.NullBackendProvider',
     'options': {},
+}
+PROCTORING_BACKEND_PROVIDERS = {
+    'default': {
+        'class': 'edx_proctoring.backends.null.NullBackendProvider',
+        'options': {},
+    }
 }
 PROCTORING_SETTINGS = {}
 

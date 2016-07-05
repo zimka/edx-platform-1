@@ -4,13 +4,29 @@ import logging
 import random
 import sys
 
+from django.conf import settings
 from collections import namedtuple
+from stevedore.extension import ExtensionManager
 
 log = logging.getLogger("edx.courseware")
 
 # This is a tuple for holding scores, either from problems or sections.
 # Section either indicates the name of the problem or the name of the section
 Score = namedtuple("Score", "earned possible graded section module_id")
+
+
+class UnrecognizedGraderError(Exception):
+    """An error occurred when grader is unavailable."""
+    pass
+
+
+def get_grader(grader_type):
+    """Returns grader by the `grader_type(str)`."""
+    extension = ExtensionManager(namespace='openedx.graders')
+    try:
+        return extension[grader_type].plugin
+    except KeyError:
+        raise UnrecognizedGraderError("Unrecognized grader `{0}`".format(grader_type))
 
 
 def aggregate_scores(scores, section_name="summary"):
@@ -73,6 +89,7 @@ def grader_from_conf(conf):
     for subgraderconf in conf:
         subgraderconf = subgraderconf.copy()
         weight = subgraderconf.pop("weight", 0)
+        passing_grade = subgraderconf.pop("passing_grade", 0)
         # NOTE: 'name' used to exist in SingleSectionGrader. We are deprecating SingleSectionGrader
         # and converting everything into an AssignmentFormatGrader by adding 'min_count' and
         # 'drop_count'. AssignmentFormatGrader does not expect 'name', so if it appears
@@ -82,10 +99,10 @@ def grader_from_conf(conf):
         try:
             if 'min_count' in subgraderconf:
                 #This is an AssignmentFormatGrader
-                subgrader_class = AssignmentFormatGrader
+                subgrader_class = get_grader(settings.ASSIGNMENT_GRADER)
             elif name in subgraderconf:
                 #This is an SingleSectionGrader
-                subgrader_class = SingleSectionGrader
+                subgrader_class = get_grader('SingleSectionGrader')
             else:
                 raise ValueError("Configuration has no appropriate grader class.")
 
@@ -100,7 +117,7 @@ def grader_from_conf(conf):
                     del subgraderconf[key]
 
             subgrader = subgrader_class(**subgraderconf)
-            subgraders.append((subgrader, subgrader.category, weight))
+            subgraders.append((subgrader, subgrader.category, weight, passing_grade))
 
         except (TypeError, ValueError) as error:
             # Add info and re-raise
@@ -109,7 +126,7 @@ def grader_from_conf(conf):
                    "\n    Error was:\n    " + str(error))
             raise ValueError(msg), None, sys.exc_info()[2]
 
-    return WeightedSubsectionsGrader(subgraders)
+    return get_grader(settings.COURSE_GRADER)(subgraders)
 
 
 class CourseGrader(object):
