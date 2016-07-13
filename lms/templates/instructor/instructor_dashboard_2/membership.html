@@ -33,6 +33,7 @@ from openedx.core.djangoapps.course_groups.partition_scheme import get_cohorted_
   </div>
 </script>
 
+%if section_data['access']['admin']:
 <fieldset class="batch-enrollment membership-section">
     <legend id="heading-batch-enrollment" class="hd hd-3">${_("Batch Enrollment")}</legend>
     <label>
@@ -83,6 +84,7 @@ from openedx.core.djangoapps.course_groups.partition_scheme import get_cohorted_
     <div class="request-response"></div>
     <div class="request-response-error"></div>
 </fieldset>
+% endif
 
 %if static.get_value('ALLOW_AUTOMATED_SIGNUPS', settings.FEATURES.get('ALLOW_AUTOMATED_SIGNUPS', False)):
 <hr class="divider" />
