@@ -14,6 +14,7 @@ from opaque_keys.edx.locator import BlockUsageLocator
 from courseware.model_data import FieldDataCache, ScoresClient
 from openedx.core.djangoapps.signals.signals import GRADES_UPDATED
 from util.module_utils import yield_dynamic_descriptor_descendants
+from openedx.core.djangoapps.content.block_structure.api import get_course_in_cache
 from xblock.core import XBlock
 from xmodule.modulestore.django import modulestore
 from xmodule.modulestore.exceptions import ItemNotFoundError
@@ -115,6 +116,14 @@ def answer_distributions(course_key):
             continue
 
     return answer_counts
+
+
+def grading_context_for_course(course):
+    """
+    Same as grading_context, but takes in a course object.
+    """
+    course_structure = get_course_in_cache(course.id)
+    return course.grading.grading_context(course_structure)
 
 
 def grade(student, course, keep_raw_scores=False):
