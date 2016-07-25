@@ -98,7 +98,7 @@ class WeightedAssignmentFormatGrader(CourseGrader):
                     section_name = scores[i].section
 
                 percentage = earned / float(possible)
-                weight = scores[i].weight
+                weight = getattr(scores[i], 'weight', 1)
                 summary_format = u"{section_type} {index} - {name} - {percent:.0%} ({earned:.3n}/{possible:.3n})"
                 summary = summary_format.format(
                     index=i + self.starting_index,

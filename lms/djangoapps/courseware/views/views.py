@@ -716,20 +716,8 @@ def _progress(request, course_key, student_id):
     # additional DB lookup (this kills the Progress page in particular).
     student = User.objects.prefetch_related("groups").get(id=student.id)
 
-    if settings.GRADING_TYPE == 'vertical':
-        with outer_atomic():
-            field_data_cache = grades.field_data_cache_for_grading(course, student)
-            scores_client = ScoresClient.from_field_data_cache(field_data_cache)
-
-        courseware_summary = course.grading.progress_summary(
-            student, request, course, field_data_cache=field_data_cache, scores_client=scores_client
-        )
-        grade_summary = course.grading.grade(
-            student, request, course, keep_raw_scores=False, field_data_cache=field_data_cache, scores_client=scores_client
-        )
-    else:
-        courseware_summary = course.grading.progress_summary(student, course)
-        grade_summary = course.grading.grade(student, course)
+    courseware_summary = course.grading.progress_summary(student, course)
+    grade_summary = course.grading.grade(student, course)
 
     studio_url = get_studio_url(course, 'settings/grading')
 

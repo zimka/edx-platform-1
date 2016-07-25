@@ -107,13 +107,13 @@ class VerticalGrading(object):
         #         for module_descriptor in yield_descriptor_descendents(child):
         #             yield module_descriptor
 
-        blocks_stack = [course_structure[course_structure.root_block_usage_key]]
+        blocks_stack = [modulestore().get_course(course_structure.get_children(course_structure.root_block_usage_key)[0].course_key)]
 
         while blocks_stack:
             curr_block = blocks_stack.pop()
             if curr_block.category == grading_type:
                 scored_descendants_of_section = [curr_block]
-                block_key = course_structure[curr_block.key]
+                block_key = curr_block.location
                 if curr_block.graded:
                     for descendant_key in course_structure.post_order_traversal(
                             filter_func=possibly_scored,
@@ -125,6 +125,7 @@ class VerticalGrading(object):
 
                     # The xmoduledescriptors included here are only the ones that have scores.
                     block_description = {
+                        'section_block': course_structure[block_key],
                         'section_descriptor': curr_block,
                         'scored_descendants': [child for child in scored_descendants_of_section if child.has_score]
                     }
@@ -144,7 +145,7 @@ class VerticalGrading(object):
         }
 
     @staticmethod
-    def grade(student, course, keep_raw_scores):
+    def grade(student, course, keep_raw_scores=False):
         """
         Unwrapped version of "grade"
 
@@ -185,7 +186,7 @@ class VerticalGrading(object):
             # be hidden behind the ScoresClient.
             max_scores_cache.fetch_from_remote(scorable_locations)
 
-        totaled_scores, raw_scores = course.grading.calculate_totaled_scores(
+        totaled_scores, raw_scores = calculate_totaled_scores(
             student, grading_context_result, max_scores_cache, submissions_scores, scores_client, keep_raw_scores
         )
 
@@ -256,7 +257,7 @@ class VerticalGrading(object):
         # Check for gated content
         gated_content = gating_api.get_gated_content(course, student)
 
-        blocks_stack = course_structure[course.location]
+        blocks_stack = [modulestore().get_course(course_structure.get_children(course_structure.root_block_usage_key)[0].course_key)]
         blocks_dict = {}
 
         while blocks_stack:
@@ -264,7 +265,6 @@ class VerticalGrading(object):
             with outer_atomic():
                 if curr_block.hide_from_toc:
                     continue
-
                 key = unicode(curr_block.scope_ids.usage_id)
                 children = [modulestore().get_item(item) for item in getattr(curr_block, 'children', []) if curr_block.category != grading_type]
                 block = {
@@ -280,7 +280,7 @@ class VerticalGrading(object):
 
                     for descendant_key in course_structure.post_order_traversal(
                             filter_func=possibly_scored,
-                            start_node=curr_block.key
+                            start_node=curr_block.location
                     ):
                         descendant = course_structure[descendant_key]
 
@@ -326,14 +326,15 @@ class VerticalGrading(object):
             'blocks': blocks_dict,
         }
 
-    def calculate_totaled_scores(
-            student,
-            grading_context_result,
-            max_scores_cache,
-            submissions_scores,
-            scores_client,
-            keep_raw_scores,
-    ):
+def calculate_totaled_scores(
+        student,
+        grading_context_result,
+        max_scores_cache,
+        submissions_scores,
+        scores_client,
+        keep_raw_scores,
+):
+    if True:
         """
         Returns the totaled scores, which can be passed to the grader.
         """
@@ -343,7 +344,7 @@ class VerticalGrading(object):
             format_scores = []
             for section_info in sections:
                 section = section_info['section_block']
-                section_descriptor = section['section_descriptor']
+                section_descriptor = section_info['section_descriptor']
                 section_name = block_metadata_utils.display_name_with_default(section)
 
                 with outer_atomic():

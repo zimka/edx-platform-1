@@ -779,8 +779,7 @@ class CourseFields(object):
 
     available_proctoring_services = String(
         display_name=_("Available Proctoring services"),
-        help=_("Comma-separated list of services available for this course. "
-               "For example: \"{}\"".format(get_proctoring_list())),
+        help=_("Comma-separated list of services available for this course."),
         default="",
         scope=Scope.settings,
     )
@@ -789,7 +788,6 @@ class CourseFields(object):
         display_name=_("Proctoring service"),
         help=_(
             "Defines the proctoring Service for this Course. Choose one of the following"
-            " services: {}".format(get_proctoring_list())
         ),
         default="",
         scope=Scope.settings,
