@@ -73,7 +73,9 @@ from xmodule.mixin import LicenseMixin
 # of this particular import silliness. It's just that I haven't made one before,
 # and I was worried about trying it with my deadline constraints.
 try:
-    import edxval.api as edxval_api
+    # import edxval.api as edxval_api
+    # Use evms api instead of edxval_api
+    import openedx.core.djangoapps.video_evms.api as edxval_api
 except ImportError:
     edxval_api = None
 
@@ -857,7 +859,7 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
 
         # Check in VAL data first if edx_video_id exists
         if self.edx_video_id:
-            video_profile_names = context.get("profiles", ["mobile_low"])
+            video_profile_names = context.get("profiles", [])
 
             # get and cache bulk VAL data for course
             val_course_data = self.get_cached_val_data_for_course(video_profile_names, self.location.course_key)
