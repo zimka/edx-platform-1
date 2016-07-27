@@ -2093,6 +2093,9 @@ INSTALLED_APPS = (
 
     # Email marketing integration
     'email_marketing',
+
+    # Api extensions
+    'open_edx_api_extension',
 )
 
 # Migrations which are not in the standard module "migrations"

@@ -39,6 +39,10 @@ def run():
 
     add_mimetypes()
 
+    if settings.FEATURES.get('ENABLE_THIRD_PARTY_AUTH', False):
+        from third_party_auth import settings as auth_settings
+        auth_settings.apply_settings(settings)
+
     if settings.FEATURES.get('USE_CUSTOM_THEME', False):
         enable_theme()
 

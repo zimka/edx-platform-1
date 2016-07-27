@@ -43,3 +43,17 @@ ubcpi-xblock==0.5.3
 -e git+https://github.com/raccoongang/examus_edx_backend.git@master#egg=examus_edx_backend
 -e git+https://github.com/raccoongang/itmo_edx_backend.git@master#egg=itmo_edx_backend
 -e git+https://github.com/raccoongang/edx_proctor_webassistant_backend.git@master#egg=edx_proctor_webassistant_backend
+
+# CIOT start
+
+-e git+https://github.com/miptliot/open_edx_api_extension.git@dogwood#egg=open_edx_api_extension
+-e git+https://github.com/miptliot/npoed-sso-edx-client.git@dogwood#egg=sso_edx_npoed
+
+# SNI support (python-2.7.3 lacks one)
+pyOpenSSL==0.15.1
+ndg-httpsclient==0.4.0
+
+# Collect exceptions
+raven==5.12.0
+
+# CIOT end

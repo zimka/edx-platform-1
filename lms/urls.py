@@ -17,6 +17,8 @@ from openedx.core.djangoapps.programs.models import ProgramsApiConfig
 from openedx.core.djangoapps.self_paced.models import SelfPacedConfiguration
 from student.views import LogoutView
 
+import openassessment.fileupload.urls
+
 # Uncomment the next two lines to enable the admin:
 if settings.DEBUG or settings.FEATURES.get('ENABLE_DJANGO_ADMIN_SITE'):
     admin.autodiscover()
@@ -1003,6 +1005,17 @@ urlpatterns += (
 urlpatterns += (
     url(r'^api/', include('edx_proctoring.urls')),
 )
+
+urlpatterns += (
+    # Extend API
+    url(r'^api/extended/', include('open_edx_api_extension.urls', namespace='api_extension')),
+    url(r'^social-logout', 'sso_edx_npoed.views.logout', name='social-logout'),
+)
+
+urlpatterns += (
+    url(r'^openassessment/storage', include(openassessment.fileupload.urls)),
+)
+
 
 if settings.FEATURES.get('ENABLE_FINANCIAL_ASSISTANCE_FORM'):
     urlpatterns += (
