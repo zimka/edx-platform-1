@@ -1171,6 +1171,12 @@ PROCTORING_BACKEND_PROVIDER = {
     'class': 'edx_proctoring.backends.null.NullBackendProvider',
     'options': {},
 }
+PROCTORING_BACKEND_PROVIDERS = {
+    'default': {
+        'class': 'edx_proctoring.backends.null.NullBackendProvider',
+        'options': {},
+    }
+}
 PROCTORING_SETTINGS = {}
 
 ############################ Global Database Configuration #####################

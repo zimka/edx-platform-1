@@ -36,6 +36,11 @@ CATALOG_VISIBILITY_ABOUT = "about"
 CATALOG_VISIBILITY_NONE = "none"
 
 
+def get_proctoring_list():
+    proctoring_providers = settings.PROCTORING_BACKEND_PROVIDERS
+    return ",".join(proctoring_providers.keys())
+
+
 class GradingTypeError(Exception):
     """An error occurred when grading type is unrecognized."""
     pass
@@ -769,6 +774,22 @@ class CourseFields(object):
         ),
         default=False,
         scope=Scope.settings
+    )
+
+    available_proctoring_services = String(
+        display_name=_("Available Proctoring services"),
+        help=_("Comma-separated list of services available for this course."),
+        default="",
+        scope=Scope.settings,
+    )
+
+    proctoring_service = String(
+        display_name=_("Proctoring service"),
+        help=_(
+            "Defines the proctoring Service for this Course."
+        ),
+        default="",
+        scope=Scope.settings,
     )
 
     minimum_grade_credit = Float(
