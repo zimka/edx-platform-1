@@ -582,3 +582,8 @@ JWT_AUTH.update({
 OAUTH2_PROVIDER_APPLICATION_MODEL = 'oauth2_provider.Application'
 
 COURSE_CATALOG_API_URL = 'https://catalog.example.com/api/v1'
+
+######## Grading ###########
+GRADING_TYPE = 'sequential'
+
+ASSIGNMENT_GRADER = 'AssignmentFormatGrader'

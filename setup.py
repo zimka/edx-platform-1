@@ -15,9 +15,11 @@ setup(
         "openedx.core.djangoapps.course_groups",
         "openedx.core.djangoapps.credit",
         "openedx.core.djangoapps.user_api",
+        "openedx.core.djangoapps.grading_policy",
         "lms",
         "cms",
     ],
+    # pylint: disable=line-too-long
     entry_points={
         "openedx.course_tab": [
             "ccx = lms.djangoapps.ccx.plugins:CcxCourseTab",
@@ -42,6 +44,16 @@ setup(
             "random = openedx.core.djangoapps.user_api.partition_schemes:RandomUserPartitionScheme",
             "cohort = openedx.core.djangoapps.course_groups.partition_scheme:CohortPartitionScheme",
             "verification = openedx.core.djangoapps.credit.partition_schemes:VerificationPartitionScheme",
+        ],
+        "openedx.grading_policy": [
+            "vertical = openedx.core.djangoapps.grading_policy.vertical:VerticalGrading",
+            "sequential = openedx.core.djangoapps.grading_policy.sequential:SequentialGrading",
+        ],
+        "openedx.graders": [
+            "WeightedSubsectionsGrader = openedx.core.djangoapps.grading_policy.graders.weighted_subs:WeightedSubsectionsGrader",
+            "SingleSectionGrader = openedx.core.djangoapps.grading_policy.graders.single_section:SingleSectionGrader",
+            "AssignmentFormatGrader = openedx.core.djangoapps.grading_policy.graders.assignment_format:AssignmentFormatGrader",
+            "WeightedAssignmentFormatGrader = openedx.core.djangoapps.grading_policy.graders.weighted_assignment_format:WeightedAssignmentFormatGrader",
         ],
         "openedx.block_structure_transformer": [
             "library_content = lms.djangoapps.course_blocks.transformers.library_content:ContentLibraryTransformer",

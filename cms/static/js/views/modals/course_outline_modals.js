@@ -13,7 +13,7 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
 ) {
     'use strict';
     var CourseOutlineXBlockModal, SettingsXBlockModal, PublishXBlockModal, AbstractEditor, BaseDateEditor,
-        ReleaseDateEditor, DueDateEditor, GradingEditor, PublishEditor, StaffLockEditor,
+        ReleaseDateEditor, DueDateEditor, GradingEditor, PublishEditor, StaffLockEditor, WeightEditor,
         VerificationAccessEditor, TimedExaminationPreferenceEditor, AccessEditor;
 
     CourseOutlineXBlockModal = BaseModal.extend({
@@ -635,6 +635,24 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
         }
     });
 
+    WeightEditor = AbstractEditor.extend({
+        templateName: 'weight-editor',
+
+        setValue: function (value) {
+            this.$('#weight').val(value);
+        },
+
+        getValue: function () {
+            return this.$('#weight').val();
+        },
+
+        getRequestData: function () {
+            return {
+                'metadata': {'weight': this.getValue()}
+            };
+         }
+     });
+
     VerificationAccessEditor = AbstractEditor.extend({
         templateName: 'verification-access-editor',
         className: 'edit-verification-access',
@@ -757,7 +775,7 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
                 tabs.push({
                     name: 'basic',
                     displayName: gettext('Basic'),
-                    editors: [ReleaseDateEditor, GradingEditor, DueDateEditor, StaffLockEditor]
+                    editors: [ReleaseDateEditor, StaffLockEditor]
                 });
 
                 if (options.enable_proctored_exams || options.enable_timed_exams) {
@@ -777,7 +795,7 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
                     });
                 }
             } else if (xblockInfo.isVertical()) {
-                editors = [StaffLockEditor];
+                editors = [GradingEditor, DueDateEditor, WeightEditor, StaffLockEditor];
 
                 if (xblockInfo.hasVerifiedCheckpoints()) {
                     editors.push(VerificationAccessEditor);

@@ -179,6 +179,28 @@
       width: 100%;
     }
 
+    .grade-category-detail {
+      margin: 3em 0;
+
+      .grade-category-detail-table {
+        margin: 0 auto;
+
+        td, th {
+          padding: .5em 0.7em;
+          border: 1px solid $black;
+          text-align: center;
+
+          &.pass {
+            color: $success-color;
+          }
+
+          &.fail {
+            color: $alert-color;
+          }
+        }
+      }
+    }
+
     > .credit-eligibility{
       border-top: 1px solid $lightGrey;
       margin-top: lh();
@@ -269,6 +291,36 @@
           width: flex-grid(2, 9);
         }
 
+        > .scores {
+          display: table-cell;
+          @include padding-left(flex-gutter(9));
+          width: flex-grid(7, 9);
+        }
+
+        .scores {
+          margin: lh(0.5) 0;
+
+          h3, h4 {
+            color: #666;
+            font-size: em(14);
+            display: inline-block;
+          }
+
+          ol {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: inline-block;
+
+            li {
+              display: inline-block;
+              font-size: em(14);
+              font-weight: normal;
+              padding-right: 1em;
+            }
+          }
+        }
+
         .sections {
           display: table-cell;
           @include padding-left(flex-gutter(9));
@@ -285,7 +337,7 @@
               border-bottom: 0;
             }
 
-            h3 {
+            h3, h4 {
               color: $gray-d1;
 
               span {
@@ -300,26 +352,19 @@
               font-size: em(14);
             }
 
-            .scores {
-              margin: lh(0.5) 0;
+            h3 + .verticals {
+              padding-top: lh();
+            }
 
-              h3 {
-                font-size: em(14);
-                display: inline-block;
+            .verticals {
+              padding-left: lh(0.5);
+
+              h4 {
+                font-size: em(15);
               }
 
-              ol {
-                list-style: none;
-                margin: 0;
-                padding: 0;
-                display: inline-block;
-
-                li {
-                  display: inline-block;
-                  font-size: em(14);
-                  font-weight: normal;
-                  padding-right: 1em;
-                }
+              > div {
+                margin-bottom: 1.5em;
               }
             }
           }

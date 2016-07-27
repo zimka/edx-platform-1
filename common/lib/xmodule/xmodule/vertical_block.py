@@ -5,8 +5,10 @@ import logging
 from copy import copy
 from lxml import etree
 from xblock.core import XBlock
+from xblock.fields import Scope, Float
 from xblock.fragment import Fragment
 from xmodule.mako_module import MakoTemplateBlockBase
+from xmodule.modulestore.inheritance import own_metadata
 from xmodule.progress import Progress
 from xmodule.seq_module import SequenceFields
 from xmodule.studio_editable import StudioEditableBlock
@@ -18,7 +20,8 @@ log = logging.getLogger(__name__)
 # HACK: This shouldn't be hard-coded to two types
 # OBSOLETE: This obsoletes 'type'
 CLASS_PRIORITY = ['video', 'problem']
-
+# Make '_' a no-op so we can scrape strings
+_ = lambda text: text
 
 class VerticalBlock(SequenceFields, XModuleFields, StudioEditableBlock, XmlParserMixin, MakoTemplateBlockBase, XBlock):
     """
@@ -26,6 +29,12 @@ class VerticalBlock(SequenceFields, XModuleFields, StudioEditableBlock, XmlParse
     """
 
     resources_dir = 'assets/vertical'
+    weight = Float(
+        display_name=_("Weight"),
+        help=_("Defines the proportion of contribution of the vertical to the category."),
+        default=1.0,
+        scope=Scope.settings
+    )
 
     mako_template = 'widgets/sequence-edit.html'
     js_module_name = "VerticalBlock"
@@ -96,6 +105,8 @@ class VerticalBlock(SequenceFields, XModuleFields, StudioEditableBlock, XmlParse
         """
         Returns the highest priority icon class.
         """
+        if own_metadata(self).get('graded', False):
+            return 'graded'
         child_classes = set(child.get_icon_class() for child in self.get_children())
         new_class = 'other'
         for higher_class in CLASS_PRIORITY:

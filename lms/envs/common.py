@@ -468,7 +468,8 @@ MAKO_TEMPLATES = {}
 MAKO_TEMPLATES['main'] = [PROJECT_ROOT / 'templates',
                           COMMON_ROOT / 'templates',
                           COMMON_ROOT / 'lib' / 'capa' / 'capa' / 'templates',
-                          COMMON_ROOT / 'djangoapps' / 'pipeline_mako' / 'templates']
+                          COMMON_ROOT / 'djangoapps' / 'pipeline_mako' / 'templates',
+                          REPO_ROOT / 'openedx' / 'core' / 'djangoapps']
 
 # Django templating
 TEMPLATES = [
@@ -2935,3 +2936,12 @@ AFFILIATE_COOKIE_NAME = 'affiliate_id'
 # The cache is cleared when Redirect models are saved/deleted
 REDIRECT_CACHE_TIMEOUT = None  # The length of time we cache Redirect model data
 REDIRECT_CACHE_KEY_PREFIX = 'redirects'
+
+############################ Settings for Grading app #############################
+
+# Possible values: vertical|sequential
+GRADING_TYPE = 'vertical'
+# Computes a final grade for the course.
+COURSE_GRADER = 'WeightedSubsectionsGrader'
+# Computes a grade for the category (Assignment Type).
+ASSIGNMENT_GRADER = 'WeightedAssignmentFormatGrader'

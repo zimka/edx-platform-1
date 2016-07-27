@@ -977,6 +977,7 @@ def create_xblock_info(xblock, data=None, metadata=None, include_ancestor_info=F
         "course_graders": [grader.get('type') for grader in graders],
         "has_changes": has_changes,
         "actions": xblock_actions,
+        "weight": getattr(xblock, 'weight', None),
         "explanatory_message": explanatory_message,
         "group_access": xblock.group_access,
         "user_partitions": get_user_partition_info(xblock, course=course),

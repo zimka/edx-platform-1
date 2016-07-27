@@ -986,6 +986,7 @@ class TestCCXGrades(FieldOverrideTestMixin, SharedModuleStoreTestCase, LoginEnro
                  'min_count': 2,
                  'short_label': 'HW',
                  'type': 'Homework',
+                 "passing_grade": 0,
                  'weight': 1}
             ],
             'GRADE_CUTOFFS': {'Pass': 0.75},

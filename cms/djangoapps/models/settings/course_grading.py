@@ -43,6 +43,7 @@ class CourseGradingModel(object):
                     "min_count": 0,
                     "drop_count": 0,
                     "short_label": None,
+                    "passing_grade": 0,
                     "weight": 0
                     }
 
@@ -220,6 +221,7 @@ class CourseGradingModel(object):
                   "min_count": int(json_grader.get('min_count', 0)),
                   "drop_count": int(json_grader.get('drop_count', 0)),
                   "short_label": json_grader.get('short_label', None),
+                  "passing_grade": float(json_grader.get('passing_grade', 0)) / 100.0,
                   "weight": float(json_grader.get('weight', 0)) / 100.0
                   }
 
@@ -227,7 +229,7 @@ class CourseGradingModel(object):
 
     @staticmethod
     def jsonize_grader(i, grader):
-        # Warning: converting weight to integer might give unwanted results due
+        # Warning: converting weight and passing_grade to integer might give unwanted results due
         # to the reason how floating point arithmetic works
         # e.g, "0.29 * 100 = 28.999999999999996"
         return {
@@ -237,4 +239,5 @@ class CourseGradingModel(object):
             "drop_count": grader.get('drop_count', 0),
             "short_label": grader.get('short_label', ""),
             "weight": grader.get('weight', 0) * 100,
+            "passing_grade": grader.get('passing_grade', 0) * 100,
         }

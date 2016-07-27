@@ -66,7 +66,6 @@ define(["jquery", "edx-ui-toolkit/js/utils/spec-helpers/ajax-helpers", "common/j
                     published: true,
                     edited_on: 'Jul 02, 2014 at 20:56 UTC',
                     edited_by: 'MockUser',
-                    course_graders: ["Lab", "Howework"],
                     has_explicit_staff_lock: false,
                     is_prereq: false,
                     prereqs: [],
@@ -91,6 +90,7 @@ define(["jquery", "edx-ui-toolkit/js/utils/spec-helpers/ajax-helpers", "common/j
                     published: true,
                     visibility_state: 'unscheduled',
                     edited_on: 'Jul 02, 2014 at 20:56 UTC',
+                    course_graders: ["Lab", "Howework"],
                     edited_by: 'MockUser'
                 }, options);
             };
@@ -231,6 +231,7 @@ define(["jquery", "edx-ui-toolkit/js/utils/spec-helpers/ajax-helpers", "common/j
                     'basic-modal', 'course-outline-modal', 'release-date-editor',
                     'due-date-editor', 'grading-editor', 'publish-editor',
                     'staff-lock-editor', 'settings-modal-tabs', 'timed-examination-preference-editor',
+                    'weight-editor',
                     'access-editor'
                 ]);
                 appendSetFixtures(mockOutlinePage);
@@ -614,10 +615,8 @@ define(["jquery", "edx-ui-toolkit/js/utils/spec-helpers/ajax-helpers", "common/j
                     return getItemHeaders('subsection').find('.wrapper-xblock-field');
                 };
 
-                setEditModalValues = function (start_date, due_date, grading_type, is_locked) {
+                setEditModalValues = function (start_date, is_locked) {
                     $("#start_date").val(start_date);
-                    $("#due_date").val(due_date);
-                    $("#grading_type").val(grading_type);
                     $("#staff_lock").prop('checked', is_locked);
                 };
 
@@ -677,12 +676,8 @@ define(["jquery", "edx-ui-toolkit/js/utils/spec-helpers/ajax-helpers", "common/j
                         release_date: 'Jan 01, 2970 at 05:00 UTC'
                     }, [
                         createMockSubsectionJSON({
-                            graded: true,
-                            due_date: 'Jul 10, 2014 at 00:00 UTC',
                             release_date: 'Jul 09, 2014 at 00:00 UTC',
                             start: "2014-07-09T00:00:00Z",
-                            format: "Lab",
-                            due: "2014-07-10T00:00:00Z",
                             has_explicit_staff_lock: true,
                             staff_only_message: true,
                             is_prereq: false,
@@ -847,7 +842,7 @@ define(["jquery", "edx-ui-toolkit/js/utils/spec-helpers/ajax-helpers", "common/j
                 it('can be edited', function() {
                     createCourseOutlinePage(this, mockCourseJSON, false);
                     outlinePage.$('.outline-subsection .configure-button').click();
-                    setEditModalValues("7/9/2014", "7/10/2014", "Lab", true);
+                    setEditModalValues("7/9/2014", true);
                     selectAdvancedSettings();
                     selectTimedExam("02:30", true);
                     $(".wrapper-modal-window .action-save").click();
@@ -858,7 +853,6 @@ define(["jquery", "edx-ui-toolkit/js/utils/spec-helpers/ajax-helpers", "common/j
                         "metadata":{
                             "visible_to_staff_only": true,
                             "start":"2014-07-09T00:00:00.000Z",
-                            "due":"2014-07-10T00:00:00.000Z",
                             "exam_review_rules": "",
                             "is_time_limited": true,
                             "is_practice_exam": false,
@@ -877,12 +871,6 @@ define(["jquery", "edx-ui-toolkit/js/utils/spec-helpers/ajax-helpers", "common/j
                     expect($(".outline-subsection .status-release-value")).toContainText(
                         "Jul 09, 2014 at 00:00 UTC"
                     );
-                    expect($(".outline-subsection .status-grading-date")).toContainText(
-                        "Due: Jul 10, 2014 at 00:00 UTC"
-                    );
-                    expect($(".outline-subsection .status-grading-value")).toContainText(
-                        "Lab"
-                    );
                     expect($(".outline-subsection .status-message-copy")).toContainText(
                         "Contains staff only content"
                     );
@@ -890,8 +878,6 @@ define(["jquery", "edx-ui-toolkit/js/utils/spec-helpers/ajax-helpers", "common/j
                     expect($(".outline-item .outline-subsection .status-grading-value")).toContainText("Lab");
                     outlinePage.$('.outline-item .outline-subsection .configure-button').click();
                     expect($("#start_date").val()).toBe('7/9/2014');
-                    expect($("#due_date").val()).toBe('7/10/2014');
-                    expect($("#grading_type").val()).toBe('Lab');
                     expect($("#staff_lock").is(":checked")).toBe(true);
                     expect($("input.timed_exam").is(":checked")).toBe(true);
                     expect($("input.proctored_exam").is(":checked")).toBe(false);
@@ -904,7 +890,7 @@ define(["jquery", "edx-ui-toolkit/js/utils/spec-helpers/ajax-helpers", "common/j
                 it('can hide time limit and hide after due fields when the None radio box is selected', function() {
                     createCourseOutlinePage(this, mockCourseJSON, false);
                     outlinePage.$('.outline-subsection .configure-button').click();
-                    setEditModalValues("7/9/2014", "7/10/2014", "Lab", true);
+                    setEditModalValues("7/9/2014", true);
                     selectAdvancedSettings();
                     selectDisableSpecialExams();
 
@@ -915,7 +901,7 @@ define(["jquery", "edx-ui-toolkit/js/utils/spec-helpers/ajax-helpers", "common/j
                 it('can select the practice exam', function() {
                     createCourseOutlinePage(this, mockCourseJSON, false);
                     outlinePage.$('.outline-subsection .configure-button').click();
-                    setEditModalValues("7/9/2014", "7/10/2014", "Lab", true);
+                    setEditModalValues("7/9/2014", true);
                     selectAdvancedSettings();
                     selectPracticeExam("00:30");
 
@@ -928,7 +914,7 @@ define(["jquery", "edx-ui-toolkit/js/utils/spec-helpers/ajax-helpers", "common/j
                 it('can select the timed exam', function() {
                     createCourseOutlinePage(this, mockCourseJSON, false);
                     outlinePage.$('.outline-subsection .configure-button').click();
-                    setEditModalValues("7/9/2014", "7/10/2014", "Lab", true);
+                    setEditModalValues("7/9/2014", true);
                     selectAdvancedSettings();
                     selectTimedExam("00:30");
                     
@@ -941,7 +927,7 @@ define(["jquery", "edx-ui-toolkit/js/utils/spec-helpers/ajax-helpers", "common/j
                 it('can select the Proctored exam option', function() {
                     createCourseOutlinePage(this, mockCourseJSON, false);
                     outlinePage.$('.outline-subsection .configure-button').click();
-                    setEditModalValues("7/9/2014", "7/10/2014", "Lab", true);
+                    setEditModalValues("7/9/2014", true);
                     selectAdvancedSettings();
                     selectProctoredExam("00:30");
                     
@@ -955,7 +941,7 @@ define(["jquery", "edx-ui-toolkit/js/utils/spec-helpers/ajax-helpers", "common/j
                 it('entering invalid time format uses default value of 30 minutes.', function() {
                     createCourseOutlinePage(this, mockCourseJSON, false);
                     outlinePage.$('.outline-subsection .configure-button').click();
-                    setEditModalValues("7/9/2014", "7/10/2014", "Lab", true);
+                    setEditModalValues("7/9/2014", true);
                     selectAdvancedSettings();
                     selectProctoredExam("abcd");
 
@@ -1311,10 +1297,10 @@ define(["jquery", "edx-ui-toolkit/js/utils/spec-helpers/ajax-helpers", "common/j
                     expect($('#prereq_min_score_error').css('display')).toBe('none');
                 });
 
-                it('release date, due date, grading type, and staff lock can be cleared.', function() {
+                it('release date, and staff lock can be cleared.', function() {
                     createCourseOutlinePage(this, mockCourseJSON, false);
                     outlinePage.$('.outline-item .outline-subsection .configure-button').click();
-                    setEditModalValues("7/9/2014", "7/10/2014", "Lab", true);
+                    setEditModalValues("7/9/2014", true);
                     $(".wrapper-modal-window .action-save").click();
 
                     // This is the response for the change operation.
@@ -1325,26 +1311,16 @@ define(["jquery", "edx-ui-toolkit/js/utils/spec-helpers/ajax-helpers", "common/j
                     expect($(".outline-subsection .status-release-value")).toContainText(
                         "Jul 09, 2014 at 00:00 UTC"
                     );
-                    expect($(".outline-subsection .status-grading-date")).toContainText(
-                        "Due: Jul 10, 2014 at 00:00 UTC"
-                    );
-                    expect($(".outline-subsection .status-grading-value")).toContainText(
-                        "Lab"
-                    );
                     expect($(".outline-subsection .status-message-copy")).toContainText(
                         "Contains staff only content"
                     );
 
                     outlinePage.$('.outline-subsection .configure-button').click();
                     expect($("#start_date").val()).toBe('7/9/2014');
-                    expect($("#due_date").val()).toBe('7/10/2014');
-                    expect($("#grading_type").val()).toBe('Lab');
                     expect($("#staff_lock").is(":checked")).toBe(true);
 
                     $(".wrapper-modal-window .scheduled-date-input .action-clear").click();
-                    $(".wrapper-modal-window .due-date-input .action-clear").click();
                     expect($("#start_date").val()).toBe('');
-                    expect($("#due_date").val()).toBe('');
 
                     $("#grading_type").val('notgraded');
                     $("#staff_lock").prop('checked', false);
@@ -1360,8 +1336,6 @@ define(["jquery", "edx-ui-toolkit/js/utils/spec-helpers/ajax-helpers", "common/j
                     expect($(".outline-subsection .status-release-value")).not.toContainText(
                         "Jul 09, 2014 at 00:00 UTC"
                     );
-                    expect($(".outline-subsection .status-grading-date")).not.toExist();
-                    expect($(".outline-subsection .status-grading-value")).not.toExist();
                     expect($(".outline-subsection .status-message-copy")).not.toContainText(
                         "Contains staff only content"
                     );
@@ -1405,6 +1379,32 @@ define(["jquery", "edx-ui-toolkit/js/utils/spec-helpers/ajax-helpers", "common/j
 
             // Note: most tests for units can be found in Bok Choy
             describe("Unit", function() {
+                var setEditModalValues, mockServerValuesJson;
+
+                setEditModalValues = function (due_date, grading_type, is_locked, weight) {
+                    $("#due_date").val(due_date);
+                    $("#grading_type").val(grading_type);
+                    $("#staff_lock").prop('checked', is_locked);
+                    $("#weight").val(weight);
+                };
+
+                // Contains hard-coded dates because dates are presented in different formats.
+                mockServerValuesJson = createMockSectionJSON({
+                        release_date: 'Jan 01, 2970 at 05:00 UTC'
+                    }, [
+                        createMockSubsectionJSON({}, [
+                            createMockVerticalJSON({
+                                graded: true,
+                                due_date: 'Jul 10, 2014 at 00:00 UTC',
+                                due: "2014-07-10T00:00:00Z",
+                                format: "Lab",
+                                has_explicit_staff_lock: true,
+                                staff_only_message: true,
+                                weight: '0.2'
+                            })
+                        ])
+                    ]);
+
                 it('can be deleted', function() {
                     var promptSpy = EditHelpers.createPromptSpy();
                     createCourseOutlinePage(this, mockCourseJSON);
@@ -1416,6 +1416,102 @@ define(["jquery", "edx-ui-toolkit/js/utils/spec-helpers/ajax-helpers", "common/j
                     // Note: verification of the server response and the UI's handling of it
                     // is handled in the acceptance tests.
                     AjaxHelpers.expectJsonRequest(requests, 'GET', '/xblock/outline/mock-section');
+                });
+
+                it('can be edited', function() {
+                    createCourseOutlinePage(this, mockCourseJSON, false);
+                    expandItemsAndVerifyState('subsection');
+                    getItemHeaders('unit').find('.configure-button').click();
+                    setEditModalValues("7/10/2014", "Lab", true, '0.2');
+                    $(".wrapper-modal-window .action-save").click();
+                    AjaxHelpers.expectJsonRequest(requests, 'POST', '/xblock/mock-unit', {
+                        "graderType":"Lab",
+                        "publish": "republish",
+                        "metadata":{
+                            "visible_to_staff_only": true,
+                            "due":"2014-07-10T00:00:00.000Z",
+                            "weight": '0.2'
+                        }
+                    });
+                    expect(requests[0].requestHeaders['X-HTTP-Method-Override']).toBe('PATCH');
+
+                    // This is the response for the change operation.
+                    AjaxHelpers.respondWithJson(requests, {});
+                    AjaxHelpers.expectJsonRequest(requests, 'GET', '/xblock/outline/mock-section');
+                    expect(requests.length).toBe(2);
+                    // This is the response for the subsequent fetch operation for the section.
+                    AjaxHelpers.respondWithJson(requests, mockServerValuesJson);
+                    expect($(".outline-unit .status-grading-date")).toContainText(
+                        "Due: Jul 10, 2014 at 00:00 UTC"
+                    );
+                    expect($(".outline-unit .status-grading-value")).toContainText(
+                        "Lab"
+                    );
+                    expect($(".outline-unit .status-grading-weight")).toContainText(
+                        "Weight: 0.2"
+                    );
+                    expect($(".outline-unit .status-message-copy")).toContainText(
+                        "Contains staff only content"
+                    );
+                    outlinePage.$('.outline-item .outline-unit .configure-button').click();
+                    expect($("#due_date").val()).toBe('7/10/2014');
+                    expect($("#grading_type").val()).toBe('Lab');
+                    expect($("#weight").val()).toBe('0.2');
+                    expect($("#staff_lock").is(":checked")).toBe(true);
+                });
+
+                it('due date, grading type, weight and staff lock can be cleared.', function() {
+                    createCourseOutlinePage(this, mockCourseJSON, false);
+                    expandItemsAndVerifyState('subsection');
+                    getItemHeaders('unit').find('.configure-button').click();
+                    setEditModalValues("7/10/2014", "Lab", true, '0.2');
+                    $(".wrapper-modal-window .action-save").click();
+
+                    // This is the response for the change operation.
+                    AjaxHelpers.respondWithJson(requests, {});
+                    // This is the response for the subsequent fetch operation.
+                    AjaxHelpers.respondWithJson(requests, mockServerValuesJson);
+
+                    expect($(".outline-unit .status-grading-date")).toContainText(
+                        "Due: Jul 10, 2014 at 00:00 UTC"
+                    );
+                    expect($(".outline-unit .status-grading-value")).toContainText(
+                        "Lab"
+                    );
+                    expect($(".outline-unit .status-grading-weight")).toContainText(
+                        "Weight: 0.2"
+                    );
+                    expect($(".outline-unit .status-message-copy")).toContainText(
+                        "Contains staff only content"
+                    );
+
+                    outlinePage.$('.outline-unit .configure-button').click();
+                    expect($("#due_date").val()).toBe('7/10/2014');
+                    expect($("#grading_type").val()).toBe('Lab');
+                    expect($("#weight").val()).toBe('0.2');
+                    expect($("#staff_lock").is(":checked")).toBe(true);
+
+                    $(".wrapper-modal-window .scheduled-date-input .action-clear").click();
+                    $(".wrapper-modal-window .due-date-input .action-clear").click();
+                    expect($("#due_date").val()).toBe('');
+
+                    $("#grading_type").val('notgraded');
+                    $("#staff_lock").prop('checked', false);
+
+                    $(".wrapper-modal-window .action-save").click();
+
+                    // This is the response for the change operation.
+                    AjaxHelpers.respondWithJson(requests, {});
+                    // This is the response for the subsequent fetch operation.
+                    AjaxHelpers.respondWithJson(requests,
+                        createMockSectionJSON({}, [createMockSubsectionJSON()])
+                    );
+                    expect($(".outline-unit .status-grading-date")).not.toExist();
+                    expect($(".outline-unit .status-grading-value")).not.toExist();
+                    expect($(".outline-unit .status-grading-weight")).not.toExist();
+                    expect($(".outline-unit .status-message-copy")).not.toContainText(
+                        "Contains staff only content"
+                    );
                 });
 
                 it('has a link to the unit page', function() {

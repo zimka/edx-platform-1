@@ -480,12 +480,12 @@ def dump_grading_context(course):
 
     msg += '%s\n' % course.grader.__class__
     graders = {}
-    if isinstance(course.grader, xmgraders.WeightedSubsectionsGrader):
+    if isinstance(course.grader, xmgraders.get_grader('WeightedSubsectionsGrader')):
         msg += '\n'
         msg += "Graded sections:\n"
-        for subgrader, category, weight in course.grader.sections:
-            msg += "  subgrader=%s, type=%s, category=%s, weight=%s\n"\
-                % (subgrader.__class__, subgrader.type, category, weight)
+        for subgrader, category, weight, passing_grade in course.grader.sections:
+            msg += "  subgrader=%s, type=%s, category=%s, weight=%s, passing_grade=%s\n"\
+                % (subgrader.__class__, subgrader.type, category, weight, passing_grade)
             subgrader.index = 1
             graders[subgrader.type] = subgrader
     msg += hbar
@@ -500,6 +500,7 @@ def dump_grading_context(course):
         for sec in gsvals:
             sdesc = sec['section_block']
             frmat = getattr(sdesc, 'format', None)
+            weight = getattr(sdesc, 'weight', 1.0)
             aname = ''
             if frmat in graders:
                 gform = graders[frmat]
@@ -511,8 +512,8 @@ def dump_grading_context(course):
             notes = ''
             if getattr(sdesc, 'score_by_attempt', False):
                 notes = ', score by attempt!'
-            msg += "      %s (format=%s, Assignment=%s%s)\n"\
-                % (sdesc.display_name, frmat, aname, notes)
+            msg += "      %s (format=%s, Assignment=%s%s, weight=%s)\n"\
+                % (sdesc.display_name, frmat, aname, notes, weight)
     msg += "all graded blocks:\n"
     msg += "length=%d\n" % len(gcontext['all_graded_blocks'])
     msg = '<pre>%s</pre>' % msg.replace('<', '&lt;')
