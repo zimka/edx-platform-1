@@ -112,7 +112,10 @@ class CacheBackedAuthenticationMiddleware(AuthenticationMiddleware):
             self._verify_session_auth(request)
         except:
             # Fallback to constructing the User from the database.
-            super(CacheBackedAuthenticationMiddleware, self).process_request(request)
+            try:
+                super(CacheBackedAuthenticationMiddleware, self).process_request(request)
+            except:
+                pass
 
     def _verify_session_auth(self, request):
         """
