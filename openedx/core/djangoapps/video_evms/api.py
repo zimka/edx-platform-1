@@ -123,3 +123,6 @@ def export_to_xml(edx_video_id):
 
 def import_from_xml(xml, edx_video_id, course_id=None):
     return
+
+def get_video_info_for_course_and_profiles(course_id, video_profile_names):
+    return {}
