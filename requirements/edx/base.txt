@@ -183,6 +183,3 @@ pynliner==0.5.2
 
 # for sailthru integration
 sailthru-client==2.2.3
-
-# Collect exceptions
-raven==5.12.0
