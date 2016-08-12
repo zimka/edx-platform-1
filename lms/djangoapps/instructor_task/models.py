@@ -406,6 +406,7 @@ class LocalFSReportStore(ReportStore):
         files.sort(key=lambda (filename, full_path): os.path.getmtime(full_path), reverse=True)
 
         return [
-            (filename, ("file://" + urllib.quote(full_path)))
+            # Downloadable link for csv
+            (filename, ("https://{0}/instructor_report/{1}".format(settings.SITE_NAME, '/'.join(urllib.quote(full_path).split('/')[6:]))))
             for filename, full_path in files
         ]
