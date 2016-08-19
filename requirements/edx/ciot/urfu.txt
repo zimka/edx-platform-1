@@ -1,1 +1,3 @@
 -e git+https://github.com/MasterGowen/MultiEngineXBlock.git#egg=multiengine-xblock
+
+-e git+https://github.com/MasterGowen/PCXBlock.git@master#egg=pcxblock
