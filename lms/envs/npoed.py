@@ -22,8 +22,8 @@ SOCIAL_AUTH_LOGOUT_URL = "%s/logout/" % SSO_NPOED_URL
 SOCIAL_AUTH_RAISE_EXCEPTIONS = True
 
 MIDDLEWARE_CLASSES += ('sso_edx_npoed.middleware.PLPRedirection',
-                       'sso_edx_npoed.middleware.SeamlessAuthorization',
-                       'sso_edx_npoed.middleware.CheckHonorAccepted')
+                       'sso_edx_npoed.middleware.SeamlessAuthorization',)
+#                       'sso_edx_npoed.middleware.CheckHonorAccepted')
 
 PLP_URL = ENV_TOKENS.get('PLP_URL')
 if PLP_URL:
