@@ -4,50 +4,49 @@ metadata:
 
 data: |
     <section class="about">
-      <h2>About This Course</h2>
-      <p>Include your long course description here. The long course description should contain 150-400 words.</p>
+      <h2>О курсе</h2>
+      <p>Включите сюда подробное описание курса. Подробное описание курса должно содержать 150-400 слов.</p>
 
-      <p>This is paragraph 2 of the long course description. Add more paragraphs as needed. Make sure to enclose them in paragraph tags.</p>
+      <p>Это второй абзац длинного описания. Добавьте ещё абзацы, если необходимо. Убедитесь, что абзацы включены в соответствующие теги.</p>
     </section>
 
     <section class="prerequisites">
-      <h2>Requirements</h2>
-      <p>Add information about the skills and knowledge students need to take this course.</p>
+      <h2>Входные требования</h2>
+      <p>Добавьте информацию о навыках и знаниях студента, необходимых для прохождения данного курса.
     </section>
 
     <section class="course-staff">
-      <h2>Course Staff</h2>
+      <h2>Команда курса</h2>
       <article class="teacher">
         <div class="teacher-image">
-          <img src="/static/images/placeholder-faculty.png" align="left" style="margin:0 20 px 0" alt="Course Staff Image #1">
+          <img src="/static/images/placeholder-faculty.png" align="left" style="margin:0 20 px 0" alt="Портрет преподавателя #1">
         </div>
 
-        <h3>Staff Member #1</h3>
-        <p>Biography of instructor/staff member #1</p>
+        <h3>Персона #1</h3>
+        <p>Биография преподавателя/сотрудника #1</p> 
       </article>
 
       <article class="teacher">
         <div class="teacher-image">
-          <img src="/static/images/placeholder-faculty.png" align="left" style="margin:0 20 px 0" alt="Course Staff Image #2">
+          <img src="/static/images/placeholder-faculty.png" align="left" style="margin:0 20 px 0" alt="Портрет преподавателя #2">
         </div>
 
-        <h3>Staff Member #2</h3>
-        <p>Biography of instructor/staff member #2</p>
+        <h3>Персона #2</h3>
+        <p>Биография преподавателя/сотрудника #2</p>
       </article>
     </section>
 
     <section class="faq">
       <section class="responses">
-        <h2>Frequently Asked Questions</h2>
+        <h2>Часто задаваемые вопросы</h2> 
         <article class="response">
-          <h3>What web browser should I use?</h3>
-          <p>The Open edX platform works best with current versions of Chrome, Firefox or Safari, or with Internet Explorer version 9 and above.</p>
-          <p>See our <a href="http://edx.readthedocs.org/en/latest/browsers.html">list of supported browsers</a> for the most up-to-date information.</p>
+          <h3>Нужно ли мне покупать эту книгу?</h3> 
+          <p>Нет, вам будет доступна бесплатная онлайн версия книги  "Chemistry: Principles, Patterns, and Applications" (первое издание), авторы - Брюс Эйверил  (Bruce Averill) и Патриция Элдридж (Patricia Eldredge). При желании вы можете приобрести печатное издание (опубликовано FlatWorld Knowledge)</p> 
         </article>
 
         <article class="response">
-          <h3>Question #2</h3>
-          <p>Your answer would be displayed here.</p>
+          <h3>Вопрос #2</h3>
+          <p>Ваши ответы будут отображаться здесь.</p> 
         </article>
       </section>
     </section>

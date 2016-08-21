@@ -6,6 +6,7 @@ from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from util.date_utils import get_time_display, DEFAULT_SHORT_DATE_FORMAT
 from django.conf import settings
+from django.utils.http import urlquote_plus
 %>
 <%block name="bodyclass">view-in-course view-progress</%block>
 
@@ -13,7 +14,6 @@ from django.conf import settings
 <%static:css group='style-course-vendor'/>
 <%static:css group='style-course'/>
 </%block>
-
 
 <%namespace name="progress_graph" file="/courseware/progress_graph.js"/>
 <%namespace name="progress_table" file="/courseware/progress_table.html"/>
@@ -108,12 +108,12 @@ from django.conf import settings
           </div>
           %endif
 
-      %if not course.disable_progress_graph:
-        <div class="grade-detail-graph" id="grade-detail-graph" aria-hidden="true"></div>
-        %if not course.no_grade and any(grader_conf.get('passing_grade') for grader_conf in course.raw_grader):
-          ${progress_table.body(grade_summary, course)}
-        %endif
-      %endif
+          %if not course.disable_progress_graph:
+            <div class="grade-detail-graph" id="grade-detail-graph" aria-hidden="true"></div>
+            %if not course.no_grade and any(grader_conf.get('passing_grade') for grader_conf in course.raw_grader):
+              ${progress_table.body(grade_summary, course)}
+            %endif
+          %endif
 
           % if credit_course_requirements:
             <section class="credit-eligibility">
@@ -163,15 +163,16 @@ from django.conf import settings
                             </div>
                         </div>
                     %endfor
-                 </div>
-                <button class="detail-collapse" aria-live="polite"><i class="fa fa-caret-up" aria-hidden="true"></i>
-                    <span class="requirement-detail">${_("Less")}</span>
-                </button>
+                     </div>
+                    <button class="detail-collapse" aria-live="polite"><span class="fa fa-caret-up" aria-hidden="true"></span>
+                        <span class="requirement-detail">${_("Less")}</span>
+                    </button>
                 </div>
             </section>
-      %endif
-
-      <%namespace name="progress_summary" file="${context['progress_summary_template']}"/>
-      ${progress_summary.body(courseware_summary)}
+          %endif
+          <%namespace name="progress_summary" file="${context['progress_summary_template']}"/>
+          ${progress_summary.body(courseware_summary)}
+        </div>
+      </div>
     </div>
 </main>

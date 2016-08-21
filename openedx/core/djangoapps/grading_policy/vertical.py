@@ -420,3 +420,4 @@ def calculate_totaled_scores(
             totaled_scores[section_format] = format_scores
 
         return totaled_scores, raw_scores
+

@@ -94,13 +94,14 @@ $(function () {
       totalLabel += "<br><span style=\"color: #b60000;white-space: nowrap;\">({status})</span>" .format(
         status = _('not pass')
       )
-    ticks += [ [overviewBarX,  totalLabel] ]
+
+    ticks += [ [overviewBarX, totalLabel] ]
     tickIndex += 1 + sectionSpacer
-  
+
   totalScore = grade_summary['percent']
   detail_tooltips['Dropped Scores'] = dropped_score_tooltips
-  
-  
+
+
   ## ----------------------------- Grade cutoffs ------------------------- ##
 
   grading_issues = []
@@ -115,22 +116,21 @@ $(function () {
         if not grade_summary['sections_passed']:
           grading_issues.append([0.25, percent])
           grading_issues_tooltips.append(_('One of the categories is not passed'))
-
   else:
     grade_cutoff_ticks = [ ]
   detail_tooltips['not-passed-categories'] = grading_issues_tooltips
   %>
-  
+
   var series = ${ json.dumps( series ) };
   var ticks = ${ json.dumps(ticks) };
   var bottomTicks = ${ json.dumps(bottomTicks) };
   var detail_tooltips = ${ json.dumps(detail_tooltips) };
   var droppedScores = ${ json.dumps(droppedScores) };
   var grade_cutoff_ticks = ${ json.dumps(grade_cutoff_ticks) }
-  
+
   //Always be sure that one series has the xaxis set to 2, or the second xaxis labels won't show up
   series.push( {label: 'Dropped Scores', data: droppedScores, points: {symbol: "cross", show: true, radius: 3}, bars: {show: false}, color: "#333"} );
-  
+
   // Allow for arbitrary grade markers e.g. ['A', 'B', 'C'], ['Pass'], etc.
   var ascending_grades = grade_cutoff_ticks.map(function (el) { return el[0]; }); // Percentage point (in decimal) of each grade cutoff
   ascending_grades.sort();
@@ -139,7 +139,6 @@ $(function () {
 
   var colors = ['#f3f3f3', '#e9e9e9', '#ddd'];
   var markings = [];
-
   %if grade_summary['sections_passed']:
     for(var i=1; i<ascending_grades.length-1; i++) // Skip the i=0 marking, which starts from 0%
       markings.push({yaxis: {from: ascending_grades[i], to: ascending_grades[i+1]}, color: colors[(i-1) % colors.length]});
@@ -163,17 +162,17 @@ $(function () {
     grid: { hoverable: true, clickable: true, borderWidth: 1, markings: markings },
     legend: {show: false},
   };
-  
+
   var $grade_detail_graph = $("#${graph_div_id}");
   if ($grade_detail_graph.length > 0) {
     var plot = $.plot($grade_detail_graph, series, options);
-    
+
     %if show_grade_breakdown:
       var o = plot.pointOffset({x: ${overviewBarX} , y: ${totalScore}});
       $grade_detail_graph.append('<div style="position:absolute;left:' + (o.left - 12) + 'px;top:' + (o.top - 20) + 'px">${"{totalscore:.0%}".format(totalscore=totalScore)}</div>');
     %endif
   }
-      
+
   var previousPoint = null;
   $grade_detail_graph.bind("plothover", function (event, pos, item) {
     $("#x").text(pos.x.toFixed(2));
@@ -181,14 +180,14 @@ $(function () {
     if (item) {
       if (previousPoint != (item.dataIndex, item.seriesIndex)) {
         previousPoint = (item.dataIndex, item.seriesIndex);
-            
+
         $("#tooltip").remove();
-            
+
         if (item.series.label in detail_tooltips) {
           var series_tooltips = detail_tooltips[item.series.label];
           if (item.dataIndex < series_tooltips.length) {
             var x = item.datapoint[0].toFixed(2), y = item.datapoint[1].toFixed(2);
-                
+
             showTooltip(item.pageX, item.pageY, series_tooltips[item.dataIndex]);
           }
         }
@@ -196,7 +195,7 @@ $(function () {
       }
     } else {
       $("#tooltip").remove();
-      previousPoint = null;            
+      previousPoint = null;
     }
   });
 });

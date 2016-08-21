@@ -1,37 +1,38 @@
----
+﻿---
 metadata:
-    display_name: Math Expression Input
+    display_name: Ввод математического выражения
     markdown: !!null
 data: |
   <problem>
   <p>
-  In math expression input problems, learners enter text that represents a
-  mathematical expression into a field, and text is converted to a symbolic
-  expression that appears below that field. You can refer learners to 
+  В задачах на ввод математического выражения Math Expression Input учащиеся 
+  вводят в поле для ответа математическое выражение, которое конвертируется в символьное 
+  выражение, которое появляется под полем ввода. ошлитесь на  
   <a href="http://edx.readthedocs.org/projects/edx-guide-for-students/en/latest/SFD_mathformatting.html" target="_blank">
-  Entering Mathematical and Scientific Expressions</a> in the <i>edX Guide for
-  Students</i> for information about how to enter text into the field.
+  Entering Mathematical and Scientific Expressions</a> в  <i>edX Guide for
+  Students</i>, чтобы учащиеся могли больше узнать, как вводить текст в поле для ответа.
   </p>
   <p>
-  Math expression problems can include unknown variables and relatively
-  complicated symbolic expressions. The grader uses a numerical sampling to
-  determine whether the student’s response matches your math expression, to a
-  specified numerical tolerance. You must specify the allowed variables in the
-  expression as well as the range of values for each variable.
+  Задачи на ввод математических выражений могут включать неизвестные переменные и
+  относительно сложные символьные выражения. При оценивании ответа проводится проверка того,
+  насколько ответы учащегося соответствуют с заданному выражению, с учетом
+  одопустимых отклонений. Вы должны определить все разрешённые переменные,
+  в выражении, так же как и диапазон значение для каждой переменной.
   </p>
   <p>
-  To create these problems, you use MathJax to change your plain text into
-  "beautiful math." For more information about how to use MathJax in Studio,
-  see <a href="http://edx.readthedocs.org/projects/edx-partner-course-staff/en/latest/exercises_tools/mathjax.html" target="_blank">
-  A Brief Introduction to MathJax in Studio</a> in <i>Building and Running an edx
+  Чтобы создать такую задачу, используйте MathJax для преобразования простого текста
+  в математическое выражение. Для более детальной информации как использовать MathJax в Studio 
+  см. <a href="http://edx.readthedocs.org/projects/edx-partner-course-staff/en/latest/exercises_tools/mathjax.html" target="_blank">
+  A Brief Introduction to MathJax in Studio</a> в <i>Building and Running an edx
   Course</i>.  
   </p>
-  <p>When you add the problem, be sure to select <strong>Settings</strong> 
-  to specify a <strong>Display Name</strong> and other values that apply.</p>
-  <p>You can use the following example problems as models.</p>
+  <p>Добавляя задачу, убедитесь, что вы выбрали <strong>Settings</strong> - 
+  <strong>Настройки</strong>, чтобы определить <strong>Display Name</strong> -
+  <strong>Отображаемое Имя</strong> и другие используемые значения.</p>
+  <p>Вы можете использовать следующий пример задачи в качестве образца.</p>
   
-  <p>Write an expression for the product of \( R_1\), \( R_2\), and
-  the inverse of \( R_3\) .</p>
+  <p>Напишите выражение для произведения \( R_1\), \( R_2\) и 
+  выражение, обратное \( R_3\) .</p>
   <formularesponse type="ci" samples="R_1,R_2,R_3@1,2,3:3,4,5#10" answer="$VoVi">
     <responseparam type="tolerance" default="0.00001"/>
     <formulaequationinput size="40" label="Enter the equation"/>
@@ -41,8 +42,8 @@ data: |
   VoVi = "(R_1*R_2)/R_3"
   </script>
 
-  <p>Let \( x\) be a variable, and let \( n\) be an arbitrary constant.
-  What is the derivative of \( x^n\)?</p>
+  <p>Пусть \( x\) будет переменной, а \( n\) будет произвольной констнатой.
+  Чемуравна производная \( x^n\)?</p>
   
   <script type="loncapa/python">
   derivative = "n*x^(n-1)"

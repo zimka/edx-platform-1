@@ -8659,6 +8659,14 @@ msgstr ""
 " Не используйте символ процентов."
 
 #: cms/templates/js/course_grade_policy.underscore
+msgid "as a percent, e.g. 60"
+msgstr "в процентах, например, 60"
+
+#: cms/templates/js/course_grade_policy.underscore
+msgid "Passing Grade"
+msgstr "Проходная оценка"
+
+#: cms/templates/js/course_grade_policy.underscore
 msgid "Total Number"
 msgstr "Общее количество"
 
@@ -9492,3 +9500,12 @@ msgstr ""
 #: cms/templates/js/video/transcripts/messages/transcripts-use-existing.underscore
 msgid "Use Current Transcript"
 msgstr "Использовать субтитры"
+
+msgid "Add a Post"
+msgstr "Добавить сообщение"
+
+msgid "Discussion Home"
+msgstr "Домашняя страница"
+
+msgid "Add a response:"
+msgstr "Ответить:"

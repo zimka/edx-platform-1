@@ -1,54 +1,54 @@
 ---
 metadata:
-    display_name: Numerical Input with Hints and Feedback
+    display_name: Ввод числа с подсказками
     markdown: |
         
-        You can provide feedback for correct answers in numerical input problems. You cannot provide feedback for incorrect answers.
+        Можно отображать обратную связь на ответы. (Вы не можете дать обратную связь на неверный ответ.)
 
-        Use feedback for the correct answer to reinforce the process for arriving at the numerical value.
+        Используйте текст подсказок, чтобы помочь учащемуся провести вычисления.
 
-        You can also add hints for learners.
+        Вы также можете добавлять подсказки.
 
-        Be sure to select Settings to specify a Display Name and other values that apply.
+        Обязательно выберите Настройки для отображения правильного названия вопроса и других значений.
 
-        Use the following example problem as a model.
+        Используйте приведенный ниже пример как образец.
 
-        >>What is the arithmetic mean for the following set of numbers? (1, 5, 6, 3, 5)<<
+        >>WВычислите среднее арифметическое для приведенного ряда чисел. (1, 5, 6, 3, 5))<<
 
-        = 4 {{The mean for this set of numbers is 20 / 5, which equals 4.}}
+        = 4 {{Среднее арияметическое составляет 20 / 5, то есть 4.}}
 
-        ||The mean is calculated by summing the set of numbers and dividing by n.||
-        ||n is the count of items in the set.||
+        ||Среднее арифметическое представляет собой сумму всех значений, делённую на их количество n.||
+        ||n - количество наблюдений в представленном ряду значений.||
 
         [explanation]
-        The mean is calculated by summing the set of numbers and dividing by n. In this case: (1 + 5 + 6 + 3 + 5) / 5 = 20 / 5 = 4.
+        Среднее арифметическое составляет собой сумму всех значений, делённую на их количество n. В данном примере: (1 + 5 + 6 + 3 + 5) / 5 = 20 / 5 = 4.
         [explanation]
 
 hinted: true
 data: |
     <problem>
     
-    <p>You can provide feedback for correct answers in numerical input problems. You cannot provide feedback for incorrect answers.</p>
+    <p>Среднее арифметическое составляет представляет собой сумму всех значений, делённую на их количество.</p>
 
-    <p>Use feedback for the correct answer to reinforce the process for arriving at the numerical value.</p>
+    <p>Используйте приведенный ниже пример как образец.</p>
 
     <p>Use the following example problem as a model.</p>
 
-    <p>What is the arithmetic mean for the following set of numbers? (1, 5, 6, 3, 5)</p>
+    <p>Вычислите среднее арифметическое для приведенного ряда чисел? (1, 5, 6, 3, 5)</p>
     <numericalresponse answer="4">
-      <formulaequationinput label="What is the arithmetic mean for the following set of numbers? (1, 5, 6, 3, 5)" />
-      <correcthint>The mean for this set of numbers is 20 / 5, which equals 4.</correcthint>
+      <formulaequationinput label="Вычислите среднее арифметическое для приведенного ряда чисел? (1, 5, 6, 3, 5)" />
+      <correcthint>Среднее арифметическое составляет 20 / 5, то есть 4.</correcthint>
     </numericalresponse>
 
     <solution>
       <div class="detailed-solution">
-        <p>Explanation</p>
-        <p>The mean is calculated by summing the set of numbers and dividing by n. In this case: (1 + 5 + 6 + 3 + 5) / 5 = 20 / 5 = 4.</p>
+        <p>Объяснение</p>
+        <p>Среднее арифметическое представляет собой сумму всех значений, делённую на их количество n. В данном случае: (1 + 5 + 6 + 3 + 5) / 5 = 20 / 5 = 4.</p>
       </div>
     </solution>
 
     <demandhint>
-      <hint>The mean is calculated by summing the set of numbers and dividing by n.</hint>
-      <hint>n is the count of items in the set.</hint>
+      <hint>Среднее арифметическое представляет собой сумму всех значений, делённую на их количество n.</hint>
+      <hint>n - количество наблюдений.</hint>
     </demandhint>
     </problem>

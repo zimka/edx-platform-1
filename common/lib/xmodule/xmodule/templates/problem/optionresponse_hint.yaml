@@ -1,51 +1,53 @@
 ---
 metadata:
-    display_name: Dropdown with Hints and Feedback
+    display_name: Выпадающий список с подсказками
     markdown: |
 
-        You can provide feedback for each available option in a dropdown problem.
+        Для каждого из имеющихся в выпадающем списке значений вы можете показать комментарий (обратную связь на ответ учащегося).
 
-        You can also add hints for learners.
+        Вы также можете добавить подсказки.
 
-        Be sure to select Settings to specify a Display Name and other values that apply.
+        Обязательно выберите Настройки для отображения правильного названия вопроса и других значений.
 
-        Use the following example problem as a model.
+        Используйте приведенный ниже пример как образец.
 
-        >> A/an ________ is a vegetable.<<
+        >>  ________ - это овощ.<<
 
         [[
-            apple {{An apple is the fertilized ovary that comes from an apple tree and contains seeds, meaning it is a fruit.}}
-            pumpkin {{A pumpkin is the fertilized ovary of a squash plant and contains seeds, meaning it is a fruit.}}
-            (potato) {{A potato is an edible part of a plant in tuber form and is a vegetable.}}
-            tomato {{Many people mistakenly think a tomato is a vegetable. However, because a tomato is the fertilized ovary of a tomato plant and contains seeds, it is a fruit.}}
+            яблоко {{Яблоко - сочный плод, произрастающий на яблоне и содержащий семена. Таким образом, это фрукт.}}
+            тыква {{Тыква - это сочный плод, содержащий семена, то есть - фрукт.}}
+            (картофель) {{Картофель - это съедобная часть растения. Это овощ.}}
+            томат {{Многие ошибочно полагают, что томат - это овощ. Тем не менее, это фрукт - это сочный плод, семена  которого окружены мякотью.}}
         ]]
 
-        ||A fruit is the fertilized ovary from a flower.||
-        ||A fruit contains seeds of the plant.||
+        ||Фрукт получается из завязи, образовавшейся в результате опыления цветка.||
+        ||Фрукт содержит семена растения.||
 
-hinted: true
+tab: hint
 data: |
     <problem>
 
-    <p>You can provide feedback for each available option in a dropdown problem.</p>
+    <p> Для каждого из имеющихся в выпадающем списке значений вы можете показать комментарий (обратную связь на ответ учащегося).</p>
 
-    <p>You can also add hints for learners.</p>
+    <p> Вы также можете добавить подсказки.</p>
 
-    <p>Use the following example problem as a model.</p>
+    <p>Используйте приведенный ниже пример в качестве образца.</p>
 
-    <p> A/an ________ is a vegetable.</p>
+    <p> ________ - это овощ.</p>
     <br/>
     <optionresponse>
     <optioninput>
-      <option correct="False">apple <optionhint>An apple is the fertilized ovary that comes from an apple tree and contains seeds, meaning it is a fruit.</optionhint></option>
-      <option correct="False">pumpkin <optionhint>A pumpkin is the fertilized ovary of a squash plant and contains seeds, meaning it is a fruit.</optionhint></option>
-      <option correct="True">potato <optionhint>A potato is an edible part of a plant in tuber form and is a vegetable.</optionhint></option>
-      <option correct="False">tomato <optionhint>Many people mistakenly think a tomato is a vegetable. However, because a tomato is the fertilized ovary of a tomato plant and contains seeds, it is a fruit.</optionhint></option>
+      <option correct="False">яблоко <optionhint>{блоко - сочный плод, произрастающий на яблоне и содержащий семена. Таким образом, это фрукт.
+             {</optionhint></option>
+      <option correct="False">тыква <optionhint>{Тыква - это сочный плод, содержащий семена, то есть - фрукт.</optionhint></option>
+      <option correct="True">картофель <optionhint>Картофель - это съедобная часть растения. Это овощ.
+             {{</optionhint></option>
+      <option correct="False">томат <optionhint>Многие ошибочно полагают, что томат - это овощ. Тем не менее, это фрукт - сочный плод, семена которого окружены мякотью.</optionhint></option>
     </optioninput>
     </optionresponse>
 
     <demandhint>
-      <hint>A fruit is the fertilized ovary from a flower.</hint>
-      <hint>A fruit contains seeds of the plant.</hint>
+      <hint>Фрукт получается из завязи, образовавшейся в результате опыления цветка.</hint>
+      <hint>Фрукт содержит семена растения.</hint>
     </demandhint>
     </problem>

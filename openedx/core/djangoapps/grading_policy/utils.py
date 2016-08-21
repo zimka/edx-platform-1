@@ -270,5 +270,3 @@ def grade_for_percentage(grade_cutoffs, percentage):
 
     return letter_grade
 
-
-
