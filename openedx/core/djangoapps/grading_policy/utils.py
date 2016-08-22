@@ -209,7 +209,10 @@ def get_score(user, block, scores_client, submissions_scores_cache, max_scores_c
     if not user.is_authenticated():
         return (None, None)
 
-    location_url = unicode(block.location)
+    try:
+        location_url = unicode(block.location)
+    except AttributeError:
+        return (None, None)
     if location_url in submissions_scores_cache:
         return submissions_scores_cache[location_url]
 
