@@ -220,7 +220,7 @@ class S3ReportStore(ReportStore):
     conventions on where files are stored to know what to display. Clients using
     this class can name the final file whatever they want.
     """
-    def __init__(self, bucket_name, root_path):
+    def __init__(self, bucket_name, root_path, custom_domain=None):
         self.root_path = root_path
 
         conn = S3Connection(
@@ -229,6 +229,7 @@ class S3ReportStore(ReportStore):
         )
 
         self.bucket = conn.get_bucket(bucket_name)
+        self.custom_domain = custom_domain
 
     @classmethod
     def from_config(cls, config_name):
@@ -247,7 +248,8 @@ class S3ReportStore(ReportStore):
         """
         return cls(
             getattr(settings, config_name).get("BUCKET"),
-            getattr(settings, config_name).get("ROOT_PATH")
+            getattr(settings, config_name).get("ROOT_PATH"),
+            getattr(settings, config_name).get("CUSTOM_DOMAIN")
         )
 
     def key_for(self, course_id, filename):
@@ -322,10 +324,22 @@ class S3ReportStore(ReportStore):
         can be plugged straight into an href
         """
         course_dir = self.key_for(course_id, '')
-        return [
-            (key.key.split("/")[-1], key.generate_url(expires_in=300))
-            for key in sorted(self.bucket.list(prefix=course_dir.key), reverse=True, key=lambda k: k.last_modified)
-        ]
+
+        links = []
+        for key in sorted(self.bucket.list(prefix=course_dir.key), reverse=True, key=lambda k: k.last_modified):
+            item_name = key.key.split("/")[-1]
+            item_url  = key.generate_url(expires_in=300)
+            if self.custom_domain is None:
+                item_url_new = item_url
+            else:
+                item_scheme = item_url.split("/")[0]
+                item_path = "/".join(item_url.split("/")[3:])
+                item_url_new = "".join([item_scheme, "//", self.custom_domain, "/", item_path])
+            links.append(
+                (item_name, item_url_new)
+            )
+
+        return links
 
 
 class LocalFSReportStore(ReportStore):
