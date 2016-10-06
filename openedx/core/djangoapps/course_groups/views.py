@@ -337,7 +337,6 @@ def add_users_to_cohort(request, course_key_string, cohort_id):
     if request.POST.get('check_student_enrolled','false') == 'true':
         check_student_enrolled = True
         from student.models import CourseEnrollment, get_user_by_username_or_email
-
     else:
         check_student_enrolled = False
 
@@ -345,15 +344,17 @@ def add_users_to_cohort(request, course_key_string, cohort_id):
     changed = []
     present = []
     unknown = []
+    not_enrolled = []
     for username_or_email in split_by_comma_and_whitespace(users):
         if not username_or_email:
             continue
         try:
             if check_student_enrolled:
                 user = get_user_by_username_or_email(username_or_email)
+                if user is None:
+                    raise ValueError
                 if CourseEnrollment.get_enrollment(user=user, course_key=course_key) is None:
-                    raise User.DoesNotExist
-
+                    raise AttributeError
             (user, previous_cohort) = cohorts.add_user_to_cohort(cohort, username_or_email)
             info = {
                 'username': user.username,
@@ -368,12 +369,15 @@ def add_users_to_cohort(request, course_key_string, cohort_id):
             present.append(username_or_email)
         except User.DoesNotExist:
             unknown.append(username_or_email)
+        except AttributeError:
+            not_enrolled.append(username_or_email)
 
     return json_http_response({'success': True,
                                'added': added,
                                'changed': changed,
                                'present': present,
-                               'unknown': unknown})
+                               'unknown': unknown,
+                               'not_enrolled':not_enrolled})
 
 
 @ensure_csrf_cookie

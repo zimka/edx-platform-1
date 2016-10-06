@@ -216,7 +216,8 @@
                     // Show error messages.
                     this.undelegateViewEvents(this.errorNotifications);
                     numErrors = modifiedUsers.unknown.length;
-                    if (numErrors > 0) {
+                    var numNotEnrolled = modifiedUsers.not_enrolled.length;
+                    if (numErrors > 0 || numNotEnrolled>0) {
                         createErrorDetails = function (unknownUsers, showAllErrors) {
                             var numErrors = unknownUsers.length, details = [];
 
@@ -228,10 +229,13 @@
 
                         title = interpolate_text(
                             ngettext("There was an error when trying to add students:",
-                                "There were {numErrors} errors when trying to add students:", numErrors),
-                            {numErrors: numErrors}
+                                "There were {numErrors} errors when trying to add students:", numErrors+numNotEnrolled),
+                            {numErrors: numNotEnrolled+numErrors}
                         );
                         details = createErrorDetails(modifiedUsers.unknown, false);
+                        for (var i = 0; i < Math.min(errorLimit-numErrors, numNotEnrolled); i++) {
+                                details.push(interpolate_text(gettext("User not enrolled: {user}"), {user: modifiedUsers.not_enrolled[i]}));
+                        }
 
                         errorActionCallback = function (view) {
                             view.model.set("actionText", null);
@@ -241,12 +245,13 @@
 
                         errorModel = new NotificationModel({
                             details: details,
-                            actionText: numErrors > errorLimit ? gettext("View all errors") : null,
+                            actionText: numErrors + numNotEnrolled > errorLimit ? gettext("View all errors") : null,
                             actionCallback: errorActionCallback,
                             actionClass: 'action-expand'
                         });
 
                         this.showErrorMessage(title, false, errorModel);
+
                     }
                     else if (this.errorNotifications) {
                         this.errorNotifications.$el.html('');
