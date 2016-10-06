@@ -2,8 +2,11 @@
     <span class="title-value"><%- cohort.get('name') %></span>
     <span class="group-count"><%-
         interpolate(
-            ngettext('(contains %(student_count)s student)', '(contains %(student_count)s students)', cohort.get('user_count')),
-            { student_count: cohort.get('user_count') },
+            ngettext('(contains %(student_count)s student', '(contains %(student_count)s students', cohort.get('user_count')) +
+            ngettext(', %(enrolled_student_count)s student enrolled in course)', ', %(enrolled_student_count)s students enrolled in course)', cohort.get('enrolled_user_count')),
+            { student_count: cohort.get('user_count'),
+              enrolled_student_count: cohort.get('enrolled_user_count')
+             },
             true
         )
     %></span>
