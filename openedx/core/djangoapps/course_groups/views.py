@@ -93,6 +93,7 @@ def _get_cohort_representation(cohort, course):
         'assignment_type': assignment_type,
         'user_partition_id': partition_id,
         'group_id': group_id,
+        'enrolled_user_count':cohort.users.filter(courseenrollment__course_id=course.id).count()
     }
 
 
@@ -331,8 +332,15 @@ def add_users_to_cohort(request, course_key_string, cohort_id):
             cohort_id=cohort_id,
             course_key_string=course_key_string
         ))
-
     users = request.POST.get('users', '')
+
+    if request.POST.get('check_student_enrolled','false') == 'true':
+        check_student_enrolled = True
+        from student.models import CourseEnrollment, get_user_by_username_or_email
+
+    else:
+        check_student_enrolled = False
+
     added = []
     changed = []
     present = []
@@ -340,8 +348,12 @@ def add_users_to_cohort(request, course_key_string, cohort_id):
     for username_or_email in split_by_comma_and_whitespace(users):
         if not username_or_email:
             continue
-
         try:
+            if check_student_enrolled:
+                user = get_user_by_username_or_email(username_or_email)
+                if CourseEnrollment.get_enrollment(user=user, course_key=course_key) is None:
+                    raise User.DoesNotExist
+
             (user, previous_cohort) = cohorts.add_user_to_cohort(cohort, username_or_email)
             info = {
                 'username': user.username,

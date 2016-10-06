@@ -31,6 +31,12 @@
 
                     <span class="tip" id="email-notification-tip"><%- gettext('You will not receive notification for emails that bounce, so double-check your spelling.') %></span>
                 </div>
+                <div class="field">
+                    <input type="checkbox" class="cohort-management-group-add-students-check-student-enrolled" id="check-student-enrolled" value="Check student enrolled">
+                    <span class="label-text">
+                        <%- gettext('Check students are enrolled') %>
+                    </span>
+                </div>
             </div>
 
             <div class="form-actions">

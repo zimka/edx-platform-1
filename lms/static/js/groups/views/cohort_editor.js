@@ -86,11 +86,12 @@
                         input = this.$('.cohort-management-group-add-students'),
                         add_url = this.model.url() + '/add',
                         students = input.val().trim(),
-                        cohortId = this.model.id;
+                        cohortId = this.model.id,
+                        check_student_enrolled = this.$('.cohort-management-group-add-students-check-student-enrolled').prop('checked');
 
                     if (students.length > 0) {
                         $.post(
-                            add_url, {'users': students}
+                            add_url, {'users': students, 'check_student_enrolled': check_student_enrolled}
                         ).done(function(modifiedUsers) {
                             self.refreshCohorts().done(function() {
                                 // Find the equivalent cohort in the new collection and select it
