@@ -4,8 +4,8 @@
 <% _.each(cohorts, function(cohort) { %>
     <%
     var label = interpolate(
-    gettext('%(cohort_name)s (%(user_count)s)'),
-    { cohort_name: cohort.get('name'), user_count: cohort.get('user_count') },
+    gettext('%(cohort_name)s (%(user_count)s/%(enrolled_user_count)s)'),
+    { cohort_name: cohort.get('name'), user_count: cohort.get('user_count'), enrolled_user_count: cohort.get('enrolled_user_count') },
     true
     );
     var isSelected = selectedCohort && selectedCohort.get('id') === cohort.get('id')
