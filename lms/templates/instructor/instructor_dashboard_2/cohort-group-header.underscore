@@ -9,9 +9,30 @@
              },
             true
         )
-    %></span>
+    %>
+    </span>
 </h3>
+
 <div class="cohort-management-group-setup">
+    <span class="group-count">
+        <% if (cohort.get('user_count') != cohort.get('enrolled_user_count')){ %>
+           <%- interpolate(
+                ngettext('Next %(n_not_enrolled_learners)s learner is', 'Next %(n_not_enrolled_learners)s learners are',  (cohort.get('user_count')-cohort.get('enrolled_user_count'))) +
+                gettext(' presented in cohort, but not enrolled in course: %(users_string)s'),
+                { n_not_enrolled_learners: (cohort.get('user_count')-cohort.get('enrolled_user_count')),
+                  users_string: cohort.get('not_enrolled_user').join(),
+                  },
+                true
+           )%>
+           <% if ((cohort.get('user_count')-cohort.get('enrolled_user_count'))>50){ %>
+                <%- interpolate(
+                gettext("... (Only first 50 users are shown)"),
+                {},
+                true
+                )%>
+           <% } %>
+        <% } %>
+    </span>
     <div class="setup-value">
         <% if (cohort.get('assignment_type') == "manual") { %>
             <%- gettext("Learners are added to this cohort only when you provide their email addresses or usernames on this page.") %>
