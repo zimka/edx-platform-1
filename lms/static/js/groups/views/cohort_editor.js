@@ -251,7 +251,6 @@
                         });
 
                         this.showErrorMessage(title, false, errorModel);
-
                     }
                     else if (this.errorNotifications) {
                         this.errorNotifications.$el.html('');

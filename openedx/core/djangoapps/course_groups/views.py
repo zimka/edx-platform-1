@@ -86,14 +86,21 @@ def _get_cohort_representation(cohort, course):
     """
     group_id, partition_id = cohorts.get_group_info_for_cohort(cohort)
     assignment_type = cohorts.get_assignment_type(cohort)
+    enrolled_user_count = cohort.users.filter(courseenrollment__course_id=course.id).count()
+    user_count = cohort.users.count()
+
+    not_enrolled_user = []
+    if enrolled_user_count != user_count:
+        not_enrolled_user = [n.username for num, n in enumerate(cohort.users.exclude(courseenrollment__course_id=course.id)) if num < 50]
     return {
         'name': cohort.name,
         'id': cohort.id,
-        'user_count': cohort.users.count(),
+        'user_count': user_count,
         'assignment_type': assignment_type,
         'user_partition_id': partition_id,
         'group_id': group_id,
-        'enrolled_user_count':cohort.users.filter(courseenrollment__course_id=course.id).count()
+        'enrolled_user_count':enrolled_user_count,
+        'not_enrolled_user':not_enrolled_user,
     }
 
 
@@ -332,6 +339,7 @@ def add_users_to_cohort(request, course_key_string, cohort_id):
             cohort_id=cohort_id,
             course_key_string=course_key_string
         ))
+
     users = request.POST.get('users', '')
 
     if request.POST.get('check_student_enrolled','false') == 'true':
@@ -339,7 +347,6 @@ def add_users_to_cohort(request, course_key_string, cohort_id):
         from student.models import CourseEnrollment, get_user_by_username_or_email
     else:
         check_student_enrolled = False
-
     added = []
     changed = []
     present = []
@@ -348,6 +355,7 @@ def add_users_to_cohort(request, course_key_string, cohort_id):
     for username_or_email in split_by_comma_and_whitespace(users):
         if not username_or_email:
             continue
+
         try:
             if check_student_enrolled:
                 user = get_user_by_username_or_email(username_or_email)
