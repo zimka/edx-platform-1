@@ -30,9 +30,9 @@ function(HtmlUtils) {
         var dfd = $.Deferred();
 
         // Changing quality for now only works for YouTube videos.
-        if (state.videoType !== 'youtube') {
-            return;
-        }
+        //if (state.videoType !== 'youtube') {
+        //    return;
+        //}
 
         state.videoQualityControl = {};
 
@@ -80,7 +80,12 @@ function(HtmlUtils) {
     //     make the created DOM elements available via the 'state' object. Much easier to work this
     //     way - you don't have to do repeated jQuery element selects.
     function _renderElements(state) {
-        var element = state.videoQualityControl.el = $(template.toString());
+        var template_str = template.toString();
+        if (state.videoType !== 'youtube') {
+            template_str = template_str.replace("is-hidden","");
+            console.log(template_str);
+        }
+        var element = state.videoQualityControl.el = $(template_str);
         state.videoQualityControl.quality = 'large';
         HtmlUtils.append(state.el.find('.secondary-controls'), HtmlUtils.HTML(element));
     }
