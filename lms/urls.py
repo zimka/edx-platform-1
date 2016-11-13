@@ -1010,10 +1010,11 @@ urlpatterns += (
     url(r'^social-logout', 'sso_edx_npoed.views.logout', name='social-logout'),
 )
 
-import openassessment.fileupload.urls
-urlpatterns += (
-    url(r'^openassessment/storage', include(openassessment.fileupload.urls)),
-)
+if settings.ORA2_FILEUPLOAD_BACKEND == 'filesystem':
+    import openassessment.fileupload.urls
+    urlpatterns += (
+        url(r'^openassessment/storage', include(openassessment.fileupload.urls)),
+    )
 
 if settings.FEATURES.get('ENABLE_FINANCIAL_ASSISTANCE_FORM'):
     urlpatterns += (
