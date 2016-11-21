@@ -914,6 +914,9 @@ INSTALLED_APPS = (
     'django_sites_extensions',
 )
 
+# Used with XQueue
+XQUEUE_WAITTIME_BETWEEN_REQUESTS = 5  # seconds
+
 
 ################# EDX MARKETING SITE ##################################
 
