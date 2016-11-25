@@ -1,3 +1,4 @@
+# coding=utf-8
 import json
 import urllib2
 import logging
@@ -6,7 +7,7 @@ from lxml.etree import Element, SubElement
 from django.conf import settings
 
 log = logging.getLogger(__name__)
-API_URL = '{0}/api/v1/video'.format(getattr(settings, 'EVMS_URL'))
+API_URL = '{0}/api/v2/video'.format(getattr(settings, 'EVMS_URL'))
 
 
 class ValError(Exception):
@@ -53,12 +54,33 @@ class ValCannotCreateError(ValError):
     pass
 
 
+def _edx_openedu_compare(openedu_profile, edx_profile):
+    """
+    Openedu api возвращает по edx_id url со значениями profile: 'original' и 'hd'.
+    EDX для отображения ожидает profile из ['youtube', 'desktop_webm', 'desktop_mp4'].
+    Проверяет 'равны' ли значения
+    :param openedu_profile:
+    :param edx_profile:
+    :return:
+    """
+    mapping = {
+        "original": "desktop_webm",
+        "hd": "desktop_mp4"
+    }
+    if openedu_profile  == edx_profile:
+        return True
+    if mapping[openedu_profile] == edx_profile:
+        return True
+    return False
+
+
 def get_urls_for_profiles(edx_video_id, val_profiles):
     raw_data = get_video_info(edx_video_id)
     if raw_data is None:
         raw_data = {}
     else:
-        raw_data = raw_data[0]
+        #raw_data = raw_data[0]
+        pass
     log.warning(raw_data)
     profile_data = {}
     for profile in val_profiles:
@@ -66,7 +88,7 @@ def get_urls_for_profiles(edx_video_id, val_profiles):
         if 'encoded_videos' in raw_data:
             videos = raw_data['encoded_videos']
             for video in videos:
-                if video.get('profile') == profile:
+                if _edx_openedu_compare(video.get('profile'), profile):
                     url = video.get('url', '')
         profile_data[profile] = url
     return json.loads(json.dumps(profile_data))

@@ -83,7 +83,6 @@ function(HtmlUtils) {
         var template_str = template.toString();
         if (state.videoType !== 'youtube') {
             template_str = template_str.replace("is-hidden","");
-            console.log(template_str);
         }
         var element = state.videoQualityControl.el = $(template_str);
         state.videoQualityControl.quality = 'large';
