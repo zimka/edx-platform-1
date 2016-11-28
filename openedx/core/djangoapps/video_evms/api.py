@@ -7,7 +7,7 @@ from lxml.etree import Element, SubElement
 from django.conf import settings
 
 log = logging.getLogger(__name__)
-API_URL = '{0}/api/v2/video'.format(getattr(settings, 'EVMS_URL'))
+API_URL = '{0}/api/v2/video' # format(EVMS_URL) только при исполнении, чтобы не было конфликтов при paver update_assets
 
 
 class ValError(Exception):
@@ -64,10 +64,10 @@ def _edx_openedu_compare(openedu_profile, edx_profile):
     :return:
     """
     mapping = {
-        "original": "desktop_webm",
-        "hd": "desktop_mp4"
+        "mobile": "desktop_webm",
+        "desktop_mp4": "desktop_mp4"
     }
-    if openedu_profile  == edx_profile:
+    if openedu_profile == edx_profile:
         return True
     if mapping[openedu_profile] == edx_profile:
         return True
@@ -100,7 +100,9 @@ def get_url_for_profile(edx_video_id, val_profile):
 
 def get_video_info(edx_video_id):
     token = getattr(settings, 'EVMS_API_KEY')
-    url_api = u'{0}/{1}?token={2}'.format(API_URL, edx_video_id, token)
+    url_api = u'{0}/{1}?token={2}'.format(API_URL.format(getattr(settings, 'EVMS_URL')),
+                                          edx_video_id,
+                                          token)
     try:
         response = urllib2.urlopen(url_api)
     except:
