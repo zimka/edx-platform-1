@@ -173,9 +173,12 @@ function() {
 
             if (is_active){
                 btn.removeClass("active");
+                btn.find(".icon").html("SD");
             }
             else{
                 btn.addClass("active");
+                btn.find(".icon").html("HD");
+
             }
             var sources_obj = this.videoEl.find('source');
             this.video.innerHTML = sources_obj.eq(1).prop('outerHTML') +' ' + sources_obj.eq(0).prop('outerHTML');
