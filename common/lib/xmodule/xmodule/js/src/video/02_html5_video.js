@@ -158,6 +158,37 @@ function () {
             this.callStateChangeCallback();
         };
 
+        Player.prototype.getAvailableQualityLevels = function(){
+            return this.videoEl.find('source')["length"];
+        };
+
+        Player.prototype.setPlaybackQuality = function(value){
+            if (value == "large"){
+                return;
+            }
+            if (this.getAvailableQualityLevels() == 1){
+                return;
+            }
+            var btn = this.el.find(".quality-control");
+            var is_active = btn.hasClass("active");
+
+            if (is_active){
+                btn.removeClass("active");
+                btn.find(".icon").html("SD");
+            }
+            else{
+                btn.addClass("active");
+                btn.find(".icon").html("HD");
+
+            }
+            var sources_obj = this.videoEl.find('source');
+            this.video.innerHTML = sources_obj.eq(1).prop('outerHTML') +' ' + sources_obj.eq(0).prop('outerHTML');
+            //this.onPause();
+            var time = this.video.currentTime;
+            this.video.load();
+            this.video.currentTime = time;
+            this.playVideo();
+        };
         return Player;
 
         /*
@@ -200,7 +231,7 @@ function () {
             var isTouch = onTouchBasedDevice() || '',
                 sourceList, _this, errorMessage, lastSource;
 
-            _.bindAll(this, 'onLoadedMetadata', 'onPlay', 'onPlaying', 'onPause', 'onEnded');
+            _.bindAll(this, 'onLoadedMetadata', 'onPlay', 'onPlaying', 'onPause', 'onEnded', 'getAvailableQualityLevels', 'setPlaybackQuality');
             this.logs = [];
             // Initially we assume that el is a DOM element. If jQuery selector
             // fails to select something, we assume that el is an ID of a DOM

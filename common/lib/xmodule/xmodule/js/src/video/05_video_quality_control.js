@@ -11,13 +11,13 @@ function (HtmlUtils) {
             '<button class="control quality-control is-hidden" aria-disabled="false" title="',
                 '{highDefinition}',
             '">',
-                '<span class="icon icon-hd" aria-hidden="true">HD</span>',
-                '<span class="sr text-translation">',
-                    '{highDefinition}',
-                '</span>&nbsp;',
-                '<span class="sr control-text">',
-                    '{off}',
-                '</span>',
+            '<span class="icon icon-hd" aria-hidden="true">SD</span>',
+            '<span class="sr text-translation">',
+            '{highDefinition}',
+            '</span>&nbsp;',
+            '<span class="sr control-text">',
+            '{off}',
+            '</span>',
             '</button>'
         ].join('')),
         {
@@ -31,9 +31,9 @@ function (HtmlUtils) {
         var dfd = $.Deferred();
 
         // Changing quality for now only works for YouTube videos.
-        if (state.videoType !== 'youtube') {
-            return;
-        }
+        //if (state.videoType !== 'youtube') {
+        //    return;
+        //}
 
         state.videoQualityControl = {};
 
@@ -81,7 +81,13 @@ function (HtmlUtils) {
     //     make the created DOM elements available via the 'state' object. Much easier to work this
     //     way - you don't have to do repeated jQuery element selects.
     function _renderElements(state) {
-        var element = state.videoQualityControl.el = $(template.toString());
+        var template_str = template.toString();
+        if (state.videoType !== 'youtube') {
+            if (state.config.sources.length >= 2){
+                template_str = template_str.replace("is-hidden","");
+            }
+        }
+        var element = state.videoQualityControl.el = $(template_str);
         state.videoQualityControl.quality = 'large';
         HtmlUtils.append(state.el.find('.secondary-controls'), HtmlUtils.HTML(element));
     }
