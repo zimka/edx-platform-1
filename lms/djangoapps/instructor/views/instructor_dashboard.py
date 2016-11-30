@@ -57,7 +57,7 @@ from openedx.core.djangoapps.site_configuration import helpers as configuration_
 from openedx.core.djangoapps.verified_track_content.models import VerifiedTrackCohortedCourse
 
 from openedx.core.djangolib.markup import HTML, Text
-
+from openedx.core.djangoapps.bulk_change_due_date import _section_change_due
 log = logging.getLogger(__name__)
 
 
@@ -237,6 +237,9 @@ def instructor_dashboard_2(request, course_id):
 
     if settings.FEATURES.get("ENABLE_INSTRUCTOR_RESET_TRACK"):
         sections.append(_section_instructor_resets(course, access))
+
+    if settings.FEATURES.get("ENABLE_BULK_CHANGE_DUE_DATES") and settings.FEATURES.get("INDIVIDUAL_DUE_DATES"):
+        sections.append(_section_change_due(course, access))
 
     context = {
         'course': course,
