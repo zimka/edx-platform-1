@@ -42,6 +42,7 @@ from django_comment_client.utils import available_division_schemes, has_forum_ac
 from django_comment_common.models import FORUM_ROLE_ADMINISTRATOR, CourseDiscussionSettings
 from edxmako.shortcuts import render_to_response
 from lms.djangoapps.courseware.module_render import get_module_by_usage_id
+from openedx.core.djangoapps.bulk_change_due_date import _section_change_due
 from openedx.core.djangoapps.course_groups.cohorts import DEFAULT_COHORT_NAME, get_course_cohorts, is_course_cohorted
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 from openedx.core.djangoapps.verified_track_content.models import VerifiedTrackCohortedCourse
@@ -231,6 +232,9 @@ def instructor_dashboard_2(request, course_id):
         course_shifts_section = (_section_course_shifts(course, access))
         if course_shifts_section:
             sections.append(course_shifts_section)
+
+    if settings.FEATURES.get("ENABLE_BULK_CHANGE_DUE_DATES") and settings.FEATURES.get("INDIVIDUAL_DUE_DATES"):
+        sections.append(_section_change_due(course, access))
 
     context = {
         'course': course,

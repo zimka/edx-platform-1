@@ -2,7 +2,7 @@
 Instructor API endpoint urls.
 """
 
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, url, include
 
 urlpatterns = patterns(
     '',
@@ -167,4 +167,7 @@ urlpatterns = patterns(
     url(r'^certificate_invalidation_view/$',
         'lms.djangoapps.instructor.views.api.certificate_invalidation_view',
         name='certificate_invalidation_view'),
+)
+urlpatterns +=(
+    url(r'^', include('openedx.core.djangoapps.bulk_change_due_date.urls')),
 )
