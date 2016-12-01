@@ -24,34 +24,24 @@ class Command(BaseCommand):
         parser.add_argument('--date_set', dest='date_set')
 
         parser.add_argument('--cohort', dest='cohort')
-        parser.add_argument('--user', dest='users')
+        parser.add_argument('--user', dest='user')
 
     def handle(self, **options):
-        self.store = modulestore()
+        store = modulestore()
         self.stdout.write("Hello command world")
 
         who_keys = ('cohort', 'user')
-        what_keys = ('problem_location', 'course_key')
+        where_keys = ('problem_location', 'course_key')
         when_keys = ('days_add', 'date_set')
 
-        who = self._exist_n_unique(options, who_keys)
-        what = self._exist_n_unique(options, what_keys)
-        when = self._exist_n_unique(options, when_keys)
+        who_key, who_val = self._exist_n_unique(options, who_keys)
+        where_key, where_val = self._exist_n_unique(options, where_keys)
+        when_key, when_val = self._exist_n_unique(options, when_keys)
 
-    def user_change_due(self, problem_location, date, user):
-        store = self.store
-        self.stdout.write(str(type(store)))
-        usage_key = UsageKey.from_string(problem_location)
-
-        xblock = store.get_item(usage_key)
-        self.stdout.write(str(type(xblock)))
-        self.stdout.write(str(xblock))
-        course = self._xblock_course(xblock)
-        course_key = course.id
-        is_enrolled = CourseEnrollment.is_enrolled(user, course_key)
-        if not is_enrolled:
-            raise CommandError("User {}() is not enrolled on course with key {}".format(user.username, course_key))
-        set_due_date_extension(course, xblock, user, date)
+        choose_keys = [who_key, where_key, when_key]
+        changer_wrap = self.choose_date_changer(choose_keys)
+        changer = changer_wrap(who_val, where_val, when_val, store, stdout=self.stdout)
+        changer.change_due()
 
     @staticmethod
     def _exist_n_unique(container, keys):
@@ -61,20 +51,29 @@ class Command(BaseCommand):
         :return: key
         """
         exist_pairs = [(k, container[k]) for k in keys if container[k]]
-        if len(exist_pairs) != 0:
+        if len(exist_pairs) != 1:
             raise CommandError("""
-                Non unique value for keys = {keys}. Ambiguous command.
+                Non un  ique value for keys = {keys}. Ambiguous command.
                 {dict}
             """.format(keys=keys, dict=exist_pairs))
         single_key = exist_pairs[0][0]
-        return single_key
+        return single_key, container[single_key]
+
+    @staticmethod
+    def choose_date_changer(keys):
+        key_set = set(keys)
+        if len(key_set) != 3:
+            raise CommandError("Internal Error. To much keys:{}".format(keys))
+        user_set_date_keys = ['user', 'date_set', 'problem_location']
+        if all(x in key_set for x in user_set_date_keys):
+            return UserSetProblemDate.wrap()
 
 
-class DateChanger:
-    def __init__(self, who, when, what, store, stdout=None):
-        self.who = who  # user or cohort
+class DateChanger(object):
+    def __init__(self, who, where, when, store, stdout=None):
+        self.who = who  # user or cohort identifier
         self.when = when  # date to set or days to add
-        self.what = what  # xblock or course
+        self.where = where  # xblock or course location
         self.stdout = stdout
         self.store = store
 
@@ -82,7 +81,7 @@ class DateChanger:
         self.stdout = stdout
 
     @staticmethod
-    def _xblock_course(xblock):
+    def _get_xblock_course(xblock):
         """
         Находит для данного xblock корень-course
         :param xblock:
@@ -110,17 +109,30 @@ class DateChanger:
             )
         return date
 
+    @classmethod
+    def wrap(cls):
+        def inner_wrap(*args, **kwargs):
+            return cls(*args, **kwargs)
+        return inner_wrap
 
-class UserSetDate(DateChanger):
+
+class UserSetProblemDate(DateChanger):
     def change_due(self):
         store = self.store
-        self.stdout.write(str(type(store)))
-        usage_key = UsageKey.from_string(self.what)
 
+        usage_key = UsageKey.from_string(self.where)
         xblock = store.get_item(usage_key)
-        course = self._xblock_course(xblock)
+        if not xblock:
+            raise CommandError("Didn't find xblock for location {}".format(self.where))
+
+        user = require_student_from_identifier(self.who)
+
+        date = self._parse_date(self.when)
+
+        course = self._get_xblock_course(xblock)
         course_key = course.id
-        is_enrolled = CourseEnrollment.is_enrolled(self.who, course_key)
+
+        is_enrolled = CourseEnrollment.is_enrolled(user, course_key)
         if not is_enrolled:
-            raise CommandError("User {} is not enrolled on course with key {}".format(self.who.username, course_key))
-        set_due_date_extension(course, self.what, self.who, self.when)
+            raise CommandError("User {} is not enrolled on course with key {}".format(user.username, course_key))
+        set_due_date_extension(course, xblock, user, date)
