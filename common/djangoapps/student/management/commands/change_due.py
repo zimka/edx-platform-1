@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import dateutil
+import logging
+
 from datetime import timedelta
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.timezone import utc
@@ -51,7 +53,10 @@ class Command(BaseCommand):
         changer_wrap = choose_date_changer(choose_keys)
         changer = changer_wrap(who_val, where_val, when_val, store, stdout=self.stdout)
         changer.change_due()
+        changer.logging()
         self.stdout.write("Successfully changed date.")
+        self.stdout.write(changer.logging_message)
+        self.stdout.write(str(type(changer)))
 
     @staticmethod
     def _exist_n_unique(container, keys):
@@ -186,6 +191,21 @@ class DateChanger(object):
 
                 set_due_date_extension(self.course, xblock, user, date)
 
+    def logging(self):
+        all_changes = []
+        template = "block '{block}'('{block_name}') for user '{user}': set due '{date}';"
+        for user in self.users_group:
+            for num, xblock in enumerate(self.xblock_group):
+                date = self.dates_group[num]
+                all_changes.append(template.format(
+                    block=str(xblock.location),
+                    block_name=str(xblock.display_name),
+                    date=str(date),
+                    user=str(user.username)
+                ))
+        self.logging_message = "\n".join(x for x in all_changes)
+        logging.info(self.logging_message)
+
 
 class BlockMixin(object):
     @property
@@ -214,6 +234,12 @@ class BlockMixin(object):
 
 
 class CourseMixin(object):
+    """
+    IMPORTANT
+    При выборе блоков, для которых меняются даты, делается проверка на наличие поля due.
+    У problems такого поля нет, поэтому в список итемов попадают уже Subsection, а не отдельные
+    problem.
+    """
     @property
     def xblock_group(self):
         try:
@@ -228,6 +254,7 @@ class CourseMixin(object):
 
         items = self.store.get_items(course_key)
         items = [x for x in items if (getattr(x, "due", False) and x.format)]
+        self.stdout.write(";; ".join(str(x.display_name) for x in items))
         self._xblock_group = items
         return self._xblock_group
 
