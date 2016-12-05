@@ -16,22 +16,22 @@ class Command(BaseCommand):
     """ + u"""
     Команде нужно указать 3 параметра: для кого менять, где менять и на когда менять
     Кто:
-        --user={username / emmail},
+        --user={username / email},
         --cohort={name/id[ не тестировал]}
     Где:
-        --problem_location={Location проблемы из STAFF DEBUG INFO в LMS}
+        --block_key={Location проблемы из STAFF DEBUG INFO в LMS}
         --course_key={id курса, например 'course-v1:test_o+test_n+test_r'}
     Когда:
-        --date_set={дата формата 2017/01/31}
-        --days_add={int добавить дней. Команда с этой опцией не кумулятивна.}
+        --set_date={дата формата 2017/01/31}
+        --add_days={int добавить дней. Команда с этой опцией не кумулятивна.}
     """
 
     def add_arguments(self, parser):
-        parser.add_argument('--problem_location', dest='problem_location')
+        parser.add_argument('--block_key', dest='block_key')
         parser.add_argument('--course_key', dest='course_key')
 
-        parser.add_argument('--days_add', dest='days_add')
-        parser.add_argument('--date_set', dest='date_set')
+        parser.add_argument('--add_days', dest='add_days')
+        parser.add_argument('--set_date', dest='set_date')
 
         parser.add_argument('--cohort', dest='cohort')
         parser.add_argument('--user', dest='user')
@@ -40,8 +40,8 @@ class Command(BaseCommand):
         store = modulestore()
 
         who_keys = ('cohort', 'user')
-        where_keys = ('problem_location', 'course_key')
-        when_keys = ('days_add', 'date_set')
+        where_keys = ('block_key', 'course_key')
+        when_keys = ('add_days', 'set_date')
 
         who_key, who_val = self._exist_n_unique(options, who_keys)
         where_key, where_val = self._exist_n_unique(options, where_keys)
@@ -75,35 +75,35 @@ def choose_date_changer(keys):
     if len(key_set) != 3:
         raise CommandError("Internal Error. To much keys:{}".format(keys))
 
-    user_problem_set_date_keys = ['user', 'date_set', 'problem_location']
+    user_problem_set_date_keys = ['user', 'set_date', 'block_key']
     if all(x in key_set for x in user_problem_set_date_keys):
         return UserProblemSetDate.wrap()
 
-    user_problem_add_days_keys = ['user', 'days_add', 'problem_location']
+    user_problem_add_days_keys = ['user', 'add_days', 'block_key']
     if all(x in key_set for x in user_problem_add_days_keys):
         return UserProblemAddDays.wrap()
 
-    user_course_set_date_keys = ['user', 'date_set', 'course_key']
+    user_course_set_date_keys = ['user', 'set_date', 'course_key']
     if all(x in key_set for x in user_course_set_date_keys):
         return UserCourseSetDate.wrap()
 
-    user_course_add_days_keys = ['user', 'days_add', 'course_key']
+    user_course_add_days_keys = ['user', 'add_days', 'course_key']
     if all(x in key_set for x in user_course_add_days_keys):
         return UserCourseAddDays.wrap()
 
-    cohort_problem_set_date_keys = ['cohort', 'date_set', 'problem_location']
+    cohort_problem_set_date_keys = ['cohort', 'set_date', 'block_key']
     if all(x in key_set for x in cohort_problem_set_date_keys):
         return CohortProblemSetDate.wrap()
 
-    cohort_problem_add_days_keys = ['cohort', 'days_add', 'problem_location']
+    cohort_problem_add_days_keys = ['cohort', 'add_days', 'block_key']
     if all(x in key_set for x in cohort_problem_add_days_keys):
         return CohortProblemAddDays.wrap()
 
-    cohort_course_set_date_keys = ['cohort', 'date_set', 'course_key']
+    cohort_course_set_date_keys = ['cohort', 'set_date', 'course_key']
     if all(x in key_set for x in cohort_course_set_date_keys):
         return CohortCourseSetDate.wrap()
 
-    cohort_course_add_days_keys = ['cohort', 'days_add', 'course_key']
+    cohort_course_add_days_keys = ['cohort', 'add_days', 'course_key']
     if all(x in key_set for x in cohort_course_add_days_keys):
         return CohortCourseAddDays.wrap()
 
@@ -187,7 +187,7 @@ class DateChanger(object):
                 set_due_date_extension(self.course, xblock, user, date)
 
 
-class ProblemMixin(object):
+class BlockMixin(object):
     @property
     def xblock_group(self):
         try:
@@ -312,11 +312,11 @@ class AddDaysMixin(object):
         return self._dates_group
 
 
-class UserProblemSetDate(UserMixin, ProblemMixin, SetDateMixin, DateChanger):
+class UserProblemSetDate(UserMixin, BlockMixin, SetDateMixin, DateChanger):
     pass
 
 
-class UserProblemAddDays(UserMixin, ProblemMixin, AddDaysMixin, DateChanger):
+class UserProblemAddDays(UserMixin, BlockMixin, AddDaysMixin, DateChanger):
     pass
 
 
@@ -328,11 +328,11 @@ class UserCourseAddDays(UserMixin, CourseMixin, AddDaysMixin, DateChanger):
     pass
 
 
-class CohortProblemSetDate(CohortMixin, ProblemMixin, SetDateMixin, DateChanger):
+class CohortProblemSetDate(CohortMixin, BlockMixin, SetDateMixin, DateChanger):
     pass
 
 
-class CohortProblemAddDays(CohortMixin, ProblemMixin, AddDaysMixin, DateChanger):
+class CohortProblemAddDays(CohortMixin, BlockMixin, AddDaysMixin, DateChanger):
     pass
 
 
@@ -346,11 +346,11 @@ class CohortCourseAddDays(CohortMixin, CourseMixin, AddDaysMixin, DateChanger):
 
 
 """
-python manage.py lms cohort_change_due --course_key=course-v1:test_o+test_n+test_r --days_add=30 --cohort=my_cohort
-python manage.py lms cohort_change_due --course_key=course-v1:test_o+test_n+test_r --date_set=2016/12/12 --cohort=my_cohort
+python manage.py lms cohort_change_due --course_key=course-v1:test_o+test_n+test_r --add_days=30 --cohort=my_cohort
+python manage.py lms cohort_change_due --course_key=course-v1:test_o+test_n+test_r --set_date=2016/12/12 --cohort=my_cohort
 python manage.py lms cohort_change_due
-    --problem_location=block-v1:test_o+test_n+test_r+type@problem+block@b725c8e540884a7890e0711b3f59a0aa
-    --date_set="2016/12/10"
+    --block_key=block-v1:test_o+test_n+test_r+type@problem+block@b725c8e540884a7890e0711b3f59a0aa
+    --set_date="2016/12/10"
     --user=test1@test1.com
 
 """
