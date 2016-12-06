@@ -9,6 +9,7 @@ import string  # pylint: disable=deprecated-module
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, Http404
@@ -954,6 +955,7 @@ def course_info_update_handler(request, course_key_string, provided_id=None):
 
 
 @login_required
+@staff_member_required
 @ensure_csrf_cookie
 @require_http_methods(("GET", "PUT", "POST"))
 @expect_json
