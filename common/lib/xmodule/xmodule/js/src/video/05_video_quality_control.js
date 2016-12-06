@@ -11,7 +11,7 @@ function () {
             gettext('High Definition'),
         '">',
             '<span class="icon-fallback-img">',
-                '<span class="icon icon-hd" aria-hidden="true">HD</span>', // "HD" is treated as a proper noun
+                '<span class="icon icon-hd" aria-hidden="true">SD</span>', // "HD" is treated as a proper noun
                 // Translator note:
                 // HD stands for high definition
                 '<span class="sr text-translation">',
@@ -31,9 +31,9 @@ function () {
         var dfd = $.Deferred();
 
         // Changing quality for now only works for YouTube videos.
-        if (state.videoType !== 'youtube') {
-            return;
-        }
+        //if (state.videoType !== 'youtube') {
+        //    return;
+        //}
 
         state.videoQualityControl = {};
 
@@ -81,7 +81,13 @@ function () {
     //     make the created DOM elements available via the 'state' object. Much easier to work this
     //     way - you don't have to do repeated jQuery element selects.
     function _renderElements(state) {
-        var element = state.videoQualityControl.el = $(template);
+        var template_str = template.toString();
+        if (state.videoType !== 'youtube') {
+            if (state.config.sources.length >= 2){
+                template_str = template_str.replace("is-hidden","");
+            }
+        }
+        var element = state.videoQualityControl.el = $(template_str);
         state.videoQualityControl.quality = 'large';
         state.el.find('.secondary-controls').append(element);
     }
