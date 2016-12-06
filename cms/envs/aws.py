@@ -302,6 +302,8 @@ AWS_STORAGE_BUCKET_NAME = AUTH_TOKENS.get('AWS_STORAGE_BUCKET_NAME', 'edxuploads
 # Disabling querystring auth instructs Boto to exclude the querystring parameters (e.g. signature, access key) it
 # normally appends to every returned URL.
 AWS_QUERYSTRING_AUTH = AUTH_TOKENS.get('AWS_QUERYSTRING_AUTH', True)
+if AUTH_TOKENS.get('AWS_S3_CALLING_FORMAT'):
+    AWS_S3_CALLING_FORMAT = AUTH_TOKENS.get('AWS_S3_CALLING_FORMAT')
 
 if AUTH_TOKENS.get('DEFAULT_FILE_STORAGE'):
     DEFAULT_FILE_STORAGE = AUTH_TOKENS.get('DEFAULT_FILE_STORAGE')
