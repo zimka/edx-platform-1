@@ -9,12 +9,13 @@ from openedx.core.djangolib.markup import HTML, Text
 
 
   <br>
+  %if False:
   <p>${_("Click to display the grading configuration for the course. The grading configuration is the breakdown of graded subsections of the course (such as exams and problem sets), and can be changed on the 'Grading' page (under 'Settings') in Studio.")}</p>
   <p><input type="button" name="dump-gradeconf" value="${_("Grading Configuration")}" data-endpoint="${ section_data['get_grading_config_url'] }"></p>
 
   <div class="data-display-text" id="data-grade-config-text"></div>
   <br>
-
+  %endif
   <p>${_("Click to download a CSV of anonymized student IDs:")}</p>
   <p><input type="button" name="list-anon-ids" value="${_("Get Student Anonymized IDs CSV")}" data-csv="true" class="csv" data-endpoint="${ section_data['get_anon_ids_url'] }" class="${'is-disabled' if disable_buttons else ''}" aria-disabled="${'true' if disable_buttons else 'false'}" ></p>
 </div>
