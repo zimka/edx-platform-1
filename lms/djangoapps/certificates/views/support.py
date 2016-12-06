@@ -49,7 +49,7 @@ def require_certificate_permission(func):
 
 
 @require_GET
-@require_certificate_permission
+#@require_certificate_permission
 def search_certificates(request):
     """
     Search for certificates for a particular user OR along with the given course.
