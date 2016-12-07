@@ -144,7 +144,7 @@ class ForumsConfig(ConfigurationModel):
     """Config for the connection to the cs_comments_service forums backend."""
 
     # For now, just tweak the connection timeout settings. We can add more later.
-    connection_timeout = models.FloatField(default=5.0)
+    connection_timeout = models.FloatField(default=10.0)
 
     def __unicode__(self):
         """Simple representation so the admin screen looks less ugly."""
