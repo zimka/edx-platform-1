@@ -107,7 +107,7 @@ class VerticalGrading(object):
         #         for module_descriptor in yield_descriptor_descendents(child):
         #             yield module_descriptor
 
-        blocks_stack = [modulestore().get_course(course_structure.get_children(course_structure.root_block_usage_key)[0].course_key)]
+        blocks_stack = [modulestore().get_course(course_structure.get_children(course_structure.root_block_usage_key)[0].course_key)] if course_structure.get_children(course_structure.root_block_usage_key) else []
 
         while blocks_stack:
             curr_block = blocks_stack.pop()
@@ -127,7 +127,7 @@ class VerticalGrading(object):
                     block_description = {
                         'section_block': course_structure[block_key],
                         'section_descriptor': curr_block,
-                        'scored_descendants': [child for child in scored_descendants_of_section if child.has_score]
+                        'scored_descendants': [child for child in scored_descendants_of_section if child and child.has_score]
                     }
 
                     block_format = getattr(curr_block, 'format', '')
@@ -161,7 +161,7 @@ class VerticalGrading(object):
         """
         course_structure = get_course_blocks(student, course.location)
         grading_context_result = course.grading.grading_context(course_structure)
-        scorable_locations = [block.location for block in grading_context_result['all_graded_blocks']]
+        scorable_locations = [block.location for block in [b for b in grading_context_result['all_graded_blocks'] if b is not None]]
 
         with outer_atomic():
             scores_client = ScoresClient.create_for_locations(course.id, student.id, scorable_locations)
@@ -257,7 +257,7 @@ class VerticalGrading(object):
         # Check for gated content
         gated_content = gating_api.get_gated_content(course, student)
 
-        blocks_stack = [modulestore().get_course(course_structure.get_children(course_structure.root_block_usage_key)[0].course_key)]
+        blocks_stack = [modulestore().get_course(course_structure.get_children(course_structure.root_block_usage_key)[0].course_key)] if course_structure.get_children(course_structure.root_block_usage_key) else []
         blocks_dict = {}
 
         while blocks_stack:
@@ -345,7 +345,10 @@ def calculate_totaled_scores(
             for section_info in sections:
                 section = section_info['section_block']
                 section_descriptor = section_info['section_descriptor']
-                section_name = block_metadata_utils.display_name_with_default(section)
+                try:
+                    section_name = block_metadata_utils.display_name_with_default(section)
+                except:
+                    section_name = ""
 
                 with outer_atomic():
                     # Check to
