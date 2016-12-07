@@ -11,7 +11,7 @@ function () {
             gettext('High Definition'),
         '">',
             '<span class="icon-fallback-img">',
-                '<span class="icon icon-hd" aria-hidden="true">SD</span>', // "HD" is treated as a proper noun
+                '<span class="icon icon-hd" aria-hidden="true">HD</span>', // "HD" is treated as a proper noun
                 // Translator note:
                 // HD stands for high definition
                 '<span class="sr text-translation">',

@@ -298,7 +298,7 @@ function () {
                 gettext('This browser cannot play .mp4, .ogg, or .webm files.'),
                 gettext('Try using a different browser, such as Google Chrome.')
             ].join('');
-            this.video.innerHTML = sourceList.join('') + errorMessage;
+            this.video.innerHTML = sourceList.reverse().join('') + errorMessage;
 
             // Get the jQuery object, and set the player state to UNSTARTED.
             // The player state is used by other parts of the VideoPlayer to

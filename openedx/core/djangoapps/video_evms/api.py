@@ -74,11 +74,16 @@ def _edx_openedu_compare(openedu_profile, edx_profile):
         "sd": "desktop_webm",
         "HD": "desktop_mp4",
         "hd": "desktop_mp4",
+        "hd2": "desktop_mp4",
+        "original": "desktop_mp4",
     }
     if openedu_profile == edx_profile:
         return True
-    if mapping[openedu_profile] == edx_profile:
-        return True
+    if openedu_profile in mapping:
+        if mapping[openedu_profile] == edx_profile:
+            return True
+    else:
+        log.error("Unknown video evms format: {}".format(openedu_profile))
     return False
 
 
