@@ -7,7 +7,7 @@ define(
 [],
 function () {
     var template = [
-        '<button class="control quality-control is-hidden" aria-disabled="false" title="',
+        '<button class="control quality-control is-hidden high-def" aria-disabled="false" title="',
             gettext('High Definition'),
         '">',
             '<span class="icon-fallback-img">',

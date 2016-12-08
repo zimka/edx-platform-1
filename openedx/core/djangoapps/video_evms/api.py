@@ -5,13 +5,14 @@ import logging
 
 from lxml.etree import Element, SubElement
 from django.conf import settings
+import requests
 
 log = logging.getLogger(__name__)
 
 API_URL = None
 if hasattr(settings, 'EVMS_URL'):
     API_URL = '{0}/api/v2/video'.format(getattr(settings, 'EVMS_URL'))
-    API_URL = 'https://evms.openedu.ru/api/v2/video'
+    API_URL = 'https://evms.test.npoed.ru/api/v2/video'
 
 
 class ValError(Exception):
@@ -75,7 +76,6 @@ def _edx_openedu_compare(openedu_profile, edx_profile):
         "HD": "desktop_mp4",
         "hd": "desktop_mp4",
         "hd2": "desktop_mp4",
-        "original": "desktop_mp4",
     }
     if openedu_profile == edx_profile:
         return True
@@ -154,3 +154,20 @@ def import_from_xml(xml, edx_video_id, course_id=None):
 
 def get_video_info_for_course_and_profiles(course_id, video_profile_names):
     return {}
+
+def get_course_edx_val_ids(course_id):
+    token = getattr(settings, 'EVMS_API_KEY')
+    course_vids_api_url = '{0}/api/v2/course' # format(EVMS_URL) только при исполнении, чтобы не было конфликтов при paver update_assets
+
+    url_api = u'https://evms.test.npoed.ru/api/v2/course/{0}?token={1}'.format(course_id.split('+')[1],
+                                          token)
+    log.info(url_api)
+    videos = requests.get(url_api).json().get("videos", False)
+    log.info(videos)
+    if not videos:
+        return False
+    values = []
+    for v in videos:
+        _dict = {"display_name": v["client_video_id"], "value": v["edx_video_id"]}
+        values.append(_dict)
+    return values

@@ -13,6 +13,7 @@ Examples of html5 videos for manual testing:
     https://s3.amazonaws.com/edx-course-videos/edx-intro/edX-FA12-cware-1_100.ogv
 """
 import copy
+from datetime import  datetime
 import json
 import logging
 import random
@@ -77,6 +78,7 @@ try:
     # Use evms api instead of edxval_api
     import openedx.core.djangoapps.video_evms.api as edxval_api
 except ImportError:
+    import edxval.api as edxval_api
     edxval_api = None
 
 try:
@@ -210,7 +212,7 @@ class VideoModule(VideoFields, VideoTranscriptsMixin, VideoStudentViewHandlers, 
         # stream.
         if self.edx_video_id and edxval_api:
             try:
-                val_profiles = ["youtube", "desktop_webm", "desktop_mp4"]
+                val_profiles = ["youtube", "desktop_mp4", "desktop_webm"]
                 val_video_urls = edxval_api.get_urls_for_profiles(self.edx_video_id, val_profiles)
 
                 # VAL will always give us the keys for the profiles we asked for, but
@@ -427,6 +429,49 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         # we should enable `download_track` if following is true:
         if not self.fields['download_track'].is_set_on(self) and self.track:
             self.download_track = True
+        self.set_video_evms_values()
+
+    def update_course_evms_values(self, user):
+        try:
+            from openedx.core.djangoapps.video_evms.api import get_course_edx_val_ids
+        except:
+            return
+        course_key = self.location.course_key
+        course_id = str(course_key)
+        course = self.runtime.modulestore.get_course(course_key)
+        #course_id = "akbar" #DEBUG
+
+        values = get_course_edx_val_ids(course_id)
+        if not values:
+            values = [{"display_name": "ERROR: failed to load list video_id from EVMS", "value": "ERROR"}]
+
+        course.edx_video_id_options = values
+
+        evms_refresh = str(datetime.now().replace(microsecond=0))
+        self.evms_refresh = evms_refresh
+        course.evms_refresh = evms_refresh
+
+        course.save()
+        self.save()
+        self.runtime.modulestore.update_item(course, user.id)
+        self.runtime.modulestore.update_item(self, user.id)
+
+        self.set_video_evms_values()
+
+    def set_video_evms_values(self):
+        course = self.runtime.modulestore.get_course(self.location.course_key)
+        print("\n\n\n\n")
+        print(course.evms_refresh)
+        course_edx_video_id_options = course.edx_video_id_options
+        course_edx_video_id_options = [{"display_name": "None", "value": "None"}] + \
+                                      course_edx_video_id_options
+        if len(course_edx_video_id_options) == 1:
+            course_edx_video_id_options = [{"display_name": "You need to update video list", "value": "None"}]
+        self.fields["edx_video_id"]._values = course_edx_video_id_options
+
+        date_values = [{"display_name":str(course.evms_refresh), "value": str(self.evms_refresh) }] + \
+                      [{"display_name": "Update", "value": "update"}]
+        self.fields["evms_refresh"]._values = date_values
 
     def editor_saved(self, user, old_metadata, old_content):
         """
@@ -470,6 +515,8 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
                 old_metadata if old_metadata else None,
                 generate_translation=True
             )
+        if self.evms_refresh == "update":
+            self.update_course_evms_values(user)
 
     def save_with_metadata(self, user):
         """
@@ -663,11 +710,14 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         if youtube_id_1_0_value:
             video_url['value'].insert(0, youtube_id_1_0_value)
 
-        metadata = {
-            'display_name': display_name,
-            'video_url': video_url
-        }
-
+        edx_video_id = metadata_fields['edx_video_id']
+        evms_refresh = metadata_fields['evms_refresh']
+        metadata = OrderedDict([
+            ('display_name', display_name),
+            ('edx_video_id',edx_video_id),
+            ('evms_refresh',evms_refresh),
+            ('video_url', video_url)
+        ])
         _context.update({'transcripts_basic_tab_metadata': metadata})
         return _context
 

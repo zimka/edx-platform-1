@@ -182,3 +182,9 @@ class VideoFields(object):
         scope=Scope.preferences,
         default=False,
     )
+    evms_refresh = String(
+        display_name=_("Video ID list update"),
+        help=_("Shows when the list of available video was updated last time. Choose 'Update' to update list."),
+        scope=Scope.settings,
+        default="Haven't been updated yet",
+    )
