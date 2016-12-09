@@ -5,6 +5,7 @@ import logging
 
 from lxml.etree import Element, SubElement
 from django.conf import settings
+import requests
 
 log = logging.getLogger(__name__)
 API_URL = '{0}/api/v2/video' # format(EVMS_URL) только при исполнении, чтобы не было конфликтов при paver update_assets
@@ -141,3 +142,19 @@ def export_to_xml(edx_video_id):
 
 def import_from_xml(xml, edx_video_id, course_id=None):
     return
+
+
+def get_course_edx_val_ids(course_id):
+    token = getattr(settings, 'EVMS_API_KEY')
+    course_vids_api_url = '{0}/api/v2/course' # format(EVMS_URL) только при исполнении, чтобы не было конфликтов при paver update_assets
+
+    url_api = u'{0}/{1}?token={2}'.format(course_vids_api_url.format(getattr(settings, 'EVMS_URL')),
+                                          course_id,
+                                          token)
+    videos = requests.get(url_api).json()["videos"]
+    values = [{"display_name": "None", "value": "None"}]
+    for v in videos:
+        _dict = {"display_name": v["client_video_id"], "value": v["edx_video_id"]}
+        values.append(_dict)
+    print(values)
+    return values

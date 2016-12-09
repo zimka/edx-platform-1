@@ -428,47 +428,31 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         # we should enable `download_track` if following is true:
         if not self.fields['download_track'].is_set_on(self) and self.track:
             self.download_track = True
-        self.set_edx_id_values()
+        self.set_edx_id_evms_values()
 
-    def set_edx_id_values(self):
+    def set_edx_id_evms_values(self):
         if self.edx_video_id:
+            #DEBUG: print("\n\nalready edx_val")
             return
-        print("OLI-OLI-OLI-OOOOOOOOOO")
+        if self.youtube_id_1_0:
+            #DEBUG: print("\n\n already youtube")
+            return
+        from openedx.core.djangoapps.video_evms.api import get_course_edx_val_ids
+        #DEBUG: print("\n\n\n\n")
         try:
-            print(self.fields['course_id'])
+            x = self
+            while x.category!='course':
+                x = x.get_parent()
+            course_id = str(x.location)
         except Exception as e:
-            print("OLI_FAILED")
-            print(e)
-            print(type(e))
-
-        def course_id(x):
-            try:
-                while x.category!='course':
-                    x = x.get_parent()
-            except Exception as e:
-                return str(e)
-            return str(x.location)
-        print('again course id')
-        print(course_id(self))
+                return
+        #DEBUG: print('course id')
+        #DEBUG: print(course_id)
         edx_val = self.fields["edx_video_id"]
-        import requests
-        url_api = "https://evms.test.npoed.ru/api/v2/course/akbar?token=a56bwtlysx4olz7i"
-        """
-        url_api = u'{0}/course/{1}?token={2}'.format(API_URL.format(getattr(settings, 'EVMS_URL')),
-                                          course_id,
-                                          token)
-        В курсах https://evms.test.npoed.ru нет видео.
-        """
-        videos = requests.get(url_api).json()["videos"]
-        values = []
-        for v in videos:
-            _dict = {"display_name":v["client_video_id"], "value":v["edx_video_id"]}
-            values.append(_dict)
+        #DEBUG: course_id = "akbar"
+        values = get_course_edx_val_ids(course_id)
         edx_val._values = values
-            #[
-             #        {"display_name": _("SubRip (.srt) file"), "value": "srt"},
-             #        {"display_name": _("Text (.txt) file"), "value": "txt"}
-             #    ]
+
 
 
     def editor_saved(self, user, old_metadata, old_content):
