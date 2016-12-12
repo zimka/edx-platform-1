@@ -77,6 +77,7 @@ try:
     # Use evms api instead of edxval_api
     import openedx.core.djangoapps.video_evms.api as edxval_api
 except ImportError:
+    import edxval.api as edxval_api
     edxval_api = None
 
 try:
@@ -428,32 +429,34 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         # we should enable `download_track` if following is true:
         if not self.fields['download_track'].is_set_on(self) and self.track:
             self.download_track = True
-        self.set_edx_id_evms_values()
+        self.set_video_evms_values()
 
-    def set_edx_id_evms_values(self):
-        if self.edx_video_id:
-            #DEBUG: print("\n\nalready edx_val")
-            return
-        if self.youtube_id_1_0:
-            #DEBUG: print("\n\n already youtube")
-            return
-        from openedx.core.djangoapps.video_evms.api import get_course_edx_val_ids
-        #DEBUG: print("\n\n\n\n")
+    def update_course_evms_values(self, user):
         try:
-            x = self
-            while x.category!='course':
-                x = x.get_parent()
-            course_id = str(x.location)
-        except Exception as e:
-                return
-        #DEBUG: print('course id')
-        #DEBUG: print(course_id)
-        edx_val = self.fields["edx_video_id"]
-        #DEBUG: course_id = "akbar"
+            from openedx.core.djangoapps.video_evms.api import get_course_edx_val_ids
+        except:
+            return
+        course_key = self.location.course_key
+        course_id = str(course_key)
+        course = self.runtime.modulestore.get_course(course_key)
+        course_id = "akbar" #DEBUG
+
         values = get_course_edx_val_ids(course_id)
-        edx_val._values = values
+        if not values:
+            values = [{"display_name": "ERROR: failed to load list video_id from EVMS", "value": "ERROR"}]
 
+        course.edx_video_id_options = values
+        course.save()
+        self.runtime.modulestore.update_item(course, user.id)
+        self.set_video_evms_values()
 
+    def set_video_evms_values(self):
+        course = self.runtime.modulestore.get_course(self.location.course_key)
+
+        course_edx_video_id_options = course.edx_video_id_options
+        course_edx_video_id_options = [{"display_name": "None", "value": "None"}] + \
+                                      course_edx_video_id_options + [{"display_name": _("Update"), "value": "update"}]
+        self.fields["edx_video_id"]._values = course_edx_video_id_options
 
     def editor_saved(self, user, old_metadata, old_content):
         """
@@ -497,6 +500,9 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
                 old_metadata if old_metadata else None,
                 generate_translation=True
             )
+        if self.edx_video_id == "update":
+            self.edx_video_id = self.fields["edx_video_id"]._values[0]["value"]
+            self.update_course_evms_values(user)
 
     def save_with_metadata(self, user):
         """

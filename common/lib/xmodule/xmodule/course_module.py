@@ -839,7 +839,14 @@ class CourseFields(object):
         ),
         scope=Scope.settings, default=False
     )
-
+    edx_video_id_options = List(
+        display_name=_("Video ID values for given course"),
+        help=_(
+            "Video ID options for Video ID field."),
+        # pylint: disable=line-too-long
+        scope=Scope.settings,
+        default=[],
+    )
 
 class CourseModule(CourseFields, SequenceModule):  # pylint: disable=abstract-method
     """

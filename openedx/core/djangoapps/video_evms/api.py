@@ -151,10 +151,11 @@ def get_course_edx_val_ids(course_id):
     url_api = u'{0}/{1}?token={2}'.format(course_vids_api_url.format(getattr(settings, 'EVMS_URL')),
                                           course_id,
                                           token)
-    videos = requests.get(url_api).json()["videos"]
-    values = [{"display_name": "None", "value": "None"}]
+    videos = requests.get(url_api).json().get("videos", False)
+    if not videos:
+        return False
+    values = []
     for v in videos:
         _dict = {"display_name": v["client_video_id"], "value": v["edx_video_id"]}
         values.append(_dict)
-    print(values)
     return values
