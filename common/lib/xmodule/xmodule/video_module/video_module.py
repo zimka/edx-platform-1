@@ -13,6 +13,7 @@ Examples of html5 videos for manual testing:
     https://s3.amazonaws.com/edx-course-videos/edx-intro/edX-FA12-cware-1_100.ogv
 """
 import copy
+from datetime import  datetime
 import json
 import logging
 import random
@@ -439,7 +440,7 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         course_key = self.location.course_key
         course_id = str(course_key)
         course = self.runtime.modulestore.get_course(course_key)
-        course_id = "akbar" #DEBUG
+        #course_id = "akbar" #DEBUG
 
         values = get_course_edx_val_ids(course_id)
         if not values:
@@ -448,6 +449,8 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         course.edx_video_id_options = values
         course.save()
         self.runtime.modulestore.update_item(course, user.id)
+        self.runtime.modulestore.update_item(self, user.id)
+
         self.set_video_evms_values()
 
     def set_video_evms_values(self):
@@ -455,8 +458,14 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
 
         course_edx_video_id_options = course.edx_video_id_options
         course_edx_video_id_options = [{"display_name": "None", "value": "None"}] + \
-                                      course_edx_video_id_options + [{"display_name": _("Update"), "value": "update"}]
+                                      course_edx_video_id_options
+        if len(course_edx_video_id_options) == 1:
+            course_edx_video_id_options = [{"display_name": "You need to update video list", "value": "None"}]
         self.fields["edx_video_id"]._values = course_edx_video_id_options
+
+        date_values = [{"display_name":str(self.evms_refresh), "value": str(self.evms_refresh) }] + \
+                      [{"display_name": "Update", "value": "update"}]
+        self.fields["evms_refresh"]._values = date_values
 
     def editor_saved(self, user, old_metadata, old_content):
         """
@@ -500,8 +509,8 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
                 old_metadata if old_metadata else None,
                 generate_translation=True
             )
-        if self.edx_video_id == "update":
-            self.edx_video_id = self.fields["edx_video_id"]._values[0]["value"]
+        if self.evms_refresh == "update":
+            self.evms_refresh = str(datetime.now().replace(microsecond=0))
             self.update_course_evms_values(user)
 
     def save_with_metadata(self, user):
@@ -696,11 +705,14 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         if youtube_id_1_0_value:
             video_url['value'].insert(0, youtube_id_1_0_value)
 
-        metadata = {
-            'display_name': display_name,
-            'video_url': video_url
-        }
-
+        edx_video_id = metadata_fields['edx_video_id']
+        evms_refresh = metadata_fields['evms_refresh']
+        metadata = OrderedDict([
+            ('display_name', display_name),
+            ('edx_video_id',edx_video_id),
+            ('evms_refresh',evms_refresh),
+            ('video_url', video_url)
+        ])
         _context.update({'transcripts_basic_tab_metadata': metadata})
         return _context
 
