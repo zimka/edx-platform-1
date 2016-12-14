@@ -447,7 +447,13 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
             values = [{"display_name": "ERROR: failed to load list video_id from EVMS", "value": "ERROR"}]
 
         course.edx_video_id_options = values
+
+        evms_refresh = str(datetime.now().replace(microsecond=0))
+        self.evms_refresh = evms_refresh
+        course.evms_refresh = evms_refresh
+
         course.save()
+        self.save()
         self.runtime.modulestore.update_item(course, user.id)
         self.runtime.modulestore.update_item(self, user.id)
 
@@ -455,7 +461,8 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
 
     def set_video_evms_values(self):
         course = self.runtime.modulestore.get_course(self.location.course_key)
-
+        print("\n\n\n\n")
+        print(course.evms_refresh)
         course_edx_video_id_options = course.edx_video_id_options
         course_edx_video_id_options = [{"display_name": "None", "value": "None"}] + \
                                       course_edx_video_id_options
@@ -463,7 +470,7 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
             course_edx_video_id_options = [{"display_name": "You need to update video list", "value": "None"}]
         self.fields["edx_video_id"]._values = course_edx_video_id_options
 
-        date_values = [{"display_name":str(self.evms_refresh), "value": str(self.evms_refresh) }] + \
+        date_values = [{"display_name":str(course.evms_refresh), "value": str(self.evms_refresh) }] + \
                       [{"display_name": "Update", "value": "update"}]
         self.fields["evms_refresh"]._values = date_values
 
@@ -510,7 +517,6 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
                 generate_translation=True
             )
         if self.evms_refresh == "update":
-            self.evms_refresh = str(datetime.now().replace(microsecond=0))
             self.update_course_evms_values(user)
 
     def save_with_metadata(self, user):
