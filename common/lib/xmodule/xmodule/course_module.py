@@ -34,7 +34,7 @@ CATALOG_VISIBILITY_NONE = "none"
 
 
 def get_proctoring_list():
-    proctoring_providers = settings.PROCTORING_BACKEND_PROVIDERS
+    proctoring_providers = getattr(settings, "PROCTORING_BACKEND_PROVIDERS", {})
     return ",".join(proctoring_providers.keys())
 
 class GradingTypeError(Exception):
