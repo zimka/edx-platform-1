@@ -144,14 +144,25 @@ def import_from_xml(xml, edx_video_id, course_id=None):
     return
 
 
+def get_course_evms_guid(course_id):
+    return str(course_id).split('+')[1]
+
+
 def get_course_edx_val_ids(course_id):
     token = getattr(settings, 'EVMS_API_KEY')
     course_vids_api_url = '{0}/api/v2/course' # format(EVMS_URL) только при исполнении, чтобы не было конфликтов при paver update_assets
-
+    course_guid = get_course_evms_guid(course_id)
     url_api = u'{0}/{1}?token={2}'.format(course_vids_api_url.format(getattr(settings, 'EVMS_URL')),
-                                          course_id,
+                                          course_guid,
                                           token)
-    videos = requests.get(url_api).json().get("videos", False)
+    try:
+        response = requests.get(url_api)
+        response = response.json()
+        videos = response.get("videos", False)
+    except Exception as e:
+        print("Api Exception:{}".format(str(e)))
+        return False
+
     if not videos:
         return False
     values = []

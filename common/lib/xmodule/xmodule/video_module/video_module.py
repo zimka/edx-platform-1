@@ -441,7 +441,6 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         course_id = str(course_key)
         course = self.runtime.modulestore.get_course(course_key)
         #course_id = "akbar" #DEBUG
-
         values = get_course_edx_val_ids(course_id)
         if not values:
             values = [{"display_name": "ERROR: failed to load list video_id from EVMS", "value": "ERROR"}]
@@ -461,8 +460,6 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
 
     def set_video_evms_values(self):
         course = self.runtime.modulestore.get_course(self.location.course_key)
-        print("\n\n\n\n")
-        print(course.evms_refresh)
         course_edx_video_id_options = course.edx_video_id_options
         course_edx_video_id_options = [{"display_name": "None", "value": "None"}] + \
                                       course_edx_video_id_options
@@ -699,11 +696,11 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
 
         _ = self.runtime.service(self, "i18n").ugettext
         video_url.update({
-            'help': _('The URL for your video. This can be a YouTube URL or a link to an .mp4, .ogg, or .webm video file hosted elsewhere on the Internet.'),  # pylint: disable=line-too-long
-            'display_name': _('Default Video URL'),
-            'field_name': 'video_url',
-            'type': 'VideoList',
-            'default_value': [get_youtube_link(youtube_id_1_0['default_value'])]
+           'help': _('The URL for your video. This can be a YouTube URL or a link to an .mp4, .ogg, or .webm video file hosted elsewhere on the Internet.'),  # pylint: disable=line-too-long
+           'display_name': _('Default Video URL'),
+           'field_name': 'video_url',
+           'type': 'VideoList',
+           'default_value': [get_youtube_link(youtube_id_1_0['default_value'])]
         })
 
         youtube_id_1_0_value = get_youtube_link(youtube_id_1_0['value'])

@@ -559,11 +559,11 @@ function(VideoPlayer, i18n, moment, _) {
 
         _setConfigurations(this);
 
-        if (!(_parseYouTubeIDs(this))) {
-            // If we do not have YouTube ID's, try parsing HTML5 video sources.
-            if (!_prepareHTML5Video(this)) {
+        if (!(_prepareHTML5Video(this))) {
+            // If we do not have HTML5 video sources, try parsing YouTube ID's.
+            if (!_parseYouTubeIDs(this)) {
                 __dfd__.reject();
-                // Non-YouTube sources were not found either.
+                // YouTube sources were not found either.
                 return __dfd__.promise();
             }
 

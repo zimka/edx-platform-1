@@ -15,7 +15,7 @@ class VideoFields(object):
     """Fields for `VideoModule` and `VideoDescriptor`."""
     display_name = String(
         help=_("The name students see. This name appears in the course ribbon and as a header for the video."),
-        display_name=_("Component Display Name"),
+        display_name=_(" Component Display Name"),
         default="Video",
         scope=Scope.settings
     )
@@ -169,7 +169,7 @@ class VideoFields(object):
     )
     edx_video_id = String(
         help=_("If you were assigned a Video ID by edX for the video to play in this component, enter the ID here. In this case, do not enter values in the Default Video URL, the Video File URLs, and the YouTube ID fields. If you were not assigned a Video ID, enter values in those other fields and ignore this field."),  # pylint: disable=line-too-long
-        display_name=_("Video ID"),
+        display_name=_(" Video ID"),
         scope=Scope.settings,
         default="",
     )
@@ -183,7 +183,7 @@ class VideoFields(object):
         default=False,
     )
     evms_refresh = String(
-        display_name=_("Video ID list update"),
+        display_name=_(" Video ID list update"),
         help=_("Shows when the list of available video was updated last time. Choose 'Update' to update list."),
         scope=Scope.settings,
         default="Haven't been updated yet",
