@@ -34,12 +34,22 @@ CATALOG_VISIBILITY_NONE = "none"
 
 
 def get_proctoring_list():
-    proctoring_providers = getattr(settings, "PROCTORING_BACKEND_PROVIDERS", {})
+    #result = []
+    try:
+        proctoring_providers = settings.PROCTORING_BACKEND_PROVIDERS
+    except:
+        return ""
+    #for proctoring_key, proctoring_settings in proctoring_providers.items():
+    #    result.append(
+    #        {"display_name": proctoring_key,
+    #         "value": proctoring_key}
+    #    )
     return ",".join(proctoring_providers.keys())
 
 class GradingTypeError(Exception):
     """An error occurred when grading type is unrecognized."""
     pass
+
 
 class StringOrDate(Date):
     def from_json(self, value):

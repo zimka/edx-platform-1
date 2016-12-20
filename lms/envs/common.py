@@ -377,7 +377,6 @@ GENERATE_PROFILE_SCORES = False
 # Used with XQueue
 XQUEUE_WAITTIME_BETWEEN_REQUESTS = 5  # seconds
 
-
 ############################# SET PATH INFORMATION #############################
 PROJECT_ROOT = path(__file__).abspath().dirname().dirname()  # /edx-platform/lms
 REPO_ROOT = PROJECT_ROOT.dirname()
@@ -460,6 +459,7 @@ OAUTH2_PROVIDER = {
 # Mako templating
 # TODO: Move the Mako templating into a different engine in TEMPLATES below.
 import tempfile
+
 MAKO_MODULE_DIR = os.path.join(tempfile.gettempdir(), 'mako_lms')
 MAKO_TEMPLATES = {}
 MAKO_TEMPLATES['main'] = [PROJECT_ROOT / 'templates',
@@ -842,7 +842,7 @@ LANGUAGES = (
     ('en', u'English'),
     ('rtl', u'Right-to-Left Test Language'),
     ('eo', u'Dummy Language (Esperanto)'),  # Dummy languaged used for testing
-    ('fake2', u'Fake translations'),        # Another dummy language for testing (not pushed to prod)
+    ('fake2', u'Fake translations'),  # Another dummy language for testing (not pushed to prod)
 
     ('am', u'አማርኛ'),  # Amharic
     ('ar', u'العربية'),  # Arabic
@@ -1032,7 +1032,6 @@ PARENTAL_CONSENT_AGE_LIMIT = 13
 ################################# Jasmine ##################################
 JASMINE_TEST_DIRECTORY = PROJECT_ROOT + '/static/coffee'
 
-
 ######################### Branded Footer ###################################
 # Constants for the footer used on the site and shared with other sites
 # (such as marketing and the blog) via the branding API.
@@ -1104,7 +1103,7 @@ MIDDLEWARE_CLASSES = (
     'openedx.core.djangoapps.safe_sessions.middleware.SafeSessionMiddleware',
 
     # Instead of AuthenticationMiddleware, we use a cached backed version
-    #'django.contrib.auth.middleware.AuthenticationMiddleware',
+    # 'django.contrib.auth.middleware.AuthenticationMiddleware',
     'cache_toolbox.middleware.CacheBackedAuthenticationMiddleware',
     # Enable SessionAuthenticationMiddleware in order to invalidate
     # user sessions after a password change.
@@ -1127,7 +1126,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
 
     'splash.middleware.SplashMiddleware',
-
 
     'geoinfo.middleware.CountryMiddleware',
     'embargo.middleware.EmbargoMiddleware',
@@ -1209,7 +1207,7 @@ courseware_js = (
     [
         'coffee/src/' + pth + '.js'
         for pth in ['courseware', 'histogram', 'navigation']
-    ] +
+        ] +
     ['js/' + pth + '.js' for pth in ['ajax-error']] +
     sorted(rooted_glob(PROJECT_ROOT / 'static', 'coffee/src/modules/**/*.js'))
 )
@@ -1234,6 +1232,10 @@ proctoring_js = (
     ] +
     [
         'proctoring/js/proctored_app.js'
+    ] +
+    [
+        'proctoring/js/models/proctoring_services_model.js',
+        'proctoring/js/collections/proctoring_services_collection.js',
     ]
 )
 
@@ -1526,7 +1528,6 @@ PIPELINE_CSS = {
     },
 }
 
-
 separately_bundled_js = set(courseware_js + discussion_js + notes_js + instructor_dash_js)
 common_js = sorted(set(rooted_glob(COMMON_ROOT / 'static', 'coffee/src/**/*.js')) - separately_bundled_js)
 xblock_runtime_js = [
@@ -1627,7 +1628,6 @@ PIPELINE_JS = {
     }
 }
 
-
 STATICFILES_IGNORE_PATTERNS = (
     "*.py",
     "*.pyc",
@@ -1652,7 +1652,6 @@ STATICFILES_IGNORE_PATTERNS = (
     # Symlinks used by js-test-tool
     "xmodule_js",
 )
-
 
 ################################# DJANGO-REQUIRE ###############################
 
@@ -1928,12 +1927,12 @@ INSTALLED_APPS = (
     'course_wiki',  # Our customizations
     'mptt',
     'sekizai',
-    #'wiki.plugins.attachments',
+    # 'wiki.plugins.attachments',
     'wiki.plugins.links',
     # Notifications were enabled, but only 11 people used it in three years. It
     # got tangled up during the Django 1.8 migration, so we are disabling it.
     # See TNL-3783 for details.
-    #'wiki.plugins.notifications',
+    # 'wiki.plugins.notifications',
     'course_wiki.plugins.markdownedx',
 
     # For testing
@@ -1997,7 +1996,7 @@ INSTALLED_APPS = (
     'course_action_state',
 
     # Additional problem types
-    'edx_jsme',    # Molecular Structure
+    'edx_jsme',  # Molecular Structure
 
     # Country list
     'django_countries',
@@ -2101,7 +2100,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
     'URL_FORMAT_OVERRIDE': None,
 }
-
 
 ######################### MARKETING SITE ###############################
 EDXMKTG_LOGGED_IN_COOKIE_NAME = 'edxloggedin'
@@ -2369,10 +2367,8 @@ FILE_UPLOAD_STORAGE_PREFIX = 'submissions_attachments'
 MAX_FAILED_LOGIN_ATTEMPTS_ALLOWED = 5
 MAX_FAILED_LOGIN_ATTEMPTS_LOCKOUT_PERIOD_SECS = 15 * 60
 
-
 ##### LMS DEADLINE DISPLAY TIME_ZONE #######
 TIME_ZONE_DISPLAYED_FOR_DEADLINES = 'UTC'
-
 
 # Source:
 # http://loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt according to http://en.wikipedia.org/wiki/ISO_639-1
@@ -2567,7 +2563,6 @@ ALL_LANGUAGES = (
     [u"zu", u"Zulu"]
 )
 
-
 ### Apps only installed in some instances
 OPTIONAL_APPS = (
     'mentoring',
@@ -2639,10 +2634,8 @@ COURSE_CATALOG_VISIBILITY_PERMISSION = 'see_exists'
 # visible. We default this to the legacy permission 'see_exists'.
 COURSE_ABOUT_VISIBILITY_PERMISSION = 'see_exists'
 
-
 # Enrollment API Cache Timeout
 ENROLLMENT_COURSE_DETAILS_CACHE_TIMEOUT = 60
-
 
 OAUTH_ID_TOKEN_EXPIRATION = 60 * 60
 
@@ -2825,7 +2818,6 @@ LTI_USER_EMAIL_DOMAIN = 'lti.example.com'
 # The time value is in seconds.
 LTI_AGGREGATE_SCORE_PASSBACK_DELAY = 15 * 60
 
-
 # For help generating a key pair import and run `openedx.core.lib.rsa_key_utils.generate_rsa_key_pair()`
 PUBLIC_RSA_KEY = None
 PRIVATE_RSA_KEY = None
@@ -2833,7 +2825,6 @@ PRIVATE_RSA_KEY = None
 # Credit notifications settings
 NOTIFICATION_EMAIL_CSS = "templates/credit_notifications/credit_notification.css"
 NOTIFICATION_EMAIL_EDX_LOGO = "templates/credit_notifications/edx-logo-header.png"
-
 
 ################################ Settings for Microsites ################################
 
@@ -2908,7 +2899,6 @@ STUDENTMODULEHISTORYEXTENDED_OFFSET = 10000
 
 # Deprecated xblock types
 DEPRECATED_ADVANCED_COMPONENT_TYPES = []
-
 
 # Cutoff date for granting audit certificates
 

@@ -58,6 +58,7 @@ DJFS = {
 ################################ DEBUG TOOLBAR ################################
 
 INSTALLED_APPS += ('debug_toolbar', 'debug_toolbar_mongo')
+
 MIDDLEWARE_CLASSES += (
     'django_comment_client.utils.QueryCountDebugMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
@@ -280,5 +281,7 @@ if os.path.isfile(join(dirname(abspath(__file__)), 'private.py')):
 MODULESTORE = convert_module_store_setting_if_needed(MODULESTORE)
 
 SECRET_KEY = '85920908f28904ed733fe576320db18cabd7b6cd'
-FEATURES['ENABLE_DISCUSSION_SERVICE'] =  False
-FEATURES['ENABLE_SPECIAL_EXAMS'] =  True
+FEATURES['ENABLE_DISCUSSION_SERVICE'] = False
+FEATURES['ENABLE_SPECIAL_EXAMS'] = True
+INSTALLED_APPS += ('open_edx_api_extension',)
+print(PROCTORING_BACKEND_PROVIDERS)
