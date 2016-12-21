@@ -290,7 +290,6 @@ class VideoModule(VideoFields, VideoTranscriptsMixin, VideoStudentViewHandlers, 
             xblock_settings = settings_service.get_settings_bucket(self)
             if xblock_settings and 'YOUTUBE_API_KEY' in xblock_settings:
                 yt_api_key = xblock_settings['YOUTUBE_API_KEY']
-
         metadata = {
             'saveStateUrl': self.system.ajax_url + '/save_user_state',
             'autoplay': settings.FEATURES.get('AUTOPLAY_VIDEOS', False),
@@ -458,14 +457,80 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
 
         self.set_video_evms_values()
 
+    def synch_edx_id(self, old_metadata=None, new_metadata=None):
+        """
+        Согласует данные в полях edx_course_video_id и edx_video_id
+        :return:
+        """
+        course_eid = self.edx_course_video_id
+        native_eid = self.edx_video_id
+
+
+        if course_eid == native_eid:
+            return
+
+        def master_native(eid):
+            block = self.fields["edx_course_video_id"]
+            values = [v["value"] for v in block.values]
+            if eid not in values:
+                block._values.append({"display_name": "'Advanced' override:{}".format(eid), "value": eid})
+            self.edx_course_video_id = eid
+
+        def master_course(eid):
+            if eid:
+                self.edx_video_id = eid
+            else:
+                self.edx_video_id = ""
+
+        """
+        Смотрим какое поле поменял пользователь: это поле будет master
+        """
+        if not old_metadata and not new_metadata:
+            """
+            метаданные не передали - считаем edx_course_video_id мастером, т.к. уже есть возможность
+            сделать edx_video_id мастером явно, поставив в edx_course_video_id: None
+            """
+            print("master_course0")
+            master_course(course_eid)
+            return
+
+        old_native_eid = old_metadata.get('edx_video_id', None)
+        new_native_eid = new_metadata.get('edx_video_id', None)
+        old_course_eid = old_metadata.get('edx_course_video_id', None)
+        new_course_eid = new_metadata.get('edx_course_video_id', None)
+
+        if old_native_eid!= new_native_eid and old_course_eid!= new_course_eid:
+            """Пользователь поменял оба поля. Мастер edx_course_video_id, аргументацию см. выше"""
+            print("master_course1")
+            master_course(course_eid)
+            return
+
+        if old_native_eid != new_native_eid:
+            print("master_naive1")
+            master_native(native_eid)
+            return
+
+        if old_course_eid != new_course_eid:
+            print("master_course2")
+            master_course(new_course_eid)
+            return
+        print("nomasterout")
+
     def set_video_evms_values(self):
         course = self.runtime.modulestore.get_course(self.location.course_key)
-        course_edx_video_id_options = course.edx_video_id_options
-        course_edx_video_id_options = [{"display_name": "None", "value": "None"}] + \
-                                      course_edx_video_id_options
-        if len(course_edx_video_id_options) == 1:
-            course_edx_video_id_options = [{"display_name": "You need to update video list", "value": "None"}]
-        self.fields["edx_video_id"]._values = course_edx_video_id_options
+        edx_course_video_id_options = course.edx_video_id_options
+        edx_course_video_id_options = [{"display_name": _("None"), "value": ""}] + \
+                                      edx_course_video_id_options
+        if len(edx_course_video_id_options) == 1:
+            edx_course_video_id_options = [{"display_name": "You need to update video list", "value": ""}]
+        if self.edx_video_id:
+            val = str(self.edx_video_id)
+            values = [v["value"] for v in edx_course_video_id_options]
+            if val not in values:
+                override = [{"display_name": "'Advanced' override:{}".format(val), "value": val}]
+                edx_course_video_id_options = override + edx_course_video_id_options
+
+        self.fields["edx_course_video_id"]._values = edx_course_video_id_options
 
         date_values = [{"display_name":str(course.evms_refresh), "value": str(self.evms_refresh) }] + \
                       [{"display_name": "Update", "value": "update"}]
@@ -489,7 +554,6 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         This should be fixed too.
         """
         metadata_was_changed_by_user = old_metadata != own_metadata(self)
-
         # There is an edge case when old_metadata and own_metadata are same and we are importing transcript from youtube
         # then there is a syncing issue where html5_subs are not syncing with youtube sub, We can make sync better by
         # checking if transcript is present for the video and if any html5_ids transcript is not present then trigger
@@ -513,6 +577,9 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
                 old_metadata if old_metadata else None,
                 generate_translation=True
             )
+        self.synch_edx_id(old_metadata=old_metadata, new_metadata=own_metadata(self))
+        self.save()
+        self.runtime.modulestore.update_item(self, user.id)
         if self.evms_refresh == "update":
             self.update_course_evms_values(user)
 
@@ -708,7 +775,7 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         if youtube_id_1_0_value:
             video_url['value'].insert(0, youtube_id_1_0_value)
 
-        edx_video_id = metadata_fields['edx_video_id']
+        edx_video_id = metadata_fields['edx_course_video_id']
         evms_refresh = metadata_fields['evms_refresh']
         metadata = OrderedDict([
             ('display_name', display_name),
