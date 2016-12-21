@@ -213,7 +213,7 @@ class VideoModule(VideoFields, VideoTranscriptsMixin, VideoStudentViewHandlers, 
         # stream.
         if self.edx_video_id and edxval_api:
             try:
-                val_profiles = ["youtube", "desktop_webm", "desktop_mp4"]
+                val_profiles = ["youtube", "desktop_mp4", "desktop_webm"]
                 val_video_urls = edxval_api.get_urls_for_profiles(self.edx_video_id, val_profiles)
 
                 # VAL will always give us the keys for the profiles we asked for, but
@@ -741,7 +741,6 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         Extend context by data for transcript basic tab.
         """
         _context = super(VideoDescriptor, self).get_context()
-
         metadata_fields = copy.deepcopy(self.editable_metadata_fields)
 
         display_name = metadata_fields['display_name']
@@ -784,6 +783,10 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
             ('video_url', video_url)
         ])
         _context.update({'transcripts_basic_tab_metadata': metadata})
+        #editable = _context['editable_metadata_fields']
+        #editable.pop('edx_course_video_id')
+        #editable.pop('evms_refresh')
+        #_context['editable_metadata_fields'] = editable
         return _context
 
     @classmethod

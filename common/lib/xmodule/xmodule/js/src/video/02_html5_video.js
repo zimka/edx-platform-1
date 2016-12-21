@@ -169,14 +169,14 @@ function() {
                 return;
             }
             var btn = this.el.find(".quality-control");
-            var is_active = btn.hasClass("active");
+            var is_active = btn.hasClass("high-def");
 
             if (is_active){
-                btn.removeClass("active");
+                btn.removeClass("high-def");
                 btn.find(".icon").html("SD");
             }
             else{
-                btn.addClass("active");
+                btn.addClass("high-def");
                 btn.find(".icon").html("HD");
 
             }

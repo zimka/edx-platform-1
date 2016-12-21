@@ -92,7 +92,7 @@ def get_urls_for_profiles(edx_video_id, val_profiles):
                 if _edx_openedu_compare(video.get('profile'), profile):
                     url = video.get('url', '')
         profile_data[profile] = url
-    return json.loads(json.dumps(profile_data))
+    return profile_data
 
 
 def get_url_for_profile(edx_video_id, val_profile):

@@ -7,10 +7,10 @@
 function(HtmlUtils) {
     var template = HtmlUtils.interpolateHtml(
         HtmlUtils.HTML([
-            '<button class="control quality-control is-hidden" aria-disabled="false" title="',
+            '<button class="control quality-control is-hidden high-def" aria-disabled="false" title="',
             '{highDefinition}',
             '">',
-            '<span class="icon icon-hd" aria-hidden="true">SD</span>',
+            '<span class="icon icon-hd" aria-hidden="true">HD</span>',
             '<span class="sr text-translation">',
             '{highDefinition}',
             '</span>&nbsp;',
