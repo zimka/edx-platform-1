@@ -529,12 +529,13 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
             if val not in values:
                 override = [{"display_name": "'Advanced' override:{}".format(val), "value": val}]
                 edx_course_video_id_options = override + edx_course_video_id_options
-
         self.fields["edx_course_video_id"]._values = edx_course_video_id_options
 
         date_values = [{"display_name":str(course.evms_refresh), "value": str(self.evms_refresh) }] + \
                       [{"display_name": "Update", "value": "update"}]
         self.fields["evms_refresh"]._values = date_values
+        if self.evms_refresh != course.evms_refresh:
+            self.evms_refresh = course.evms_refresh
 
     def editor_saved(self, user, old_metadata, old_content):
         """
