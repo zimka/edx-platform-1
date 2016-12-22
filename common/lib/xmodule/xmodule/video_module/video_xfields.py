@@ -167,6 +167,12 @@ class VideoFields(object):
         scope=Scope.settings,
         default=False
     )
+    edx_course_video_id = String(
+        help=_("List of known Video IDs for this course. To update use 'Video ID list update'. To set Video ID from other course go to 'Advanced' and use 'Video ID'"),  # pylint: disable=line-too-long
+        display_name=_(" Course Video ID"),
+        scope=Scope.settings,
+        default="",
+    )
     edx_video_id = String(
         help=_("If you were assigned a Video ID by edX for the video to play in this component, enter the ID here. In this case, do not enter values in the Default Video URL, the Video File URLs, and the YouTube ID fields. If you were not assigned a Video ID, enter values in those other fields and ignore this field."),  # pylint: disable=line-too-long
         display_name=_("Video ID"),

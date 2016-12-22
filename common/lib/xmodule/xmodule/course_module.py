@@ -877,9 +877,7 @@ class CourseFields(object):
     )
     edx_video_id_options = List(
         display_name=_("Video ID values for given course"),
-        help=_(
-            "Video ID options for Video ID field."),
-        # pylint: disable=line-too-long
+        help=_("Video ID options for Video ID field."),
         scope=Scope.settings,
         default=[],
     )

@@ -13,6 +13,7 @@ API_URL = None
 if hasattr(settings, 'EVMS_URL'):
     API_URL = '{0}/api/v2/video'.format(getattr(settings, 'EVMS_URL'))
     API_URL = 'https://evms.test.npoed.ru/api/v2/video'
+    EVMS_URL = 'https://evms.test.npoed.ru'
 
 
 class ValError(Exception):
@@ -69,7 +70,6 @@ def _edx_openedu_compare(openedu_profile, edx_profile):
     :return:
     """
     mapping = {
-        "mobile": "desktop_webm",
         "desktop_mp4": "desktop_mp4",
         "SD": "desktop_webm",
         "sd": "desktop_webm",
@@ -89,6 +89,7 @@ def _edx_openedu_compare(openedu_profile, edx_profile):
 
 def get_urls_for_profiles(edx_video_id, val_profiles):
     raw_data = get_video_info(edx_video_id)
+    log.info(raw_data)
     if raw_data is None:
         raw_data = {}
     profile_data = {}
@@ -98,9 +99,11 @@ def get_urls_for_profiles(edx_video_id, val_profiles):
             videos = raw_data['encoded_videos']
             for video in videos:
                 if _edx_openedu_compare(video.get('profile'), profile):
+                    log.info("{} {}".format(video.get('profile'), profile))
                     url = video.get('url', '')
         profile_data[profile] = url
-    return json.loads(json.dumps(profile_data))
+        log.info(profile_data)
+    return profile_data
 
 
 def get_url_for_profile(edx_video_id, val_profile):
@@ -112,6 +115,7 @@ def get_video_info(edx_video_id):
     if hasattr(settings, 'EVMS_API_KEY'):
         token = getattr(settings, 'EVMS_API_KEY')
     url_api = u'{0}/{1}?token={2}'.format(API_URL, edx_video_id, token)
+    log.info(url_api)
     try:
         response = urllib2.urlopen(url_api)
     except:
@@ -152,18 +156,25 @@ def export_to_xml(edx_video_id):
 def import_from_xml(xml, edx_video_id, course_id=None):
     return
 
+
 def get_video_info_for_course_and_profiles(course_id, video_profile_names):
     return {}
 
+
+def get_course_evms_guid(course_id):
+    return str(course_id).split('+')[1]
+
+
 def get_course_edx_val_ids(course_id):
     token = getattr(settings, 'EVMS_API_KEY')
-    course_vids_api_url = '{0}/api/v2/course' # format(EVMS_URL) только при исполнении, чтобы не было конфликтов при paver update_assets
-
-    url_api = u'https://evms.test.npoed.ru/api/v2/course/{0}?token={1}'.format(course_id.split('+')[1],
-                                          token)
-    log.info(url_api)
-    videos = requests.get(url_api).json().get("videos", False)
-    log.info(videos)
+    course_vids_api_url = '{0}/api/v2/course'.format(EVMS_URL)  #только при исполнении, чтобы не было конфликтов при paver update_assets
+    course_guid = get_course_evms_guid(course_id)
+    url_api = u'{0}/{1}?token={2}'.format(course_vids_api_url, course_guid, token)
+    try:
+        videos = requests.get(url_api).json().get("videos", False)
+    except Exception as e:
+        log.error("Api Exception:{}".format(str(e)))
+        return False
     if not videos:
         return False
     values = []

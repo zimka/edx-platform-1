@@ -287,13 +287,13 @@ function (VideoPlayer, i18n, moment) {
         // If none of the supported video formats can be played and there is no
         // short-hand video links, than hide the spinner and show error message.
         if (!state.config.sources.length) {
-            _hideWaitPlaceholder(state);
-            state.el
-                .find('.video-player div')
-                    .addClass('hidden');
-            state.el
-                .find('.video-player .video-error')
-                    .removeClass('is-hidden');
+            //_hideWaitPlaceholder(state);
+            //state.el
+            //    .find('.video-player div')
+            //        .addClass('hidden');
+            //state.el
+            //    .find('.video-player .video-error')
+            //        .removeClass('is-hidden');
 
             return false;
         }
@@ -562,44 +562,48 @@ function (VideoPlayer, i18n, moment) {
 
         _setConfigurations(this);
 
-        if (!(_parseYouTubeIDs(this))) {
-
-            // If we do not have YouTube ID's, try parsing HTML5 video sources.
-            if (!_prepareHTML5Video(this)) {
-
+        if (!(_prepareHTML5Video(this))){
+            if  (!_parseYouTubeIDs(this)) {
+                // If we do not have HTML5 video sources, try parsing YouTube ID's.
+                _hideWaitPlaceholder(this);
+                this.el.find('.video-player div').addClass('hidden');
+                this.el.find('.video-player .video-error').removeClass('is-hidden');
                 __dfd__.reject();
-                // Non-YouTube sources were not found either.
+                // YouTube sources were not found either.
                 return __dfd__.promise();
-            }
 
+            } else {
+                _renderElements(this);
+
+                _waitForYoutubeApi(this);
+
+                var scriptTag = document.createElement('script');
+
+                scriptTag.src = this.config.ytApiUrl;
+                scriptTag.async = true;
+
+                $(scriptTag).on('load', function() {
+                  self.loadYoutubePlayer();
+                });
+                $(scriptTag).on('error', function() {
+                    console.log(
+                        '[Video info]: YouTube returned an error for ' +
+                        'video with id "' + self.id + '".'
+                    );
+                    // If the video is already loaded in `_waitForYoutubeApi` by the
+                    // time we get here, then we shouldn't load it again.
+                    if (!self.htmlPlayerLoaded) {
+                      self.loadHtmlPlayer();
+                    }
+                });
+
+              window.Video.loadYouTubeIFrameAPI(scriptTag);
+            }
+        }
+        else {
             console.log('[Video info]: Start player in HTML5 mode.');
             _renderElements(this);
-        } else {
-            _renderElements(this);
 
-            _waitForYoutubeApi(this);
-
-            var scriptTag = document.createElement('script');
-
-            scriptTag.src = this.config.ytApiUrl;
-            scriptTag.async = true;
-
-            $(scriptTag).on('load', function() {
-                self.loadYoutubePlayer();
-            });
-            $(scriptTag).on('error', function() {
-                console.log(
-                    '[Video info]: YouTube returned an error for ' +
-                    'video with id "' + self.id + '".'
-                );
-                // If the video is already loaded in `_waitForYoutubeApi` by the
-                // time we get here, then we shouldn't load it again.
-                if (!self.htmlPlayerLoaded) {
-                    self.loadHtmlPlayer();
-                }
-            });
-
-            window.Video.loadYouTubeIFrameAPI(scriptTag);
         }
         return __dfd__.promise();
     }
