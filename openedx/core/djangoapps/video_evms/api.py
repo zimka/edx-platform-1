@@ -9,11 +9,9 @@ import requests
 
 log = logging.getLogger(__name__)
 
-API_URL = None
+EVMS_URL = None
 if hasattr(settings, 'EVMS_URL'):
-    API_URL = '{0}/api/v2/video'.format(getattr(settings, 'EVMS_URL'))
-    API_URL = 'https://evms.test.npoed.ru/api/v2/video'
-    EVMS_URL = 'https://evms.test.npoed.ru'
+    EVMS_URL = 'https://evms.openedu.ru'
 
 
 class ValError(Exception):
@@ -114,7 +112,7 @@ def get_video_info(edx_video_id):
     token = None
     if hasattr(settings, 'EVMS_API_KEY'):
         token = getattr(settings, 'EVMS_API_KEY')
-    url_api = u'{0}/{1}?token={2}'.format(API_URL, edx_video_id, token)
+    url_api = u'{0}/api/v2/video/{1}?token={2}'.format(EVMS_URL, edx_video_id, token)
     log.info(url_api)
     try:
         response = urllib2.urlopen(url_api)
