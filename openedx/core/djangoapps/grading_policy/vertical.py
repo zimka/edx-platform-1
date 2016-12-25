@@ -409,7 +409,9 @@ def calculate_totaled_scores(
                         if keep_raw_scores:
                             raw_scores += scores
                     else:
-                        graded_total = graders.Score(0.0, 1.0, True, section_name, None)
+                        graded_total = WeightedScore(
+                            0.0, 1.0, True, section_name, None, getattr(section_descriptor, 'weight', 1.0)
+                        )
 
                     # Add the graded total to totaled_scores
                     if graded_total.possible > 0:
