@@ -87,7 +87,6 @@ def _edx_openedu_compare(openedu_profile, edx_profile):
 
 def get_urls_for_profiles(edx_video_id, val_profiles):
     raw_data = get_video_info(edx_video_id)
-    log.info(raw_data)
     if raw_data is None:
         raw_data = {}
     profile_data = {}
@@ -97,10 +96,8 @@ def get_urls_for_profiles(edx_video_id, val_profiles):
             videos = raw_data['encoded_videos']
             for video in videos:
                 if _edx_openedu_compare(video.get('profile'), profile):
-                    log.info("{} {}".format(video.get('profile'), profile))
                     url = video.get('url', '')
         profile_data[profile] = url
-        log.info(profile_data)
     return profile_data
 
 
@@ -113,7 +110,6 @@ def get_video_info(edx_video_id):
     if hasattr(settings, 'EVMS_API_KEY'):
         token = getattr(settings, 'EVMS_API_KEY')
     url_api = u'{0}/api/v2/video/{1}?token={2}'.format(EVMS_URL, edx_video_id, token)
-    log.info(url_api)
     try:
         response = urllib2.urlopen(url_api)
     except:
