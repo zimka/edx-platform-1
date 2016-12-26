@@ -1214,14 +1214,23 @@ courseware_js = (
 
 proctoring_js = (
     [
+        'proctoring/js/views/Backbone.ModalDialog.js',
+    ] +
+    [
         'proctoring/js/models/proctored_exam_allowance_model.js',
         'proctoring/js/models/proctored_exam_attempt_model.js',
         'proctoring/js/models/proctored_exam_model.js'
     ] +
     [
+        'proctoring/js/models/proctoring_services_model.js',
+    ] +
+    [
         'proctoring/js/collections/proctored_exam_allowance_collection.js',
         'proctoring/js/collections/proctored_exam_attempt_collection.js',
         'proctoring/js/collections/proctored_exam_collection.js'
+    ] +
+    [
+        'proctoring/js/collections/proctoring_services_collection.js',
     ] +
     [
         'proctoring/js/views/Backbone.ModalDialog.js',
@@ -1231,14 +1240,13 @@ proctoring_js = (
         'proctoring/js/views/proctored_exam_view.js'
     ] +
     [
-        'proctoring/js/proctored_app.js'
+        'proctoring/js/views/proctoring_services_view.js',
     ] +
     [
-        'proctoring/js/models/proctoring_services_model.js',
-        'proctoring/js/collections/proctoring_services_collection.js',
+        'proctoring/js/proctored_app.js'
     ]
-)
 
+)
 # Before a student accesses courseware, we do not
 # need many of the JS dependencies.  This includes
 # only the dependencies used everywhere in the LMS

@@ -105,7 +105,6 @@ CELERY_ROUTES = "{}celery.Router".format(QUEUE_VARIANT)
 ############# NON-SECURE ENV CONFIG ##############################
 # Things like server locations, ports, etc.
 with open(CONFIG_ROOT / CONFIG_PREFIX + "env.json") as env_file:
-    print(env_file)
     ENV_TOKENS = json.load(env_file)
 
 # STATIC_URL_BASE specifies the base url to use for static files
