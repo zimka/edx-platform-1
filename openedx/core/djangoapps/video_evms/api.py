@@ -65,12 +65,12 @@ def _edx_openedu_compare(openedu_profile, edx_profile):
     :return:
     """
     mapping = {
-        "mobile": "desktop_webm",
-        "desktop_mp4": "desktop_mp4"
+        "sd": "desktop_webm",
+        "hd": "desktop_mp4"
     }
     if openedu_profile == edx_profile:
         return True
-    if mapping[openedu_profile] == edx_profile:
+    if mapping.get(openedu_profile, False) == edx_profile:
         return True
     return False
 
