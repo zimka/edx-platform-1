@@ -457,6 +457,10 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
 
         self.set_video_evms_values()
 
+    @staticmethod
+    def edx_course_video_overriden(s):
+        return "'Advanced' override:{}".format(s)
+
     def synch_edx_id(self, old_metadata=None, new_metadata=None):
         """
         Согласует данные в полях edx_course_video_id и edx_video_id
@@ -465,7 +469,6 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         course_eid = self.edx_course_video_id
         native_eid = self.edx_video_id
 
-
         if course_eid == native_eid:
             return
 
@@ -473,7 +476,7 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
             block = self.fields["edx_course_video_id"]
             values = [v["value"] for v in block.values]
             if eid not in values:
-                block._values.append({"display_name": "'Advanced' override:{}".format(eid), "value": eid})
+                block._values.append({"display_name": self.edx_course_video_overriden(eid), "value": eid})
             self.edx_course_video_id = eid
 
         def master_course(eid):
@@ -490,7 +493,6 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
             метаданные не передали - считаем edx_course_video_id мастером, т.к. уже есть возможность
             сделать edx_video_id мастером явно, поставив в edx_course_video_id: None
             """
-            print("master_course0")
             master_course(course_eid)
             return
 
@@ -501,22 +503,21 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
 
         if old_native_eid!= new_native_eid and old_course_eid!= new_course_eid:
             """Пользователь поменял оба поля. Мастер edx_course_video_id, аргументацию см. выше"""
-            print("master_course1")
             master_course(course_eid)
             return
 
         if old_native_eid != new_native_eid:
-            print("master_naive1")
             master_native(native_eid)
             return
 
         if old_course_eid != new_course_eid:
-            print("master_course2")
             master_course(new_course_eid)
             return
-        print("nomasterout")
 
     def set_video_evms_values(self):
+        if self.edx_video_id and self.edx_course_video_id == "":
+            self.edx_course_video_id = self.edx_video_id
+
         course = self.runtime.modulestore.get_course(self.location.course_key)
         edx_course_video_id_options = course.edx_video_id_options
         edx_course_video_id_options = [{"display_name": _("None"), "value": ""}] + \
@@ -527,7 +528,7 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
             val = str(self.edx_video_id)
             values = [v["value"] for v in edx_course_video_id_options]
             if val not in values:
-                override = [{"display_name": "'Advanced' override:{}".format(val), "value": val}]
+                override = [{"display_name": self.edx_course_video_overriden(val), "value": val}]
                 edx_course_video_id_options = override + edx_course_video_id_options
         self.fields["edx_course_video_id"]._values = edx_course_video_id_options
 
