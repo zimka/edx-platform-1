@@ -9,8 +9,9 @@ import requests
 
 log = logging.getLogger(__name__)
 
-EVMS_URL = None
 if hasattr(settings, 'EVMS_URL'):
+    EVMS_URL = settings.EVMS_URL
+else:
     EVMS_URL = 'https://evms.openedu.ru'
 
 
