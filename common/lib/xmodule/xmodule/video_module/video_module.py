@@ -46,7 +46,7 @@ from .video_handlers import VideoStudentViewHandlers, VideoStudioViewHandlers
 
 from xmodule.video_module import manage_video_subtitles_save
 from xmodule.mixin import LicenseMixin
-
+from xmodule.util.django import get_current_request_hostname
 # The following import/except block for edxval is temporary measure until
 # edxval is a proper XBlock Runtime Service.
 #
@@ -429,7 +429,8 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         # we should enable `download_track` if following is true:
         if not self.fields['download_track'].is_set_on(self) and self.track:
             self.download_track = True
-        self.set_video_evms_values()
+        if get_current_request_hostname() == settings.CMS_BASE:
+            self.set_video_evms_values()
 
     def update_course_evms_values(self, user):
         try:
@@ -454,7 +455,6 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         self.save()
         self.runtime.modulestore.update_item(course, user.id)
         self.runtime.modulestore.update_item(self, user.id)
-
         self.set_video_evms_values()
 
     @staticmethod
