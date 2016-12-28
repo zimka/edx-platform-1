@@ -866,7 +866,6 @@ class CourseFields(object):
         scope=Scope.settings
     )
 
-
     proctor_attention_enabled = Boolean(
         display_name=_("Enable attention in 5 minutes before exam finished"),
         help=_(
@@ -875,18 +874,7 @@ class CourseFields(object):
         default=False,
         scope=Scope.settings,
     )
-    edx_video_id_options = List(
-        display_name=_("Video ID values for given course"),
-        help=_("Video ID options for Video ID field."),
-        scope=Scope.settings,
-        default=[],
-    )
-    evms_refresh = String(
-        display_name=_("Video ID list update"),
-        help=_("Shows when the list of available video was updated last time. Choose 'Update' to update list."),
-        scope=Scope.settings,
-        default="Haven't been updated yet",
-    )
+
 
 class CourseModule(CourseFields, SequenceModule):  # pylint: disable=abstract-method
     """
