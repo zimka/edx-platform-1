@@ -429,57 +429,35 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         # we should enable `download_track` if following is true:
         if not self.fields['download_track'].is_set_on(self) and self.track:
             self.download_track = True
-        if get_current_request_hostname() == settings.CMS_BASE:
-            self.set_video_evms_values()
+        #if self.edx_video_id != self.edx_dropdown_video_id:
+            #self.edx_dropdown_video_id = self.edx_video_id
 
-    def update_course_evms_values(self, user):
-        try:
-            from openedx.core.djangoapps.video_evms.api import get_course_edx_val_ids
-        except:
-            return
-        course_key = self.location.course_key
-        course_id = str(course_key)
-        course = self.runtime.modulestore.get_course(course_key)
-        #course_id = "akbar" #DEBUG
-        values = get_course_edx_val_ids(course_id)
-        if not values:
-            values = [{"display_name": "ERROR: failed to load list video_id from EVMS", "value": "ERROR"}]
-
-        course.edx_video_id_options = values
-
-        evms_refresh = str(datetime.now().replace(microsecond=0))
-        self.evms_refresh = evms_refresh
-        course.evms_refresh = evms_refresh
-
-        course.save()
-        self.save()
-        self.runtime.modulestore.update_item(course, user.id)
-        self.runtime.modulestore.update_item(self, user.id)
+    def studio_view(self, context):
         self.set_video_evms_values()
+        return super(VideoDescriptor, self).studio_view(context)
 
     @staticmethod
-    def edx_course_video_overriden(s):
+    def edx_dropdown_video_overriden(s):
         return "'Advanced' override:{}".format(s)
 
     def synch_edx_id(self, old_metadata=None, new_metadata=None):
         """
-        Согласует данные в полях edx_course_video_id и edx_video_id
+        Согласует данные в полях edx_dropdown_video_id и edx_video_id перед сохранением
         :return:
         """
-        course_eid = self.edx_course_video_id
+        dropdown_eid = self.edx_dropdown_video_id
         native_eid = self.edx_video_id
-
-        if course_eid == native_eid:
+        if dropdown_eid == native_eid:
             return
 
         def master_native(eid):
-            block = self.fields["edx_course_video_id"]
+            block = self.fields["edx_dropdown_video_id"]
             values = [v["value"] for v in block.values]
             if eid not in values:
-                block._values.append({"display_name": self.edx_course_video_overriden(eid), "value": eid})
-            self.edx_course_video_id = eid
+                block._values.append({"display_name": self.edx_dropdown_video_overriden(eid), "value": eid})
+            self.edx_dropdown_video_id = eid
 
-        def master_course(eid):
+        def master_dropdown(eid):
             if eid:
                 self.edx_video_id = eid
             else:
@@ -490,53 +468,48 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         """
         if not old_metadata and not new_metadata:
             """
-            метаданные не передали - считаем edx_course_video_id мастером, т.к. уже есть возможность
-            сделать edx_video_id мастером явно, поставив в edx_course_video_id: None
+            метаданные не передали - считаем edx_dropdown_video_id мастером, т.к. уже есть возможность
+            сделать edx_video_id мастером явно, поставив в edx_dropdown_video_id: None
             """
-            master_course(course_eid)
+            master_dropdown(dropdown_eid)
             return
 
         old_native_eid = old_metadata.get('edx_video_id', None)
         new_native_eid = new_metadata.get('edx_video_id', None)
-        old_course_eid = old_metadata.get('edx_course_video_id', None)
-        new_course_eid = new_metadata.get('edx_course_video_id', None)
+        old_dropdown_eid = old_metadata.get('edx_dropdown_video_id', None)
+        new_dropdown_eid = new_metadata.get('edx_dropdown_video_id', None)
 
-        if old_native_eid!= new_native_eid and old_course_eid!= new_course_eid:
-            """Пользователь поменял оба поля. Мастер edx_course_video_id, аргументацию см. выше"""
-            master_course(course_eid)
+        if old_native_eid!= new_native_eid and old_dropdown_eid!= new_dropdown_eid:
+            """Пользователь поменял оба поля. Мастер edx_dropdown_video_id, аргументацию см. выше"""
+            master_dropdown(dropdown_eid)
             return
 
         if old_native_eid != new_native_eid:
             master_native(native_eid)
             return
 
-        if old_course_eid != new_course_eid:
-            master_course(new_course_eid)
+        if old_dropdown_eid != new_dropdown_eid:
+            master_dropdown(new_dropdown_eid)
             return
 
     def set_video_evms_values(self):
-        if self.edx_video_id and self.edx_course_video_id == "":
-            self.edx_course_video_id = self.edx_video_id
+        try:
+            from openedx.core.djangoapps.video_evms.api import get_course_edx_val_ids
+        except:
+            get_course_edx_val_ids = lambda x: [{"display_name": u"None", "value": ""}]
 
         course = self.runtime.modulestore.get_course(self.location.course_key)
-        edx_course_video_id_options = course.edx_video_id_options
-        edx_course_video_id_options = [{"display_name": _("None"), "value": ""}] + \
-                                      edx_course_video_id_options
-        if len(edx_course_video_id_options) == 1:
-            edx_course_video_id_options = [{"display_name": "You need to update video list", "value": ""}]
-        if self.edx_video_id:
-            val = str(self.edx_video_id)
-            values = [v["value"] for v in edx_course_video_id_options]
-            if val not in values:
-                override = [{"display_name": self.edx_course_video_overriden(val), "value": val}]
-                edx_course_video_id_options = override + edx_course_video_id_options
-        self.fields["edx_course_video_id"]._values = edx_course_video_id_options
 
-        date_values = [{"display_name":str(course.evms_refresh), "value": str(self.evms_refresh) }] + \
-                      [{"display_name": "Update", "value": "update"}]
-        self.fields["evms_refresh"]._values = date_values
-        if self.evms_refresh != course.evms_refresh:
-            self.evms_refresh = course.evms_refresh
+        values = get_course_edx_val_ids(course.id)
+        #values = [{"display_name": str(n), "value": str(n)} for n in range(3)]
+
+        if not values:
+            values = [{"display_name": u"None", "value": ""}]
+
+        if self.edx_video_id not in [v["value"] for v in values]:
+            override = [{"display_name": self.edx_dropdown_video_overriden(self.edx_video_id), "value": self.edx_video_id}]
+            values = override + values
+        self.fields["edx_dropdown_video_id"]._values = values
 
     def editor_saved(self, user, old_metadata, old_content):
         """
@@ -579,11 +552,9 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
                 old_metadata if old_metadata else None,
                 generate_translation=True
             )
+        self.runtime.modulestore.update_item(self, user.id)
         self.synch_edx_id(old_metadata=old_metadata, new_metadata=own_metadata(self))
         self.save()
-        self.runtime.modulestore.update_item(self, user.id)
-        if self.evms_refresh == "update":
-            self.update_course_evms_values(user)
 
     def save_with_metadata(self, user):
         """
@@ -776,18 +747,15 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         if youtube_id_1_0_value:
             video_url['value'].insert(0, youtube_id_1_0_value)
 
-        edx_video_id = metadata_fields['edx_course_video_id']
-        evms_refresh = metadata_fields['evms_refresh']
+        edx_video_id = metadata_fields['edx_dropdown_video_id']
         metadata = OrderedDict([
             ('display_name', display_name),
             ('edx_video_id',edx_video_id),
-            ('evms_refresh',evms_refresh),
             ('video_url', video_url)
         ])
         _context.update({'transcripts_basic_tab_metadata': metadata})
         #editable = _context['editable_metadata_fields']
-        #editable.pop('edx_course_video_id')
-        #editable.pop('evms_refresh')
+        #editable.pop('edx_dropdown_video_id')
         #_context['editable_metadata_fields'] = editable
         return _context
 

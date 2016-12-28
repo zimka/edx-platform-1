@@ -167,8 +167,8 @@ class VideoFields(object):
         scope=Scope.settings,
         default=False
     )
-    edx_course_video_id = String(
-        help=_("List of known Video IDs for this course. To update use 'Video ID list update'. To set Video ID from other course go to 'Advanced' and use 'Video ID'"),  # pylint: disable=line-too-long
+    edx_dropdown_video_id = String(
+        help=_("List of known Video IDs for this course. Updates automatically. To set Video ID from other course go to 'Advanced' and use 'Video ID'"),  # pylint: disable=line-too-long
         display_name=_(" Course Video ID"),
         scope=Scope.settings,
         default="",
@@ -187,10 +187,4 @@ class VideoFields(object):
         display_name=_("Do not show bumper again"),
         scope=Scope.preferences,
         default=False,
-    )
-    evms_refresh = String(
-        display_name=_(" Video ID list update"),
-        help=_("Shows when the list of available video was updated last time. Choose 'Update' to update list."),
-        scope=Scope.settings,
-        default="Haven't been updated yet",
     )

@@ -167,6 +167,11 @@ def get_course_edx_val_ids(course_id):
         return False
     values = []
     for v in videos:
-        _dict = {"display_name": v["client_video_id"], "value": v["edx_video_id"]}
+        name = v["client_video_id"]
+        name = u"{}::{}".format(v["edx_video_id"], name)
+        if len(name) > 70:
+            name = name[:67] + u"..."
+        _dict = {"display_name": name, "value": str(v["edx_video_id"])}
         values.append(_dict)
+    values = [{"display_name": u"None", "value": ""}] + values
     return values
