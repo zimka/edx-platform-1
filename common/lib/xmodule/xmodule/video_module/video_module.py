@@ -429,6 +429,8 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         # we should enable `download_track` if following is true:
         if not self.fields['download_track'].is_set_on(self) and self.track:
             self.download_track = True
+        if self.edx_video_id != self.edx_dropdown_video_id:
+            self.edx_dropdown_video_id = self.edx_video_id
 
     def studio_view(self, context):
         self.set_video_evms_values()
@@ -436,7 +438,7 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
 
     @staticmethod
     def edx_dropdown_video_overriden(s):
-        return "'Advanced' override:{}".format(s)
+        return "'Additional value': {}".format(s)
 
     def synch_edx_id(self, old_metadata=None, new_metadata=None):
         """
@@ -491,12 +493,16 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
             return
 
     def set_video_evms_values(self):
+        turned_off_vals = lambda x: [{"display_name": u"'Update available video' option is turned off in course settings", "value": ""}]
+        default_vals = lambda x: [{"display_name": u"None", "value": ""}]
         try:
             from openedx.core.djangoapps.video_evms.api import get_course_edx_val_ids
         except:
-            get_course_edx_val_ids = lambda x: [{"display_name": u"None", "value": ""}]
+            get_course_edx_val_ids = default_vals
 
         course = self.runtime.modulestore.get_course(self.location.course_key)
+        if not course.update_from_evms:
+            get_course_edx_val_ids = turned_off_vals
         values = get_course_edx_val_ids(course.id)
 
         if not values:

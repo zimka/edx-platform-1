@@ -171,17 +171,22 @@ def get_course_edx_val_ids(course_id):
     try:
         videos = requests.get(url_api).json().get("videos", False)
     except Exception as e:
-        log.error("Api Exception:{}".format(str(e)))
+        log.error("Openedx EVMS api exception:{}".format(str(e)))
         return False
+
+    values = [{"display_name": u"None", "value": ""}]
     if not videos:
-        return False
-    values = []
+        logging.error("EVMS api response error for course_id {}:{}".format(course_id, str(response)))
+        return values
+    thr = 67
+    py_placeholder = " " * 5
+    html_placeholder = "&nbsp; " * len(py_placeholder)
     for v in videos:
         name = v["client_video_id"]
-        name = u"{}::{}".format(v["edx_video_id"], name)
-        if len(name) > 80:
-            name = name[:77] + u"..."
+        name = u"{}{}{}".format(v["edx_video_id"], py_placeholder,  v["client_video_id"])
+        if len(name) > thr:
+            name = name[:thr] + u"..."
+        name = name.replace(py_placeholder, html_placeholder)
         _dict = {"display_name": name, "value": str(v["edx_video_id"])}
         values.append(_dict)
-    values = [{"display_name": u"None", "value": ""}] + values
     return values

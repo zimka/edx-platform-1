@@ -874,6 +874,12 @@ class CourseFields(object):
         default=False,
         scope=Scope.settings,
     )
+    update_from_evms = Boolean(
+        display_name=_("Update available video from EVMS"),
+        help=_("Enter true or false. "),
+        scope=Scope.settings,
+        default=True
+    )
 
 
 class CourseModule(CourseFields, SequenceModule):  # pylint: disable=abstract-method
