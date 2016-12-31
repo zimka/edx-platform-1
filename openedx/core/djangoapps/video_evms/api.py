@@ -82,7 +82,7 @@ def _edx_openedu_compare(openedu_profile, edx_profile):
         if mapping[openedu_profile] == edx_profile:
             return True
     else:
-        log.error("Unknown video evms format: {}".format(openedu_profile))
+        log.warning("Unknown video evms format: {}".format(openedu_profile))
     return False
 
 
@@ -168,12 +168,22 @@ def get_course_edx_val_ids(course_id):
     try:
         videos = requests.get(url_api).json().get("videos", False)
     except Exception as e:
-        log.error("Api Exception:{}".format(str(e)))
+        log.error("Openedx EVMS api exception:{}".format(str(e)))
         return False
+
+    values = [{"display_name": u"None", "value": ""}]
     if not videos:
-        return False
-    values = []
+        log.error("EVMS api response error for course_id {}:{}".format(course_id, str(response)))
+        return values
+    thr = 67
+    py_placeholder = " " * 5
+    html_placeholder = "&nbsp; " * len(py_placeholder)
     for v in videos:
-        _dict = {"display_name": v["client_video_id"], "value": v["edx_video_id"]}
+        name = v["client_video_id"]
+        name = u"{}{}{}".format(v["edx_video_id"], py_placeholder,  v["client_video_id"])
+        if len(name) > thr:
+            name = name[:thr] + u"..."
+        name = name.replace(py_placeholder, html_placeholder)
+        _dict = {"display_name": name, "value": str(v["edx_video_id"])}
         values.append(_dict)
     return values
