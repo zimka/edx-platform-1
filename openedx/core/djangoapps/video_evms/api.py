@@ -82,7 +82,7 @@ def _edx_openedu_compare(openedu_profile, edx_profile):
         if mapping[openedu_profile] == edx_profile:
             return True
     else:
-        log.error("Unknown video evms format: {}".format(openedu_profile))
+        log.warning("Unknown video evms format: {}".format(openedu_profile))
     return False
 
 
@@ -173,7 +173,7 @@ def get_course_edx_val_ids(course_id):
 
     values = [{"display_name": u"None", "value": ""}]
     if not videos:
-        logging.error("EVMS api response error for course_id {}:{}".format(course_id, str(response)))
+        log.error("EVMS api response error for course_id {}:{}".format(course_id, str(response)))
         return values
     thr = 67
     py_placeholder = " " * 5
