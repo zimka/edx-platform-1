@@ -212,3 +212,5 @@ urlpatterns += (
     url(r'^404$', handler404),
     url(r'^500$', handler500),
 )
+
+urlpatterns +=  (url(r'^api/proctoring/', include('proctoring_api.urls', namespace='proctoring_api')),)
