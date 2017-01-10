@@ -13,31 +13,44 @@ class CourseProctoringProvider(UpdateAPIView):
         token = request.data['token']
         user_id = request.data['user']
         service = request.data['service']
+        response = None
 
         if token != settings.CMS_PROCTORING_API_KEY:
-            return Response({"error":"Wrong key"},
-                            status=401)
+            response = Response({"error": "Wrong api key"},
+                                status=400)
         course_id = kwargs.get('course_id', None)
         if not course_id:
-            return Response(status=400)
-
+            response = response or Response({"error": "No course id in request"},
+                                            status=400)
         course_key = CourseKey.from_string(course_id)
         store = modulestore()
         course = store.get_course(course_key)
         if not course:
-            return Response({"error":"No course with such course_id"},
-                            status=400)
+            response = response or Response({"error": "No course with such course_id: '{}'".format(course_id)},
+                                            status=400)
+        known_providers = settings.PROCTORING_BACKEND_PROVIDERS
+        if service not in known_providers:
+            response = response or Response({"error": "Unknown proctoring service:{}".format(service)},
+                                            status=400)
         available_providers = course.available_proctoring_services.split(',')
         if service not in available_providers:
-            return Response({"error":"This proctoring service is not available"},
-                            status=403)
-        course.proctoring_service = service
+            response = response or Response({"error": "This proctoring service is not available for course:{}".format(service)},
+                                            status=400)
         try:
             int(user_id)
         except ValueError:
-            return Response({"error": "Broken user_id"},
-                            status=400)
+            answer = {"error": "Broken user_id:{}".format(user_id)}
+            response = response or Response(answer,
+                                            status=400)
 
-        store.update_item(course, user_id)
-        logging.info("Proctoring set from lms:'{}' by user with id: '{}'".format(service, user_id))
-        return Response(status=200)
+        response = response or Response(status=200)
+        code = response.status_code
+        response_data = response.data or "OK"
+
+        _log = "Proctoring api request: data '{request_data}';course_id: '{course_id}';Response:{response_data}"
+        _log = _log.format(request_data=str(dict(request.data)), course_id=str(course_id), response_data=response_data)
+        logging.info(_log)
+        if code == 200:
+            course.proctoring_service = service
+            store.update_item(course, user_id)
+        return response
