@@ -56,7 +56,7 @@ def _advanced_component_types():
     """
     Return advanced component types which can be created.
     """
-    disabled_create_block_types = XBlockDisableConfig.disabled_create_block_types()
+    disabled_create_block_types = []#XBlockDisableConfig.disabled_create_block_types()
     return [c_type for c_type in ADVANCED_COMPONENT_TYPES if c_type not in disabled_create_block_types]
 
 
