@@ -469,7 +469,7 @@ div.problem {
       &:before {
         @extend %t-strong;
         display: inline;
-        content: "Answer: ";
+        content: "Ответ: ";
 
       }
       &:empty {
