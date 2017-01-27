@@ -168,9 +168,9 @@ if (is_proctored_exam) {
                     <p>
                         <span class="sr status-grading-label"> <%- gettext('Graded as:') %> </span>
                         <span class="icon fa fa-check" aria-hidden="true"></span>
-                        <span class="status-grading-value"> <%- gradingType %> </span>
+                        <!--<span class="status-grading-value"> <%- gradingType %> </span>
                          -
-                        <span class="sr status-proctored-exam-label"> <%- exam_value %> </span>
+                        <span class="sr status-proctored-exam-label"> <%- exam_value %> </span>-->
                         <span class="status-proctored-exam-value"> <%- exam_value %> </span>
                         <% if (xblockInfo.get('due_date')) { %>
                             <span class="status-grading-date"> <%- gettext('Due:') %> <%- xblockInfo.get('due_date') %> </span>

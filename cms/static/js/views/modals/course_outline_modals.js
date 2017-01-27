@@ -776,7 +776,7 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
                 tabs.push({
                     name: 'basic',
                     displayName: gettext('Basic'),
-                    editors: [ReleaseDateEditor, GradingEditor, DueDateEditor, StaffLockEditor]
+                    editors: [ReleaseDateEditor, DueDateEditor, StaffLockEditor]
                 });
 
                 if (options.enable_proctored_exams || options.enable_timed_exams) {
