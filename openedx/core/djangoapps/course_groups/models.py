@@ -105,14 +105,25 @@ class CohortMembership(models.Model):
         # with outer_atomic(read_committed=True):
         if True:  # in openedu we call this method already from atomic block
 
-            saved_membership, created = CohortMembership.objects.select_for_update().get_or_create(
-                user__id=self.user.id,
-                course_id=self.course_id,
-                defaults={
-                    'course_user_group': self.course_user_group,
-                    'user': self.user
-                }
-            )
+            try:
+                saved_membership, created = CohortMembership.objects.select_for_update().get_or_create(
+                    user__id=self.user.id,
+                    course_id=self.course_id,
+                    defaults={
+                        'course_user_group': self.course_user_group,
+                        'user': self.user
+                    }
+                )
+            except:
+                with outer_atomic(read_committed=True):
+                    saved_membership, created = CohortMembership.objects.select_for_update().get_or_create(
+                        user__id=self.user.id,
+                        course_id=self.course_id,
+                        defaults={
+                            'course_user_group': self.course_user_group,
+                            'user': self.user
+                        }
+                    )
 
             # If the membership was newly created, all the validation and course_user_group logic was settled
             # with a call to self.save(force_insert=True), which gets handled above.
