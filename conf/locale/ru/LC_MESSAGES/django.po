@@ -1714,11 +1714,11 @@ msgstr "Требуется тег {expected_tag}. Вместо него введ
 
 #: common/lib/capa/capa/responsetypes.py
 msgid "Correct"
-msgstr "Верных"
+msgstr "Верно"
 
 #: common/lib/capa/capa/responsetypes.py
 msgid "Incorrect"
-msgstr "Неверных"
+msgstr "Неверно"
 
 #: common/lib/capa/capa/responsetypes.py
 msgid "Error {err} in evaluating hint function {hintfn}."
