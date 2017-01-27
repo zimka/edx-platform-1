@@ -23543,3 +23543,15 @@ msgstr "Контрольное задание"
 
 msgid "This exam is proctored"
 msgstr "Это контрольное задание требует идентификации личности."
+
+msgid "***Evms video id is None or inputted manually***"
+msgstr "***Идентфикатор EVMS видео отсутствует или введен вручную***"
+
+msgid "Video compression in progress. Until the end of compression it will not visible for students."
+msgstr "Видео в процессе пережатия. До окончания пережатия оно не отображается в LMS."
+
+msgid "+++++++++++++++In progress++++++++++++++"
+msgstr "++++++++++++++++ В процессе пережатия +++++++++++++++++++"
+
+msgid "*************************Error*************************"
+msgstr "************************* Видео с ошибками в EVMS *************************"

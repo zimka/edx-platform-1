@@ -13,7 +13,6 @@ Examples of html5 videos for manual testing:
     https://s3.amazonaws.com/edx-course-videos/edx-intro/edX-FA12-cware-1_100.ogv
 """
 import copy
-from datetime import  datetime
 import json
 import logging
 import random
@@ -46,6 +45,7 @@ from .video_handlers import VideoStudentViewHandlers, VideoStudioViewHandlers
 
 from xmodule.video_module import manage_video_subtitles_save
 from xmodule.mixin import LicenseMixin
+
 # The following import/except block for edxval is temporary measure until
 # edxval is a proper XBlock Runtime Service.
 #
@@ -77,7 +77,6 @@ try:
     # Use evms api instead of edxval_api
     import openedx.core.djangoapps.video_evms.api as edxval_api
 except ImportError:
-    import edxval.api as edxval_api
     edxval_api = None
 
 try:
@@ -209,10 +208,13 @@ class VideoModule(VideoFields, VideoTranscriptsMixin, VideoStudentViewHandlers, 
         # If we have an edx_video_id, we prefer its values over what we store
         # internally for download links (source, html5_sources) and the youtube
         # stream.
+        val_profiles = ["youtube", "desktop_mp4", "desktop_webm"]
+        is_studio = False
         if self.edx_video_id and edxval_api:
             try:
                 val_profiles = ["youtube", "desktop_mp4", "desktop_webm"]
-                val_video_urls = edxval_api.get_urls_for_profiles(self.edx_video_id, val_profiles)
+                is_studio = len(self.runtime.STATIC_URL.split('/static/')[1]) > 1
+                val_video_urls = edxval_api.get_urls_for_profiles(self.edx_video_id, val_profiles, is_studio)
 
                 # VAL will always give us the keys for the profiles we asked for, but
                 # if it doesn't have an encoded video entry for that Video + Profile, the
@@ -289,6 +291,12 @@ class VideoModule(VideoFields, VideoTranscriptsMixin, VideoStudentViewHandlers, 
             if xblock_settings and 'YOUTUBE_API_KEY' in xblock_settings:
                 yt_api_key = xblock_settings['YOUTUBE_API_KEY']
 
+        only_original = False
+        if is_studio:
+            available_profiles = edxval_api.get_available_profiles(self.edx_video_id, val_profiles)
+            if len(available_profiles) == 1 and u'original' in available_profiles:
+                only_original = True
+
         metadata = {
             'saveStateUrl': self.system.ajax_url + '/save_user_state',
             'autoplay': settings.FEATURES.get('AUTOPLAY_VIDEOS', False),
@@ -359,6 +367,7 @@ class VideoModule(VideoFields, VideoTranscriptsMixin, VideoStudentViewHandlers, 
             'track': track_url,
             'transcript_download_format': transcript_download_format,
             'transcript_download_formats_list': self.descriptor.fields['transcript_download_format'].values,
+            'only_original': only_original,
             'license': getattr(self, "license", None),
         }
         return self.system.render_template('video.html', context)
@@ -451,6 +460,8 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
 
         def master_native(eid):
             block = self.fields["edx_dropdown_video_id"]
+            if not block.values:
+                return
             values = [v["value"] for v in block.values]
             if eid not in values:
                 block._values.append({"display_name": self.edx_dropdown_video_overriden(eid), "value": eid})
@@ -507,9 +518,30 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         if not values:
             values = [{"display_name": u"None", "value": ""}]
 
+        first_value = [{"display_name": u"***Evms video id is None or inputted manually***", "value": ""}]
+        ok_values = []
+        new_values = []
+        error_values = []
+        override = []
+
         if self.edx_video_id not in [v["value"] for v in values]:
             override = [{"display_name": self.edx_dropdown_video_overriden(self.edx_video_id), "value": self.edx_video_id}]
-            values = override + values
+
+        for v in values:
+            if 'status' in v:
+                if v['status'] == 'ok':
+                    ok_values.append(v)
+                elif v['status'] in ['uploading', 'new']:
+                    new_values.append(v)
+                else:
+                    error_values.append(v)
+
+        if new_values:
+            new_values = [{"display_name": u"+++++++++++++++In progress++++++++++++++", "value": ""}] + new_values
+        if error_values:
+            error_values = [{"display_name": u"*************************Error*************************", "value": ""}] + error_values
+        values = override + first_value + ok_values + new_values + error_values
+
         self.fields["edx_dropdown_video_id"]._values = values
 
     def editor_saved(self, user, old_metadata, old_content):
