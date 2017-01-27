@@ -244,8 +244,8 @@ class CapaMixin(CapaFields):
                 self.seed = self.lcp.seed
 
         except Exception as err:  # pylint: disable=broad-except
-            msg = u'cannot create LoncapaProblem {loc}: {err}'.format(
-                loc=self.location.to_deprecated_string(), err=err)
+            msg = u'cannot create LoncapaProblem {loc}'.format(
+                loc=self.location.to_deprecated_string())
             # TODO (vshnayder): do modules need error handlers too?
             # We shouldn't be switching on DEBUG.
             if self.runtime.DEBUG:
