@@ -241,6 +241,9 @@ def get_score(user, block, scores_client, submissions_scores_cache, max_scores_c
         # cached_max_score on hand. We know they've earned 0.0 points on this.
         correct = 0.0
         total = block.transformer_data[GradesTransformer].max_score
+        # TODO: delete it when qnet xblock will be fixed
+        if total is None and block.category == 'qnet':
+            total = block.weight
 
         # Problem may be an error module (if something in the problem builder failed)
         # In which case total might be None
