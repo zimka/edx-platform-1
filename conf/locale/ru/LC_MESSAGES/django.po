@@ -23555,3 +23555,6 @@ msgstr "++++++++++++++++ В процессе пережатия ++++++++++++++++
 
 msgid "*************************Error*************************"
 msgstr "************************* Видео с ошибками в EVMS *************************"
+
+msgid "You are eligible to purchase academic credit for this course if you complete all required exams and also achieve a final grade that meets the credit requirements for the course."
+msgstr "Вы получите подтвержденный сертификат по этому курсу, если успешно выполните все контрольные задания и наберете необходимое для аттестации число баллов."
