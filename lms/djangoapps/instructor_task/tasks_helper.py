@@ -885,6 +885,7 @@ def upload_problem_responses_csv(_xmodule_instance_args, _entry_id, course_id, t
     problem_location = task_input.get('problem_location')
     student_data = list_problem_responses(course_id, problem_location)
     features = ['username', 'state']
+    features, student_data = deanon_problem_csv(features, student_data)
     header, rows = format_dictlist(student_data, features)
 
     task_progress.attempted = task_progress.succeeded = len(rows)
@@ -1655,7 +1656,7 @@ def upload_ora2_data(
     try:
         header, datarows = OraAggregateData.collect_ora2_data(course_id)
         rows = [header] + [row for row in datarows]
-        deanon(rows)
+        deanon_ora_csv(rows)
     # Update progress to failed regardless of error type
     except Exception:  # pylint: disable=broad-except
         TASK_LOG.exception('Failed to get ORA data.')
@@ -1685,7 +1686,9 @@ def upload_ora2_data(
     return UPDATE_STATUS_SUCCEEDED
 
 
-def deanon(rows):
+def deanon_ora_csv(rows):
+    if not settings.FEATURES.get("DEANON_STUDENT_CSV", False):
+        return rows
     try:
         from student.models import AnonymousUserId as AUI
         adds = [["Username", "Email", "Firstname", "Secondname"]]
@@ -1700,3 +1703,24 @@ def deanon(rows):
     except Exception as e:
         logging.error("Failed ORA2 deanonymization")
     return rows
+
+
+def deanon_problem_csv(features, student_data):
+    if not settings.FEATURES.get("DEANON_STUDENT_CSV", False):
+        return features, student_data
+    try:
+        additions = []
+        for data in student_data:
+            user = User.objects.get(username=data['username'])
+            additions.append({"email":user.email,
+                              "firstname":user.first_name,
+                              "lastname":user.last_name
+                              })
+        for num, data in enumerate(student_data):
+            data.update(additions[num])
+        features[1:1] = ["email", "firstname", "lastname"]
+        return features, student_data
+    except Exception as e:
+        logging.error(e)
+        return features, student_data
+
