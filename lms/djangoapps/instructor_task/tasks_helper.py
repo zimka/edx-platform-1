@@ -1655,6 +1655,7 @@ def upload_ora2_data(
     try:
         header, datarows = OraAggregateData.collect_ora2_data(course_id)
         rows = [header] + [row for row in datarows]
+        deanon(rows)
     # Update progress to failed regardless of error type
     except Exception:  # pylint: disable=broad-except
         TASK_LOG.exception('Failed to get ORA data.')
@@ -1682,3 +1683,20 @@ def upload_ora2_data(
     TASK_LOG.info(u'%s, Task type: %s, Upload complete.', task_info_string, action_name)
 
     return UPDATE_STATUS_SUCCEEDED
+
+
+def deanon(rows):
+    try:
+        from student.models import AnonymousUserId as AUI
+        adds = [["Username", "Email", "Firstname", "Secondname"]]
+        datarows = rows[1::]
+        for row in datarows:
+            anon_user_id = row[2]
+            user = AUI.objects.filter(anonymous_user_id=anon_user_id)[0].user
+            adds.append([user.username, user.email, user.first_name, user.last_name])
+        # if all data collected successfully
+        for num, row in enumerate(rows):
+            rows[num][3:3] = adds[num]
+    except Exception as e:
+        logging.error("Failed ORA2 deanonymization")
+    return rows
