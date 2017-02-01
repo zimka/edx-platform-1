@@ -217,8 +217,11 @@ class ReportStore(object):
         new list of rows with those strings encoded as utf-8 for CSV
         compatibility.
         """
+        transform = lambda x: unicode(x).encode('utf-8')
+        if settings.FEATURES.get("CSV_DECODING"):
+            transform = lambda x: str(x).decode('unicode-escape').encode('utf-8')
         for row in rows:
-            yield [unicode(item).encode('utf-8') for item in row]
+            yield [transform(item) for item in row]
 
 
 class DjangoStorageReportStore(ReportStore):
