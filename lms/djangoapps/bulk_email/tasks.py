@@ -523,9 +523,20 @@ def _send_course_email(entry_id, email_id, to_list, global_email_context, subtas
             unsub_hash = base64.b64encode("{0}+{1}".format(username, course_email.course_id.html_id()))
             unsub_url = '%s%s' % ("{}/unsubscribe/".format(settings.PLP_URL), unsub_hash)
             unsub_headers['List-Unsubscribe'] = '<{0}>'.format(unsub_url)
-            html_msg = u'{0}<br/><p>Для отписки от рассылки курса перейдите <a href="{1}">по ссылке</a></p>'.format(html_msg, unsub_url)
-            plaintext_msg = u'{0}Для отписки от рассылки курса перейдите по ссылке {1}'.format(plaintext_msg, unsub_url)
+            to_course_html_msg = u'''
+            <br/><p>Вы получили это письмо, потому что записаны на курс {0} на платформе "Открытое образование".
+            Чтобы продолжить обучение, перейдите по <a href="{1}">по ссылке.</a></p>
+            '''.format(course_title, global_email_context['course_url']).replace("\n","")
+            to_course_plaintext_msg = u'''
+            Вы получили это письмо, потому что записаны на курс {0} на платформе "Открытое образование".
+            Чтобы продолжить обучение, перейдите по по ссылке {1}.
+            '''.format(course_title, global_email_context['course_url']).replace("\n","")
 
+            html_msg = u"{} {}".format(html_msg,to_course_html_msg)
+            plaintext_msg = u"{} {}".format(plaintext_msg, to_course_plaintext_msg)
+
+            html_msg = u'{0}<br/><p>Для отписки от рассылки курса перейдите <a href="{1}">по ссылке.</a></p>'.format(html_msg, unsub_url)
+            plaintext_msg = u'{0}Для отписки от рассылки курса перейдите по ссылке {1}.'.format(plaintext_msg, unsub_url)
             # Create email:
             email_msg = EmailMultiAlternatives(
                 course_email.subject,
