@@ -998,7 +998,9 @@ urlpatterns += (
     url(r'^404$', handler404),
     url(r'^500$', handler500),
 )
-
+urlpatterns += (
+    url(r'^api/extended/', include('open_edx_api_extension.urls', namespace='api_extension')),
+)
 # include into our URL patterns the HTTP REST API that comes with edx-proctoring.
 urlpatterns += (
     url(r'^api/', include('edx_proctoring.urls')),

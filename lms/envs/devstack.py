@@ -280,3 +280,14 @@ if os.path.isfile(join(dirname(abspath(__file__)), 'private.py')):
 MODULESTORE = convert_module_store_setting_if_needed(MODULESTORE)
 
 SECRET_KEY = '85920908f28904ed733fe576320db18cabd7b6cd'
+INSTALLED_APPS += ('open_edx_api_extension','sso_edx_npoed')
+
+#print("simple_history" in INSTALLED_APPS)
+
+##NPOED OPTIONS
+npoed_temp = [path('/edx/app/edxapp/edx-platform/npoed_templates/')]
+NPOED_MAKO_TEMPLATES = ENV_TOKENS.get('NPOED_MAKO_TEMPLATES', npoed_temp )
+
+#TEMPLATE_DIRS.insert(0, '/edx/app/edxapp/venvs/edxapp/src/npoed-sso-edx-client/sso_edx_npoed')
+MAKO_TEMPLATES['main'] = NPOED_MAKO_TEMPLATES + MAKO_TEMPLATES['main']
+print(MAKO_TEMPLATES['main'])
