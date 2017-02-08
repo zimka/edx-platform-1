@@ -11,7 +11,7 @@ import re
 from time import sleep
 
 import dogstats_wrapper as dog_stats_api
-from smtplib import SMTPServerDisconnected, SMTPDataError, SMTPConnectError, SMTPException
+from smtplib import SMTPServerDisconnected, SMTPDataError, SMTPConnectError, SMTPException, SMTPRecipientsRefused
 from boto.ses.exceptions import (
     SESAddressNotVerifiedError,
     SESIdentityNotVerifiedError,
@@ -51,7 +51,7 @@ from instructor_task.subtasks import (
 )
 from util.query import use_read_replica_if_available
 from util.date_utils import get_default_time_display
-from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
+from openedx.core.djangoapps.theming import helpers as theming_helpers
 
 log = logging.getLogger('edx.celery.task')
 
@@ -63,6 +63,7 @@ SINGLE_EMAIL_FAILURE_ERRORS = (
     SESDomainEndsWithDotError,  # Recipient's email address' domain ends with a period/dot.
     SESIllegalAddressError,  # Raised when an illegal address is encountered.
     SESLocalAddressCharacterError,  # An address contained a control or whitespace character.
+    SMTPRecipientsRefused, # code 501 from SMTP server
 )
 
 # Exceptions that, if caught, should cause the task to be re-tried.
@@ -116,7 +117,7 @@ def _get_course_email_context(course):
         'course_end_date': course_end_date,
         'account_settings_url': 'https://{}{}'.format(settings.SITE_NAME, reverse('account_settings')),
         'email_settings_url': 'https://{}{}'.format(settings.SITE_NAME, reverse('dashboard')),
-        'platform_name': configuration_helpers.get_value('PLATFORM_NAME', settings.PLATFORM_NAME),
+        'platform_name': theming_helpers.get_value('PLATFORM_NAME', settings.PLATFORM_NAME),
     }
     return email_context
 
@@ -388,7 +389,7 @@ def _get_source_address(course_id, course_title, truncate=True):
         return from_addr_format.format(
             course_title=course_title_no_quotes,
             course_name=course_name,
-            from_email=configuration_helpers.get_value(
+            from_email=theming_helpers.get_value(
                 'email_from_address',
                 settings.BULK_EMAIL_DEFAULT_FROM_EMAIL
             )
@@ -407,6 +408,12 @@ def _get_source_address(course_id, course_title, truncate=True):
     if len(escaped_encoded_from_addr) >= 320 and truncate:
         from_addr = format_address(course_name)
 
+    # TODO: Курс -> Course + translation
+    # Only "from" default bulk email
+    from_addr = u'"Курс {0}" <{1}>'.format(
+            course_title_no_quotes,
+            settings.BULK_EMAIL_DEFAULT_FROM_EMAIL
+    )
     return from_addr
 
 
@@ -510,12 +517,22 @@ def _send_course_email(entry_id, email_id, to_list, global_email_context, subtas
             plaintext_msg = course_email_template.render_plaintext(course_email.text_message, email_context)
             html_msg = course_email_template.render_htmltext(course_email.html_message, email_context)
 
+            import base64
+            unsub_headers = {}
+            username = User.objects.filter(email=email)[0].username
+            unsub_hash = base64.b64encode("{0}+{1}".format(username, course_email.course_id.html_id()))
+            unsub_url = '%s%s' % ("{}/unsubscribe/".format(settings.PLP_URL), unsub_hash)
+            unsub_headers['List-Unsubscribe'] = '<{0}>'.format(unsub_url)
+            html_msg = u'{0}<br/><p>Для отписки от рассылки курса перейдите <a href="{1}">по ссылке</a></p>'.format(html_msg, unsub_url)
+            plaintext_msg = u'{0}Для отписки от рассылки курса перейдите по ссылке {1}'.format(plaintext_msg, unsub_url)
+
             # Create email:
             email_msg = EmailMultiAlternatives(
                 course_email.subject,
                 plaintext_msg,
                 from_addr,
                 [email],
+                headers = unsub_headers,
                 connection=connection
             )
             email_msg.attach_alternative(html_msg, 'text/html')
@@ -817,3 +834,4 @@ def _statsd_tag(course_title):
     The tag also gets modified by our dogstats_wrapper code.
     """
     return u"course_email:{0}".format(course_title)
+
