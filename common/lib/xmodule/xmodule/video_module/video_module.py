@@ -213,12 +213,9 @@ class VideoModule(VideoFields, VideoTranscriptsMixin, VideoStudentViewHandlers, 
         # internally for download links (source, html5_sources) and the youtube
         # stream.
         val_profiles = ["youtube", "desktop_mp4", "desktop_webm"]
-        is_studio = False
         if self.edx_video_id and edxval_api:
             try:
-                val_profiles = ["youtube", "desktop_mp4", "desktop_webm"]
-                is_studio = len(self.runtime.STATIC_URL.split('/static/')[1]) > 1
-                val_video_urls = edxval_api.get_urls_for_profiles(self.edx_video_id, val_profiles, is_studio)
+                val_video_urls = edxval_api.get_urls_for_profiles(self.edx_video_id, val_profiles)
 
                 # VAL will always give us the keys for the profiles we asked for, but
                 # if it doesn't have an encoded video entry for that Video + Profile, the
@@ -295,11 +292,6 @@ class VideoModule(VideoFields, VideoTranscriptsMixin, VideoStudentViewHandlers, 
             if xblock_settings and 'YOUTUBE_API_KEY' in xblock_settings:
                 yt_api_key = xblock_settings['YOUTUBE_API_KEY']
 
-        only_original = False
-        if is_studio:
-            available_profiles = edxval_api.get_available_profiles(self.edx_video_id, val_profiles)
-            if len(available_profiles) == 1 and u'original' in available_profiles:
-                only_original = True
 
         metadata = {
             'saveStateUrl': self.system.ajax_url + '/save_user_state',
@@ -371,7 +363,7 @@ class VideoModule(VideoFields, VideoTranscriptsMixin, VideoStudentViewHandlers, 
             'track': track_url,
             'transcript_download_format': transcript_download_format,
             'transcript_download_formats_list': self.descriptor.fields['transcript_download_format'].values,
-            'only_original': only_original,
+            'only_original': edxval_api.only_original(self.edx_video_id, val_profiles),
             'license': getattr(self, "license", None),
         }
         return self.system.render_template('video.html', context)
@@ -441,8 +433,6 @@ class VideoDescriptor(VideoDescriptoEVMSMixin, VideoFields, VideoTranscriptsMixi
         # we should enable `download_track` if following is true:
         if not self.fields['download_track'].is_set_on(self) and self.track:
             self.download_track = True
-        if self.edx_video_id != self.edx_dropdown_video_id:
-            self.edx_dropdown_video_id = self.edx_video_id
 
     @EVMS_editor_saved_dec
     def editor_saved(self, user, old_metadata, old_content):

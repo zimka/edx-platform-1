@@ -88,7 +88,8 @@ def _edx_openedu_compare(openedu_profile, edx_profile, is_studio = False):
     return False
 
 
-def get_urls_for_profiles(edx_video_id, val_profiles, is_studio = False):
+def get_urls_for_profiles(edx_video_id, val_profiles):
+    is_studio = not is_lms()
     raw_data = get_video_info(edx_video_id)
     if raw_data is None:
         raw_data = {}
@@ -209,3 +210,19 @@ def get_available_profiles(edx_video_id, val_profiles):
         for video in videos:
             profiles.append(video["profile"])
     return profiles
+
+def is_lms():
+    from xmodule.util.django import get_current_request_hostname
+    try:
+        LMS_BASE = settings.LMS_BASE
+    except AttributeError:
+        LMS_BASE = settings.LMS_ROOT_URL.split("//")[-1]
+    return get_current_request_hostname() == LMS_BASE
+
+
+def only_original(edx_video_id, val_profiles):
+    if not is_lms():
+        available_profiles = get_available_profiles(edx_video_id, val_profiles)
+        if len(available_profiles) == 1 and u'original' in available_profiles:
+            return True
+    return False
