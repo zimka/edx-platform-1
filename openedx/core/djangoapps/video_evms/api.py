@@ -8,7 +8,11 @@ from django.conf import settings
 import requests
 
 log = logging.getLogger(__name__)
-API_URL = '{0}/api/v2/video' # format(EVMS_URL) только при исполнении, чтобы не было конфликтов при paver update_assets
+
+if hasattr(settings, 'EVMS_URL'):
+    EVMS_URL = settings.EVMS_URL
+else:
+    EVMS_URL = 'https://evms.openedu.ru'
 
 
 class ValError(Exception):
@@ -55,7 +59,7 @@ class ValCannotCreateError(ValError):
     pass
 
 
-def _edx_openedu_compare(openedu_profile, edx_profile):
+def _edx_openedu_compare(openedu_profile, edx_profile, is_studio = False):
     """
     Openedu api возвращает по edx_id url со значениями profile: 'original' и 'hd'.
     EDX для отображения ожидает profile из ['youtube', 'desktop_webm', 'desktop_mp4'].
@@ -65,31 +69,46 @@ def _edx_openedu_compare(openedu_profile, edx_profile):
     :return:
     """
     mapping = {
+        "desktop_mp4": "desktop_mp4",
+        "SD": "desktop_webm",
         "sd": "desktop_webm",
-        "hd": "desktop_mp4"
+        "HD": "desktop_mp4",
+        "hd": "desktop_mp4",
+        "hd2": "desktop_mp4",
     }
+    if is_studio:
+        mapping['original'] = "desktop_webm"
     if openedu_profile == edx_profile:
         return True
-    if mapping.get(openedu_profile, False) == edx_profile:
-        return True
+    if openedu_profile in mapping:
+        if mapping[openedu_profile] == edx_profile:
+            return True
+    elif openedu_profile not in ['original', 'mobile']:
+        log.warning("Unknown video evms format: {}".format(openedu_profile))
     return False
 
 
-def get_urls_for_profiles(edx_video_id, val_profiles):
+def get_urls_for_profiles(edx_video_id, val_profiles, is_studio = False):
     raw_data = get_video_info(edx_video_id)
     if raw_data is None:
         raw_data = {}
-    else:
-        #raw_data = raw_data[0]
-        pass
-    log.warning(raw_data)
     profile_data = {}
+    sum_len = 0
     for profile in val_profiles:
         url = ''
         if 'encoded_videos' in raw_data:
             videos = raw_data['encoded_videos']
             for video in videos:
                 if _edx_openedu_compare(video.get('profile'), profile):
+                    url = video.get('url', '')
+        profile_data[profile] = url
+        sum_len += len(url)
+    if sum_len < 1 and is_studio:
+        url = ''
+        if 'encoded_videos' in raw_data:
+            videos = raw_data['encoded_videos']
+            for video in videos:
+                if _edx_openedu_compare(video.get('profile'), profile, is_studio):
                     url = video.get('url', '')
         profile_data[profile] = url
     return profile_data
@@ -100,17 +119,17 @@ def get_url_for_profile(edx_video_id, val_profile):
 
 
 def get_video_info(edx_video_id):
-    token = getattr(settings, 'EVMS_API_KEY')
-    url_api = u'{0}/{1}?token={2}'.format(API_URL.format(getattr(settings, 'EVMS_URL')),
-                                          edx_video_id,
-                                          token)
+    token = None
+    if hasattr(settings, 'EVMS_API_KEY'):
+        token = getattr(settings, 'EVMS_API_KEY')
+    url_api = u'{0}/api/v2/video/{1}?token={2}'.format(EVMS_URL, edx_video_id, token)
     try:
         response = urllib2.urlopen(url_api)
+        data = response.read()
+        clean_data = json.loads(data)
+        return clean_data
     except:
         return None
-    data = response.read()
-    clean_data = json.loads(data)
-    return clean_data
 
 
 def export_to_xml(edx_video_id):
@@ -118,7 +137,8 @@ def export_to_xml(edx_video_id):
     if video is None:
         return Element('video_asset')
     else:
-        video = video[0]
+        if isinstance(video, list):
+            video = video[0]
     video_el = Element(
         'video_asset',
         attrib={
@@ -144,37 +164,48 @@ def import_from_xml(xml, edx_video_id, course_id=None):
     return
 
 
+def get_video_info_for_course_and_profiles(course_id, video_profile_names):
+    return {}
+
+
 def get_course_evms_guid(course_id):
     return str(course_id).split('+')[1]
 
 
 def get_course_edx_val_ids(course_id):
     token = getattr(settings, 'EVMS_API_KEY')
-    course_vids_api_url = '{0}/api/v2/course' # format(EVMS_URL) только при исполнении, чтобы не было конфликтов при paver update_assets
+    course_vids_api_url = '{0}/api/v2/course'.format(EVMS_URL)  #только при исполнении, чтобы не было конфликтов при paver update_assets
     course_guid = get_course_evms_guid(course_id)
-    url_api = u'{0}/{1}?token={2}'.format(course_vids_api_url.format(getattr(settings, 'EVMS_URL')),
-                                          course_guid,
-                                          token)
+    url_api = u'{0}/{1}?token={2}'.format(course_vids_api_url, course_guid, token)
     try:
         response = requests.get(url_api)
-        response = response.json()
-        videos = response.get("videos", False)
+        videos = response.json().get("videos", False)
     except Exception as e:
-        logging.error("Openedx EVMS api exception:{}".format(str(e)))
+        log.error("Openedx EVMS api exception:{}".format(str(e)))
         return False
 
-    values = [{"display_name": u"None", "value": ""}]
+    values = [{"display_name": u"***Evms video id is None or inputted manually***", "value": ""}]
     if not videos:
-        logging.error("EVMS api response error for course_id {}:{}".format(course_id, str(response)))
+        log.error("EVMS api response error for course_id {}:{}".format(course_id, str(response)))
         return values
     thr = 67
-    py_placeholder = " " * 5
-    html_placeholder = "&nbsp; " * len(py_placeholder)
+    py_placeholder = " --- "
     for v in videos:
-        name = u"{}{}{}".format(v["edx_video_id"], py_placeholder,  v["client_video_id"])
+        name = u"{}{}{}".format(v["edx_video_id"], py_placeholder, v["client_video_id"])
         if len(name) > thr:
-            name = name[:thr] + u"..."
-        name = name.replace(py_placeholder, html_placeholder)
-        _dict = {"display_name": name, "value": str(v["edx_video_id"])}
+            name = "".join([name[0:thr], u"..."])
+        _dict = {"display_name": name, "value": v["edx_video_id"], "status": v["status"]}
         values.append(_dict)
     return values
+
+
+def get_available_profiles(edx_video_id, val_profiles):
+    raw_data = get_video_info(edx_video_id)
+    if raw_data is None:
+        raw_data = []
+    profiles = []
+    if 'encoded_videos' in raw_data:
+        videos = raw_data['encoded_videos']
+        for video in videos:
+            profiles.append(video["profile"])
+    return profiles

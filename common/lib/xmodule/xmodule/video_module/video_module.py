@@ -13,7 +13,6 @@ Examples of html5 videos for manual testing:
     https://s3.amazonaws.com/edx-course-videos/edx-intro/edX-FA12-cware-1_100.ogv
 """
 import copy
-from datetime import  datetime
 import json
 import logging
 import random
@@ -46,7 +45,7 @@ from .video_handlers import VideoStudentViewHandlers, VideoStudioViewHandlers
 
 from xmodule.video_module import manage_video_subtitles_save
 from xmodule.mixin import LicenseMixin
-from xmodule.util.django import get_current_request_hostname
+
 # The following import/except block for edxval is temporary measure until
 # edxval is a proper XBlock Runtime Service.
 #
@@ -78,7 +77,6 @@ try:
     # Use evms api instead of edxval_api
     import openedx.core.djangoapps.video_evms.api as edxval_api
 except ImportError:
-    import edxval.api as edxval_api
     edxval_api = None
 
 try:
@@ -116,7 +114,6 @@ class VideoModule(VideoFields, VideoTranscriptsMixin, VideoStudentViewHandlers, 
     #TODO: For each of the following, ensure that any generated html is properly escaped.
     js = {
         'js': [
-            resource_string(module, 'js/src/time.js'),
             resource_string(module, 'js/src/video/00_component.js'),
             resource_string(module, 'js/src/video/00_video_storage.js'),
             resource_string(module, 'js/src/video/00_resizer.js'),
@@ -211,10 +208,13 @@ class VideoModule(VideoFields, VideoTranscriptsMixin, VideoStudentViewHandlers, 
         # If we have an edx_video_id, we prefer its values over what we store
         # internally for download links (source, html5_sources) and the youtube
         # stream.
+        val_profiles = ["youtube", "desktop_mp4", "desktop_webm"]
+        is_studio = False
         if self.edx_video_id and edxval_api:
             try:
                 val_profiles = ["youtube", "desktop_mp4", "desktop_webm"]
-                val_video_urls = edxval_api.get_urls_for_profiles(self.edx_video_id, val_profiles)
+                is_studio = len(self.runtime.STATIC_URL.split('/static/')[1]) > 1
+                val_video_urls = edxval_api.get_urls_for_profiles(self.edx_video_id, val_profiles, is_studio)
 
                 # VAL will always give us the keys for the profiles we asked for, but
                 # if it doesn't have an encoded video entry for that Video + Profile, the
@@ -290,6 +290,13 @@ class VideoModule(VideoFields, VideoTranscriptsMixin, VideoStudentViewHandlers, 
             xblock_settings = settings_service.get_settings_bucket(self)
             if xblock_settings and 'YOUTUBE_API_KEY' in xblock_settings:
                 yt_api_key = xblock_settings['YOUTUBE_API_KEY']
+
+        only_original = False
+        if is_studio:
+            available_profiles = edxval_api.get_available_profiles(self.edx_video_id, val_profiles)
+            if len(available_profiles) == 1 and u'original' in available_profiles:
+                only_original = True
+
         metadata = {
             'saveStateUrl': self.system.ajax_url + '/save_user_state',
             'autoplay': settings.FEATURES.get('AUTOPLAY_VIDEOS', False),
@@ -354,12 +361,13 @@ class VideoModule(VideoFields, VideoTranscriptsMixin, VideoStudentViewHandlers, 
             'cdn_eval': cdn_eval,
             'cdn_exp_group': cdn_exp_group,
             'id': self.location.html_id(),
-            'display_name': self.display_name_with_default,
+            'display_name': self.display_name_with_default_escaped,
             'handout': self.handout,
             'download_video_link': download_video_link,
             'track': track_url,
             'transcript_download_format': transcript_download_format,
             'transcript_download_formats_list': self.descriptor.fields['transcript_download_format'].values,
+            'only_original': only_original,
             'license': getattr(self, "license", None),
         }
         return self.system.render_template('video.html', context)
@@ -452,6 +460,8 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
 
         def master_native(eid):
             block = self.fields["edx_dropdown_video_id"]
+            if not block.values:
+                return
             values = [v["value"] for v in block.values]
             if eid not in values:
                 block._values.append({"display_name": self.edx_dropdown_video_overriden(eid), "value": eid})
@@ -508,9 +518,30 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         if not values:
             values = [{"display_name": u"None", "value": ""}]
 
+        first_value = [{"display_name": u"***Evms video id is None or inputted manually***", "value": ""}]
+        ok_values = []
+        new_values = []
+        error_values = []
+        override = []
+
         if self.edx_video_id not in [v["value"] for v in values]:
             override = [{"display_name": self.edx_dropdown_video_overriden(self.edx_video_id), "value": self.edx_video_id}]
-            values = override + values
+
+        for v in values:
+            if 'status' in v:
+                if v['status'] == 'ok':
+                    ok_values.append(v)
+                elif v['status'] in ['uploading', 'new']:
+                    new_values.append(v)
+                else:
+                    error_values.append(v)
+
+        if new_values:
+            new_values = [{"display_name": u"+++++++++++++++In progress++++++++++++++", "value": ""}] + new_values
+        if error_values:
+            error_values = [{"display_name": u"*************************Error*************************", "value": ""}] + error_values
+        values = override + first_value + ok_values + new_values + error_values
+
         self.fields["edx_dropdown_video_id"]._values = values
 
     def editor_saved(self, user, old_metadata, old_content):
@@ -531,6 +562,7 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         This should be fixed too.
         """
         metadata_was_changed_by_user = old_metadata != own_metadata(self)
+
         # There is an edge case when old_metadata and own_metadata are same and we are importing transcript from youtube
         # then there is a syncing issue where html5_subs are not syncing with youtube sub, We can make sync better by
         # checking if transcript is present for the video and if any html5_ids transcript is not present then trigger
@@ -580,7 +612,7 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
         else:
             editable_fields.pop('source')
 
-        languages = [{'label': label, 'code': lang} for lang, label in settings.ALL_LANGUAGES]
+        languages = [{'label': label, 'code': lang} for lang, label in settings.ALL_LANGUAGES if lang != u'en']
         languages.sort(key=lambda l: l['label'])
         editable_fields['transcripts']['languages'] = languages
         editable_fields['transcripts']['type'] = 'VideoTranslations'
@@ -707,15 +739,16 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
             A full youtube url to the video whose ID is passed in
         """
         if youtube_id:
-            return u'https://www.youtube.com/watch?v={0}'.format(youtube_id)
+            return 'https://www.youtube.com/watch?v={0}'.format(youtube_id)
         else:
-            return u''
+            return ''
 
     def get_context(self):
         """
         Extend context by data for transcript basic tab.
         """
         _context = super(VideoDescriptor, self).get_context()
+
         metadata_fields = copy.deepcopy(self.editable_metadata_fields)
 
         display_name = metadata_fields['display_name']
@@ -737,11 +770,11 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
 
         _ = self.runtime.service(self, "i18n").ugettext
         video_url.update({
-           'help': _('The URL for your video. This can be a YouTube URL or a link to an .mp4, .ogg, or .webm video file hosted elsewhere on the Internet.'),  # pylint: disable=line-too-long
-           'display_name': _('Default Video URL'),
-           'field_name': 'video_url',
-           'type': 'VideoList',
-           'default_value': [get_youtube_link(youtube_id_1_0['default_value'])]
+            'help': _('The URL for your video. This can be a YouTube URL or a link to an .mp4, .ogg, or .webm video file hosted elsewhere on the Internet.'),  # pylint: disable=line-too-long
+            'display_name': _('Default Video URL'),
+            'field_name': 'video_url',
+            'type': 'VideoList',
+            'default_value': [get_youtube_link(youtube_id_1_0['default_value'])]
         })
 
         youtube_id_1_0_value = get_youtube_link(youtube_id_1_0['value'])
@@ -756,9 +789,6 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
             ('video_url', video_url)
         ])
         _context.update({'transcripts_basic_tab_metadata': metadata})
-        #editable = _context['editable_metadata_fields']
-        #editable.pop('edx_dropdown_video_id')
-        #_context['editable_metadata_fields'] = editable
         return _context
 
     @classmethod
@@ -946,10 +976,11 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
 
         encoded_videos = {}
         val_video_data = {}
+        val_video_duration = None
 
         # Check in VAL data first if edx_video_id exists
         if self.edx_video_id:
-            video_profile_names = context.get("profiles", ["mobile_low"])
+            video_profile_names = context.get("profiles", [])
 
             # get and cache bulk VAL data for course
             val_course_data = self.get_cached_val_data_for_course(video_profile_names, self.location.course_key)
@@ -968,11 +999,14 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
             elif context.get("allow_cache_miss", "True").lower() == "true":
                 try:
                     val_video_data = edxval_api.get_video_info(self.edx_video_id)
+                    val_video_duration = val_video_data.get('duration', None)
                     # Unfortunately, the VAL API is inconsistent in how it returns the encodings, so remap here.
                     for enc_vid in val_video_data.pop('encoded_videos'):
                         if enc_vid['profile'] in video_profile_names:
                             encoded_videos[enc_vid['profile']] = {key: enc_vid[key] for key in ["url", "file_size"]}
                 except edxval_api.ValVideoNotFoundError:
+                    pass
+                except AttributeError:
                     pass
 
         # Fall back to other video URLs in the video module if not found in VAL
@@ -1000,7 +1034,7 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
 
         return {
             "only_on_web": self.only_on_web,
-            "duration": val_video_data.get('duration', None),
+            "duration": val_video_duration,
             "transcripts": transcripts,
             "encoded_videos": encoded_videos,
         }
