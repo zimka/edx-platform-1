@@ -1108,6 +1108,9 @@ class ChoiceResponse(LoncapaResponse):
                 if selector_set == student_set:
                     # This is the atypical case where the hint text is in an inner div with its own style.
                     hint_text = compound_hint.text.strip()
+                    children = compound_hint.getchildren()
+                    if len(children):
+                        hint_text += etree.tostring(compound_hint.getchildren()[0])
                     # Compute the choice names just for logging
                     choices = self.xml.xpath('//checkboxgroup[@id=$id]/choice', id=self.answer_id)
                     choice_all = [choice.get('name') for choice in choices]
