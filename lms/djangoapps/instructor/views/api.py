@@ -109,6 +109,7 @@ from opaque_keys.edx.locations import SlashSeparatedCourseKey
 from opaque_keys import InvalidKeyError
 from openedx.core.djangoapps.course_groups.cohorts import is_course_cohorted
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
+from open_edx_api_extension.utils import plp_check_unenroll
 
 log = logging.getLogger(__name__)
 
@@ -678,6 +679,9 @@ def students_update_enrollment(request, course_id):
                         state_transition = UNENROLLED_TO_ALLOWEDTOENROLL
 
             elif action == 'unenroll':
+                plp_check, plp_response = plp_check_unenroll(identifiers, user.username, str(course_id), request.user.username)
+                if not plp_check:
+                    return plp_response
                 before, after = unenroll_email(
                     course_id, email, email_students, email_params, language=language
                 )
