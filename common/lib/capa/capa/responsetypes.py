@@ -1589,7 +1589,7 @@ class OptionResponse(LoncapaResponse):
     human_name = _('Dropdown')
     tags = ['optionresponse']
     hint_tag = 'optionhint'
-    allowed_inputfields = ['optioninput']
+    allowed_inputfields = ['optioninput', 'styledoptioninput']
     answer_fields = None
     multi_device_support = True
 

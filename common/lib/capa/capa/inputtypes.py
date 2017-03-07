@@ -1828,3 +1828,60 @@ class ChoiceTextGroup(InputTypeBase):
             # Add the tuple for the current choice to the list of choices
             choices.append((choice.get("name"), components))
         return choices
+
+
+@registry.register
+class StyledOptionInput(OptionInput):
+    """
+    This tag can have 'style' attribute.
+    Examples:
+        <styledoptioninput style="('color:red;','','font-size:25px;')" options=...> ...</..>
+    OR
+       <styledoptioninput>
+            <option style="color:red;"> ...</option>
+            ...
+        </styledoptioninput>
+    """
+    template = "styledoptioninput.html"
+    tags = ['styledoptioninput']
+
+    def __init__(self, system, xml, state):
+        if not xml.attrib.get('options', ''):
+            xml.attrib['options'] = self.collect_attrs(xml, None)
+        if not xml.attrib.get('style', ''):
+            xml.attrib['style'] = self.collect_attrs(xml, 'style')
+        super(StyledOptionInput, self).__init__(system, xml, state)
+
+    @staticmethod
+    def collect_attrs(xml, attr_name):
+        """
+        Collects attribute from xml nodes, returns string
+        :param xml: lxml element
+        :param attr_name: if None, collects inner text of node, otherwise collects given attribute
+        :return:
+        """
+        if attr_name:
+            action = lambda x : x.attrib.get(attr_name, '')
+        else:
+            from .util import get_inner_html_from_xpath
+            action = lambda x: get_inner_html_from_xpath(x)
+        attr_collect = [action(node) for node in xml]
+        quotes = lambda x: "'{}'".format(x)
+        attr_str = "({})".format(",".join([quotes(x) for x in attr_collect]))
+        return attr_str
+
+    @staticmethod
+    def parse_values(values):
+        _values = values[1:-1].replace("','", "'/'")
+        return [x[1:-1] for x in _values.split("/")]
+
+    @classmethod
+    def get_attributes(cls):
+        """
+        Context for template
+        """
+        return [Attribute('options', transform=cls.parse_options),
+                Attribute('inline', False),
+                Attribute('label', ''),
+                Attribute('style', None, transform=cls.parse_values),
+                ]
