@@ -97,53 +97,39 @@ class VerticalGrading(object):
         all_graded_blocks = []
         all_graded_sections = defaultdict(list)
 
-        # def yield_descriptor_descendents(module_descriptor):  # pylint: disable=missing-docstring
-        #     children = module_descriptor.get_children(usage_key_filter=possibly_scored)
-        #     children_2 = getattr(module_descriptor, 'children', [])
-        #     if len(children_2) > len(children):
-        #         children = (modulestore().get_item(item) for item in children_2)
-        #     for child in children:
-        #         yield child
-        #         for module_descriptor in yield_descriptor_descendents(child):
-        #             yield module_descriptor
+        for chapter_key in course_structure.get_children(course_structure.root_block_usage_key):
+            for section_key in course_structure.get_children(chapter_key):
+                for vertical_key in course_structure.get_children(section_key):
+                    vertical = course_structure[vertical_key]
+                    scored_descendants_of_vertical = [vertical]
+                    if vertical.graded:
+                        for descendant_key in course_structure.post_order_traversal(
+                                filter_func=possibly_scored,
+                                start_node=vertical_key,
+                        ):
+                            scored_descendants_of_vertical.append(
+                                course_structure[descendant_key],
+                            )
 
-        blocks_stack = [modulestore().get_course(course_structure.get_children(course_structure.root_block_usage_key)[0].course_key)] if course_structure.get_children(course_structure.root_block_usage_key) else []
-
-        while blocks_stack:
-            curr_block = blocks_stack.pop()
-            if curr_block.category == grading_type:
-                scored_descendants_of_section = [curr_block]
-                block_key = curr_block.location
-                if curr_block.graded:
-                    for descendant_key in course_structure.post_order_traversal(
-                            filter_func=possibly_scored,
-                            start_node=block_key,
-                    ):
-                        scored_descendants_of_section.append(
-                            course_structure[descendant_key],
-                        )
-
-                    # The xmoduledescriptors included here are only the ones that have scores.
-                    block_description = {
-                        'section_block': course_structure[block_key],
-                        'section_descriptor': curr_block,
-                        'scored_descendants': [child for child in scored_descendants_of_section if child and child.has_score]
-                    }
-
-                    block_format = getattr(curr_block, 'format', '')
-                    all_graded_sections[block_format] = [block_description] + all_graded_sections.get(block_format, [])
-                    all_graded_blocks.extend(scored_descendants_of_section)
-
-            else:
-                children = [modulestore().get_item(item) for item in getattr(curr_block, 'children', [])]
-                # Add this blocks children to the stack so that we can traverse them as well.
-                blocks_stack.extend(children)
+                        # include only those blocks that have scores, not if they are just a parent
+                        vertical_info = {
+                            'section_block': vertical,
+                            'section_descriptor': vertical,
+                            'scored_descendants': [
+                                child for child in scored_descendants_of_vertical
+                                if getattr(child, 'has_score', None)
+                            ]
+                        }
+                        section_format = getattr(vertical, 'format', '')
+                        all_graded_sections[section_format].append(vertical_info)
+                        all_graded_blocks.extend(scored_descendants_of_vertical)
 
         return {
             'all_graded_sections': all_graded_sections,
             'all_graded_blocks': all_graded_blocks,
         }
 
+    
     @staticmethod
     def grade(student, course, keep_raw_scores=False):
         """
