@@ -677,6 +677,13 @@ def students_update_enrollment(request, course_id):
                         state_transition = UNENROLLED_TO_ALLOWEDTOENROLL
 
             elif action == 'unenroll':
+                try:
+                    from open_edx_api_extension.utils import plp_check_unenroll
+                    plp_check, plp_response = plp_check_unenroll(identifiers, user.username, str(course_id), request.user.username)
+                    if not plp_check:
+                        return plp_response
+                except ImportError:
+                    pass
                 before, after = unenroll_email(
                     course_id, email, email_students, email_params, language=language
                 )
