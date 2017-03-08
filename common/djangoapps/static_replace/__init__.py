@@ -179,8 +179,11 @@ def replace_static_urls(text, data_directory=None, course_id=None, static_asset_
             try:
                 exists_in_staticfiles_storage = staticfiles_storage.exists(rest)
             except Exception as err:
-                log.warning("staticfiles_storage couldn't find path {0}: {1}".format(
-                    rest, str(err)))
+                try:
+                    log.warning(u"staticfiles_storage couldn't find path {0}: {1}".format(
+                        rest, str(err)))
+                except UnicodeEncodeError:
+                    log.warning(u"staticfiles_storage couldn't find path")
 
             if exists_in_staticfiles_storage:
                 url = staticfiles_storage.url(rest)
