@@ -60,7 +60,7 @@ def get_logger_config(log_dir,
     if syslog_addr:
         handlers.append('syslogger-remote')
 
-    if hasattr(settings, 'RAVEN_DSN'):
+    if hasattr(settings, 'RAVEN_CONFIG') and settings.RAVEN_CONFIG.has_key('dsn'):
         handlers.append('sentry')
 
     logger_config = {
@@ -162,7 +162,7 @@ def get_logger_config(log_dir,
             },
         })
 
-    if hasattr(settings, 'RAVEN_DSN'):
+    if hasattr(settings, 'RAVEN_CONFIG') and settings.RAVEN_CONFIG.has_key('dsn'):
         logger_config['handlers'].update({
             'sentry': {
                 'level': 'ERROR',

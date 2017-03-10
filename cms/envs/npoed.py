@@ -2,15 +2,18 @@ import datetime
 
 from .aws import *
 
-
 #  ENV_TOKENS file - cms.env.json; AUTH_TOKENS file - cms.auth.json
-# Sentry integration
-RAVEN_DSN = ENV_TOKENS.get('RAVEN_DSN', None)
-if RAVEN_DSN:
-    INSTALLED_APPS += ('raven.contrib.django.raven_compat',)
-    RAVEN_CONFIG = {
-        'dsn': RAVEN_DSN,
-    }
+
+# ==== Raven ====
+RAVEN_CONFIG = AUTH_TOKENS.get('RAVEN_CONFIG', {})
+if RAVEN_CONFIG and RAVEN_CONFIG.has_key('dsn'):
+    try:
+        from raven.transport.requests import RequestsHTTPTransport
+        RAVEN_CONFIG['transport'] = RequestsHTTPTransport
+        INSTALLED_APPS += ( 'raven.contrib.django.raven_compat', )
+    except ImportError:
+        print "couldn't enable Raven with RequestsHTTPTransport!"
+# ===============
 
 SSO_NPOED_URL = ENV_TOKENS.get('SSO_NPOED_URL')
 if SSO_NPOED_URL:
