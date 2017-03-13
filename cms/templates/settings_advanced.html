@@ -43,8 +43,14 @@
 <div class="wrapper-content wrapper">
   <section class="content">
     <article class="content-primary" role="main">
-      <form id="settings_advanced" class="settings-advanced" method="post" action="">
-
+      <form id="settings_advanced"
+            
+        % if settings_changes_allowed:
+            class="settings-advanced changes-allowed"
+        % else:
+            class="settings-advanced changes-forbidden"
+        % endif
+            method="post" action="">
         <div class="message message-status confirm">
           ${_("Your policy changes have been saved.")}
         </div>

@@ -1213,17 +1213,21 @@ def advanced_settings_handler(request, course_key_string):
     course_key = CourseKey.from_string(course_key_string)
     with modulestore().bulk_operations(course_key):
         course_module = get_course_and_check_access(course_key, request.user)
+        su_or_staff = request.user.is_staff or request.user.is_superuser
         if 'text/html' in request.META.get('HTTP_ACCEPT', '') and request.method == 'GET':
 
             return render_to_response('settings_advanced.html', {
                 'context_course': course_module,
                 'advanced_dict': CourseMetadata.fetch(course_module),
-                'advanced_settings_url': reverse_course_url('advanced_settings_handler', course_key)
+                'advanced_settings_url': reverse_course_url('advanced_settings_handler', course_key),
+                'settings_changes_allowed':su_or_staff,
             })
         elif 'application/json' in request.META.get('HTTP_ACCEPT', ''):
             if request.method == 'GET':
                 return JsonResponse(CourseMetadata.fetch(course_module))
             else:
+                if not su_or_staff:
+                    return JsonResponseBadRequest([{"message":"You are not allowed to change advanced settings."}])
                 try:
                     # validate data formats and update the course module.
                     # Note: don't update mongo yet, but wait until after any tabs are changed

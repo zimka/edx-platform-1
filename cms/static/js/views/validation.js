@@ -137,6 +137,13 @@ var ValidatingView = BaseView.extend({
                     }
                 }]
             }});
+        if (!($('#settings_advanced').hasClass('changes-allowed'))){
+            this.confirmation = new NotificationView.Warning({
+            title: this.save_title,
+            message: gettext("You are not allowed to change advanced settings. To change advanced settings please contact support service, teacher@openedu.ru."),
+            actions: {}
+            });
+        }
         this.notificationBarShowing = true;
         this.confirmation.show();
         // Make sure the bar is in the right state
