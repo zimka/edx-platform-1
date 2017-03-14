@@ -120,6 +120,27 @@ from pipeline_mako import render_require_js_path_overrides
     </script>
 % endif
 
+% if course and custom_course:
+  % if custom_course['js']:
+    <script type="text/javascript" src="${custom_course['js']}";></script>
+  % endif
+  % if custom_course['css']:
+  <script type="text/javascript">
+      $(document).ready(function() {
+          var style = document.createElement('link');
+          style.href = "${custom_course['css']}";
+          style.type = "text/css";
+          style.rel = "stylesheet";
+          document.body.appendChild(style);
+      });
+  </script>
+  % endif
+%else:
+    <script src="NOCOURSE"></script>
+    %if course:
+       <p>courseget</p>
+    %endif
+% endif
 </head>
 
 <body class="${static.dir_rtl()} <%block name='bodyclass'/> lang_${LANGUAGE_CODE}">

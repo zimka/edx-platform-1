@@ -53,6 +53,10 @@ from ..model_data import FieldDataCache
 from ..module_render import toc_for_course, get_module_for_descriptor
 from .views import get_current_child, registered_for_course
 
+try:
+    from openedx.core.djangoapps.npoed_theming.utils import get_custom_course_assets_urls
+except:
+    get_custom_course_assets_urls =  None
 
 log = logging.getLogger("edx.courseware.views.index")
 TEMPLATE_IMPORTS = {'urllib': urllib}
@@ -445,6 +449,8 @@ class CoursewareIndex(View):
             )
             courseware_context['fragment'] = self.section.render(STUDENT_VIEW, section_context)
 
+        if get_custom_course_assets_urls:
+            courseware_context['custom_course'] = get_custom_course_assets_urls(self.course)
         return courseware_context
 
     def _create_section_context(self, previous_of_active_section, next_of_active_section):
