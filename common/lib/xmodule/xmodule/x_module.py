@@ -1001,8 +1001,9 @@ class ResourceTemplates(object):
                     return template
 
 
+from openedx.core.djangoapps.npoed_mixins.utils import CustomResourceTemplates #Placed here to avoid circular dependency
 @XBlock.needs("i18n")
-class XModuleDescriptor(HTMLSnippet, ResourceTemplates, XModuleMixin):
+class XModuleDescriptor(HTMLSnippet, CustomResourceTemplates, XModuleMixin):
     """
     An XModuleDescriptor is a specification for an element of a course. This
     could be a problem, an organizational element (a group of content), or a
