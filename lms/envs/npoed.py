@@ -1,16 +1,21 @@
 from aws import *
 
-#  ENV_TOKENS file - lms.env.json; AUTH_TOKENS file - lms.auth.json
-
 # ==== Raven ====
 RAVEN_CONFIG = AUTH_TOKENS.get('RAVEN_CONFIG', {})
-if RAVEN_CONFIG and RAVEN_CONFIG.has_key('dsn'):
+RAVEN_DSN = ENV_TOKENS.get('RAVEN_DSN', None) # FIXME: for a smooth upgrade, remove in future
+if RAVEN_CONFIG or RAVEN_DSN:
     try:
         from raven.transport.requests import RequestsHTTPTransport
         RAVEN_CONFIG['transport'] = RequestsHTTPTransport
+
+        # ==== FIXME: for a smooth upgrade, remove in future
+        if RAVEN_DSN:
+            RAVEN_CONFIG['dsn'] = RAVEN_DSN
+        # ====
+
         INSTALLED_APPS += ( 'raven.contrib.django.raven_compat', )
     except ImportError:
-        print "couldn't enable Raven with RequestsHTTPTransport!"
+        print "couldn't enable Raven!"
 # ===============
 
 SSO_NPOED_URL = ENV_TOKENS.get('SSO_NPOED_URL')
@@ -67,3 +72,7 @@ if USERS_WITH_SPECIAL_PERMS_IDS_STR:
 PLP_API_KEY = AUTH_TOKENS.get('PLP_API_KEY')
 
 PLP_BAN_ON = True
+
+MIDDLEWARE_CLASSES = ('dogslow.WatchdogMiddleware', ) + MIDDLEWARE_CLASSES
+DOGSLOW_TIMER = 15
+DOGSLOW_STACK_VARS = True
