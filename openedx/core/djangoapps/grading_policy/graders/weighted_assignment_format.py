@@ -54,7 +54,7 @@ class WeightedAssignmentFormatGrader(CourseGrader):
         self.starting_index = starting_index
         self.hide_average = hide_average
 
-    def grade(self, grade_sheet, generate_random_scores=False):
+    def grade(self, grade_sheet, generate_random_scores=False, unpublished_graded_verticals=dict()):
         def total_with_drops(breakdown, drop_count):
             '''calculates total score for a section while dropping lowest scores'''
             # A list of the indices of the dropped scores
@@ -84,6 +84,7 @@ class WeightedAssignmentFormatGrader(CourseGrader):
 
         # Figure the homework scores
         scores = grade_sheet.get(self.type, [])
+        unpublished_weights = unpublished_graded_verticals.get(self.type, [])
         breakdown = []
         for i in range(max(self.min_count, len(scores))):
             if i < len(scores) or generate_random_scores:
@@ -110,7 +111,10 @@ class WeightedAssignmentFormatGrader(CourseGrader):
                 )
             else:
                 percentage = 0
-                weight = 0
+                if i - len(scores) < len(unpublished_weights):
+                    weight = unpublished_weights[i - len(scores)]
+                else:
+                    weight = 1.0
                 summary = u"{section_type} {index} Unreleased - 0% (?/?)".format(
                     index=i + self.starting_index,
                     section_type=self.section_type

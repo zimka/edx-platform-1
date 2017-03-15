@@ -28,13 +28,13 @@ class WeightedSubsectionsGrader(CourseGrader):
     def __init__(self, sections):
         self.sections = sections
 
-    def grade(self, grade_sheet, generate_random_scores=False):
+    def grade(self, grade_sheet, generate_random_scores=False, unpublished_graded_verticals={}):
         total_percent = 0.0
         section_breakdown = []
         grade_breakdown = []
 
         for subgrader, category, weight, passing_grade in self.sections:
-            subgrade_result = subgrader.grade(grade_sheet, generate_random_scores)
+            subgrade_result = subgrader.grade(grade_sheet, generate_random_scores, unpublished_graded_verticals)
 
             weighted_percent = subgrade_result['percent'] * weight
             section_detail = u"{0} = {1:.2%} of a possible {2:.2%}".format(category, weighted_percent, weight)
