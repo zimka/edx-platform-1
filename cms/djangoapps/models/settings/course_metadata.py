@@ -54,6 +54,7 @@ class CourseMetadata(object):
         'self_paced',
         'chrome',
         'default_tab',
+        'exam_review_checkbox',
     ]
 
     @classmethod

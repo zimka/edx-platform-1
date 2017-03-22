@@ -999,6 +999,7 @@ def create_xblock_info(xblock, data=None, metadata=None, include_ancestor_info=F
                 "exam_review_rules": xblock.exam_review_rules,
                 "default_time_limit_minutes": xblock.default_time_limit_minutes,
                 "hide_after_due": xblock.hide_after_due,
+                "exam_review_checkbox": xblock.exam_review_checkbox,
             })
 
     # Update with gating info

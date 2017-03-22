@@ -351,9 +351,11 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
             }
             if (showRulesField) {
                 this.$('.field-exam-review-rules').show();
+                this.$('.field-exam-review-rules-checkbox').show();
             }
             else {
                 this.$('.field-exam-review-rules').hide();
+                this.$('.field-exam-review-rules-checkbox').hide();
             }
             if (showHideAfterDueField) {
                 this.$('.field-hide-after-due').show();
@@ -396,10 +398,12 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
 
             this.setReviewRules(this.model.get('exam_review_rules'));
             this.setHideAfterDue(this.model.get('hide_after_due'));
+            this.setReviewCheckbox(this.model.get('exam_review_checkbox'));
         },
         setExamType: function(is_time_limited, is_proctored_exam, is_practice_exam) {
             this.$('.field-time-limit').hide();
             this.$('.field-exam-review-rules').hide();
+            this.$('.field-exam-review-rules-checkbox').hide();
             this.$('.field-hide-after-due').hide();
 
             if (!is_time_limited) {
@@ -415,6 +419,7 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
                 } else {
                     this.$('input.proctored_exam').prop('checked', true);
                     this.$('.field-exam-review-rules').show();
+                    this.$('.field-exam-review-rules-checkbox').show();
                 }
             } else {
                 // Since we have an early exit at the top of the method
@@ -430,6 +435,18 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
         },
         setReviewRules: function (value) {
             this.$('.field-exam-review-rules textarea').val(value);
+        },
+        setReviewCheckbox: function (value) {
+            this.$('#web_sites').prop('checked', value['web_sites']);
+            this.$('#books').prop('checked', value['books']);
+            this.$('#papersheet').prop('checked', value['papersheet']);
+            this.$('#messengers').prop('checked', value['messengers']);
+            this.$('#calculator').prop('checked', value['calculator']);
+            this.$('#excel').prop('checked', value['excel']);
+            this.$('#human_assistant').prop('checked', value['human_assistant']);
+            this.$('#absence').prop('checked', value['absence']);
+            this.$('#voices').prop('checked', value['voices']);
+            this.$('#gaze_averted').prop('checked', value['gaze_averted']);
         },
         setHideAfterDue: function(value) {
             this.$('.field-hide-after-due input').prop('checked', value);
@@ -460,6 +477,16 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
             var time_limit = this.getExamTimeLimit();
             var exam_review_rules = this.$('.field-exam-review-rules textarea').val();
             var hide_after_due = this.$('.field-hide-after-due input').is(':checked');
+            var web_sites = this.$('#web_sites').is(':checked');
+            var books = this.$('#books').is(':checked');
+            var papersheet = this.$('#papersheet').is(':checked');
+            var messengers = this.$('#messengers').is(':checked');
+            var calculator = this.$('#calculator').is(':checked');
+            var excel = this.$('#excel').is(':checked');
+            var human_assistant = this.$('#human_assistant').is(':checked');
+            var absence = this.$('#absence').is(':checked');
+            var voices = this.$('#voices').is(':checked');
+            var gaze_averted = this.$('#gaze_averted').is(':checked');
 
             if (this.$('input.no_special_exam').is(':checked')){
                 is_time_limited = false;
@@ -485,6 +512,18 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
                     'is_time_limited': is_time_limited,
                     'exam_review_rules': exam_review_rules,
                     'hide_after_due': hide_after_due,
+                    'exam_review_checkbox': {
+                        "web_sites" : web_sites,
+                        "books" : books,
+                        "papersheet" : papersheet,
+                        "messengers" : messengers,
+                        "calculator" : calculator,
+                        "excel" : excel,
+                        "human_assistant" : human_assistant,
+                        "absence" : absence,
+                        "voices" : voices,
+                        "gaze_averted": gaze_averted
+                    },
                     // We have to use the legacy field name
                     // as the Ajax handler directly populates
                     // the xBlocks fields. We will have to

@@ -10,7 +10,7 @@ from pkg_resources import resource_string
 
 from lxml import etree
 from xblock.core import XBlock
-from xblock.fields import Integer, Scope, Boolean, String
+from xblock.fields import Integer, Scope, Boolean, String, Dict
 from xblock.fragment import Fragment
 import newrelic.agent
 
@@ -94,6 +94,26 @@ class ProctoringFields(object):
             "This setting indicates what rules the proctoring team should follow when viewing the videos."
         ),
         default='',
+        scope=Scope.settings,
+    )
+
+    exam_review_checkbox = Dict(
+        display_name=_("exam_review_checkbox"),
+        help=_(
+            "exam_review_checkbox"
+        ),
+        default={
+             "calculator": True,
+             "excel": False,
+             "messengers": False,
+             "absence": False,
+             "books": False,
+             "papersheet": True,
+             "aid": False,
+             "web_sites": False,
+             "voice": False,
+             "gaze_averted": True
+        },
         scope=Scope.settings,
     )
 
