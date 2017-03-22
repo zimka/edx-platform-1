@@ -116,12 +116,12 @@ def choose_date_changer(keys):
 
 
 class DateChanger(object):
-    def __init__(self, who, where, when, store, stdout=None):
+    def __init__(self, who, where, when, store=None, stdout=None):
         self.who = who  # user or cohort identifier
         self.when = when  # date to set or days to add
         self.where = where  # xblock or course location
         self.stdout = stdout
-        self.store = store
+        self.store = store or modulestore()
 
     def set_stdout(self, stdout):
         self.stdout = stdout
@@ -254,7 +254,8 @@ class CourseMixin(object):
 
         items = self.store.get_items(course_key)
         items = [x for x in items if (getattr(x, "due", False) and x.format)]
-        self.stdout.write(";; ".join(str(x.display_name) for x in items))
+        if self.stdout:
+            self.stdout.write(";; ".join(str(x.display_name) for x in items))
         self._xblock_group = items
         return self._xblock_group
 

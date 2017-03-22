@@ -168,3 +168,6 @@ urlpatterns = patterns(
         'instructor.views.api.certificate_invalidation_view',
         name='certificate_invalidation_view'),
 )
+urlpatterns +=(
+    url(r'^post_change_due/$', 'instructor.views.api.post_change_due', name='post_change_due'),
+)
