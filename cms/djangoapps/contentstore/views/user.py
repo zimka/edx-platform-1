@@ -1,5 +1,4 @@
 from django.core.exceptions import PermissionDenied
-from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
@@ -36,7 +35,6 @@ def request_course_creator(request):
 
 
 @login_required
-@staff_member_required
 @ensure_csrf_cookie
 @require_http_methods(("GET", "POST", "PUT", "DELETE"))
 def course_team_handler(request, course_key_string=None, email=None):

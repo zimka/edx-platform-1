@@ -26,7 +26,7 @@ log = logging.getLogger("openedx.grading_policy")
 WeightedScore = namedtuple("WeightedScore", "earned possible graded section module_id weight")
 
 
-def aggregate_section_scores(scores, section_name="summary", weight=1.0):
+def aggregate_section_scores(scores, section_name="summary", weight=1.0, module_id=None):
     """
     Aggregates all passed scores.
     scores: A list of WeightedScore objects
@@ -46,7 +46,7 @@ def aggregate_section_scores(scores, section_name="summary", weight=1.0):
         total_possible,
         False,
         section_name,
-        None,
+        module_id,
         weight
     )
     # selecting only graded things
@@ -55,7 +55,7 @@ def aggregate_section_scores(scores, section_name="summary", weight=1.0):
         total_possible_graded,
         True,
         section_name,
-        None,
+        module_id,
         weight
     )
 
@@ -179,7 +179,18 @@ class VerticalGrading(object):
         with outer_atomic():
             # Grading policy might be overriden by a CCX, need to reset it
             course.set_grading_policy(course.grading_policy)
-            grade_summary = course.grader.grade(totaled_scores, generate_random_scores=settings.GENERATE_PROFILE_SCORES)
+            totaled_scores_ids = []
+            for values_list in totaled_scores.values():
+                totaled_scores_ids = totaled_scores_ids + [unicode(ws.module_id) for ws in values_list]
+            unpublished_graded_verticals = {}
+            all_verticals_in_course = modulestore().get_items(course.id, qualifiers = {'category': 'vertical'})
+            for vertical in all_verticals_in_course:
+                if vertical.graded and unicode(vertical.scope_ids.usage_id) not in totaled_scores_ids:
+                    if vertical.format in unpublished_graded_verticals:
+                        unpublished_graded_verticals[vertical.format].append(vertical.weight)
+                    else:
+                        unpublished_graded_verticals[vertical.format] = [vertical.weight]
+            grade_summary = course.grader.grade(totaled_scores, generate_random_scores=settings.GENERATE_PROFILE_SCORES, unpublished_graded_verticals=unpublished_graded_verticals)
 
             # We round the grade here, to make sure that the grade is a whole percentage and
             # doesn't get displayed differently than it gets grades
@@ -242,22 +253,22 @@ class VerticalGrading(object):
 
         # Check for gated content
         gated_content = gating_api.get_gated_content(course, student)
-
-        blocks_stack = [modulestore().get_course(course_structure.get_children(course_structure.root_block_usage_key)[0].course_key)] if course_structure.get_children(course_structure.root_block_usage_key) else []
+        if course_structure.get_children(course_structure.root_block_usage_key):
+            blocks_stack = [course_structure.root_block_usage_key]
+        else:
+            blocks_stack = []
         blocks_dict = {}
 
         while blocks_stack:
-            curr_block = blocks_stack.pop()
+            key = blocks_stack.pop()
+            curr_block = course_structure[key]
             with outer_atomic():
-                if curr_block.hide_from_toc:
-                    continue
-                key = unicode(curr_block.scope_ids.usage_id)
-                children = [modulestore().get_item(item) for item in getattr(curr_block, 'children', []) if curr_block.category != grading_type]
+                children = course_structure.get_children(key) if curr_block.category != grading_type else []
                 block = {
-                    'display_name': curr_block.display_name_with_default,
+                    'display_name': block_metadata_utils.display_name_with_default_escaped(curr_block),
                     'block_type': curr_block.category,
-                    'url_name': curr_block.url_name,
-                    'children': [unicode(child.scope_ids.usage_id) for child in children],
+                    'url_name': block_metadata_utils.url_name_for_block(curr_block),
+                    'children': [unicode(child) for child in children],
                 }
 
                 if curr_block.category == grading_type:
@@ -291,7 +302,7 @@ class VerticalGrading(object):
                         scores.append(weighted_location_score)
 
                     scores.reverse()
-                    total, _ = graders.aggregate_scores(scores, curr_block.display_name_with_default)
+                    total, _ = aggregate_section_scores(scores, block_metadata_utils.display_name_with_default_escaped(curr_block))
 
                     module_format = curr_block.format if curr_block.format is not None else ''
                     block.update({
@@ -302,7 +313,7 @@ class VerticalGrading(object):
                         'graded': graded,
                     })
 
-                blocks_dict[key] = block
+                blocks_dict[unicode(key)] = block
                 # Add this blocks children to the stack so that we can traverse them as well.
                 blocks_stack.extend(children)
 
@@ -390,13 +401,13 @@ def calculate_totaled_scores(
                             )
 
                         __, graded_total = aggregate_section_scores(
-                            scores, section_name, getattr(section_descriptor, 'weight', 1.0)
+                            scores, section_name, getattr(section_descriptor, 'weight', 1.0), section.location
                         )
                         if keep_raw_scores:
                             raw_scores += scores
                     else:
                         graded_total = WeightedScore(
-                            0.0, 1.0, True, section_name, None, getattr(section_descriptor, 'weight', 1.0)
+                            0.0, 1.0, True, section_name, section.location, getattr(section_descriptor, 'weight', 1.0)
                         )
 
                     # Add the graded total to totaled_scores
