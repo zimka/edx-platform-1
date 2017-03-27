@@ -31,6 +31,7 @@ from instructor_task.tasks import (
     generate_certificates,
     proctored_exam_results_csv,
     export_ora2_data,
+    change_due_dates
 )
 
 from certificates.models import CertificateGenerationHistory
@@ -518,3 +519,21 @@ def regenerate_certificates(request, course_key, statuses_to_regenerate):
     )
 
     return instructor_task
+
+
+def submit_change_due_task(request, course_key, changedue_params):
+    """
+    Submits task to change due dates for user(s) for item(s)
+    changedue_params: OrderedDict with 3 key. Each key is supposed to be one from pair:
+        "user"/"cohort": $name
+        "course"/"block": $location
+        "add_days"/"set_date": numeric str/date str (like  2017/01/31)
+    """
+    task_type = 'change_due_dates'
+    task_class = change_due_dates
+    task_input = {
+        "keys": [x for x in changedue_params.keys()],
+        "values": [x for x in changedue_params.values()],
+    }
+    task_key = ''
+    return submit_task(request, task_type, task_class, course_key, task_input, task_key)
