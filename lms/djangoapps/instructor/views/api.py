@@ -3313,6 +3313,10 @@ def validate_request_data_and_get_certificate(certificate_invalidation, course_k
     return certificate
 
 
+@transaction.non_atomic_requests
+@require_POST
+@ensure_csrf_cookie
+@require_level('staff')
 def post_change_due(request, course_id):
     """ Changes due dates for given cohort/user for given block/course"""
     data = request.POST
@@ -3342,8 +3346,6 @@ def post_change_due(request, course_id):
             return JsonResponse({"message": "Date is not specified"}, status=400)
         params['set_date'] = data['set-date']
 
-    date_changer = choose_date_changer(params.keys())
-    changer = date_changer(*params.values())
-    changer.change_due()
-    changer.logging()
+    course_key = CourseKey.from_string(course_id)
+    instructor_task.api.submit_change_due_task(request, course_key, params)
     return JsonResponse(status=200)
