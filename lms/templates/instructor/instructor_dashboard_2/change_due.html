@@ -29,14 +29,14 @@ from openedx.core.djangolib.markup import HTML
         </div>
         <div class="change-due-cohort">
           <fieldset>
-          <legend class="sr">${_("Cohorts:")}</legend>
+          <legend class="sr">${_("Cohorts")}</legend>
           %if len(section_data['cohorts']) > 0:
             <div class="cohort-management-nav-form-select field field-select">
               <label for="cohort-select" class="label sr">Select a cohort to manage</label>
               <select class="input cohort-select" name="cohort" id="cohort-select">
               %for cohort in section_data['cohorts']:
                 <option value="${cohort.name}" id="target_cohort_${cohort.id}">
-                  ${_("Cohort: ") + cohort.name}
+                  ${_("Cohort") +": "+ cohort.name}
                 </option>
               %endfor
               </select>
@@ -48,7 +48,7 @@ from openedx.core.djangolib.markup import HTML
         </div>
         <div class="change-due-user">
           <label>
-            <input type="text" id="change-due-user-name" name="user-name" maxlength="20" placeholder="${_("username")}">
+            <input type="text" id="change-due-user-name" name="user-name" maxlength="20" placeholder="${_("Username")}">
           </label>
         </div>
       </li>
@@ -82,7 +82,7 @@ from openedx.core.djangolib.markup import HTML
     <input type="hidden" name="csrfmiddlewaretoken" value="${ csrf_token }">
     <input type="button" name="send" value="${_("Submit Change Due")}" onclick="change_due_submit()">
   </form>
-  <div class="request-response-message hidden"> Success </div>
+  <div class="request-response-message hidden"> ${_("Success")} </div>
 
   <div class="request-response-error"></div>
 

@@ -3323,33 +3323,32 @@ def post_change_due(request, course_id):
     params = OrderedDict()
     if 'user' in data['who']:
         if not data['user-name']:
-            return JsonResponse({"message": "User is not specified"}, status=400)
+            return JsonResponse({"message": _("User is not specified")}, status=400)
         params['user'] = data['user-name']
     if 'cohort' in data['who']:
         try:
             params['cohort'] = data['cohort']
         except:
-            return JsonResponse({"message": "Cohort is not specified"}, status=400)
+            return JsonResponse({"message": _("Cohort is not specified")}, status=400)
     if 'course' in data['where']:
         params['course_key'] = course_id
     if 'block' in data['where']:
         if not data['location']:
-            return JsonResponse({"message": "Location is not specified"}, status=400)
+            return JsonResponse({"message": _("Location is not specified")}, status=400)
         params['block_key'] = data['location']
 
     if 'add' in data['when']:
         if not data['add-days']:
-            return JsonResponse({"message": "Days to add are not specified"}, status=400)
+            return JsonResponse({"message": _("Days to add are not specified")}, status=400)
         params['add_days'] = data['add-days']
     if 'set' in data['when']:
         if not data['set-date']:
-            return JsonResponse({"message": "Date is not specified"}, status=400)
+            return JsonResponse({"message": _("Date is not specified")}, status=400)
         params['set_date'] = data['set-date']
     course_key = CourseKey.from_string(course_id)
     failed_check = validate_change_due_keys(params, course_key)
     if failed_check:
         return JsonResponse({"message": failed_check}, status=400)
-    return JsonResponse(status=200)
 
     instructor_task.api.submit_change_due_task(request, course_key, params)
     return JsonResponse(status=200)
