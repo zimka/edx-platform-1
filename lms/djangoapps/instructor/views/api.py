@@ -112,7 +112,7 @@ from opaque_keys.edx.locations import SlashSeparatedCourseKey
 from opaque_keys import InvalidKeyError
 from openedx.core.djangoapps.course_groups.cohorts import is_course_cohorted
 from openedx.core.djangoapps.theming import helpers as theming_helpers
-from student.management.commands.change_due import choose_date_changer
+from student.management.commands.change_due import choose_date_changer, validate_change_due_keys
 
 log = logging.getLogger(__name__)
 
@@ -3326,13 +3326,13 @@ def post_change_due(request, course_id):
     params = OrderedDict()
     if 'user' in data['who']:
         if not data['user-name']:
-            return JsonResponse({"message":"User is not specified"}, status=400)
+            return JsonResponse({"message": "User is not specified"}, status=400)
         params['user'] = data['user-name']
     if 'cohort' in data['who']:
         try:
             params['cohort'] = data['cohort']
         except:
-            return JsonResponse({"message":"Cohort is not specified"}, status=400)
+            return JsonResponse({"message": "Cohort is not specified"}, status=400)
     if 'course' in data['where']:
         params['course_key'] = course_id
     if 'block' in data['where']:
@@ -3345,10 +3345,14 @@ def post_change_due(request, course_id):
             return JsonResponse({"message": "Days to add are not specified"}, status=400)
         params['add_days'] = data['add-days']
     if 'set' in data['when']:
-        if not data['set_date']:
+        if not data['set-date']:
             return JsonResponse({"message": "Date is not specified"}, status=400)
         params['set_date'] = data['set-date']
-
     course_key = CourseKey.from_string(course_id)
+    failed_check = validate_change_due_keys(params, course_key)
+    if failed_check:
+        return JsonResponse({"message": failed_check}, status=400)
+    return JsonResponse(status=200)
+
     instructor_task.api.submit_change_due_task(request, course_key, params)
     return JsonResponse(status=200)
