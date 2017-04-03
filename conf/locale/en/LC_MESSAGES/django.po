@@ -19982,3 +19982,66 @@ msgid ""
 "A new revision was created: Merge between Revision #%(r1)d and Revision "
 "#%(r2)d"
 msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/change_due.html:14
+msgid ""
+"Feature INDIVIDUAL_DUE_DATES is turned off. Your changes won't affect "
+"due's till feature activation. Please contact your administrator."
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/change_due.html:18
+msgid "Here you can change due dates."
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/change_due.html:20
+msgid ""
+"You should choose to whom to change dues (user or cohort), to which "
+"courseware to change due (some block or the whole course) and how to "
+"change dues (just add days for current deadline or to set new deadline "
+"date) "
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/change_due.html:58
+msgid "Block"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/change_due.html:66
+msgid "Add days"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/change_due.html:71
+msgid "E.g: 7"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/change_due.html:76
+msgid "E.g. 2017/01/31"
+msgstr ""
+
+#: lms/templates/instructor/instructor_dashboard_2/change_due.html:83
+msgid "Submit Change Due"
+msgstr ""
+
+
+#: common/djangoapps/student/management/commands/change_due.py:87
+msgid "No such user: {}"
+msgstr ""
+
+#: common/djangoapps/student/management/commands/change_due.py:92
+msgid "No such cohort: {}"
+msgstr ""
+
+#: common/djangoapps/student/management/commands/change_due.py:97
+msgid "No such block: {}"
+msgstr ""
+
+#: common/djangoapps/student/management/commands/change_due.py:102
+msgid "Add days must be integer; {} - is not integer "
+msgstr ""
+
+#: common/djangoapps/student/management/commands/change_due.py:107
+msgid "Didn't understand date '{}'; Must be in dd/mm/yyyy"
+msgstr ""
+
+#: lms/djangoapps/instructor/views/instructor_dashboard.py
+msgid "Change due"
+msgstr ""
