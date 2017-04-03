@@ -3,8 +3,10 @@ import dateutil
 import logging
 
 from datetime import timedelta
+from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.timezone import utc
+from django.utils.translation import ugettext as _
 from lms.djangoapps.instructor.views.tools import require_student_from_identifier, set_due_date_extension
 from openedx.core.djangoapps.course_groups.cohorts import get_cohort_by_id, get_cohort_by_name
 from opaque_keys.edx.keys import CourseKey, UsageKey
@@ -73,6 +75,37 @@ class Command(BaseCommand):
             """.format(keys=keys, dict=exist_pairs))
         single_key = exist_pairs[0][0]
         return single_key, container[single_key]
+
+
+def validate_change_due_keys(keys, course_key):
+    if len(keys) != 3:
+        return "Need 3 keys, got {}: {}".format(len(keys), ",".join(x for x in keys.keys()))
+    if "user" in keys:
+        try:
+            user = User.objects.get(username=keys['user'])
+        except:
+            return _("No such user: {}").format(keys['user'])
+    if "cohort" in keys:
+        try:
+            cohort = get_cohort_by_name(course_key, keys['cohort'])
+        except:
+            return _("No such cohort: {}").format(keys['cohort'])
+    if "block_key" in keys:
+        try:
+            block = UsageKey.from_string(keys['block_key'])
+        except:
+            return _("No such block: {}").format(keys['block_key'])
+    if "add_days" in keys:
+        try:
+            add_days = int(keys["add_days"])
+        except:
+            return _("Add days must be integer; {} - is not integer ").format(keys['add_days'])
+    if "set_date" in keys:
+        try:
+            set_date = dateutil.parser.parse(keys["set_date"], dayfirst=True).replace(tzinfo=utc)
+        except:
+            return _("Didn't understand date '{}'; Must be in dd/mm/yyyy").format(keys['set_date'])
+    return 0
 
 
 def choose_date_changer(keys):
@@ -148,7 +181,7 @@ class DateChanger(object):
         :return:
         """
         try:
-            date = dateutil.parser.parse(date_str).replace(tzinfo=utc)
+            date = dateutil.parser.parse(date_str, dayfirst=True).replace(tzinfo=utc)
         except ValueError:
             raise CommandError(
                 "Date {} not reckognized".format(date_str)
