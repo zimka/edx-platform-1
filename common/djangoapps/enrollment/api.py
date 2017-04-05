@@ -192,7 +192,7 @@ def add_enrollment(user_id, course_id, mode=None, is_active=True):
     return _data_api().create_course_enrollment(user_id, course_id, mode, is_active)
 
 
-def update_enrollment(user_id, course_id, mode=None, is_active=None, enrollment_attributes=None, include_expired=False):
+def update_enrollment(user_id, course_id, mode=None, is_active=None, enrollment_attributes=None, include_expired=True):
     """Updates the course mode for the enrolled user.
 
     Update a course enrollment for the given user and course.
