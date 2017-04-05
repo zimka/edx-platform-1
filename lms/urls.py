@@ -1034,3 +1034,7 @@ if settings.FEATURES.get('ENABLE_FINANCIAL_ASSISTANCE_FORM'):
             name='submit_financial_assistance_request'
         )
     )
+
+urlpatterns += (
+    url(r'^', include('sso_edx_npoed.sso_api_urls')),
+)

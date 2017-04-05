@@ -15,6 +15,7 @@ from path import Path as path
 from xblock.core import XBlock
 from xblock.fields import Scope, List, String, Dict, Boolean, Integer, Float
 
+from open_edx_api_extension.mixins import ProctorAttemptDeletingCourseMixin
 from stevedore.extension import ExtensionManager
 
 from xmodule import course_metadata_utils
@@ -890,7 +891,7 @@ class CourseModule(CourseFields, SequenceModule):  # pylint: disable=abstract-me
     """
 
 
-class CourseDescriptor(CourseFields, SequenceDescriptor, LicenseMixin):
+class CourseDescriptor(CourseFields, SequenceDescriptor, LicenseMixin, ProctorAttemptDeletingCourseMixin):
     """
     The descriptor for the course XModule
     """

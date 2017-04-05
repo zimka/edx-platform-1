@@ -137,6 +137,13 @@ var ValidatingView = BaseView.extend({
                     }
                 }]
             }});
+        if ($('#settings_advanced').hasClass('changes-not-allowed')){
+            this.confirmation = new NotificationView.Warning({
+                title: this.save_title,
+                message: gettext('You are not allowed to change advanced settings. To change advanced settings please contact support service'),
+                actions: {}
+            });
+        }
         this.notificationBarShowing = true;
         this.confirmation.show();
         // Make sure the bar is in the right state

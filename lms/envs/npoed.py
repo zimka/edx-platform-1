@@ -72,3 +72,9 @@ if USERS_WITH_SPECIAL_PERMS_IDS_STR:
 PLP_API_KEY = AUTH_TOKENS.get('PLP_API_KEY')
 
 PLP_BAN_ON = True
+FEATURES["PROCTORED_EXAMS_ATTEMPT_DELETE"] = True
+FEATURES["ICALENDAR_DUE_API"] = True
+
+ORA_LOCALE_PATH = PROJECT_ROOT.dirname().dirname() + "/venvs/edxapp/lib/python2.7/site-packages/openassessment/locale"
+LOCALE_PATHS += (ORA_LOCALE_PATH,)
+

@@ -1226,6 +1226,8 @@ def advanced_settings_handler(request, course_key_string):
             if request.method == 'GET':
                 return JsonResponse(CourseMetadata.fetch(course_module))
             else:
+                if not request.user.is_staff:
+                    return JsonResponseBadRequest([{"message":_('You are not allowed to change advanced settings.')}])
                 try:
                     # validate data formats and update the course module.
                     # Note: don't update mongo yet, but wait until after any tabs are changed
