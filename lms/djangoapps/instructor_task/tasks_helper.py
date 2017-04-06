@@ -66,7 +66,6 @@ from openedx.core.djangoapps.content.course_structures.models import CourseStruc
 from opaque_keys.edx.keys import UsageKey
 from openedx.core.djangoapps.course_groups.cohorts import add_user_to_cohort, is_course_cohorted
 from student.models import CourseEnrollment, CourseAccessRole
-from student.management.commands.change_due import choose_date_changer
 from lms.djangoapps.teams.models import CourseTeamMembership
 from lms.djangoapps.verify_student.models import SoftwareSecurePhotoVerification
 
@@ -1688,30 +1687,3 @@ def upload_ora2_data(
     TASK_LOG.info(u'%s, Task type: %s, Upload complete.', task_info_string, action_name)
 
     return UPDATE_STATUS_SUCCEEDED
-
-
-def change_due_dates_task(_xmodule_instance_args, _entry_id, course_id, _task_input, action_name):
-    """
-    Task to change due dates for given user/cohort and course item
-    """
-    try:
-        fmt = u'Task: {task_id}, InstructorTask ID: {entry_id}, Course: {course_id}, Input: {task_input}'
-        task_info_string = fmt.format(
-            task_id=_xmodule_instance_args.get('task_id') if _xmodule_instance_args is not None else None,
-            entry_id=_entry_id,
-            course_id=course_id,
-            task_input=_task_input
-        )
-        TASK_LOG.info(u'%s, Task type: %s, Starting task execution', task_info_string, action_name)
-
-        params_keys = _task_input["keys"]
-        params_values = _task_input["values"]
-        date_changer = choose_date_changer(params_keys)
-        changer = date_changer(*params_values)
-
-        changer.change_due()
-        changer.logging()
-        return UPDATE_STATUS_SUCCEEDED
-    except:
-        TASK_LOG.exception(u"Task (%s) failed", _get_task_id_from_xmodule_args(_xmodule_instance_args), exc_info=True)
-        return UPDATE_STATUS_FAILED

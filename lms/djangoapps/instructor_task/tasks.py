@@ -301,13 +301,3 @@ def export_ora2_data(entry_id, xmodule_instance_args):
     action_name = ugettext_noop('generated')
     task_fn = partial(upload_ora2_data, xmodule_instance_args)
     return run_main_task(entry_id, task_fn, action_name)
-
-from .tasks_helper import change_due_dates_task
-@task(base=BaseInstructorTask)  # pylint: disable=not-callable
-def change_due_dates(entry_id, xmodule_instance_args):
-    """
-    Generate a CSV of ora2 responses and push it to S3.
-    """
-    action_name = ugettext_noop('due dates changed')
-    task_fn = partial(change_due_dates_task, xmodule_instance_args)
-    return run_main_task(entry_id, task_fn, action_name)

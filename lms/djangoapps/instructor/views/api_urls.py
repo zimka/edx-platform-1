@@ -169,5 +169,5 @@ urlpatterns = patterns(
         name='certificate_invalidation_view'),
 )
 urlpatterns +=(
-    url(r'^post_change_due/$', 'instructor.views.api.post_change_due', name='post_change_due'),
+    url(r'^post_change_due/$', 'openedx.core.djangoapps.bulk_change_due_date.views.post_change_due', name='post_change_due'),
 )

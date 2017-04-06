@@ -10,7 +10,6 @@ import json
 import logging
 import re
 import time
-from collections import OrderedDict
 from django.conf import settings
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.views.decorators.http import require_POST, require_http_methods
@@ -112,7 +111,6 @@ from opaque_keys.edx.locations import SlashSeparatedCourseKey
 from opaque_keys import InvalidKeyError
 from openedx.core.djangoapps.course_groups.cohorts import is_course_cohorted
 from openedx.core.djangoapps.theming import helpers as theming_helpers
-from student.management.commands.change_due import choose_date_changer, validate_change_due_keys
 
 log = logging.getLogger(__name__)
 
@@ -3314,44 +3312,3 @@ def validate_request_data_and_get_certificate(certificate_invalidation, course_k
             "username/email and the selected course are correct and try again."
         ).format(student=student.username, course=course_key.course))
     return certificate
-
-
-@transaction.non_atomic_requests
-@require_POST
-@ensure_csrf_cookie
-@require_level('staff')
-def post_change_due(request, course_id):
-    """ Changes due dates for given cohort/user for given block/course"""
-    data = request.POST
-    params = OrderedDict()
-    if 'user' in data['who']:
-        if not data['user-name']:
-            return JsonResponse({"message": _("User is not specified")}, status=400)
-        params['user'] = data['user-name']
-    if 'cohort' in data['who']:
-        try:
-            params['cohort'] = data['cohort']
-        except:
-            return JsonResponse({"message": _("Cohort is not specified")}, status=400)
-    if 'course' in data['where']:
-        params['course_key'] = course_id
-    if 'block' in data['where']:
-        if not data['location']:
-            return JsonResponse({"message": _("Location is not specified")}, status=400)
-        params['block_key'] = data['location']
-
-    if 'add' in data['when']:
-        if not data['add-days']:
-            return JsonResponse({"message": _("Days to add are not specified")}, status=400)
-        params['add_days'] = data['add-days']
-    if 'set' in data['when']:
-        if not data['set-date']:
-            return JsonResponse({"message": _("Date is not specified")}, status=400)
-        params['set_date'] = data['set-date']
-    course_key = CourseKey.from_string(course_id)
-    failed_check = validate_change_due_keys(params, course_key)
-    if failed_check:
-        return JsonResponse({"message": failed_check}, status=400)
-
-    instructor_task.api.submit_change_due_task(request, course_key, params)
-    return JsonResponse(status=200)
