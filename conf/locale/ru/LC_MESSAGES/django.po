@@ -24267,3 +24267,24 @@ msgstr "Изменить сроки"
 #: lms/templates/instructor/instructor_dashboard_2/change_due.html:14
 msgid "To use this option you should setup cohorts at first."
 msgstr "Для использования этой опции необходимо включить и настроить когорты"
+
+#: lms/djangoapps/instructor/views/api.py: 3329
+msgid "User is not specified"
+msgstr "Пользователь не указан"
+
+#: lms/djangoapps/instructor/views/api.py: 3335
+msgid "Cohort is not specified"
+msgstr "Группа не указана"
+
+#: lms/djangoapps/instructor/views/api.py: 3340
+msgid "Location is not specified"
+msgstr "Местоположение задания не указано"
+
+#: lms/djangoapps/instructor/views/api.py: 3345
+msgid "Days to add are not specified"
+msgstr "Не указано количество добавляемых дней"
+
+#: lms/djangoapps/instructor/views/api.py: 3349
+msgid "Date is not specified"
+msgstr "Дата не указана"
+

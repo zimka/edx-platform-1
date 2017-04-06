@@ -226,15 +226,15 @@ class DateChanger(object):
 
     def logging(self):
         all_changes = []
-        template = "block '{block}'('{block_name}') for user '{user}': set due '{date}';"
+        template = u"block '{block}'('{block_name}') for user '{user}': set due '{date}';"
         for user in self.users_group:
             for num, xblock in enumerate(self.xblock_group):
                 date = self.dates_group[num]
                 all_changes.append(template.format(
                     block=str(xblock.location),
-                    block_name=str(xblock.display_name),
+                    block_name=unicode(xblock.display_name),
                     date=str(date),
-                    user=str(user.username)
+                    user=user.username
                 ))
         self.logging_message = "\n".join(x for x in all_changes)
         logging.info(self.logging_message)
@@ -287,6 +287,10 @@ class CourseMixin(object):
 
         items = self.store.get_items(course_key)
         items = [x for x in items if (getattr(x, "due", False) and x.format)]
+        children = []
+        for x in items:
+            children.extend(x.get_children())
+        items.extend(children)
         if self.stdout:
             self.stdout.write(";; ".join(str(x.display_name) for x in items))
         self._xblock_group = items
