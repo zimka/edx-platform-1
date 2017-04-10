@@ -49,7 +49,7 @@ def submit_change_due_task(request, course_key, changedue_params):
 @task(base=BaseInstructorTask)  # pylint: disable=not-callable
 def change_due_dates(entry_id, xmodule_instance_args):
     """
-    Generate a CSV of ora2 responses and push it to S3.
+    Change courseware due dates according to the given args
     """
     action_name = ugettext_noop('due dates changed')
     task_fn = partial(change_due_dates_task, xmodule_instance_args)

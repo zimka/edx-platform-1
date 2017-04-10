@@ -204,7 +204,8 @@ def instructor_dashboard_2(request, course_id):
 
     certificate_invalidations = CertificateInvalidation.get_certificate_invalidations(course_key)
 
-    sections.append(_section_change_due(course, access))
+    if settings.FEATURES.get("ENABLE_BULK_CHANGE_DUE_DATES") and settings.FEATURES.get("INDIVIDUAL_DUE_DATES"):
+        sections.append(_section_change_due(course, access))
     context = {
         'course': course,
         'studio_url': get_studio_url(course, 'course'),
@@ -693,9 +694,9 @@ def _section_change_due(course, access):
         'section_key': 'change_due',
         'section_display_name': _('Change due'),
         'access': access,
-        'course_id': unicode(course.id),
+        'course_id': unicode(course_key),
         'default_cohort_name': DEFAULT_COHORT_NAME,
-        'submit_change_due': reverse('post_change_due', kwargs={'course_id': unicode(course.id)}),
+        'submit_change_due': reverse('post_change_due', kwargs={'course_id': unicode(course_key)}),
         'cohorts': cohorts,
         'list_instructor_tasks_url': reverse('list_instructor_tasks', kwargs={'course_id': unicode(course_key)}),
         'changed_due_turned_on':settings.FEATURES.get('INDIVIDUAL_DUE_DATES')

@@ -1,9 +1,21 @@
 # -*- coding: utf-8 -*-
+import logging
 from django.core.management.base import BaseCommand, CommandError
 from xmodule.modulestore.django import modulestore
 from .utils import choose_date_changer
 
+
 class Command(BaseCommand):
+    """
+    Examples:
+    python manage.py lms cohort_change_due --course_key=course-v1:test_o+test_n+test_r --add_days=30 --cohort=my_cohort
+    python manage.py lms cohort_change_due --course_key=course-v1:test_o+test_n+test_r --set_date=2016/12/12 --cohort=my_cohort
+    python manage.py lms cohort_change_due
+        --block_key=block-v1:test_o+test_n+test_r+type@problem+block@b725c8e540884a7890e0711b3f59a0aa
+        --set_date="2016/12/10"
+        --user=test1@test1.com
+
+    """
     help = u"""
     Changes due date for given problem for given cohort or user
     """ + u"""
@@ -42,9 +54,13 @@ class Command(BaseCommand):
 
         choose_keys = [who_key, where_key, when_key]
         changer_wrap = choose_date_changer(choose_keys)
-        changer = changer_wrap(who_val, where_val, when_val, store, stdout=self.stdout)
-        changer.change_due()
-        changer.logging()
+        try:
+            changer = changer_wrap(who_val, where_val, when_val, store, stdout=self.stdout)
+            changer.change_due()
+            changer.logging()
+        except ValueError as e:
+            logging.error(e.message)
+            raise CommandError("Command failed. Message:{}".format(e.message))
         self.stdout.write("Successfully changed date.")
         self.stdout.write(changer.logging_message)
         self.stdout.write(str(type(changer)))
@@ -59,21 +75,8 @@ class Command(BaseCommand):
         exist_pairs = [(k, container[k]) for k in keys if container[k]]
         if len(exist_pairs) != 1:
             raise CommandError("""
-                Non un  ique value for keys = {keys}. Ambiguous command.
+                Non unique value for keys = {keys}. Ambiguous command.
                 {dict}
             """.format(keys=keys, dict=exist_pairs))
         single_key = exist_pairs[0][0]
         return single_key, container[single_key]
-
-
-
-
-"""
-python manage.py lms cohort_change_due --course_key=course-v1:test_o+test_n+test_r --add_days=30 --cohort=my_cohort
-python manage.py lms cohort_change_due --course_key=course-v1:test_o+test_n+test_r --set_date=2016/12/12 --cohort=my_cohort
-python manage.py lms cohort_change_due
-    --block_key=block-v1:test_o+test_n+test_r+type@problem+block@b725c8e540884a7890e0711b3f59a0aa
-    --set_date="2016/12/10"
-    --user=test1@test1.com
-
-"""

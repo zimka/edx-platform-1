@@ -11,7 +11,7 @@ from .tasks import submit_change_due_task
 
 log = logging.getLogger(__name__)
 
-#@require_level('staff')
+
 @transaction.non_atomic_requests
 @require_POST
 @ensure_csrf_cookie

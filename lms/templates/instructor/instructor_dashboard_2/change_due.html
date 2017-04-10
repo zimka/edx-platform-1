@@ -102,106 +102,95 @@ from openedx.core.djangolib.markup import HTML
 </div>
 
 <%block name="js_extra">
-     <script type="text/javascript">
-       $(document).ready(function () {
-           var when = $(".change-due-when input[value=add]");
-           when.prop("checked", true);
-           var who= $(".change-due-who input[value=cohort]");
-           who.prop("checked", true);
-           var where= $(".change-due-where input[value=block]");
-           where.prop("checked", true);
-           var hide = $(".change-due-set");
-           hide.addClass("hidden");
-           hide = $(".change-due-user");
-           hide.addClass("hidden");
-       });
-       function change_due_submit(){
-           var form = $("#form-change-due");
-           var dataurl = form.attr('action');
-           var msg = form.serialize();
-           $.ajax({
-               type: 'POST',
-               url: dataurl,
-               data: msg,
-               dataType: "json",
-               success: function () {
-                   $('.request-response-message').removeClass("hidden");
-                   $('#section-change-due').find('.request-response-error').html("");
-               },
-               error: function(data) {
-                   $('#section-change-due').find('.request-response-error').html(data["responseJSON"]['message']);
-                   $('.request-response-message').addClass("hidden");
-
-               }
-            });
-            return false;
+  <script type="text/javascript">
+    $(document).ready(function () {
+      var when = $(".change-due-when input[value=add]");
+      when.prop("checked", true);
+      var who= $(".change-due-who input[value=cohort]");
+      who.prop("checked", true);
+      var where= $(".change-due-where input[value=block]");
+      where.prop("checked", true);
+      var hide = $(".change-due-set");
+      hide.addClass("hidden");
+      hide = $(".change-due-user");
+      hide.addClass("hidden");
+    });
+    function change_due_submit(){
+      var form = $("#form-change-due");
+      var dataurl = form.attr('action');
+      var msg = form.serialize();
+      $.ajax({
+        type: 'POST',
+        url: dataurl,
+        data: msg,
+        dataType: "json",
+        success: function () {
+          $('.request-response-message').removeClass("hidden");
+          $('#section-change-due').find('.request-response-error').html("");
+        },
+        error: function(data) {
+          $('#section-change-due').find('.request-response-error').html(data["responseJSON"]['message']);
+          $('.request-response-message').addClass("hidden");
         }
-
-       function change_due_exclude(chosen_radio){
-           if (chosen_radio.value == "user") {
-               $(".change-due-cohort").addClass("hidden");
-               $(".change-due-user").removeClass("hidden");
-           }
-           if (chosen_radio.value == "cohort") {
-               $(".change-due-cohort").removeClass("hidden");
-               $(".change-due-user").addClass("hidden");
-           }
-           if (chosen_radio.value == "course") {
-               var loc = $("#change-due-location");
-               loc.addClass("is-disabled");
-               loc.attr("disabled", "true");
-               loc = loc.find('input')[0];
-               console.log("LOG2");
-               console.log(loc);
-               console.log(loc.placeholder);
-               loc.value ='';
-               loc.placeholder = "";
-               console.log(loc.placeholder);
-               $(loc).addClass("blocked");
-
-           }
-           if (chosen_radio.value == "block") {
-               var loc = $("#change-due-location");
-               loc.removeClass("is-disabled");
-               loc.attr("disabled", "true");
-               loc = loc.find('input')[0];
-               console.log("LOG");
-               console.log(loc);
-               console.log(loc.placeholder);
-               loc.placeholder = "${_("Problem location")}";
-               $(loc).removeClass("blocked");
-           }
-           if (chosen_radio.value == "add") {
-                $(".change-due-set").addClass("hidden");
-                $(".change-due-add").removeClass("hidden");
-
-           }
-           if (chosen_radio.value == "set") {
-                $(".change-due-set").removeClass("hidden");
-                $(".change-due-add").addClass("hidden");
-           }
-       }
-    </script>
+      });
+      return false;
+     }
+    function change_due_exclude(chosen_radio){
+      if (chosen_radio.value == "user") {
+          $(".change-due-cohort").addClass("hidden");
+          $(".change-due-user").removeClass("hidden");
+      }
+      if (chosen_radio.value == "cohort") {
+          $(".change-due-cohort").removeClass("hidden");
+          $(".change-due-user").addClass("hidden");
+      }
+      if (chosen_radio.value == "course") {
+        var loc = $("#change-due-location");
+        loc.addClass("is-disabled");
+        loc.attr("disabled", "true");
+        loc = loc.find('input')[0];
+        loc.value ='';
+        loc.placeholder = "";
+        $(loc).addClass("blocked");
+      }
+      if (chosen_radio.value == "block") {
+        var loc = $("#change-due-location");
+        loc.removeClass("is-disabled");
+        loc.attr("disabled", "true");
+        loc = loc.find('input')[0];
+        loc.placeholder = "${_("Problem location")}";
+        $(loc).removeClass("blocked");
+      }
+      if (chosen_radio.value == "add") {
+        $(".change-due-set").addClass("hidden");
+        $(".change-due-add").removeClass("hidden");
+      }
+      if (chosen_radio.value == "set") {
+        $(".change-due-set").removeClass("hidden");
+        $(".change-due-add").addClass("hidden");
+      }
+    }
+  </script>
 </%block>
 <%block name="header_extras">
-    <style>
-        .change-due-options{
-            padding: 2em 0 0 0;
-        }
-        .section-change-due input[type="radio"]{
-            vertical-align: baseline;
-        }
-        .section-change-due label{
-            margin: 0 1em 0 0;
-        }
-        .section-change-due .change-due-options-first{
-            float:left;
-        }
-        #change-due-location .blocked{
-            background-color: #efefef;
-        }
-        .change-due-disclaimer{
-            color: red;
-        }
-    </style>
+  <style>
+    .change-due-options{
+      padding: 2em 0 0 0;
+    }
+    .section-change-due input[type="radio"]{
+      vertical-align: baseline;
+    }
+    .section-change-due label{
+      margin: 0 1em 0 0;
+    }
+    .section-change-due .change-due-options-first{
+      float:left;
+    }
+    #change-due-location .blocked{
+      background-color: #efefef;
+    }
+    .change-due-disclaimer{
+      color: red;
+    }
+  </style>
 </%block>

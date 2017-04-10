@@ -1,19 +1,23 @@
 # -*- coding: utf-8 -*-
-import logging
-from datetime import timedelta
-
 import dateutil
-from django.core.management.base import CommandError
+from datetime import timedelta
+import logging
+
 from django.utils.timezone import utc
 from opaque_keys.edx.keys import CourseKey, UsageKey
-from student.models import CourseEnrollment
-from xmodule.modulestore.django import modulestore
 
 from lms.djangoapps.instructor.views.tools import require_student_from_identifier, set_due_date_extension
 from openedx.core.djangoapps.course_groups.cohorts import get_cohort_by_id, get_cohort_by_name
+from student.models import CourseEnrollment
+from xmodule.modulestore.django import modulestore
 
 
 class DateChanger(object):
+    """
+    Выполняет сдвиг дат для пользователя(-ей), блока(-ов) и нового срока(-ов). Не должен использоваться без
+    трех примесей, каждая из которых реализует соответственно группу юзеров, группу блоков и группу сроков.
+    Может использоваться в web view либо в команде
+    """
     def __init__(self, who, where, when, store=None, stdout=None):
         self.who = who  # user or cohort identifier
         self.when = when  # date to set or days to add
@@ -25,18 +29,28 @@ class DateChanger(object):
         self.stdout = stdout
 
     @staticmethod
-    def _get_xblock_course(xblock):
+    def _get_xblock_course(xblock, store=None):
         """
         Находит для данного xblock корень-course
         :param xblock:
         :return: course
         """
         item = xblock
-        for _ in range(10):
+        if store:
+            course_key = xblock.location.course_key
+            try:
+                course = store.get_course(course_key)
+                return course
+            except ValueError:
+                raise RuntimeError("No course for course_key '{}'".format(str(course_key)))
+
+        #Пытаемсся найти итерациями по get_parent
+        arbitrary_iter_number = 10
+        for _ in range(arbitrary_iter_number):
             if item.category == "course":
                 return item
             item = item.get_parent()
-        raise CommandError("Did not find course root for xblock")
+        raise RuntimeError("Did not find course root for xblock")
 
     @staticmethod
     def _parse_date(date_str):
@@ -48,8 +62,8 @@ class DateChanger(object):
         try:
             date = dateutil.parser.parse(date_str, dayfirst=True).replace(tzinfo=utc)
         except ValueError:
-            raise CommandError(
-                "Date {} not reckognized".format(date_str)
+            raise RuntimeError(
+                "Date {} not recognized".format(date_str)
             )
         return date
 
@@ -83,7 +97,7 @@ class DateChanger(object):
 
                 is_enrolled = CourseEnrollment.is_enrolled(user, self.course.id)
                 if not is_enrolled:
-                    raise CommandError("User {} is not enrolled on course with key {}".format(
+                    raise RuntimeError("User {} is not enrolled on course with key {}".format(
                         user.username,
                         self.course.id))
 
@@ -128,7 +142,6 @@ class BlockMixin(object):
             xblock = self.xblock_group[0]
             self._course = self._get_xblock_course(xblock)
             return self._course
-        raise NotImplementedError
 
 
 class CourseMixin(object):
@@ -196,7 +209,7 @@ class CohortMixin(object):
             return cohort
         except Exception as e:
             pass
-        raise CommandError("Didn't find cohort")
+        raise RuntimeError("Didn't find cohort")
 
     @property
     def users_group(self):
@@ -225,8 +238,8 @@ class AddDaysMixin(object):
     IMPORTANT
     При текущей реализации прибавление дней не кумулятивно -
     в качестве базы берется значение due самого xblock, а не
-    StudentFieldOverride, поэтому если выполнение команды дважды
-    приведет к такому же результату, как и однократное.
+    StudentFieldOverride, поэтому, если выполнить команду дважды,
+    результат не изменится.
     """
 
     @property
