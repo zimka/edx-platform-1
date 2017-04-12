@@ -2,6 +2,7 @@ import dateutil
 from django.contrib.auth.models import User
 from django.utils.timezone import utc
 from django.utils.translation import ugettext as _
+from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import UsageKey
 from openedx.core.djangoapps.course_groups.cohorts import get_cohort_by_name
 from .core import UserProblemSetDate, UserProblemAddDays, UserCourseSetDate, \
@@ -24,7 +25,7 @@ def are_change_due_keys_broken(keys, course_key):
     if 'block_key' in keys:
         try:
             block = UsageKey.from_string(keys['block_key'])
-        except ValueError:
+        except InvalidKeyError:
             return _("No such block: {}").format(keys['block_key'])
     if 'add_days' in keys:
         try:

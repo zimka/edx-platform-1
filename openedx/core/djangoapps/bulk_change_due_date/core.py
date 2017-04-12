@@ -94,7 +94,6 @@ class DateChanger(object):
         for user in self.users_group:
             for num, xblock in enumerate(self.xblock_group):
                 date = self.dates_group[num]
-
                 is_enrolled = CourseEnrollment.is_enrolled(user, self.course.id)
                 if not is_enrolled:
                     raise RuntimeError("User {} is not enrolled on course with key {}".format(
@@ -130,9 +129,17 @@ class BlockMixin(object):
         xblock = self.store.get_item(usage_key)
         if not getattr(self, "_course", False):
             self._course = self._get_xblock_course(xblock)
-        self._xblock_group = [xblock]
-
+        self._xblock_group = self._breadth_search(xblock)
         return self._xblock_group
+
+    def _breadth_search(self, block):
+        num_item = 0
+        items = [block]
+        while num_item<len(items):
+            current = items[num_item]
+            items.extend(current.get_children())
+            num_item += 1
+        return items
 
     @property
     def course(self):
@@ -167,8 +174,10 @@ class CourseMixin(object):
         items = [x for x in items if (getattr(x, "due", False) and x.format)]
         children = []
         for x in items:
-            children.extend(x.get_children())
+            if x.category == "vertical":
+                children.extend(x.get_children())
         items.extend(children)
+
         if self.stdout:
             self.stdout.write(";; ".join(str(x.display_name) for x in items))
         self._xblock_group = items
@@ -208,8 +217,7 @@ class CohortMixin(object):
             cohort = get_cohort_by_id(course_key, cohort_id_or_name)
             return cohort
         except Exception as e:
-            pass
-        raise RuntimeError("Didn't find cohort")
+            raise RuntimeError("Didn't find cohort")
 
     @property
     def users_group(self):
