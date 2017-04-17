@@ -388,6 +388,7 @@ def add_staff_markup(user, has_instructor_access, disable_staff_debug_info, bloc
             log.warning("Unable to read field in Staff Debug information", exc_info=True)
             field_contents.append((name, "WARNING: Unable to read field"))
 
+    field_contents.append(("grandparent", str(block.get_parent().get_parent().location)))
     staff_context = {
         'fields': field_contents,
         'xml_attributes': getattr(block, 'xml_attributes', {}),
