@@ -1,10 +1,13 @@
 define(["domReady", "jquery", "underscore", "js/views/utils/create_course_utils", "common/js/components/utils/view_utils"],
-    function (domReady, $, _, CreateCourseUtilsFactory, ViewUtils) {
+    function (domReady, $, _, CreateCourseUtilsFactory, ViewUtils, ValidationHelpers, DateUtils) {
         var CreateCourseUtils = new CreateCourseUtilsFactory({
             name: '.rerun-course-name',
             org: '.rerun-course-org',
             number: '.rerun-course-number',
             run: '.rerun-course-run',
+            date: '.rerun-course-start-date',
+            time: '.rerun-course-start-time',
+            olddt: '.rerun-course-old-start-datetime',
             save: '.rerun-course-save',
             errorWrapper: '.wrapper-error',
             errorMessage: '#course_rerun_error',
@@ -31,13 +34,19 @@ define(["domReady", "jquery", "underscore", "js/views/utils/create_course_utils"
             var org = $newCourseForm.find('.rerun-course-org').val();
             var number = $newCourseForm.find('.rerun-course-number').val();
             var run = $newCourseForm.find('.rerun-course-run').val();
+            var date = $newCourseForm.find('.rerun-course-start-date').val();
+            var time = $newCourseForm.find('.rerun-course-start-time').val();
+            var olddt = $newCourseForm.find('.rerun-course-old-start-datetime').val();
 
             course_info = {
                 source_course_key: source_course_key,
                 org: org,
                 number: number,
                 display_name: display_name,
-                run: run
+                run: run,
+                date: date,
+                time: time,
+                olddt: olddt
             };
 
             analytics.track('Reran a Course', course_info);

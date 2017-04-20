@@ -299,6 +299,7 @@ def course_rerun_handler(request, course_key_string):
             return render_to_response('course-create-rerun.html', {
                 'source_course_key': course_key,
                 'display_name': course_module.display_name,
+                'start': course_module.start,
                 'user': request.user,
                 'course_creator_status': _get_course_creator_status(request.user),
                 'allow_unicode_course_id': settings.FEATURES.get('ALLOW_UNICODE_COURSE_ID', False)
@@ -750,6 +751,9 @@ def _create_or_rerun_course(request):
         fields.update(definition_data)
 
         if 'source_course_key' in request.json:
+            fields['shift_date'] = request.json.get('date')
+            fields['shift_time'] = request.json.get('time')
+            fields['start'] = request.json.get('olddt')
             return _rerun_course(request, org, course, run, fields)
         else:
             return _create_new_course(request, org, course, run, fields)

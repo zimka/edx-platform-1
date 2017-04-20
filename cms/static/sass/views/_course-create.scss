@@ -62,8 +62,15 @@
     .rerun-course-org,
     .rerun-course-number,
     .rerun-course-name,
-    .rerun-course-run {
+    .rerun-course-run,
+    .rerun-course-start-date,
+    .rerun-course-start-time{
       width: 100%;
+    }
+
+    .startdate {
+      margin-right: 4%;
+      width: 45%;
     }
 
     .rerun-course-name {

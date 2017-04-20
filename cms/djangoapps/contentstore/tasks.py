@@ -1,10 +1,12 @@
 """
 This file contains celery tasks for contentstore views
 """
+from collections import deque
 import json
 import logging
 from celery.task import task
 from celery.utils.log import get_task_logger
+import pytz
 from datetime import datetime
 from pytz import UTC
 
@@ -34,6 +36,29 @@ def rerun_course(source_course_key_string, destination_course_key_string, user_i
         # deserialize the payload
         source_course_key = CourseKey.from_string(source_course_key_string)
         destination_course_key = CourseKey.from_string(destination_course_key_string)
+
+        date_shift = None
+        if fields:
+            json_fields = json.loads(fields)
+            date_shift = json_fields.pop('shift_date')
+            time_shift = json_fields.pop('shift_time')
+            if date_shift and time_shift:
+                try:
+                    date_shift = pytz.utc.localize(datetime.strptime(" ".join([date_shift, time_shift]), "%m/%d/%Y %H:%M"))
+                except ValueError:
+                    date_shift = None
+                    logging.info("Invalid datetime will be ignored")
+            elif date_shift:
+                try:
+                    date_shift = pytz.utc.localize(datetime.strptime(date_shift, "%m/%d/%Y"))
+                except ValueError:
+                    date_shift = None
+                    logging.info("Invalid date will be ignored")
+
+            if date_shift and date_shift < pytz.utc.localize(datetime(1900, 1, 2)):
+                date_shift = None
+                logging.info("Datetime earlier than 01/02/1900 will be ignored")
+            fields = json.dumps(json_fields)
         fields = deserialize_fields(fields) if fields else None
 
         # use the split modulestore as the store for the rerun course,
@@ -45,6 +70,17 @@ def rerun_course(source_course_key_string, destination_course_key_string, user_i
         # set initial permissions for the user to access the course.
         initialize_permissions(destination_course_key, User.objects.get(id=user_id))
 
+        if date_shift:
+            source_course = store.get_course(source_course_key)
+            delta_date = date_shift - source_course.start
+            shifting = shift_course(destination_course_key, delta_date, user_id=user_id)
+            if not shifting:
+                logging.info("Course re-run {} sucessfully shifted".format(str(destination_course_key)))
+            else:
+                logging.warning("Problems happened during the course {} shifting:'{}'".format(
+                    str(destination_course_key),
+                    str(shifting))
+                )
         # update state: Succeeded
         CourseRerunState.objects.succeeded(course_key=destination_course_key)
 
@@ -73,6 +109,36 @@ def rerun_course(source_course_key_string, destination_course_key_string, user_i
             pass
 
         return "exception: " + unicode(exc)
+
+
+def shift_course(course_key, delta_date, store=None, user_id=0):
+    if not store:
+        store = modulestore()
+    course = store.get_course(course_key)
+
+    queue = deque(course.get_children())
+    try:
+        while queue:
+            item = queue.popleft()
+            children = item.get_children()
+            if children:
+                queue.extend(children)
+            if item.start:
+                item.start += delta_date
+            if item.due:
+                item.due += delta_date
+            store.update_item(item, user_id)
+        attrs = ["start", "enrollment_start", "end", "enrollment_end", "announcement"]
+        for a in attrs:
+            value = getattr(course, a, False)
+            if value:
+                value += delta_date
+                setattr(course, a, value)
+        store.update_item(course, user_id)
+
+        return 0
+    except Exception as e:
+        return str(e)
 
 
 def deserialize_fields(json_fields):

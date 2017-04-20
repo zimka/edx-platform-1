@@ -111,8 +111,26 @@ from openedx.core.djangolib.js_utils import js_escaped_string
                         <span class="tip tip-error is-hidden"></span>
                       </div>
                     </li>
+
+                    <li class="row">
+                      <h3 class="title-3">${_("Optional fields for saving intervals between dates of publication")}</h3>
+                      <div class="column field date startdate" id="field-course-start-date">
+                        <label for="rerun-course-start-date">${_("Course Start Date")}</label>
+                        <input class="date rerun-course-start-date" id="rerun-course-start-date" name="rerun-course-start-date" placeholder="MM/DD/YYYY"/>
+                        <span class="tip tip-stacked">${_("Note that the start date of the course you rerunning is ")}${start.strftime('%m/%d/%Y')}</span>
+                      </div>
+
+                      <div class="column field time" id="field-course-start-time">
+                        <label for="rerun-course-start-time">${_("Course Start Time")}</label>
+                        <input class="time rerun-course-start-time" id="rerun-course-start-time" name="rerun-course-start-time" placeholder="HH:MM"/>
+                        <span class="tip tip-stacked timezone">${_("Note that the start time of the course you rerunning is ")}${start.strftime('%H:%M')}${_(" (UTC)")}</span>
+                      </div>
+
+                    </li>
+
                   </ol>
 
+                  <input type="hidden" value="${start}" class="rerun-course-old-start-datetime"/>
                   <input type="hidden" value="${allow_unicode_course_id}" class="allow-unicode-course-id" /> <!-- TODO: need to add support for allow_unicode_course_id in real view's template -->
                 </fieldset>
               </div>
@@ -130,7 +148,7 @@ from openedx.core.djangolib.js_utils import js_escaped_string
           <div class="bit">
             <h3 class="title-3">${_("When will my course re-run start?")}</h3>
             <ul class="list-details">
-              <li class="item-detail">${_("The new course is set to start on January 1, 2030 at midnight (UTC).")}</li>
+              <li class="item-detail">${_("The new course is set to start on January 1, 2030 at midnight (UTC) by default. You can edit it.")}</li>
             </ul>
           </div>
 
@@ -145,6 +163,13 @@ from openedx.core.djangolib.js_utils import js_escaped_string
             <h3 class="title-3">${_("What does not transfer from the original course?")}</h3>
             <ul class="list-details">
               <li class="item-detail">${_("You are the only member of the new course's staff. No students are enrolled in the course, and there is no student data. There is no content in the discussion topics or wiki.")}</li>
+            </ul>
+          </div>
+
+          <div class="bit">
+            <h3 class="title-3">${_("What advantages of setting start date and time here?")}</h3>
+            <ul class="list-details">
+              <li class="item-detail">${_("You can save intervals between all course start and due dates from your previous course run.")}</li>
             </ul>
           </div>
 
