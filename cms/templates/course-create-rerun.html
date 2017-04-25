@@ -10,10 +10,12 @@ from openedx.core.djangolib.js_utils import js_escaped_string
 <%block name="title">${_("Create a Course Rerun of:")}</%block>
 <%block name="bodyclass">is-signedin view-course-create view-course-create-rerun</%block>
 
+<%namespace name='static' file='static_content.html'/>
 <%block name="jsextra">
   <script type="text/javascript">
     var source_course_key = "${source_course_key | n, js_escaped_string}";
   </script>
+  <link rel="stylesheet" type="text/css" href="${static.url('js/vendor/timepicker/jquery.timepicker.css')}" />
 </%block>
 <%block name="requirejs">
   require(["js/factories/course_create_rerun"], function (CourseCreateRerunFactory) {
@@ -112,22 +114,22 @@ from openedx.core.djangolib.js_utils import js_escaped_string
                       </div>
                     </li>
 
-                    <li class="row">
+                    % if settings.FEATURES.get("COURSE_RERUN_SHIFT") :
+                    <li class="field-group field-group-course-start row" id="course-start">
                       <h3 class="title-3">${_("Optional fields for saving intervals between dates of publication")}</h3>
                       <div class="column field date startdate" id="field-course-start-date">
                         <label for="rerun-course-start-date">${_("Course Start Date")}</label>
-                        <input class="date rerun-course-start-date" id="rerun-course-start-date" name="rerun-course-start-date" placeholder="MM/DD/YYYY"/>
+                        <input class="date rerun-course-start-date" id="rerun-course-start-date" name="rerun-course-start-date" placeholder="MM/DD/YYYY" style="width:90%"/>
                         <span class="tip tip-stacked">${_("Note that the start date of the course you rerunning is ")}${start.strftime('%m/%d/%Y')}</span>
                       </div>
 
                       <div class="column field time" id="field-course-start-time">
                         <label for="rerun-course-start-time">${_("Course Start Time")}</label>
-                        <input class="time rerun-course-start-time" id="rerun-course-start-time" name="rerun-course-start-time" placeholder="HH:MM"/>
+                        <input class="time rerun-course-start-time" id="rerun-course-start-time" name="rerun-course-start-time" placeholder="HH:MM" style="width:90%"/>
                         <span class="tip tip-stacked timezone">${_("Note that the start time of the course you rerunning is ")}${start.strftime('%H:%M')}${_(" (UTC)")}</span>
                       </div>
-
                     </li>
-
+                    % endif
                   </ol>
 
                   <input type="hidden" value="${start}" class="rerun-course-old-start-datetime"/>

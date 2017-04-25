@@ -1,4 +1,4 @@
-define(["domReady", "jquery", "underscore", "js/views/utils/create_course_utils", "common/js/components/utils/view_utils"],
+define(["domReady", "jquery", "underscore", "js/views/utils/create_course_utils", "common/js/components/utils/view_utils", "js/models/validation_helpers", "js/utils/date_utils"],
     function (domReady, $, _, CreateCourseUtilsFactory, ViewUtils, ValidationHelpers, DateUtils) {
         var CreateCourseUtils = new CreateCourseUtilsFactory({
             name: '.rerun-course-name',
@@ -74,6 +74,19 @@ define(["domReady", "jquery", "underscore", "js/views/utils/create_course_utils"
             ViewUtils.redirect('/course/');
         };
 
+        var includeDatePicker = function(){
+            if ($("#course-start").length == 0){
+                return;
+            }
+
+            this.$el = $("*");
+            this.fieldToSelectorMap = {
+                'start_date' : "course-start",
+                'end_date' : 'rerun-course-end'
+            };
+            DateUtils.setupDatePicker('start_date', this);
+        };
+
         var onReady = function () {
             var $cancelButton = $('.rerun-course-cancel');
             var $courseRun = $('.rerun-course-run');
@@ -81,8 +94,8 @@ define(["domReady", "jquery", "underscore", "js/views/utils/create_course_utils"
             $('.rerun-course-save').on('click', saveRerunCourse);
             $cancelButton.bind('click', cancelRerunCourse);
             $('.cancel-button').bind('click', cancelRerunCourse);
-
             CreateCourseUtils.configureHandlers();
+            includeDatePicker();
         };
 
         domReady(onReady);
