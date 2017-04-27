@@ -107,3 +107,7 @@ class StudentGradeOverrideView(APIView):
             sgo.original_grade,
         ))
         return Response({"message": "original grade restored:{}".format(str(sgo.original_grade))})
+
+
+class StudentVerticalGradingCourseResultOverrideView(APIView):
+    pass

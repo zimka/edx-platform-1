@@ -1,11 +1,12 @@
+import json
 from django.db import models
 from django.utils.translation import ugettext as _
 from courseware.models import StudentModule
-
+from openedx.core.djangoapps.grading_policy.graders.weighted_subs import WeightedSubsectionsGrader
 
 class StudentGradeOverride(models.Model):
     """
-    Instructors override for student's problem grade. Actually changes value of grade.
+    Instructor's override for student's problem grade. Actually changes value of grade.
     On object's deletion original grade is restored. Doesn't store history but can be
     overridden again without lose of original grade.
     """
@@ -58,3 +59,28 @@ class StudentGradeOverride(models.Model):
         module.grade = self.original_grade
         module.save()
         return super(StudentGradeOverride, self).delete(*args, **kwargs)
+
+
+class StudentCourseResultOverride(models.Model):
+    """
+    Allows instructor to add points to overall course score.
+    Doesn't actually change any student's result. Should be watched at
+    grading module.
+    """
+    added_score = models.IntegerField()
+    passed_sections = models.CharField(max_length=256)
+
+    def __setattr__(self, attrname, val):
+        if attrname == "passed_section":
+            val = json.dumps(val)
+        super(StudentCourseResultOverride, self).__setattr__(attrname, val)
+
+    def __getattr__(self, attrname):
+        val = super(StudentCourseResultOverride, self).__getattr__(attrname)
+        if attrname == "passed_section":
+            val = json.loads(val)
+        return val
+
+    def update_grader_result(self, grader, grading_result):
+        if isinstance(grader, WeightedSubsectionsGrader):
+            pass
