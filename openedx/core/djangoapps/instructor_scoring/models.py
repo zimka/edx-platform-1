@@ -1,8 +1,10 @@
 import json
 from django.db import models
+from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
+
 from courseware.models import StudentModule
-from openedx.core.djangoapps.grading_policy.graders.weighted_subs import WeightedSubsectionsGrader
+
 
 class StudentGradeOverride(models.Model):
     """
@@ -67,7 +69,9 @@ class StudentCourseResultOverride(models.Model):
     Doesn't actually change any student's result. Should be watched at
     grading module.
     """
-    added_score = models.IntegerField()
+    student = models.ForeignKey(User)
+    course_id = models.CharField(max_length=100)
+    added_percent = models.FloatField()
     passed_sections = models.CharField(max_length=256)
 
     def __setattr__(self, attrname, val):
@@ -81,6 +85,31 @@ class StudentCourseResultOverride(models.Model):
             val = json.loads(val)
         return val
 
-    def update_grader_result(self, grader, grading_result):
-        if isinstance(grader, WeightedSubsectionsGrader):
-            pass
+    @classmethod
+    def update_grader_result(cls, student, course, grade_summary):
+        """
+        Updates grade_summary if override for course-student exists.
+        """
+        course_id = course.id
+
+        try:
+            scro = StudentCourseResultOverride.objects.get(student=student, course_id=course_id)
+        except StudentGradeOverride.DoesNotExist:
+            scro = None
+        if not scro:
+            return "", grade_summary
+        grade_breakdown = grade_summary['grade_breakdown']
+        new_grade_breakdown = []
+        updated_sections = []
+        for num, _section in enumerate(grade_breakdown):
+            section = grade_breakdown[num]
+            if section['category'] in scro.passed_sections:
+                if not section['is_passed']:
+                    section['is_passed'] = True
+                    updated_sections.append(section['category'])
+            new_grade_breakdown.append(section)
+        grade_summary['grade_breakdown'] = new_grade_breakdown
+        percent = grade_summary['percent'] + scro.added_percent
+        grade_summary['percent'] = percent if percent < 1. else 1.
+        grade_summary['grade'] = 'Pass'
+        return "Updated sections:{}".format(",".join(x for x in updated_sections)), grade_summary

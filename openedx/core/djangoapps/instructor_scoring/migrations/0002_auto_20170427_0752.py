@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('student_grade_override', '0001_initial'),
+        ('instructor_scoring', '0001_initial'),
     ]
 
     operations = [
