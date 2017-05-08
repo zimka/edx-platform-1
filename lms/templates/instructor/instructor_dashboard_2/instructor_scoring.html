@@ -1,0 +1,32 @@
+<%page args="settings, context_data"/>
+<%! from django.utils.translation import ugettext as _ %>
+
+<div>
+    <hr>
+    <p>Test INSTRUCTOR_SCORING</p>
+
+    <div class="course-specific-container action-type-container" id="student-grade-overwrite">
+        <h3 class="hd hd-3">${_('Student Grade Overwrite ')}</h3>
+        <div class="request-response-error"></div>
+        <p>
+            ${_("Here you can overwrite student's grade for given problem. Student won't have to do anything to activate this overwriting.")}
+               ${_("You have to specify username or email, problem location and new grade. Grade must be between 0 and available maximum score for chosen problem.")}
+        </p>
+        <label>
+            ${_("Specify a problem in the course here with its complete location:")}
+            <input type="text" name="student-overwrite-problem" size="60" placeholder="${_("Problem location")}" aria-describedby="problem-select-all-help">
+        </label>
+        <p id="problem-select-all-help">${_("You must provide the complete location of the problem. In the Staff Debug viewer, the location looks like this:")}<br/><code>block-v1:edX+DemoX+2015+type@problem+block@618c5933b8b544e4a4cc103d3e508378</code></p>
+        <br/>
+        <label>
+            ${_("Specify the {platform_name} email address or username of a student here:").format(platform_name=settings.PLATFORM_NAME)}
+            <input type="text" name="student-overwrite-student" placeholder="${_("Student Email or Username")}" >
+        </label>
+        <br/>
+        <label>
+            ${_("Specify new score for problem, e.g. 0.6 or 2").format(platform_name=settings.PLATFORM_NAME)}
+            <input type="text" name="student-overwrite-grade" placeholder="${_("Problem Grade")}" >
+        </label>
+        <input type="button" name="student-overwrite" value="${_('Overwrite student\'s problem score')}" data-endpoint="${ context_data['student_grade_override_url'] }">
+    </div>
+</div>

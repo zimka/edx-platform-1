@@ -1,9 +1,12 @@
 import json
+import logging as log
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
 from courseware.models import StudentModule
+from certificates.models import CertificateWhitelist
 
 
 class StudentGradeOverride(models.Model):
@@ -62,6 +65,10 @@ class StudentGradeOverride(models.Model):
         module.save()
         return super(StudentGradeOverride, self).delete(*args, **kwargs)
 
+    def __str__(self):
+        return "{}: {} -> {}, {}".format(self.student_module.student.username, self.original_grade,
+                                         self.current_grade, str(self.student_module.module_state_key)
+                                        )
 
 class StudentCourseResultOverride(models.Model):
     """
@@ -73,6 +80,7 @@ class StudentCourseResultOverride(models.Model):
     course_id = models.CharField(max_length=100)
     added_percent = models.FloatField()
     passed_sections = models.CharField(max_length=256)
+    whitelist = models.ForeignKey(CertificateWhitelist)
 
     def __setattr__(self, attrname, val):
         if attrname == "passed_section":
@@ -90,20 +98,20 @@ class StudentCourseResultOverride(models.Model):
         """
         Updates grade_summary if override for course-student exists.
         """
-        course_id = course.id
-
+        course_id = str(course.id)
+        old_grade_summary = dict((k,v) for k,v in grade_summary.items())
         try:
             scro = StudentCourseResultOverride.objects.get(student=student, course_id=course_id)
-        except StudentGradeOverride.DoesNotExist:
+        except StudentCourseResultOverride.DoesNotExist:
             scro = None
         if not scro:
-            return "", grade_summary
+            return grade_summary
         grade_breakdown = grade_summary['grade_breakdown']
         new_grade_breakdown = []
         updated_sections = []
         for num, _section in enumerate(grade_breakdown):
             section = grade_breakdown[num]
-            if section['category'] in scro.passed_sections:
+            if (section['category'] in scro.passed_sections) or ('all' in scro.passed_sections):
                 if not section['is_passed']:
                     section['is_passed'] = True
                     updated_sections.append(section['category'])
@@ -112,4 +120,43 @@ class StudentCourseResultOverride(models.Model):
         percent = grade_summary['percent'] + scro.added_percent
         grade_summary['percent'] = percent if percent < 1. else 1.
         grade_summary['grade'] = 'Pass'
-        return "Updated sections:{}".format(",".join(x for x in updated_sections)), grade_summary
+        return grade_summary
+
+    def delete(self, *args, **kwargs):
+        self.whitelist.whitelist = False
+        self.whitelist.save()
+        return super(StudentCourseResultOverride, self).delete(*args, **kwargs)
+
+    @classmethod
+    def override_student_course_result(cls, student, course, percent, passed_sections='all'):
+        if passed_sections == 'all':
+            passed_sections = ['all']
+        if percent > 1:
+            percent = 1.
+
+        override, created = cls.objects.get_or_create(student=student, course_id=str(course.id))
+        override.passed_sections = passed_sections
+        override.added_percent = percent
+        if created:
+            whitelist, created = CertificateWhitelist.objects.get_or_create(user=student, course_id=course.id)
+            whitelist.whitelist = True
+            whitelist.save()
+            override.whitelist = whitelist
+        override.save()
+
+from functools import wraps
+
+
+def course_result_override(func):
+    """
+    Use this decorator for openedx.core.djangoapps.grading_policy.sequentUal/vertical.py: *Some*Grading.grade
+    Must be before staticmethod i.e. @staticmethod@course_result_override@
+    :param func:
+    :return:
+    """
+    @wraps(func)
+    def wrapped(student, course, *args, **kwargs):
+        grade_summary = func(student, course, *args, **kwargs)
+        grade_summary = StudentCourseResultOverride.update_grader_result(student, course, grade_summary)
+        return grade_summary
+    return wrapped
