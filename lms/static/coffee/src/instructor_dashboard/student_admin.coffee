@@ -367,11 +367,49 @@ class @StudentAdmin
           create_task_list_table @$table_task_history_all, data.tasks
         error: std_ajax_err => @$request_response_error_all.text gettext("Error listing task history for this student and problem.")
 
-  # wraps a function, but first clear the error displays
+    @$btn_student_overwrite_grade     = @$section.find "input[name='student-overwrite']"
+    @$field_student_overwrite_problem_location = @$section.find "input[name='student-overwrite-problem-location']"
+    @$field_student_overwrite_user = @$section.find "input[name='student-overwrite-user']"
+    @$field_student_overwrite_grade = @$section.find "input[name='student-overwrite-grade']"
+    @$request_response_error_overwrite_grade = @$section.find ".student-grade-overwrite-container .request-response-error"
+
+    @$btn_student_overwrite_grade.click =>
+      unique_student_identifier = @$field_student_overwrite_user.val()
+      problem_to_reset = @$field_student_overwrite_problem_location.val()
+      grade = @$field_student_overwrite_grade.val()
+
+      if not unique_student_identifier
+        return @$request_response_error_overwrite_grade.text gettext("Please enter a student email address or username.")
+      if not problem_to_reset
+        return @$request_response_error_overwrite_grade.text gettext("Please enter a problem location.")
+      if not grade
+        return @$request_response_error_overwrite_grade.text gettext("Please enter new grade for problem.")
+      send_data =
+        username: unique_student_identifier
+        block_id: problem_to_reset
+        grade: grade
+
+      $.ajax
+        type: 'POST'
+        dataType: 'json'
+        url: @$btn_student_overwrite_grade.data 'endpoint'
+        data: send_data
+        success: @clear_errors_then ->
+          success_message = gettext("Grade sucessfully overwriten for'{student_id}'")
+          full_success_message = interpolate_text(success_message, {student_id: unique_student_identifier})
+          alert full_success_message
+        error: std_ajax_err(response) =>
+          error_message = gettext("Error starting a task to overwrite grade for student '{student_id}'")
+          full_error_message = interpolate_text(error_message, {student_id: unique_student_identifier})
+          message = if response.responseText  then  JSON.parse(response.responseText)['error'] else full_error_message;
+          @$request_response_error_overwrite_grade.text message
+
+# wraps a function, but first clear the error displays
   clear_errors_then: (cb) ->
     @$request_response_error_progress.empty()
     @$request_response_error_grade.empty()
     @$request_response_error_ee.empty()
+    @$request_response_error_overwrite_grade.empty()
     @$request_response_error_all.empty()
     ->
       cb?.apply this, arguments

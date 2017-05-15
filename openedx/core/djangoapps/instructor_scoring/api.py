@@ -42,21 +42,28 @@ class StudentGradeOverrideView(APIView):
     def post(self,request, course_id):
         data = request.data
         block_id = data.get("block_id")
-        username = data.get("username")
+        username_or_email = data.get("username")
         grade = data.get("grade")
-        if not (block_id and username and grade):
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        if not (block_id and username_or_email and grade):
+            return Response({"error": "Parameters not specified"}, status=status.HTTP_400_BAD_REQUEST)
+
+        failed = "Block for location '{}' not found".format(block_id)
         try:
             location = UsageKey.from_string(block_id)
-            user = User.objects.get(username=username)
+            failed = "User for username or email '{}' not found".format(username_or_email)
+            if '@' in username_or_email:
+                user = User.objects.get(email=username_or_email)
+            else:
+                user = User.objects.get(username=username_or_email)
+            failed = "Grade {} is not digital".format(grade)
             grade = float(grade)
         except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Incorrect parameters: {}".format(failed)}, status=status.HTTP_400_BAD_REQUEST)
         if str(location.course_key) != course_id:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Invalid course key"}, status=status.HTTP_400_BAD_REQUEST)
         error, sgo = StudentGradeOverride.override_student_grade(location=location, student=user, grade=grade)
         if error:
-            return Response({"error":error}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": error}, status=status.HTTP_400_BAD_REQUEST)
         logging.info("Instructor '{}' overrode student's '{}' grade for '{}': grade was changed from {} to {}".format(
             request.user.username,
             user.username,

@@ -27,8 +27,8 @@ class StudentGradeOverride(models.Model):
             module = None
         if not module:
             return _("User haven't started task yet"), None
-        if grade > module.max_grade:
-            return _("Grade is higher than max_grade for this task"), None
+        if module.max_grade and grade > module.max_grade:
+            return _("Grade '{}' is higher than max_grade for this task: '{}'".format(grade, module.max_grade)), None
         if grade < 0:
             return _("Grade is lower than zero"), None
         if module.done == 'i':  # means "Incomplete"
@@ -36,7 +36,7 @@ class StudentGradeOverride(models.Model):
         override, created = StudentGradeOverride.objects.get_or_create(student_module=module)
         override.current_grade = grade
         if created:
-            override.original_grade = module.grade
+            override.original_grade = module.grade or 0
         module.grade = grade
         module.save()
         override.save()
@@ -55,7 +55,7 @@ class StudentGradeOverride(models.Model):
             return
 
     def save(self, *args, **kwargs):
-        if not self.pk:
+        if not self.pk and self.student_module.grade:
             self.original_grade = self.student_module.grade
         return super(StudentGradeOverride, self).save(*args, **kwargs)
 
