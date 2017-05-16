@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .models import StudentGradeOverride
-
+from .utils import get_user_by_username_or_email
 
 class StudentGradeOverrideView(APIView):
     """
@@ -51,10 +51,7 @@ class StudentGradeOverrideView(APIView):
         try:
             location = UsageKey.from_string(block_id)
             failed = "User for username or email '{}' not found".format(username_or_email)
-            if '@' in username_or_email:
-                user = User.objects.get(email=username_or_email)
-            else:
-                user = User.objects.get(username=username_or_email)
+            user = get_user_by_username_or_email(username_or_email)
             failed = "Grade {} is not digital".format(grade)
             grade = float(grade)
         except:
@@ -96,13 +93,16 @@ class StudentGradeOverrideView(APIView):
         data = request.data
         block_id = data.get("block_id")
         username = data.get("username")
+        failed = "Block '{}' not found".format(block_id)
         try:
             location = UsageKey.from_string(block_id)
-            user = User.objects.get(username=username)
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            failed = "Block '{}' not found".format(block_id)
+            user = get_user_by_username_or_email(username)
+        except Exception as e:
+            return Response({"error":"Incorrect parameters: {}".format(failed)}, status=status.HTTP_400_BAD_REQUEST)
         if str(location.course_key) != course_id:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
         sgo = StudentGradeOverride.get_override(location=location, user=user)
         if not sgo:
             return Response(status=status.HTTP_400_BAD_REQUEST)

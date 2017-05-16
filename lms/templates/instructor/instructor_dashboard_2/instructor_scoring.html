@@ -3,9 +3,7 @@
 
 <div>
     <hr>
-    <p>Test INSTRUCTOR_SCORING</p>
-
-    <div class="student-grade-overwrite-container action-type-container" id="student-grade-overwrite">
+   <div class="student-grade-overwrite-container action-type-container" id="student-grade-overwrite">
         <h3 class="hd hd-3">${_('Student Grade Overwrite ')}</h3>
         <p>
             ${_("Here you can overwrite student's grade for given problem. Student won't have to do anything to activate this overwriting.")}
@@ -13,21 +11,48 @@
         </p>
         <label>
             ${_("Specify a problem in the course here with its complete location:")}
-            <input type="text" name="student-overwrite-problem-location" size="60" placeholder="${_("Problem location")}" aria-describedby="problem-select-all-help">
+            <input type="text" name="student-overwrite-problem-location" size="60"
+                   placeholder="${_("Problem location")}" aria-describedby="problem-select-all-help">
         </label>
-        <p id="problem-select-all-help">${_("You must provide the complete location of the problem. In the Staff Debug viewer, the location looks like this:")}<br/><code>block-v1:edX+DemoX+2015+type@problem+block@618c5933b8b544e4a4cc103d3e508378</code></p>
+        <p id="problem-select-all-help">${_("You must provide the complete location of the problem. In the Staff Debug viewer, the location looks like this:")}
+            <br/><code>block-v1:edX+DemoX+2015+type@problem+block@618c5933b8b544e4a4cc103d3e508378</code></p>
         <br/>
         <label>
             ${_("Specify the {platform_name} email address or username of a student here:").format(platform_name=settings.PLATFORM_NAME)}
-            <input type="text" name="student-overwrite-user" placeholder="${_("Student Email or Username")}" >
+            <input type="text" name="student-overwrite-user" placeholder="${_("Student Email or Username")}">
         </label>
         <br/>
         <label>
             ${_("Specify new score for problem, e.g. 0.6 or 2").format(platform_name=settings.PLATFORM_NAME)}
-            <input type="text" name="student-overwrite-grade" placeholder="${_("Problem Grade")}" >
+            <input type="text" name="student-overwrite-grade" placeholder="${_("Problem Grade")}">
         </label>
-        <input type="button" name="student-overwrite" value="${_('Overwrite student\'s problem score')}" data-endpoint="${ instructor_scoring_context['student_grade_override_url'] }">
+        <input type="button" name="student-overwrite" value="${_('Overwrite student\'s problem score')}"
+               data-endpoint="${ instructor_scoring_context['student_grade_override_url'] }">
 
+        <br/>
+
+        <div class="overwrites-delete">
+            <fieldset>
+                <h3 class="hd hd-3">${_('Delete student grade overwrites')}</h3>
+                %if len(instructor_scoring_context['course_overrides_dict']) > 0:
+                        <label for="student-overwrite-select-delete" class="label">${_("Select an overwrite to delete")}</label>
+                        <select class="student-overwrite-select-delete" name="student-overwrite-select-delete" id="student-overwrite-select-delete">
+                            <option value=""></option>
+                            %for overwrite_key in instructor_scoring_context['course_overrides_dict']:
+                                <option value="${overwrite_key}">
+                                    ${_("Overwrite: ") + instructor_scoring_context['course_overrides_dict'][overwrite_key]}
+                                </option>
+                            %endfor
+                        </select>
+
+                       <input type="button" name="student-overwrite-delete" value="${_('Delete chosen student grade overwrite ')}"
+               data-endpoint="${ instructor_scoring_context['student_grade_override_url'] }">
+
+                %else:
+                    <p>${_("No overwrites to delete")}</p>
+                %endif
+            </fieldset>
+        </div>
         <div class="request-response-error"></div>
 
     </div>

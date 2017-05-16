@@ -395,13 +395,40 @@ class @StudentAdmin
         url: @$btn_student_overwrite_grade.data 'endpoint'
         data: send_data
         success: @clear_errors_then ->
-          success_message = gettext("Grade sucessfully overwriten for'{student_id}'")
+          success_message = gettext("Grade sucessfully overwriten for '{student_id}'")
           full_success_message = interpolate_text(success_message, {student_id: unique_student_identifier})
           alert full_success_message
-        error: std_ajax_err(response) =>
+        error: (response) =>
           error_message = gettext("Error starting a task to overwrite grade for student '{student_id}'")
           full_error_message = interpolate_text(error_message, {student_id: unique_student_identifier})
           message = if response.responseText  then  JSON.parse(response.responseText)['error'] else full_error_message;
+          @$request_response_error_overwrite_grade.text message
+
+    @$btn_student_overwrite_grade_delete     = @$section.find "input[name='student-overwrite-delete']"
+    @$field_student_overwrite_select_delete = @$section.find "select[name='student-overwrite-select-delete']"
+    @$btn_student_overwrite_grade_delete.click =>
+      overwrite_id = @$field_student_overwrite_select_delete.val()
+      if not overwrite_id
+        return @$request_response_error_overwrite_grade.text gettext("Please choose which overwrite to delete.")
+      values = overwrite_id.split "___"
+      username = values[0]
+      block_id = values[1]
+      send_data =
+        username: username
+        block_id: block_id
+
+      $.ajax
+        type: 'DELETE'
+        dataType: 'json'
+        url: @$btn_student_overwrite_grade_delete.data 'endpoint'
+        data: send_data
+        success: @clear_errors_then ->
+          success_message = gettext("Grade sucessfully deleted for '{student_id}'")
+          full_success_message = interpolate_text(success_message, {student_id: username})
+          alert full_success_message
+        error: (response) =>
+          error_message = gettext("Error starting a task to delete overwrite grade")
+          message = if response.responseText  then  JSON.parse(response.responseText)['error'] else error_message;
           @$request_response_error_overwrite_grade.text message
 
 # wraps a function, but first clear the error displays
