@@ -6,17 +6,18 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from .models import StudentGradeOverride
+from .models import StudentGradeOverwrite
 from .utils import get_user_by_username_or_email
 
-class StudentGradeOverrideView(APIView):
+
+class StudentGradeOverwriteView(APIView):
     """
         **Use Cases**
-            Allows to manage StudentGradeOverride
+            Allows to manage StudentGradeOverwrite
 
         **Example Requests**:
 
-            GET /api/extended/student_grade_override/{course_key_string}?username='name'&block_id='<block_id>'
+            GET /api/extended/student_grade_overwrite/{course_key_string}?username='name'&block_id='<block_id>'
 
         **Get Parameters**
 
@@ -45,6 +46,7 @@ class StudentGradeOverrideView(APIView):
         username_or_email = data.get("username")
         grade = data.get("grade")
         if not (block_id and username_or_email and grade):
+            logging.error("")
             return Response({"error": "Parameters not specified"}, status=status.HTTP_400_BAD_REQUEST)
 
         failed = "Block for location '{}' not found".format(block_id)
@@ -55,13 +57,20 @@ class StudentGradeOverrideView(APIView):
             failed = "Grade {} is not digital".format(grade)
             grade = float(grade)
         except:
+            logging.error("Failed Grade Overwrite by '{}' ,reason:{}".format(str(request.user), failed))
             return Response({"error": "Incorrect parameters: {}".format(failed)}, status=status.HTTP_400_BAD_REQUEST)
-        if str(location.course_key) != course_id:
+
+        if str(location.course_key) != course_id: #request done not from instructor dashboard, unlikely event
             return Response({"error": "Invalid course key"}, status=status.HTTP_400_BAD_REQUEST)
-        error, sgo = StudentGradeOverride.override_student_grade(location=location, student=user, grade=grade)
-        if error:
+        error, sgo = StudentGradeOverwrite.overwrite_student_grade(location=location, student=user, grade=grade)
+        if error: #overwrite can't be done for some reason
+            message = "Overwrite for user '{}' for problem '{}' by instructor '{}' failed, reason:{}".format(
+                str(user), str(location), str(request.user), error
+            )
+            logging.error(message)
             return Response({"error": error}, status=status.HTTP_400_BAD_REQUEST)
-        logging.info("Instructor '{}' overrode student's '{}' grade for '{}': grade was changed from {} to {}".format(
+
+        logging.info("Instructor '{}' overwrote student's '{}' grade for '{}': grade was changed from {} to {}".format(
             request.user.username,
             user.username,
             str(location),
@@ -81,9 +90,9 @@ class StudentGradeOverrideView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         if str(location.course_key) != course_id:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        sgo = StudentGradeOverride.get_override(location=location, user=user)
-        if not sgo:
-            return Response({})
+        sgo = StudentGradeOverwrite.get_overwrite(location=location, user=user)
+        if not sgo: #no overwrite
+            return Response()
         return Response({
             "original_grade": sgo.original_grade,
             "current_grade": sgo.current_grade
@@ -103,11 +112,11 @@ class StudentGradeOverrideView(APIView):
         if str(location.course_key) != course_id:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        sgo = StudentGradeOverride.get_override(location=location, user=user)
+        sgo = StudentGradeOverwrite.get_overwrite(location=location, user=user)
         if not sgo:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         sgo.delete()
-        logging.info("Instructor '{}' deleted student's '{}' grade override for '{}': original grade restored {}".format(
+        logging.info("Instructor '{}' deleted student's '{}' grade overwrite for '{}': original grade restored {}".format(
             request.user.username,
             user.username,
             str(location),
@@ -116,5 +125,46 @@ class StudentGradeOverrideView(APIView):
         return Response({"message": "original grade restored:{}".format(str(sgo.original_grade))})
 
 
-class StudentVerticalGradingCourseResultOverrideView(APIView):
-    pass
+class StudentVerticalGradingCourseResultOverrideView(APIView): #Currently not enabled and NOT finished
+    """
+        **Use Cases**
+            Allows to manage tudentVerticalGradingCourseResultOverride
+
+        **Example Requests**:
+
+            GET /api/extended/student_course_result_override/{course_key_string}?username='name'&percent='xx'
+
+        **Get Parameters**
+
+            * username: User unique username.
+
+        **Post Parameters**
+
+            * username: User unique username.
+            * percent: percent to add 1-99
+
+        **Delete Parameters**
+
+            * username: User unique username.
+
+        **Response Values**
+
+            200 - OK , 400 - bad parameters, 403 - non-staff user requests calendar for other user
+
+    """
+    def post(self, request, course_id):
+        data = request.data
+        username_or_email = data.get("username")
+        percent = data.get("grade")
+        if not (username_or_email and percent):
+            return Response({"error": "Parameters not specified"}, status=status.HTTP_400_BAD_REQUEST)
+
+        failed = "User for username or email '{}' not found".format(username_or_email)
+        try:
+            user = get_user_by_username_or_email(username_or_email)
+            failed = "Grade {} is not digital from 1 to 100".format(percent)
+            percent = float(percent) / 100
+            if not (0. <= percent <= 1.):
+                raise ValueError
+        except:
+            return Response({"error": "Incorrect parameters: {}".format(failed)}, status=status.HTTP_400_BAD_REQUEST)

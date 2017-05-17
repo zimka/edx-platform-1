@@ -3,50 +3,54 @@
 
 <div>
     <hr>
-   <div class="student-grade-overwrite-container action-type-container" id="student-grade-overwrite">
-        <h3 class="hd hd-3">${_('Student Grade Overwrite ')}</h3>
-        <p>
-            ${_("Here you can overwrite student's grade for given problem. Student won't have to do anything to activate this overwriting.")}
+    <div class="student-grade-overwrite-container action-type-container" id="student-grade-overwrite">
+        <div class="grade-overwrite-add">
+            <h3 class="hd hd-3">${_('Student Grade Overwrite ')}</h3>
+            <p>
+                ${_("Here you can overwrite student's grade for given problem. Student won't have to do anything to activate it.")}
                ${_("You have to specify username or email, problem location and new grade. Grade must be between 0 and available maximum score for chosen problem.")}
-        </p>
-        <label>
-            ${_("Specify a problem in the course here with its complete location:")}
-            <input type="text" name="student-overwrite-problem-location" size="60"
-                   placeholder="${_("Problem location")}" aria-describedby="problem-select-all-help">
-        </label>
-        <p id="problem-select-all-help">${_("You must provide the complete location of the problem. In the Staff Debug viewer, the location looks like this:")}
-            <br/><code>block-v1:edX+DemoX+2015+type@problem+block@618c5933b8b544e4a4cc103d3e508378</code></p>
+            </p>
+            <label>
+                ${_("Specify a problem in the course here with its complete location:")}
+                <input type="text" name="student-overwrite-problem-location" size="60"
+                       placeholder="${_("Problem location")}" aria-describedby="problem-select-all-help">
+            </label>
+            <p id="problem-select-all-help">${_("You must provide the complete location of the problem. In the Staff Debug viewer, the location looks like this:")}
+                <br/><code>block-v1:edX+DemoX+2015+type@problem+block@618c5933b8b544e4a4cc103d3e508378</code></p>
+            <br/>
+            <label>
+                ${_("Specify the {platform_name} email address or username of a student here:").format(platform_name=settings.PLATFORM_NAME)}
+                <input type="text" name="student-overwrite-user" placeholder="${_("Student Email or Username")}">
+            </label>
+            <br/>
+            <label>
+                ${_("Specify new score for problem, e.g. 0.6 or 2").format(platform_name=settings.PLATFORM_NAME)}
+                <input type="text" name="student-overwrite-grade" placeholder="${_("Problem Grade")}">
+            </label>
+            <input type="button" name="student-overwrite" value="${_('Overwrite student\'s problem score')}"
+                   data-endpoint="${ instructor_scoring_context['student_grade_overwrite_url'] }">
+        </div>
         <br/>
-        <label>
-            ${_("Specify the {platform_name} email address or username of a student here:").format(platform_name=settings.PLATFORM_NAME)}
-            <input type="text" name="student-overwrite-user" placeholder="${_("Student Email or Username")}">
-        </label>
-        <br/>
-        <label>
-            ${_("Specify new score for problem, e.g. 0.6 or 2").format(platform_name=settings.PLATFORM_NAME)}
-            <input type="text" name="student-overwrite-grade" placeholder="${_("Problem Grade")}">
-        </label>
-        <input type="button" name="student-overwrite" value="${_('Overwrite student\'s problem score')}"
-               data-endpoint="${ instructor_scoring_context['student_grade_override_url'] }">
 
-        <br/>
-
-        <div class="overwrites-delete">
+        <div class="grade-overwrites-delete">
             <fieldset>
                 <h3 class="hd hd-3">${_('Delete student grade overwrites')}</h3>
-                %if len(instructor_scoring_context['course_overrides_dict']) > 0:
-                        <label for="student-overwrite-select-delete" class="label">${_("Select an overwrite to delete")}</label>
-                        <select class="student-overwrite-select-delete" name="student-overwrite-select-delete" id="student-overwrite-select-delete">
-                            <option value=""></option>
-                            %for overwrite_key in instructor_scoring_context['course_overrides_dict']:
-                                <option value="${overwrite_key}">
-                                    ${_("Overwrite: ") + instructor_scoring_context['course_overrides_dict'][overwrite_key]}
-                                </option>
-                            %endfor
-                        </select>
+                %if len(instructor_scoring_context['course_overwrite_dict']) > 0:
+                    <label for="student-overwrite-select-delete"
+                           class="label">${_("Select an overwrite to delete")}</label>
+                    <select class="student-overwrite-select-delete" name="student-overwrite-select-delete"
+                            id="student-overwrite-select-delete">
+                        <option value=""></option>
+                        %for overwrite_key in instructor_scoring_context['course_overwrite_dict']:
+                            <option value="${overwrite_key}">
+                                ${_("Overwrite: ") + instructor_scoring_context['course_overwrite_dict'][overwrite_key]}
+                            </option>
+                        %endfor
+                    </select>
 
-                       <input type="button" name="student-overwrite-delete" value="${_('Delete chosen student grade overwrite ')}"
-               data-endpoint="${ instructor_scoring_context['student_grade_override_url'] }">
+                    <input type="button" name="student-overwrite-delete"
+                           value="${_('Delete chosen student grade overwrite ')}"
+                           data-endpoint="${ instructor_scoring_context['student_grade_overwrite_url'] }">
 
                 %else:
                     <p>${_("No overwrites to delete")}</p>
@@ -56,4 +60,43 @@
         <div class="request-response-error"></div>
 
     </div>
+
+    % if instructor_scoring_context['enable_course_result_overwrite']:
+    <div class="student-course-overwrite-container action-type-container" id="student-course-overwrite">
+        <div class="course-overwrite-add">
+            <h3 class="hd hd-3">${_('Student Course Result Overwrite ')}</h3>
+            <p>
+                ${_("Here you can overwrite student's course overall result score. You can add scores and this student will get certificate anyway.")}
+            </p>
+
+            <label>
+                ${_("Specify the {platform_name} email address or username of a student here:").format(platform_name=settings.PLATFORM_NAME)}
+                <input type="text" name="student-course-overwrite-user" placeholder="${_("Student Email or Username")}">
+            </label>
+            <br/>
+
+            <label>
+                ${_("Specify added percent for overall course grade. Must be between 0 and 100").format(platform_name=settings.PLATFORM_NAME)}
+                <input type="text" name="student-course-overwrite-grade" placeholder="${_("Added Course Percent")}">
+            </label>
+            <br/>
+            <label>
+                ${_("Specify which sections student will pass automatically").format(platform_name=settings.PLATFORM_NAME)}
+                  <br/>
+                  %for section_option in instructor_scoring_context['course_result_overwrite_sections']:
+                      <input type="checkbox" name="student-overwrite-grade-${section_option}">
+                       ${_(instructor_scoring_context['course_result_overwrite_sections'][section_option])}
+                      <br/>
+                  %endfor
+            </label>
+
+            <input type="button" name="student-course-overwrite" value="${_('Overwrite student\'s problem score')}"
+                   data-endpoint="${ instructor_scoring_context['student_grade_overwrite_url'] }">
+        </div>
+        <br/>
+
+        <div class="request-response-error"></div>
+
+    </div>
+    % endif
 </div>

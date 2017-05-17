@@ -1,17 +1,17 @@
 import json
-import logging as log
 
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
+from functools import wraps
 
 from courseware.models import StudentModule
 from certificates.models import CertificateWhitelist
 
 
-class StudentGradeOverride(models.Model):
+class StudentGradeOverwrite(models.Model):
     """
-    Instructor's override for student's problem grade. Actually changes value of grade.
+    Instructor's overwrite for student's problem grade. Actually changes value of grade.
     On object's deletion original grade is restored. Doesn't store history but can be
     overridden again without lose of original grade.
     """
@@ -20,55 +20,58 @@ class StudentGradeOverride(models.Model):
     current_grade = models.FloatField(default=0)
 
     @classmethod
-    def override_student_grade(cls, location, student, grade):
+    def overwrite_student_grade(cls, location, student, grade):
         try:
             module = StudentModule.objects.get(module_state_key=location, student=student)
         except StudentModule.DoesNotExist:
-            module = None
-        if not module:
             return _("User haven't started task yet"), None
+        if not module.max_grade:
+            return _("Grade for this problem can't be overwritten currently"), None
+        if not module.module_type == 'problem':
+            return _("Only problems can be overwritten currently"), None
+
         if module.max_grade and grade > module.max_grade:
             return _("Grade '{}' is higher than max_grade for this task: '{}'".format(grade, module.max_grade)), None
         if grade < 0:
             return _("Grade is lower than zero"), None
         if module.done == 'i':  # means "Incomplete"
             return _("Student haven't finished task yet"), None
-        override, created = StudentGradeOverride.objects.get_or_create(student_module=module)
-        override.current_grade = grade
+        overwrite, created = StudentGradeOverwrite.objects.get_or_create(student_module=module)
+        overwrite.current_grade = grade
         if created:
-            override.original_grade = module.grade or 0
+            overwrite.original_grade = module.grade or 0
         module.grade = grade
         module.save()
-        override.save()
-        override, created = StudentGradeOverride.objects.get_or_create(student_module=module)
-        return "", override
+        overwrite.save()
+        return "", overwrite
 
     @classmethod
-    def get_override(cls, location, user):
+    def get_overwrite(cls, location, user):
         try:
             module = StudentModule.objects.get(module_state_key=location, student=user)
             if not module:
                 return
-            override = StudentGradeOverride.objects.get(student_module=module)
-            return override
-        except (StudentModule.DoesNotExist, StudentGradeOverride.DoesNotExist) :
+            overwrite = StudentGradeOverwrite.objects.get(student_module=module)
+            return overwrite
+        except (StudentModule.DoesNotExist, StudentGradeOverwrite.DoesNotExist) :
             return
 
     def save(self, *args, **kwargs):
         if not self.pk and self.student_module.grade:
             self.original_grade = self.student_module.grade
-        return super(StudentGradeOverride, self).save(*args, **kwargs)
+        return super(StudentGradeOverwrite, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         module = self.student_module
         module.grade = self.original_grade
         module.save()
-        return super(StudentGradeOverride, self).delete(*args, **kwargs)
+        return super(StudentGradeOverwrite, self).delete(*args, **kwargs)
 
     def __str__(self):
         return "{}: {} -> {}, {}".format(self.student_module.student.username, self.original_grade,
                                          self.current_grade, str(self.student_module.module_state_key)
-                                        )
+        )
+
 
 class StudentCourseResultOverride(models.Model):
     """
@@ -143,8 +146,6 @@ class StudentCourseResultOverride(models.Model):
             whitelist.save()
             override.whitelist = whitelist
         override.save()
-
-from functools import wraps
 
 
 def course_result_override(func):
