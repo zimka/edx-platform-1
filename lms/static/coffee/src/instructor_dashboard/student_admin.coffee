@@ -410,12 +410,8 @@ class @StudentAdmin
       overwrite_id = @$field_student_overwrite_select_delete.val()
       if not overwrite_id
         return @$request_response_error_overwrite_grade.text gettext("Please choose which overwrite to delete.")
-      values = overwrite_id.split "___"
-      username = values[0]
-      block_id = values[1]
       send_data =
-        username: username
-        block_id: block_id
+        serialized_overwrite: overwrite_id
 
       $.ajax
         type: 'DELETE'
@@ -423,9 +419,8 @@ class @StudentAdmin
         url: @$btn_student_overwrite_grade_delete.data 'endpoint'
         data: send_data
         success: @clear_errors_then ->
-          success_message = gettext("Grade sucessfully deleted for '{student_id}'")
-          full_success_message = interpolate_text(success_message, {student_id: username})
-          alert full_success_message
+          success_message = gettext("Grade sucessfully deleted")
+          alert success_message
         error: (response) =>
           error_message = gettext("Error starting a task to delete overwrite grade")
           message = if response.responseText  then  JSON.parse(response.responseText)['error'] else error_message;

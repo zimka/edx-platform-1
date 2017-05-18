@@ -1,6 +1,8 @@
 import logging
 
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext as _
+
 from opaque_keys.edx.keys import UsageKey
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -100,26 +102,27 @@ class StudentGradeOverwriteView(APIView):
 
     def delete(self, request, course_id):
         data = request.data
-        block_id = data.get("block_id")
-        username = data.get("username")
-        failed = "Block '{}' not found".format(block_id)
-        try:
-            location = UsageKey.from_string(block_id)
-            failed = "Block '{}' not found".format(block_id)
-            user = get_user_by_username_or_email(username)
-        except Exception as e:
-            return Response({"error":"Incorrect parameters: {}".format(failed)}, status=status.HTTP_400_BAD_REQUEST)
-        if str(location.course_key) != course_id:
+        serialized_overwrite = data.get('serialized_overwrite')
+        if not serialized_overwrite:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        sgo = StudentGradeOverwrite.get_overwrite(location=location, user=user)
-        if not sgo:
+        try:
+            sgo = StudentGradeOverwrite.deserialize(serialized_overwrite)
+        except Exception as e:
+            message = """Failed to delete overwrite. Please refresh page and try later.
+                                    If error isn't disappearing, please contact platform administrator"""
+            logging.error("From '{}': failed to delete overwrite '{}', traceback:'{}'".format(
+                str(request.user), serialized_overwrite, str(e)))
+            return Response({"error": _(message)},status=status.HTTP_400_BAD_REQUEST)
+
+        if sgo.course_id != course_id:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
         sgo.delete()
         logging.info("Instructor '{}' deleted student's '{}' grade overwrite for '{}': original grade restored {}".format(
             request.user.username,
-            user.username,
-            str(location),
+            sgo.user.username,
+            str(sgo.location),
             sgo.original_grade,
         ))
         return Response({"message": "original grade restored:{}".format(str(sgo.original_grade))})

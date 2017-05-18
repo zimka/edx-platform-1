@@ -8,12 +8,14 @@ from .models import StudentGradeOverwrite
 
 def get_instructor_scoring_context(course_id):
     context = {}
+    if not settings.FEATURES.get("ENABLE_STUDENT_GRADE_OVERWRITE"):
+        return context
     url = reverse('student-grade-overwrite', kwargs={"course_id": course_id})
     context['student_grade_overwrite_url'] = url
-    course_key = CourseKey.from_string(course_id)
-    course_overwrites = StudentGradeOverwrite.objects.filter(student_module__course_id=course_key)
-    serialize = lambda x: "{}___{}".format(str(x.student_module.student.username), str(x.student_module.module_state_key))
-    course_overwrites_dict = dict((serialize(x), str(x)) for x in course_overwrites)
+    course_overwrites = StudentGradeOverwrite.get_course_overwrites(course_id)
+    nice_view = lambda x: x if len(x) < 80 else x[:77] + "..."
+    course_overwrites_dict = dict((StudentGradeOverwrite.serialize(x), nice_view(str(x))) for x in course_overwrites)
+
     context['course_overwrite_dict'] = course_overwrites_dict
     sections = collect_course_sections(course_id)
     context['course_result_override_sections'] = sections
