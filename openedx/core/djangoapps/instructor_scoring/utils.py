@@ -2,7 +2,6 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 
-from opaque_keys.edx.keys import CourseKey
 from .models import StudentGradeOverwrite
 
 
@@ -17,16 +16,7 @@ def get_instructor_scoring_context(course_id):
     course_overwrites_dict = dict((StudentGradeOverwrite.serialize(x), nice_view(str(x))) for x in course_overwrites)
 
     context['course_overwrite_dict'] = course_overwrites_dict
-    sections = collect_course_sections(course_id)
-    context['course_result_override_sections'] = sections
-    context['enable_course_result_overwrite'] = settings.FEATURES.get('ENABLE_COURSE_RESULT_OVERWRITE')
     return context
-
-
-def collect_course_sections(course_id):
-    if settings.FEATURES.get('ENABLE_COURSE_RESULT_OVERWRITE'):
-        raise NotImplementedError("Course result overwrite is too hacky and can be replace by certs white list")
-    return {}
 
 
 def get_user_by_username_or_email(username_or_email):

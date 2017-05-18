@@ -60,43 +60,4 @@
         <div class="request-response-error"></div>
 
     </div>
-
-    % if instructor_scoring_context['enable_course_result_overwrite']:
-    <div class="student-course-overwrite-container action-type-container" id="student-course-overwrite">
-        <div class="course-overwrite-add">
-            <h3 class="hd hd-3">${_('Student Course Result Overwrite ')}</h3>
-            <p>
-                ${_("Here you can overwrite student's course overall result score. You can add scores and this student will get certificate anyway.")}
-            </p>
-
-            <label>
-                ${_("Specify the {platform_name} email address or username of a student here:").format(platform_name=settings.PLATFORM_NAME)}
-                <input type="text" name="student-course-overwrite-user" placeholder="${_("Student Email or Username")}">
-            </label>
-            <br/>
-
-            <label>
-                ${_("Specify added percent for overall course grade. Must be between 0 and 100").format(platform_name=settings.PLATFORM_NAME)}
-                <input type="text" name="student-course-overwrite-grade" placeholder="${_("Added Course Percent")}">
-            </label>
-            <br/>
-            <label>
-                ${_("Specify which sections student will pass automatically").format(platform_name=settings.PLATFORM_NAME)}
-                  <br/>
-                  %for section_option in instructor_scoring_context['course_result_overwrite_sections']:
-                      <input type="checkbox" name="student-overwrite-grade-${section_option}">
-                       ${_(instructor_scoring_context['course_result_overwrite_sections'][section_option])}
-                      <br/>
-                  %endfor
-            </label>
-
-            <input type="button" name="student-course-overwrite" value="${_('Overwrite student\'s problem score')}"
-                   data-endpoint="${ instructor_scoring_context['student_grade_overwrite_url'] }">
-        </div>
-        <br/>
-
-        <div class="request-response-error"></div>
-
-    </div>
-    % endif
 </div>

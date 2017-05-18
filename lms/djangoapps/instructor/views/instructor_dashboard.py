@@ -218,6 +218,9 @@ def instructor_dashboard_2(request, course_id):
         'certificate_invalidation_view_url': certificate_invalidation_view_url,
     }
 
+    from openedx.core.djangoapps.instructor_scoring import get_instructor_scoring_context
+    instructor_scoring_context = get_instructor_scoring_context(course_id)
+    context['instructor_scoring_context'] = instructor_scoring_context
     return render_to_response('instructor/instructor_dashboard_2/instructor_dashboard_2.html', context)
 
 

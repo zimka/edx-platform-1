@@ -1,14 +1,12 @@
-import json
-
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
-from functools import wraps
 
 from courseware.models import StudentModule
-from certificates.models import CertificateWhitelist
 from xmodule_django.models import UsageKeyField
 from opaque_keys.edx.keys import UsageKey
+from submissions.models import ScoreSummary
+from student.models import anonymous_id_for_user
 
 
 class StudentGradeOverwrite(models.Model):
@@ -17,7 +15,6 @@ class StudentGradeOverwrite(models.Model):
     On object's deletion original grade is restored. Doesn't store history but can be
     overridden again without lose of original grade.
     """
-    #student_module = models.OneToOneField(StudentModule, on_delete=models.DO_NOTHING)
 
     user = models.ForeignKey(User)
     location = UsageKeyField(max_length=255)
@@ -38,7 +35,8 @@ class StudentGradeOverwrite(models.Model):
             except OraStudentModule.DoesNotExistError:
                 return None
         else:
-            return TypeError("Can overwrite only problem or open response assessment, not '{}'".format(location.block_type))
+            return TypeError(
+                "Can overwrite only problem or open response assessment, not '{}'".format(location.block_type))
 
     @classmethod
     def overwrite_student_grade(cls, location, student, grade):
@@ -78,14 +76,9 @@ class StudentGradeOverwrite(models.Model):
     @classmethod
     def get_course_overwrites(cls, course_id):
         return StudentGradeOverwrite.objects.filter(course_id=course_id)
-#    def save(self, *args, **kwargs):
-#        if not self.pk and self.student_module.grade:
-#            self.original_grade = self.student_module.grade
-#        return super(StudentGradeOverwrite, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         module = self.get_module(self.user, self.location)
-        #module = self.student_module
         module.grade = self.original_grade
         module.save()
         return super(StudentGradeOverwrite, self).delete(*args, **kwargs)
@@ -93,9 +86,10 @@ class StudentGradeOverwrite(models.Model):
     def __str__(self):
         str_loc = str(self.location)
         str_obj = "{}: {} -> {}, {}".format(self.user.username, self.original_grade,
-                                         self.current_grade, str_loc
-        )
+                                            self.current_grade, str_loc
+                                            )
         return str_obj
+
     @classmethod
     def serialize(cls, obj):
         """Returns string that can be later unserialized"""
@@ -113,10 +107,6 @@ class StudentGradeOverwrite(models.Model):
         return student_grade_overwrite
 
 
-from submissions.models import StudentItem, ScoreSummary
-from student.models import anonymous_id_for_user
-
-
 class OraStudentModule(object):
     """
     Interface to scores for OpenResponseAssessment. Mimics StudentModule interface.
@@ -127,7 +117,7 @@ class OraStudentModule(object):
     def __init__(self, user, ora_location):
         self.user = user
         self.location = ora_location
-        self.module_type =  u'openassessment'
+        self.module_type = u'openassessment'
         if ora_location.block_type != self.module_type:
             raise TypeError("OraOverwrite got non 'openassessment' location: '{}'".format(ora_location.block_type))
 
@@ -137,7 +127,7 @@ class OraStudentModule(object):
             student_item__item_id=str(self.location),
             student_item__student_id=an_user_id,
         ).select_related('latest')
-        if len(score_summaries) < 1: # We don't need interface without object, catch it elsewhere
+        if len(score_summaries) < 1:  # We don't need interface without object, catch it elsewhere
             raise self.DoesNotExistError
 
         if len(score_summaries) > 1:  # Something is really wrong here
@@ -163,99 +153,9 @@ class OraStudentModule(object):
     @property
     def done(self):
         """Needed only to mimic StudentModule interface, for any OraStudentModule ora module is finished actually"""
-        return "f" #finished
+        return "f"  # finished
 
     @classmethod
     def get(cls, module_state_key, student):
         obj = cls(user=student, ora_location=module_state_key)
         return obj
-
-
-class StudentCourseResultOverride(models.Model):
-    """
-    Allows instructor to add points to overall course score.
-    Doesn't actually change any student's result. Should be watched at
-    grading module.
-    """
-    student = models.ForeignKey(User)
-    course_id = models.CharField(max_length=100)
-    added_percent = models.FloatField()
-    passed_sections = models.CharField(max_length=256)
-    whitelist = models.ForeignKey(CertificateWhitelist)
-
-    def __setattr__(self, attrname, val):
-        if attrname == "passed_section":
-            val = json.dumps(val)
-        super(StudentCourseResultOverride, self).__setattr__(attrname, val)
-
-    def __getattr__(self, attrname):
-        val = super(StudentCourseResultOverride, self).__getattr__(attrname)
-        if attrname == "passed_section":
-            val = json.loads(val)
-        return val
-
-    @classmethod
-    def update_grader_result(cls, student, course, grade_summary):
-        """
-        Updates grade_summary if override for course-student exists.
-        """
-        course_id = str(course.id)
-        old_grade_summary = dict((k,v) for k,v in grade_summary.items())
-        try:
-            scro = StudentCourseResultOverride.objects.get(student=student, course_id=course_id)
-        except StudentCourseResultOverride.DoesNotExist:
-            scro = None
-        if not scro:
-            return grade_summary
-        grade_breakdown = grade_summary['grade_breakdown']
-        new_grade_breakdown = []
-        updated_sections = []
-        for num, _section in enumerate(grade_breakdown):
-            section = grade_breakdown[num]
-            if (section['category'] in scro.passed_sections) or ('all' in scro.passed_sections):
-                if not section['is_passed']:
-                    section['is_passed'] = True
-                    updated_sections.append(section['category'])
-            new_grade_breakdown.append(section)
-        grade_summary['grade_breakdown'] = new_grade_breakdown
-        percent = grade_summary['percent'] + scro.added_percent
-        grade_summary['percent'] = percent if percent < 1. else 1.
-        grade_summary['grade'] = 'Pass'
-        return grade_summary
-
-    def delete(self, *args, **kwargs):
-        self.whitelist.whitelist = False
-        self.whitelist.save()
-        return super(StudentCourseResultOverride, self).delete(*args, **kwargs)
-
-    @classmethod
-    def override_student_course_result(cls, student, course, percent, passed_sections='all'):
-        if passed_sections == 'all':
-            passed_sections = ['all']
-        if percent > 1:
-            percent = 1.
-
-        override, created = cls.objects.get_or_create(student=student, course_id=str(course.id))
-        override.passed_sections = passed_sections
-        override.added_percent = percent
-        if created:
-            whitelist, created = CertificateWhitelist.objects.get_or_create(user=student, course_id=course.id)
-            whitelist.whitelist = True
-            whitelist.save()
-            override.whitelist = whitelist
-        override.save()
-
-
-def course_result_override(func):
-    """
-    Use this decorator for openedx.core.djangoapps.grading_policy.sequentUal/vertical.py: *Some*Grading.grade
-    Must be before staticmethod i.e. @staticmethod@course_result_override@
-    :param func:
-    :return:
-    """
-    @wraps(func)
-    def wrapped(student, course, *args, **kwargs):
-        grade_summary = func(student, course, *args, **kwargs)
-        grade_summary = StudentCourseResultOverride.update_grader_result(student, course, grade_summary)
-        return grade_summary
-    return wrapped
