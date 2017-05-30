@@ -2,12 +2,7 @@ import json
 import logging
 
 from django.contrib.auth.models import User
-from django.db import models, transaction
-from util.db import outer_atomic
-from django.core.exceptions import ValidationError
-from django.db.models.signals import pre_delete
-from django.dispatch import receiver
-from xmodule_django.models import CourseKeyField
+from django.db import models
 
 log = logging.getLogger(__name__)
 

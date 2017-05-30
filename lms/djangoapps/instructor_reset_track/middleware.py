@@ -7,8 +7,14 @@ from lms.djangoapps.courseware.user_state_client import DjangoXBlockUserStateCli
 from opaque_keys.edx.keys import UsageKey
 from .models import InstructorResetStudentAttempts
 
+SELECTOR = "reset_student_attempts"  # understand that this is our url
+
 
 class InstructorResetMiddleware(TrackMiddleware):
+    """
+    This middleware should be added to the MIDDLEWARE_CLASSES to watch
+    all instructor attempts to affect student answers
+    """
 
     @staticmethod
     def _get_user(username_or_email):
@@ -27,9 +33,9 @@ class InstructorResetMiddleware(TrackMiddleware):
         return context
 
     def process_request(self, request):
-        if not "reset" in request.path:
+        if not SELECTOR in request.path:
             return
-        if not json.loads(request.POST['delete_module']): #'delete_module': ['false']
+        if not json.loads(request.POST['delete_module']):  # 'delete_module': ['false']
             return
 
         context = self.get_context(request)
@@ -52,13 +58,13 @@ class InstructorResetMiddleware(TrackMiddleware):
         request.removed_answer = removed_answer
 
     def process_response(self, _request, response):
-        if not "reset" in _request.path:
+        if not SELECTOR in _request.path:
             return response
         context = self.get_context(_request)
         if hasattr(_request, "removed_answer"):
             context["removed_answer"] = _request.removed_answer
 
-        if "reset" in response.content:
+        if "reset" in response.content and not "error" in response.content:
             context["success"] = True
         else:
             context["success"] = False
@@ -75,8 +81,8 @@ class InstructorResetMiddleware(TrackMiddleware):
         success = data["success"]
         removed_answer = ""
 
-        if action=="delete":
-            removed_answer = data.get("removed_answer", "Error") #we had to remember answer during process_request
+        if action == "delete":
+            removed_answer = data.get("removed_answer", "Error")  # we had to remember answer during process_request
         try:
             InstructorResetStudentAttempts.objects.create(
                 instructor_username=instructor_username,
