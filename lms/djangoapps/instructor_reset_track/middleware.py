@@ -7,7 +7,8 @@ from lms.djangoapps.courseware.user_state_client import DjangoXBlockUserStateCli
 from opaque_keys.edx.keys import UsageKey
 from .models import InstructorResetStudentAttempts
 
-SELECTOR = "reset_student_attempts"  # understand that this is our url
+log = logging.getLogger(__name__)
+SELECTOR = "reset_student_attempts"  # keyword to filter suitable url
 
 
 class InstructorResetMiddleware(TrackMiddleware):
@@ -46,7 +47,7 @@ class InstructorResetMiddleware(TrackMiddleware):
 
         user = self._get_user(username)
         if not user:
-            logging.error("User not found for: {}".format(str(username)))
+            log.error("User not found for: {}".format(str(username)))
             return
 
         usc = DjangoXBlockUserStateClient(user)
@@ -94,4 +95,4 @@ class InstructorResetMiddleware(TrackMiddleware):
                 success=success
             )
         except Exception as e:
-            logging.error("Error during instructor_reset_track: '{}'".format(str(e)))
+            log.error("Error during instructor_reset_track: '{}'".format(str(e)))

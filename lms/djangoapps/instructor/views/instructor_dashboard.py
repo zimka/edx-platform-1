@@ -204,6 +204,8 @@ def instructor_dashboard_2(request, course_id):
 
     certificate_invalidations = CertificateInvalidation.get_certificate_invalidations(course_key)
 
+    sections.append(_section_instructor_resets(course, access))
+
     context = {
         'course': course,
         'studio_url': get_studio_url(course, 'course'),
@@ -678,5 +680,18 @@ def _section_metrics(course, access):
         'get_students_opened_subsection_url': reverse('get_students_opened_subsection'),
         'get_students_problem_grades_url': reverse('get_students_problem_grades'),
         'post_metrics_data_csv_url': reverse('post_metrics_data_csv'),
+    }
+    return section_data
+
+
+def _section_instructor_resets(course, access):
+    """Provide data for instructor resets dasboard section"""
+    course_key = course.id
+    section_data = {
+        'section_key': 'instructor_reset_track',
+        'section_display_name': _('Instructor Student Attempt Resets'),
+        'access': access,
+        'course_id': unicode(course_key),
+        'instructor_resets_url': reverse('instructor_reset_track', kwargs={'course_id': unicode(course_key)}),
     }
     return section_data
