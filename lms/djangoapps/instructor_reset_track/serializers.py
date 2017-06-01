@@ -14,5 +14,6 @@ class InstructorResetStudentAttemptsSerializer(serializers.ModelSerializer):
                   'block_id',
                   'action',
                   'removed_answer',
-                  'timestamp'
+                  'time_readable',
+                  'block_url'
                   )

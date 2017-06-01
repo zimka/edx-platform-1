@@ -7,24 +7,26 @@ import pytz
 <div>
 <div class="instructor-reset-track-container action-type-container">
     <h3 class="hd hd-3">${_('Instructor Resets')}</h3>
-    <p>${_('Here you can watch all student attempt resets done by instructors')}</p>
+    <p></p>
     <div id="instructor-reset-track-table">
-        <table class="table table-condensed" >
+        <table>
             <thead>
             <tr>
-                <th> instructor_username </th>
-                <th> student_username </th>
-                <th> block_id </th>
-                <th> action </th>
-                <th> removed_answer </th>
-                <th> timestamp </th>
+                <th style="width: 15%;"> ${_("Instructor")} </th>
+                <th style="width: 15%;"> ${_("Student")} </th>
+                <th> ${_("Problem location")}</th>
+                <th style="width: 10%;"> ${_("Action")} </th>
+                <th> ${_("Response")} </th>
+                <th style="width: 15%;"> ${_("Time")} </th>
             </tr>
             </thead>
             <tbody>
             </tbody>
         </table>
-        <button class="prev-button disabled" value="null">Prev</button>
-        <button class="next-button" value="${section_data['instructor_resets_url']}">Next</button>
+        <button class="button prev-button disabled">${_("Previous")}</button>
+        <button class="button next-button" value="${section_data['instructor_resets_url']}">${_("Next")}</button>
+        <div class="table-pages"></div>
+
     </div>
 </div>
 </div>
@@ -36,13 +38,33 @@ import pytz
          table-layout: fixed;
          width: 100%
     }
+
     #instructor-reset-track-table td, #instructor-reset-track-table th{
         word-wrap: break-word;
         min-width: 3em;
+        border: 1px solid black;
         width: 3em; /* the normal 'fixed' width */
         max-width: 3em;
-        padding: 1em;
+        padding: 0.2em;
         margin: 1em;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    #instructor-reset-track-table .table-pages{
+        display: block;
+        font-size: 1.2em;
+        margin:0 auto;
+        vertical-align: text-bottom;
+        width:100px;
+    }
+
+    #instructor-reset-track-table .button{
+        float:left;
+    }
+
+    #instructor-reset-track-table .next-button{
+        float:right;
     }
 </style>
 </%block>

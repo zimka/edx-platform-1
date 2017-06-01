@@ -204,7 +204,8 @@ def instructor_dashboard_2(request, course_id):
 
     certificate_invalidations = CertificateInvalidation.get_certificate_invalidations(course_key)
 
-    sections.append(_section_instructor_resets(course, access))
+    if settings.FEATURES.get("ENABLE_INSTRUCTOR_RESET_TRACK"):
+        sections.append(_section_instructor_resets(course, access))
 
     context = {
         'course': course,

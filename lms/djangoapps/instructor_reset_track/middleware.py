@@ -1,10 +1,13 @@
-from track.middleware import TrackMiddleware
-from eventtracking import tracker
 import json
 import logging
+
 from django.contrib.auth.models import User
-from lms.djangoapps.courseware.user_state_client import DjangoXBlockUserStateClient
+from django.conf import settings
+from eventtracking import tracker
 from opaque_keys.edx.keys import UsageKey
+
+from lms.djangoapps.courseware.user_state_client import DjangoXBlockUserStateClient
+from track.middleware import TrackMiddleware
 from .models import InstructorResetStudentAttempts
 
 log = logging.getLogger(__name__)
@@ -34,6 +37,8 @@ class InstructorResetMiddleware(TrackMiddleware):
         return context
 
     def process_request(self, request):
+        if not settings.FEATURES.get("ENABLE_INSTRUCTOR_RESET_TRACK"):
+            return
         if not SELECTOR in request.path:
             return
         if not json.loads(request.POST['delete_module']):  # 'delete_module': ['false']
@@ -59,6 +64,9 @@ class InstructorResetMiddleware(TrackMiddleware):
         request.removed_answer = removed_answer
 
     def process_response(self, _request, response):
+        if not settings.FEATURES.get("ENABLE_INSTRUCTOR_RESET_TRACK"):
+            return
+
         if not SELECTOR in _request.path:
             return response
         context = self.get_context(_request)
@@ -85,7 +93,7 @@ class InstructorResetMiddleware(TrackMiddleware):
         if action == "delete":
             removed_answer = data.get("removed_answer", "Error")  # we had to remember answer during process_request
         try:
-            InstructorResetStudentAttempts.objects.create(
+            InstructorResetStudentAttempts.create(
                 instructor_username=instructor_username,
                 student_username=student_username,
                 block_id=block_id,

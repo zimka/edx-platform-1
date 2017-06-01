@@ -1,5 +1,3 @@
-import logging
-
 from rest_framework.generics import ListAPIView
 
 from .models import InstructorResetStudentAttempts
@@ -21,4 +19,4 @@ class InstructorResetStudentAttemptsView(ListAPIView):
 
     def get_queryset(self):
         course_id = self.kwargs['course_id']
-        return InstructorResetStudentAttempts.objects.filter(success=True, course_id=course_id).order_by('-timestamp')
+        return InstructorResetStudentAttempts.represent_queryset(course_id)
