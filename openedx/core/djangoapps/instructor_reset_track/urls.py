@@ -4,6 +4,6 @@ from .api import InstructorResetStudentAttemptsView
 
 urlpatterns = patterns(
     '',
-    url(r'^instructor_reset_track/{}'.format(settings.COURSE_ID_PATTERN),
+    url(r'^{}'.format(settings.COURSE_ID_PATTERN),
         InstructorResetStudentAttemptsView.as_view(), name='instructor_reset_track'),
 )

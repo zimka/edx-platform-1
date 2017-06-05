@@ -78,3 +78,7 @@ FEATURES["ICALENDAR_DUE_API"] = True
 ORA_LOCALE_PATH = PROJECT_ROOT.dirname().dirname() + "/venvs/edxapp/lib/python2.7/site-packages/openassessment/locale"
 LOCALE_PATHS += (ORA_LOCALE_PATH,)
 
+INSTALLED_APPS += ('openedx.core.djangoapps.instructor_reset_track', )
+MIDDLEWARE_CLASSES += ('openedx.core.djangoapps.instructor_reset_track.middleware.InstructorResetMiddleware',)
+FEATURES["ENABLE_INSTRUCTOR_RESET_TRACK"] = True
+TIME_ZONE = 'Europe/Moscow'

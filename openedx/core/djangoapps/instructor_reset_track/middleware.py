@@ -41,13 +41,13 @@ class InstructorResetMiddleware(TrackMiddleware):
             return
         if not SELECTOR in request.path:
             return
-        if not json.loads(request.POST['delete_module']):  # 'delete_module': ['false']
+        if not json.loads(request.POST["delete_module"]):  # 'delete_module': ["false"]
             return
 
         context = self.get_context(request)
 
-        username = context['POST']['unique_student_identifier'][0]
-        block_id = context['POST']['problem_to_reset'][0]
+        username = context["POST"]["unique_student_identifier"][0]
+        block_id = context["POST"]["problem_to_reset"][0]
         block_keys = [UsageKey.from_string(block_id)]
 
         user = self._get_user(username)
@@ -57,10 +57,10 @@ class InstructorResetMiddleware(TrackMiddleware):
 
         usc = DjangoXBlockUserStateClient(user)
         removed_answers_list = list(usc.get_many(username, block_keys))
-        if not len(removed_answers_list):
+        if not removed_answers_list:
             removed_answer = "No answer"
         else:
-            removed_answer = json.dumps(removed_answers_list[0][2]['student_answers'])
+            removed_answer = json.dumps(removed_answers_list[0][2]["student_answers"])
         request.removed_answer = removed_answer
 
     def process_response(self, _request, response):
@@ -81,12 +81,12 @@ class InstructorResetMiddleware(TrackMiddleware):
         return super(InstructorResetMiddleware, self).process_response(_request, response)
 
     def write_down_reset(self, data):
-        instructor_username = data['username']
-        course_id = data['course_id']
-        event_dict = data['POST']
-        action = "delete" if json.loads(event_dict['delete_module'][0]) else "reset"
+        instructor_username = data["username"]
+        course_id = data["course_id"]
+        event_dict = data["POST"]
+        action = "delete" if json.loads(event_dict["delete_module"][0]) else "reset"
         student_username = event_dict["unique_student_identifier"][0]
-        block_id = event_dict['problem_to_reset'][0]
+        block_id = event_dict["problem_to_reset"][0]
         success = data["success"]
         removed_answer = ""
 

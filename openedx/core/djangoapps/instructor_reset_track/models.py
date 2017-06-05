@@ -19,11 +19,14 @@ class InstructorResetStudentAttempts(models.Model):
     )
     instructor_username = models.CharField(max_length=50)
     student_username = models.CharField(max_length=50)
-    block_id = models.CharField(max_length=300)
-    block_url = models.CharField(max_length=300)
-    course_id = models.CharField(max_length=150)
-    action = models.CharField(max_length=16, choices=ACTION_CHOICES)
+    block_id = models.CharField(max_length=255)
+    block_url = models.CharField(max_length=255)
+    course_id = models.CharField(max_length=255)
+    action = models.CharField(max_length=10, choices=ACTION_CHOICES)
+
     removed_answer = models.TextField(default="")
+    #Student's answer taken from DjangoXBlockUserStateClient,
+    #In general it is 'correct_map' field from StudentModule.state dict
 
     success = models.BooleanField(default=False)
     timestamp = models.DateTimeField(default=datetime.now)
@@ -34,11 +37,14 @@ class InstructorResetStudentAttempts(models.Model):
 
     @property
     def time_readable(self):
-
         return str(timezone.localtime(self.timestamp).replace(microsecond=0, tzinfo=None))
 
     @staticmethod
     def get_block_url(block_id):
+        """
+        For given problem/vertical block_id builds url for section where block can be found
+        Called once when object is first created
+        """
         block_key = UsageKey.from_string(block_id)
         course_key = block_key.course_key
         store = modulestore()
@@ -63,8 +69,6 @@ class InstructorResetStudentAttempts(models.Model):
     @classmethod
     def create(cls, instructor_username, student_username, block_id,
                course_id, action, removed_answer, success):
-        print("CREATE")
-        print(datetime.now())
         url = cls.get_block_url(block_id)
         return cls.objects.create(instructor_username=instructor_username,
                                   student_username=student_username,
