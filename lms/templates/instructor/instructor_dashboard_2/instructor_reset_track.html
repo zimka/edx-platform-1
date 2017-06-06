@@ -9,6 +9,10 @@ import pytz
     <h3 class="hd hd-3">${_('Instructor Resets')}</h3>
     <p></p>
     <div id="instructor-reset-track-table">
+        <input type="text" name="instructor-reset-track-username-filter" maxlength="55" size="25" placeholder="${_("Student Username")}">
+        <button class="button apply-username-filter-button">${_("Apply username filter")}</button>
+        <div class="request-response-error"></div>
+        <br/>
         <table>
             <thead>
             <tr>
@@ -27,6 +31,7 @@ import pytz
         <button class="button next-button" value="${section_data['instructor_resets_url']}">${_("Next")}</button>
         <div class="table-pages"></div>
 
+        <input class="default-api-url" type="hidden" value="${section_data['instructor_resets_url']}">
     </div>
 </div>
 </div>
@@ -34,9 +39,10 @@ import pytz
 <%block name="header_extras">
 <style>
     #instructor-reset-track-table table{
-         border: 1px solid black;
-         table-layout: fixed;
-         width: 100%
+        border: 1px solid black;
+        table-layout: fixed;
+        width: 100%;
+        margin: 1em 0;
     }
 
     #instructor-reset-track-table td, #instructor-reset-track-table th{
@@ -59,12 +65,16 @@ import pytz
         width:100px;
     }
 
-    #instructor-reset-track-table .button{
+    #instructor-reset-track-table .prev-button{
         float:left;
     }
 
     #instructor-reset-track-table .next-button{
         float:right;
+    }
+    #instructor-reset-track-table .request-response-error{
+        margin: .5em 0;
+        padding: .5em 0;
     }
 </style>
 </%block>

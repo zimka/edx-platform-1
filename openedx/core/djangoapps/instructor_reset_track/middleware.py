@@ -46,11 +46,12 @@ class InstructorResetMiddleware(TrackMiddleware):
 
         context = self.get_context(request)
 
-        username = context["POST"]["unique_student_identifier"][0]
+        user_identifier = context["POST"]["unique_student_identifier"][0]
         block_id = context["POST"]["problem_to_reset"][0]
         block_keys = [UsageKey.from_string(block_id)]
 
-        user = self._get_user(username)
+        user = self._get_user(user_identifier)
+        username = user.username
         if not user:
             log.error("User not found for: {}".format(str(username)))
             return

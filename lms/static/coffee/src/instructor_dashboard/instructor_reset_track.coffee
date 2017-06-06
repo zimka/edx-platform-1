@@ -10,10 +10,19 @@ class @InstructorResetTrack
     @$next_table_button    = @$section.find "#instructor-reset-track-table .next-button"
     @$prev_table_button    = @$section.find "#instructor-reset-track-table .prev-button"
     @$table_pages          = @$section.find "#instructor-reset-track-table .table-pages"
+    @$apply_username_button= @$section.find "#instructor-reset-track-table .apply-username-filter-button"
+    @$default_api_url      =(@$section.find "#instructor-reset-track-table .default-api-url" ).attr("value")
+    @$apply_username_input = @$section.find "#instructor-reset-track-table input[name='instructor-reset-track-username-filter']"
+    @$request_response_error = @$section.find ".request-response-error"
 
     # attach click handlers
 
-    # go to student progress page
+    @$apply_username_button.click () =>
+      username = @$apply_username_input.attr("value")
+      @$apply_username_button.attr("value", username)
+      @update_table (@$default_api_url)
+      return
+
     @$next_table_button.click () =>
       url = @$next_table_button.attr("value")
       @update_table (url)
@@ -27,10 +36,13 @@ class @InstructorResetTrack
     @$next_table_button.click()
 
   update_table: (url) =>
+     username = @$apply_username_button.attr("value")
      $.ajax
         type: 'GET'
         dataType: 'json'
         url: url
+        data:
+          username: username
         success: (data) =>
           results = data['results']
           @clear_table (@$table[0].rows.length-1)
@@ -53,7 +65,23 @@ class @InstructorResetTrack
           current = data['current_page']
           maximum = data['num_pages']
           pages.innerHTML = "#{current}/#{maximum}"
+          @clear_error()
           return
+
+        error: (data) =>
+          @username_filter_error (data)
+
+  username_filter_error: (data) =>
+    error_dict = $.parseJSON data.responseText
+    error_message = gettext("Unexpected error")
+    if "non_field_errors" of error_dict
+      error_message = error_dict["non_field_errors"]
+      @$apply_username_input.attr("value", "")
+      @$apply_username_button.attr("value", "")
+    @$request_response_error.text error_message
+
+  clear_error: ->
+    @$request_response_error.text ""
 
   add_row: (row_dict) ->
     new_row = @$table[0].insertRow(@$table[0].rows.length)

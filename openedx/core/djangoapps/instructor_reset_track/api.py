@@ -5,7 +5,7 @@ from openedx.core.lib.api.authentication import OAuth2Authentication, SessionAut
 
 from .models import InstructorResetStudentAttempts
 from .permissions import IsCourseStaffInstructor
-from .serializers import InstructorResetStudentAttemptsSerializer
+from .serializers import InstructorResetStudentAttemptsSerializer, InputInstructorResetAttemptSerializer
 
 
 class InstructorResetStudentAttemptsView(ListAPIView):
@@ -20,13 +20,21 @@ class InstructorResetStudentAttemptsView(ListAPIView):
 
         **Response Values**
 
-            200 - OK , 400 - bad parameters, 401 - non-staff user requests data
+            200 - OK , 400 - bad parameters, 401 - non-staff user requests data, 403 - not authorized
     """
-    paginate_by = 5
+    paginate_by = 25
     serializer_class = InstructorResetStudentAttemptsSerializer
     authentication_classes = (OAuth2Authentication, SessionAuthentication)
-    permission_classes = (permissions.IsAuthenticated, IsCourseStaffInstructor,)
+    permission_classes = (permissions.IsAuthenticated, IsCourseStaffInstructor)
 
     def get_queryset(self):
         course_id = self.kwargs.get("course_id")
-        return InstructorResetStudentAttempts.represent_queryset(course_id)
+        query = InstructorResetStudentAttempts.represent_queryset(course_id)
+        username = self.request.query_params.get("username")
+
+        data_validation = InputInstructorResetAttemptSerializer(data={"username": username, "course_id": course_id})
+        data_validation.is_valid(raise_exception=True)
+
+        if username:
+            query = query.filter(student_username=username)
+        return query
