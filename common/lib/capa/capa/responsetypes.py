@@ -1227,6 +1227,11 @@ class MultipleChoiceResponse(LoncapaResponse):
         for response in self.xml.xpath("choicegroup"):
             # Is Masking enabled? -- check for shuffle or answer-pool features
             # Masking (self._has_mask) is off, to be re-enabled with a future PR.
+
+            inds = list(range(len(response)))
+            random.seed(self.id)
+            random.shuffle(inds)
+
             rtype = response.get('type')
             if rtype not in ["MultipleChoice"]:
                 # force choicegroup to be MultipleChoice if not valid
@@ -1236,7 +1241,7 @@ class MultipleChoiceResponse(LoncapaResponse):
                 if choice.get("name") is not None:
                     name = "choice_" + choice.get("name")
                 else:
-                    name = "choice_" + str(i)
+                    name = "choice_" + str(inds[i])
                     i += 1
                 # If using the masked name, e.g. mask_0, save the regular name
                 # to support unmasking later (for the logs).
