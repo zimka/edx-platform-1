@@ -5,6 +5,7 @@ import datetime
 
 from bok_choy.page_object import PageObject
 from bok_choy.promise import EmptyPromise
+from bok_choy.javascript import js_defined, wait_for_js
 
 from selenium.webdriver import ActionChains
 from selenium.webdriver.support.ui import Select
@@ -18,6 +19,7 @@ from common.test.acceptance.pages.studio.container import ContainerPage
 from common.test.acceptance.pages.studio.utils import set_input_value_and_save, set_input_value
 
 
+@js_defined('jQuery')
 class CourseOutlineItem(object):
     """
     A mixin class for any :class:`PageObject` shown in a course outline.
@@ -174,6 +176,7 @@ class CourseOutlineItem(object):
         element = self.q(css=self._bounded_selector(".status-grading-value"))  # pylint: disable=no-member
         return element.first.text[0] if element.present else None
 
+    @wait_for_js
     def publish(self):
         """
         Publish the unit.
@@ -572,6 +575,13 @@ class CourseOutlinePage(CoursePage, CourseOutlineContainer):
         self.q(css=".action-save").first.click()
         self.wait_for_ajax()
 
+    def select_visibility_tab(self):
+        """
+        Select the advanced settings tab
+        """
+        self.q(css=".settings-tab-button[data-tab='visibility']").first.click()
+        self.wait_for_element_presence('input[value=hide_after_due]', 'Visibility fields not present.')
+
     def select_advanced_tab(self, desired_item='special_exam'):
         """
         Select the advanced settings tab
@@ -581,8 +591,6 @@ class CourseOutlinePage(CoursePage, CourseOutlineContainer):
             self.wait_for_element_presence('input.no_special_exam', 'Special exam settings fields not present.')
         if desired_item == 'gated_content':
             self.wait_for_element_visibility('#is_prereq', 'Gating settings fields are present.')
-        if desired_item == 'hide_after_due_date':
-            self.wait_for_element_presence('input[value=hide_after_due]', 'Visibility fields not present.')
 
     def make_exam_proctored(self):
         """
@@ -598,6 +606,7 @@ class CourseOutlinePage(CoursePage, CourseOutlineContainer):
         """
         self.q(css="input.timed_exam").first.click()
         if hide_after_due:
+            self.select_visibility_tab()
             self.q(css='input[name=content-visibility][value=hide_after_due]').first.click()
         self.q(css=".action-save").first.click()
         self.wait_for_ajax()
@@ -1054,7 +1063,7 @@ class CourseOutlineModal(object):
         if needed.
         """
         if not self.is_staff_lock_visible:
-            self.find_css(".settings-tab-button[data-tab=advanced]").click()
+            self.find_css(".settings-tab-button[data-tab=visibility]").click()
         EmptyPromise(
             lambda: self.is_staff_lock_visible,
             "Staff lock option is visible",

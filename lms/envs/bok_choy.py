@@ -76,6 +76,17 @@ PIPELINE_JS_COMPRESSOR = None
 CELERY_ALWAYS_EAGER = True
 CELERY_RESULT_BACKEND = 'djcelery.backends.cache:CacheBackend'
 
+BLOCK_STRUCTURES_SETTINGS = dict(
+    # We have CELERY_ALWAYS_EAGER set to True, so there's no asynchronous
+    # code running and the celery routing is unimportant.
+    # It does not make sense to retry.
+    TASK_MAX_RETRIES=0,
+    # course publish task delay is irrelevant is because the task is run synchronously
+    COURSE_PUBLISH_TASK_DELAY=0,
+    # retry delay is irrelevent because we never retry
+    TASK_DEFAULT_RETRY_DELAY=0,
+)
+
 ###################### Grade Downloads ######################
 GRADES_DOWNLOAD = {
     'STORAGE_TYPE': 'localfs',
@@ -135,6 +146,8 @@ FEATURES['AUTOMATIC_AUTH_FOR_TESTING'] = True
 # Open up endpoint for faking Software Secure responses
 FEATURES['ENABLE_SOFTWARE_SECURE_FAKE'] = True
 
+FEATURES['ENABLE_ENROLLMENT_TRACK_USER_PARTITION'] = True
+
 ########################### Entrance Exams #################################
 FEATURES['ENTRANCE_EXAMS'] = True
 
@@ -142,6 +155,7 @@ FEATURES['ENABLE_SPECIAL_EXAMS'] = True
 
 # Point the URL used to test YouTube availability to our stub YouTube server
 YOUTUBE_PORT = 9080
+YOUTUBE['TEST_TIMEOUT'] = 5000
 YOUTUBE['API'] = "http://127.0.0.1:{0}/get_youtube_api/".format(YOUTUBE_PORT)
 YOUTUBE['METADATA_URL'] = "http://127.0.0.1:{0}/test_youtube/".format(YOUTUBE_PORT)
 YOUTUBE['TEXT_API']['url'] = "127.0.0.1:{0}/test_transcripts_youtube/".format(YOUTUBE_PORT)
@@ -207,10 +221,21 @@ BADGING_BACKEND = 'lms.djangoapps.badges.backends.tests.dummy_backend.DummyBacke
 
 # Configure the LMS to use our stub eCommerce implementation
 ECOMMERCE_API_URL = 'http://localhost:8043/api/v2/'
-ECOMMERCE_API_SIGNING_KEY = 'ecommerce-key'
 
 LMS_ROOT_URL = "http://localhost:8000"
 DOC_LINK_BASE_URL = 'http://edx.readthedocs.io/projects/edx-guide-for-students'
+
+# TODO: TNL-6546: Remove this waffle and flag code.
+from django.db.utils import ProgrammingError
+from waffle.models import Flag
+try:
+    flag, created = Flag.objects.get_or_create(name='unified_course_view')
+    flag.everyone = True
+    flag.save
+    WAFFLE_OVERRIDE = True
+except ProgrammingError:
+    # during initial reset_db, the table for the flag doesn't yet exist.
+    pass
 
 #####################################################################
 # Lastly, see if the developer has any local overrides.
