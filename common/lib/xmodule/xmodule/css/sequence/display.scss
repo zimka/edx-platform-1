@@ -135,6 +135,14 @@ $seq-nav-height: 44px;
           }
         }
 
+        //graded
+        &.seq_graded {
+
+          .icon:before {
+            content: "\f19d"; // .fa-graduation-cap
+          }
+        }
+
         //vertical
         &.seq_vertical {
           .icon:before {

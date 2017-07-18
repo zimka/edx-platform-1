@@ -159,6 +159,7 @@ class CourseGradeFactory(object):
         )
         if should_persist:
             course_grade._subsection_grade_factory.bulk_create_unsaved()
+            course_grade._vertical_grade_factory.bulk_create_unsaved()
             PersistentCourseGrade.update_or_create_course_grade(
                 user_id=user.id,
                 course_id=course_data.course_key,

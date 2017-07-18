@@ -1,13 +1,23 @@
 <%page expression_filter="h"/>
-<%! from openedx.core.djangolib.markup import HTML %>
+<%!
+    from openedx.core.djangolib.markup import HTML
+    from django.utils.translation import ugettext as _
+%>
 %if unit_title:
   <h2 class="hd hd-2 unit-title">${unit_title}</h2>
+% endif
+% if xblock_context['is_graded']:
+    <h4 class="hd-8 de-emphasized">${_("This content is graded")}
+    % if xblock_context['format']:
+        ${_("as ")}<td>${xblock_context['format']},</td>
+        <td>${_("weight: ")}${xblock_context['weight']}</td>
+    % endif
+    </h4>
 % endif
 
 % if show_bookmark_button:
     <%include file='bookmark_button.html' args="bookmark_id=bookmark_id, is_bookmarked=bookmarked"/>
 % endif
-
 <div class="vert-mod">
 % for idx, item in enumerate(items):
   <div class="vert vert-${idx}" data-id="${item['id']}">

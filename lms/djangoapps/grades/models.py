@@ -480,6 +480,248 @@ class PersistentSubsectionGrade(DeleteGradesMixin, TimeStampedModel):
             )
 
 
+class PersistentVerticalGrade(DeleteGradesMixin, TimeStampedModel):
+    """
+    A django model tracking persistent grades at the vertical level.
+    """
+
+    class Meta(object):
+        app_label = "grades"
+        unique_together = [
+            # * Specific grades can be pulled using all three columns,
+            # * Progress page can pull all grades for a given (course_id, user_id)
+            # * Course staff can see all grades for a course using (course_id,)
+            ('course_id', 'user_id', 'usage_key'),
+        ]
+        # Allows querying in the following ways:
+        # (modified): find all the grades updated within a certain timespan
+        # (modified, course_id): find all the grades updated within a timespan for a certain course
+        # (modified, course_id, usage_key): find all the grades updated within a timespan for a vertical
+        #   in a course
+        # (first_attempted, course_id, user_id): find all attempted verticals in a course for a user
+        # (first_attempted, course_id): find all attempted verticals in a course for all users
+        index_together = [
+            ('modified', 'course_id', 'usage_key'),
+            ('first_attempted', 'course_id', 'user_id')
+        ]
+
+    # primary key will need to be large for this table
+    id = UnsignedBigIntAutoField(primary_key=True)  # pylint: disable=invalid-name
+
+    user_id = models.IntegerField(blank=False)
+    course_id = CourseKeyField(blank=False, max_length=255)
+
+    # note: the usage_key may not have the run filled in for
+    # old mongo courses.  Use the full_usage_key property
+    # instead when you want to use/compare the usage_key.
+    usage_key = UsageKeyField(blank=False, max_length=255)
+
+    # Information relating to the state of content when grade was calculated
+    subtree_edited_timestamp = models.DateTimeField(u'Last content edit timestamp', blank=True, null=True)
+    course_version = models.CharField(u'Guid of latest course version', blank=True, max_length=255)
+
+    # earned/possible refers to the number of points achieved and available to achieve.
+    # graded refers to the subset of all problems that are marked as being graded.
+    earned_all = models.FloatField(blank=False)
+    possible_all = models.FloatField(blank=False)
+    earned_graded = models.FloatField(blank=False)
+    possible_graded = models.FloatField(blank=False)
+    weight = models.FloatField(blank=False)
+
+    # timestamp for the learner's first attempt at content in
+    # this vertical. If null, indicates no attempt
+    # has yet been made.
+    first_attempted = models.DateTimeField(null=True, blank=True)
+
+    # track which blocks were visible at the time of grade calculation
+    visible_blocks = models.ForeignKey(VisibleBlocks, db_column='visible_blocks_hash', to_field='hashed')
+
+    @property
+    def full_usage_key(self):
+        """
+        Returns the "correct" usage key value with the run filled in.
+        """
+        if self.usage_key.run is None:  # pylint: disable=no-member
+            return self.usage_key.replace(course_key=self.course_id)
+        else:
+            return self.usage_key
+
+    def __unicode__(self):
+        """
+        Returns a string representation of this model.
+        """
+        return (
+            u"{} user: {}, course version: {}, vertical: {} ({}). {}/{} graded, {}/{} all, first_attempted: {}"
+        ).format(
+            type(self).__name__,
+            self.user_id,
+            self.course_version,
+            self.usage_key,
+            self.visible_blocks_id,
+            self.earned_graded,
+            self.possible_graded,
+            self.earned_all,
+            self.possible_all,
+            self.first_attempted,
+        )
+
+    @classmethod
+    def read_grade(cls, user_id, usage_key):
+        """
+        Reads a grade from database
+
+        Arguments:
+            user_id: The user associated with the desired grade
+            usage_key: The location of the vertical associated with the desired grade
+
+        Raises PersistentVerticalGrade.DoesNotExist if applicable
+        """
+        return cls.objects.select_related('visible_blocks').get(
+            user_id=user_id,
+            course_id=usage_key.course_key,  # course_id is included to take advantage of db indexes
+            usage_key=usage_key,
+        )
+
+    @classmethod
+    def bulk_read_grades(cls, user_id, course_key):
+        """
+        Reads all grades for the given user and course.
+
+        Arguments:
+            user_id: The user associated with the desired grades
+            course_key: The course identifier for the desired grades
+        """
+        return cls.objects.select_related('visible_blocks').filter(
+            user_id=user_id,
+            course_id=course_key,
+        )
+
+    @classmethod
+    def update_or_create_grade(cls, **params):
+        """
+        Wrapper for objects.update_or_create.
+        """
+        cls._prepare_params_and_visible_blocks(params)
+
+        user_id = params.pop('user_id')
+        usage_key = params.pop('usage_key')
+        attempted = params.pop('attempted')
+
+        grade, _ = cls.objects.update_or_create(
+            user_id=user_id,
+            course_id=usage_key.course_key,
+            usage_key=usage_key,
+            defaults=params,
+        )
+
+        if attempted and not grade.first_attempted:
+            grade.first_attempted = now()
+            grade.save()
+        cls._emit_grade_calculated_event(grade)
+        return grade
+
+    @classmethod
+    def create_grade(cls, **params):
+        """
+        Wrapper for objects.create.
+        """
+        cls._prepare_params_and_visible_blocks(params)
+        cls._prepare_attempted_for_create(params, now())
+        grade = cls.objects.create(**params)
+        cls._emit_grade_calculated_event(grade)
+        return grade
+
+    @classmethod
+    def bulk_create_grades(cls, grade_params_iter, course_key):
+        """
+        Bulk creation of grades.
+        """
+        if not grade_params_iter:
+            return
+
+        map(cls._prepare_params, grade_params_iter)
+        VisibleBlocks.bulk_get_or_create([params['visible_blocks'] for params in grade_params_iter], course_key)
+        map(cls._prepare_params_visible_blocks_id, grade_params_iter)
+        first_attempt_timestamp = now()
+        for params in grade_params_iter:
+            cls._prepare_attempted_for_create(params, first_attempt_timestamp)
+        grades = [PersistentVerticalGrade(**params) for params in grade_params_iter]
+        grades = cls.objects.bulk_create(grades)
+        for grade in grades:
+            cls._emit_grade_calculated_event(grade)
+        return grades
+
+    @classmethod
+    def _prepare_params_and_visible_blocks(cls, params):
+        """
+        Prepares the fields for the grade record, while
+        creating the related VisibleBlocks, if needed.
+        """
+        cls._prepare_params(params)
+        params['visible_blocks'] = VisibleBlocks.objects.create_from_blockrecords(params['visible_blocks'])
+
+    @classmethod
+    def _prepare_params(cls, params):
+        """
+        Prepares the fields for the grade record.
+        """
+        if not params.get('course_id', None):
+            params['course_id'] = params['usage_key'].course_key
+        params['course_version'] = params.get('course_version', None) or ""
+        params['visible_blocks'] = BlockRecordList.from_list(params['visible_blocks'], params['course_id'])
+
+    @classmethod
+    def _prepare_attempted_for_create(cls, params, timestamp):
+        """
+        When creating objects, an attempted vertical gets its timestamp set
+        unconditionally.
+        """
+        if params.pop('attempted'):
+            params['first_attempted'] = timestamp
+
+    @classmethod
+    def _prepare_params_visible_blocks_id(cls, params):
+        """
+        Prepares the visible_blocks_id field for the grade record,
+        using the hash of the visible_blocks field.  Specifying
+        the hashed field eliminates extra queries to get the
+        VisibleBlocks record.  Use this variation of preparing
+        the params when you are sure of the existence of the
+        VisibleBlock.
+        """
+        params['visible_blocks_id'] = params['visible_blocks'].hash_value
+        del params['visible_blocks']
+
+    @staticmethod
+    def _emit_grade_calculated_event(grade):
+        """
+        Emits an edx.grades.vertical.grade_calculated event
+        with data from the passed grade.
+        """
+        # TODO: remove this context manager after completion of AN-6134
+        event_name = u'edx.grades.vertical.grade_calculated'
+        context = contexts.course_context_from_course_id(grade.course_id)
+        with tracker.get_tracker().context(event_name, context):
+            tracker.emit(
+                event_name,
+                {
+                    'user_id': unicode(grade.user_id),
+                    'course_id': unicode(grade.course_id),
+                    'block_id': unicode(grade.usage_key),
+                    'course_version': unicode(grade.course_version),
+                    'weighted_total_earned': grade.earned_all,
+                    'weighted_total_possible': grade.possible_all,
+                    'weighted_graded_earned': grade.earned_graded,
+                    'weighted_graded_possible': grade.possible_graded,
+                    'first_attempted': unicode(grade.first_attempted),
+                    'subtree_edited_timestamp': unicode(grade.subtree_edited_timestamp),
+                    'event_transaction_id': unicode(get_event_transaction_id()),
+                    'event_transaction_type': unicode(get_event_transaction_type()),
+                    'visible_blocks_hash': unicode(grade.visible_blocks_id),
+                }
+            )
+
+
 class PersistentCourseGrade(DeleteGradesMixin, TimeStampedModel):
     """
     A django model tracking persistent course grades.

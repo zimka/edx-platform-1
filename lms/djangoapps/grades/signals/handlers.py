@@ -4,6 +4,7 @@ Grades related signals.
 from contextlib import contextmanager
 from logging import getLogger
 
+from django.conf import settings
 from django.dispatch import receiver
 from submissions.models import score_set, score_reset
 from xblock.scorable import ScorableXBlockMixin, Score
@@ -23,12 +24,13 @@ from .signals import (
     PROBLEM_RAW_SCORE_CHANGED,
     PROBLEM_WEIGHTED_SCORE_CHANGED,
     SUBSECTION_SCORE_CHANGED,
+    VERTICAL_SCORE_CHANGED,
     SCORE_PUBLISHED,
 )
 from ..constants import ScoreDatabaseTableEnum
 from ..new.course_grade_factory import CourseGradeFactory
 from ..scores import weighted_score
-from ..tasks import recalculate_subsection_grade_v3, RECALCULATE_GRADE_DELAY
+from ..tasks import recalculate_subsection_grade_v3, recalculate_vertical_grade_v3, RECALCULATE_GRADE_DELAY
 
 log = getLogger(__name__)
 
@@ -157,7 +159,6 @@ def score_published_handler(sender, block, user, raw_earned, raw_possible, only_
         # Set the problem score on the xblock.
         if isinstance(block, ScorableXBlockMixin):
             block.set_score(Score(raw_earned=raw_earned, raw_possible=raw_possible))
-
         # Fire a signal (consumed by enqueue_subsection_update, below)
         PROBLEM_RAW_SCORE_CHANGED.send(
             sender=None,
@@ -210,7 +211,11 @@ def enqueue_subsection_update(sender, **kwargs):  # pylint: disable=unused-argum
     enqueueing a subsection update operation to occur asynchronously.
     """
     _emit_problem_submitted_event(kwargs)
-    result = recalculate_subsection_grade_v3.apply_async(
+    if settings.GRADING_TYPE == 'vertical':
+        recalculate_method = recalculate_vertical_grade_v3
+    else:
+        recalculate_method = recalculate_subsection_grade_v3
+    result = recalculate_method.apply_async(
         kwargs=dict(
             user_id=kwargs['user_id'],
             anonymous_user_id=kwargs.get('anonymous_user_id'),
@@ -234,6 +239,14 @@ def enqueue_subsection_update(sender, **kwargs):  # pylint: disable=unused-argum
 
 
 @receiver(SUBSECTION_SCORE_CHANGED)
+def recalculate_course_grade(sender, course, course_structure, user, **kwargs):  # pylint: disable=unused-argument
+    """
+    Updates a saved course grade.
+    """
+    CourseGradeFactory().update(user, course=course, course_structure=course_structure)
+
+
+@receiver(VERTICAL_SCORE_CHANGED)
 def recalculate_course_grade(sender, course, course_structure, user, **kwargs):  # pylint: disable=unused-argument
     """
     Updates a saved course grade.

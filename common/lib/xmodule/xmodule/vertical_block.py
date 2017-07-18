@@ -5,6 +5,7 @@ import logging
 from copy import copy
 from lxml import etree
 from xblock.core import XBlock
+from xblock.fields import Scope, Float
 from xblock.fragment import Fragment
 from xmodule.mako_module import MakoTemplateBlockBase
 from xmodule.progress import Progress
@@ -12,6 +13,10 @@ from xmodule.seq_module import SequenceFields
 from xmodule.studio_editable import StudioEditableBlock
 from xmodule.x_module import STUDENT_VIEW, XModuleFields
 from xmodule.xml_module import XmlParserMixin
+
+# Make '_' a no-op so we can scrape strings. Using lambda instead of
+#  `django.utils.translation.ugettext_noop` because Django cannot be imported in this file
+_ = lambda text: text
 
 log = logging.getLogger(__name__)
 
@@ -27,6 +32,13 @@ class VerticalBlock(SequenceFields, XModuleFields, StudioEditableBlock, XmlParse
     """
 
     resources_dir = 'assets/vertical'
+
+    weight = Float(
+        display_name=_("Weight"),
+        help=_("Defines the proportion of contribution of the vertical to the category."),
+        default=1.0,
+        scope=Scope.settings
+    )
 
     mako_template = 'widgets/sequence-edit.html'
     js_module_name = "VerticalBlock"
@@ -57,6 +69,10 @@ class VerticalBlock(SequenceFields, XModuleFields, StudioEditableBlock, XmlParse
         child_context['child_of_vertical'] = True
 
         is_child_of_vertical = context.get('child_of_vertical', False)
+
+        context['is_graded'] = self.graded
+        context['weight'] = self.weight
+        context['format'] = self.format
 
         # pylint: disable=no-member
         for child in self.get_display_items():
