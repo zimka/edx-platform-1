@@ -23,7 +23,6 @@ from courseware.models import StudentModule
 from certificates.models import GeneratedCertificate
 from django.db.models import Count
 from certificates.models import CertificateStatuses
-from lms.djangoapps.grades.context import grading_context_for_course
 from lms.djangoapps.verify_student.models import SoftwareSecurePhotoVerification
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 
@@ -506,7 +505,7 @@ def dump_grading_context(course):
     msg += hbar
     msg += "Listing grading context for course %s\n" % course.id.to_deprecated_string()
 
-    gcontext = grading_context_for_course(course.id)
+    gcontext = course.grading.grading_context_for_course(course.id)
     msg += "graded sections:\n"
 
     msg += '%s\n' % gcontext['all_graded_subsections_by_type'].keys()

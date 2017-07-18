@@ -32,8 +32,9 @@ from xmodule.modulestore.django import modulestore
 
 from .constants import ScoreDatabaseTableEnum
 from .new.subsection_grade_factory import SubsectionGradeFactory
+from .new.vertical_grade_factory import VerticalGradeFactory
 from .new.course_grade_factory import CourseGradeFactory
-from .signals.signals import SUBSECTION_SCORE_CHANGED
+from .signals.signals import SUBSECTION_SCORE_CHANGED, VERTICAL_SCORE_CHANGED
 from .transformer import GradesTransformer
 
 
@@ -83,6 +84,78 @@ def recalculate_subsection_grade_v3(self, **kwargs):
     for _recalculate_subsection_grade for further description.
     """
     _recalculate_subsection_grade(self, **kwargs)
+
+
+@task(bind=True, base=_BaseTask, default_retry_delay=30, routing_key=settings.RECALCULATE_GRADES_ROUTING_KEY)
+def recalculate_vertical_grade_v3(self, **kwargs):
+    """
+    Latest version of the recalculate_vertical_grade task.  See docstring
+    for _recalculate_vertical_grade for further description.
+    """
+    _recalculate_vertical_grade(self, **kwargs)
+
+
+def _recalculate_vertical_grade(self, **kwargs):
+    """
+    Updates a saved vertical grade.
+
+    Keyword Arguments:
+        user_id (int): id of applicable User object
+        anonymous_user_id (int, OPTIONAL): Anonymous ID of the User
+        course_id (string): identifying the course
+        usage_id (string): identifying the course block
+        only_if_higher (boolean): indicating whether grades should
+            be updated only if the new raw_earned is higher than the
+            previous value.
+        expected_modified_time (serialized timestamp): indicates when the task
+            was queued so that we can verify the underlying data update.
+        score_deleted (boolean): indicating whether the grade change is
+            a result of the problem's score being deleted.
+        event_transaction_id (string): uuid identifying the current
+            event transaction.
+        event_transaction_type (string): human-readable type of the
+            event at the root of the current event transaction.
+        score_db_table (ScoreDatabaseTableEnum): database table that houses
+            the changed score. Used in conjunction with expected_modified_time.
+    """
+    try:
+        course_key = CourseLocator.from_string(kwargs['course_id'])
+        scored_block_usage_key = UsageKey.from_string(kwargs['usage_id']).replace(course_key=course_key)
+
+        set_custom_metrics_for_course_key(course_key)
+        set_custom_metric('usage_id', unicode(scored_block_usage_key))
+
+        # The request cache is not maintained on celery workers,
+        # where this code runs. So we take the values from the
+        # main request cache and store them in the local request
+        # cache. This correlates model-level grading events with
+        # higher-level ones.
+        set_event_transaction_id(kwargs.get('event_transaction_id'))
+        set_event_transaction_type(kwargs.get('event_transaction_type'))
+
+        # Verify the database has been updated with the scores when the task was
+        # created. This race condition occurs if the transaction in the task
+        # creator's process hasn't committed before the task initiates in the worker
+        # process.
+        has_database_updated = _has_db_updated_with_new_score(self, scored_block_usage_key, **kwargs)
+
+        if not has_database_updated:
+            raise DatabaseNotReadyError
+
+        _update_vertical_grades(
+            course_key,
+            scored_block_usage_key,
+            kwargs['only_if_higher'],
+            kwargs['user_id'],
+        )
+    except Exception as exc:   # pylint: disable=broad-except
+        if not isinstance(exc, KNOWN_RETRY_ERRORS):
+            log.info("tnl-6244 grades unexpected failure: {}. task id: {}. kwargs={}".format(
+                repr(exc),
+                self.request.id,
+                kwargs,
+            ))
+        raise self.retry(kwargs=kwargs, exc=exc)
 
 
 def _recalculate_subsection_grade(self, **kwargs):
@@ -187,6 +260,47 @@ def _has_db_updated_with_new_score(self, scored_block_usage_key, **kwargs):
         )
 
     return db_is_updated
+
+
+def _update_vertical_grades(
+        course_key,
+        scored_block_usage_key,
+        only_if_higher,
+        user_id,
+):
+    """
+    A helper function to update vertical grades in the database
+    for each vertical containing the given block, and to signal
+    that those vertical grades were updated.
+    """
+    student = User.objects.get(id=user_id)
+    store = modulestore()
+    with store.bulk_operations(course_key):
+        course_structure = get_course_blocks(student, store.make_course_usage_key(course_key))
+        verticals_to_update = course_structure.get_transformer_block_field(
+            scored_block_usage_key,
+            GradesTransformer,
+            'verticals',
+            set(),
+        )
+        log.info(verticals_to_update)
+
+        course = store.get_course(course_key, depth=0)
+        vertical_grade_factory = VerticalGradeFactory(student, course, course_structure)
+
+        for vertical_usage_key in verticals_to_update:
+            if vertical_usage_key in course_structure:
+                vertical_grade = vertical_grade_factory.update(
+                    course_structure[vertical_usage_key],
+                    only_if_higher,
+                )
+                VERTICAL_SCORE_CHANGED.send(
+                    sender=None,
+                    course=course,
+                    course_structure=course_structure,
+                    user=student,
+                    vertical_grade=vertical_grade,
+                )
 
 
 def _update_subsection_grades(

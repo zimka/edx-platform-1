@@ -493,6 +493,7 @@ MAKO_TEMPLATES['main'] = [
     COMMON_ROOT / 'djangoapps' / 'pipeline_mako' / 'templates',
     OPENEDX_ROOT / 'core' / 'djangoapps' / 'cors_csrf' / 'templates',
     OPENEDX_ROOT / 'core' / 'djangoapps' / 'dark_lang' / 'templates',
+    OPENEDX_ROOT / 'core' / 'djangoapps' / 'grading_policy' / 'templates',
 ]
 
 # Django templating
@@ -3096,3 +3097,13 @@ COURSE_ENROLLMENT_MODES = {
 ############## Settings for the Discovery App ######################
 
 COURSES_API_CACHE_TIMEOUT = 3600  # Value is in seconds
+
+
+############################ Settings for Grading app #############################
+
+# Possible values: vertical|sequential
+GRADING_TYPE = 'vertical'
+# Computes a final grade for the course.
+COURSE_GRADER = 'WeightedSubsectionsGrader'
+# Computes a grade for the category (Assignment Type).
+ASSIGNMENT_GRADER = 'WeightedAssignmentFormatGrader'

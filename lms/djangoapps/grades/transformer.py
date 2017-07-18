@@ -10,6 +10,8 @@ import json
 from lms.djangoapps.course_blocks.transformers.utils import collect_unioned_set_field, get_field_on_block
 from openedx.core.djangoapps.content.block_structure.transformer import BlockStructureTransformer
 
+from django.conf import settings
+
 
 log = getLogger(__name__)
 
@@ -57,11 +59,17 @@ class GradesTransformer(BlockStructureTransformer):
         """
         block_structure.request_xblock_fields(*cls.FIELDS_TO_COLLECT)
         cls._collect_max_scores(block_structure)
+        if settings.GRADING_TYPE == 'vertical':
+            merged_field_name = 'verticals'
+            block_type = 'vertical'
+        else:
+            merged_field_name = 'subsections'
+            block_type = 'sequential'
         collect_unioned_set_field(
             block_structure=block_structure,
             transformer=cls,
-            merged_field_name='subsections',
-            filter_by=lambda block_key: block_key.block_type == 'sequential',
+            merged_field_name=merged_field_name,
+            filter_by=lambda block_key: block_key.block_type == block_type,
         )
         cls._collect_explicit_graded(block_structure)
         cls._collect_grading_policy_hash(block_structure)

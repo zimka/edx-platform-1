@@ -1,0 +1,59 @@
+<%page args="courseware_summary, **kwargs"/>
+<%!
+from django.utils.translation import ugettext as _
+from django.core.urlresolvers import reverse
+from util.date_utils import get_time_display
+from django.conf import settings
+%>
+<section class="chapters">
+    <h2 class="sr">${_('Details for each chapter')}</h2>
+    %for chapter in courseware_summary:
+        %if not chapter['display_name'] == "hidden":
+        <section aria-labelledby="chapter_${loop.index}">
+            <h3 class="hd hd-3" id="chapter_${loop.index}">${ chapter['display_name']}</h3>
+            <div class="sections">
+                %for section in chapter['sections']:
+                    <div>
+                        <%
+                        earned = section.all_total.earned
+                        total = section.all_total.possible
+                        percentageString = "{0:.0%}".format( float(earned)/total) if earned > 0 and total > 0 else ""
+                        %>
+                        <h4 class="hd hd-4">
+                            <a href="${reverse('courseware_section', kwargs=dict(course_id=course.id.to_deprecated_string(), chapter=chapter['url_name'], section=section.url_name))}">
+                                ${ section.display_name}
+                                %if total > 0 or earned > 0:
+                                <span class="sr">
+                                    ${_("{earned} of {total} possible points").format(earned='{:.3n}'.format(float(earned)), total='{:.3n}'.format(float(total)))}
+                                </span>
+                                %endif
+                            </a>
+                            %if total > 0 or earned > 0:
+                            <span> ${"({0:.3n}/{1:.3n}) {2}".format( float(earned), float(total), percentageString )}</span>
+                            %endif
+                        </h4>
+                        <p>
+                            %if section.format is not None:
+                                ${section.format}
+                            %endif
+                            %if section.due is not None:
+                                <em class="localized-datetime" data-datetime="${section.due}" data-string="${_('due {date}')}" data-timezone="${user_timezone}" data-language="${user_language}"></em>
+                            %endif
+                        </p>
+                        %if len(section.scores) > 0:
+                        <dl class="scores">
+                            <dt class="hd hd-6">${ _("Problem Scores: ") if section.graded else _("Practice Scores: ")}</dt>
+                            %for score in section.scores:
+                            <dd>${"{0:.3n}/{1:.3n}".format(float(score.earned),float(score.possible))}</dd>
+                            %endfor
+                        </dl>
+                        %else:
+                        <p class="no-scores">${_("No problem scores in this section")}</p>
+                        %endif
+                    </div>
+                %endfor
+            </div>
+        </section>
+        %endif
+    %endfor
+</section>

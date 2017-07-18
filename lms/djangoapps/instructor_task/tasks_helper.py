@@ -41,7 +41,6 @@ from certificates.models import (
     GeneratedCertificate
 )
 from courseware.courses import get_course_by_id, get_problems_in_section
-from lms.djangoapps.grades.context import grading_context_for_course
 from lms.djangoapps.grades.new.course_grade_factory import CourseGradeFactory
 from courseware.model_data import DjangoKeyValueStore, FieldDataCache
 from courseware.models import StudentModule
@@ -754,12 +753,8 @@ def upload_grades_csv(_xmodule_instance_args, _entry_id, course_id, _task_input,
         total_enrolled_students,
     )
 
-    graded_assignments = _graded_assignments(course_id)
-    grade_header = []
-    for assignment_info in graded_assignments.itervalues():
-        if assignment_info['use_subsection_headers']:
-            grade_header.extend(assignment_info['subsection_headers'].itervalues())
-        grade_header.append(assignment_info['average_header'])
+    graded_assignments = course.grading.graded_assignments(course_id)
+    grade_header = course.grading.grade_header(graded_assignments)
 
     rows.append(
         ["Student ID", "Email", "Username", "Grade"] +
@@ -840,25 +835,7 @@ def upload_grades_csv(_xmodule_instance_args, _entry_id, course_id, _task_input,
                 student.id in whitelisted_user_ids
             )
 
-        grade_results = []
-        for assignment_type, assignment_info in graded_assignments.iteritems():
-            for subsection_location in assignment_info['subsection_headers']:
-                try:
-                    subsection_grade = course_grade.graded_subsections_by_format[assignment_type][subsection_location]
-                except KeyError:
-                    grade_results.append([u'Not Available'])
-                else:
-                    if subsection_grade.graded_total.attempted:
-                        grade_results.append(
-                            [subsection_grade.graded_total.earned / subsection_grade.graded_total.possible]
-                        )
-                    else:
-                        grade_results.append([u'Not Attempted'])
-            if assignment_info['use_subsection_headers']:
-                assignment_average = course_grade.grader_result['grade_breakdown'].get(assignment_type, {}).get(
-                    'percent'
-                )
-                grade_results.append([assignment_average])
+        grade_results = course.grading.grade_results(graded_assignments, course_grade)
 
         grade_results = list(chain.from_iterable(grade_results))
 
@@ -892,63 +869,6 @@ def upload_grades_csv(_xmodule_instance_args, _entry_id, course_id, _task_input,
     # One last update before we close out...
     TASK_LOG.info(u'%s, Task type: %s, Finalizing grade task', task_info_string, action_name)
     return task_progress.update_task_state(extra_meta=current_step)
-
-
-def _graded_assignments(course_key):
-    """
-    Returns an OrderedDict that maps an assignment type to a dict of subsection-headers and average-header.
-    """
-    grading_context = grading_context_for_course(course_key)
-    graded_assignments_map = OrderedDict()
-    for assignment_type_name, subsection_infos in grading_context['all_graded_subsections_by_type'].iteritems():
-        graded_subsections_map = OrderedDict()
-
-        for subsection_index, subsection_info in enumerate(subsection_infos, start=1):
-            subsection = subsection_info['subsection_block']
-            header_name = u"{assignment_type} {subsection_index}: {subsection_name}".format(
-                assignment_type=assignment_type_name,
-                subsection_index=subsection_index,
-                subsection_name=subsection.display_name,
-            )
-            graded_subsections_map[subsection.location] = header_name
-
-        average_header = u"{assignment_type}".format(assignment_type=assignment_type_name)
-
-        # Use separate subsection and average columns only if
-        # there's more than one subsection.
-        use_subsection_headers = len(subsection_infos) > 1
-        if use_subsection_headers:
-            average_header += u" (Avg)"
-
-        graded_assignments_map[assignment_type_name] = {
-            'subsection_headers': graded_subsections_map,
-            'average_header': average_header,
-            'use_subsection_headers': use_subsection_headers
-        }
-    return graded_assignments_map
-
-
-def _graded_scorable_blocks_to_header(course_key):
-    """
-    Returns an OrderedDict that maps a scorable block's id to its
-    headers in the final report.
-    """
-    scorable_blocks_map = OrderedDict()
-    grading_context = grading_context_for_course(course_key)
-    for assignment_type_name, subsection_infos in grading_context['all_graded_subsections_by_type'].iteritems():
-        for subsection_index, subsection_info in enumerate(subsection_infos, start=1):
-            for scorable_block in subsection_info['scored_descendants']:
-                header_name = (
-                    u"{assignment_type} {subsection_index}: "
-                    u"{subsection_name} - {scorable_block_name}"
-                ).format(
-                    scorable_block_name=scorable_block.display_name,
-                    assignment_type=assignment_type_name,
-                    subsection_index=subsection_index,
-                    subsection_name=subsection_info['subsection_block'].display_name,
-                )
-                scorable_blocks_map[scorable_block.location] = [header_name + " (Earned)", header_name + " (Possible)"]
-    return scorable_blocks_map
 
 
 def upload_problem_responses_csv(_xmodule_instance_args, _entry_id, course_id, task_input, action_name):
@@ -1001,14 +921,14 @@ def upload_problem_grade_report(_xmodule_instance_args, _entry_id, course_id, _t
     # as the keys.  It is structured in this way to keep the values related.
     header_row = OrderedDict([('id', 'Student ID'), ('email', 'Email'), ('username', 'Username')])
 
-    graded_scorable_blocks = _graded_scorable_blocks_to_header(course_id)
+    course = get_course_by_id(course_id)
+    graded_scorable_blocks = course.grading.graded_scorable_blocks_to_header(course_id)
 
     # Just generate the static fields for now.
     rows = [list(header_row.values()) + ['Grade'] + list(chain.from_iterable(graded_scorable_blocks.values()))]
     error_rows = [list(header_row.values()) + ['error_msg']]
     current_step = {'step': 'Calculating Grades'}
 
-    course = get_course_by_id(course_id)
     for student, course_grade, err_msg in CourseGradeFactory().iter(course, enrolled_students):
         student_fields = [getattr(student, field_name) for field_name in header_row]
         task_progress.attempted += 1

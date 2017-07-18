@@ -9,6 +9,8 @@ from lazy import lazy
 from xmodule import block_metadata_utils
 from .subsection_grade_factory import SubsectionGradeFactory
 from .subsection_grade import ZeroSubsectionGrade
+from .vertical_grade_factory import VerticalGradeFactory
+from .vertical_grade import ZeroVerticalGrade
 
 
 class CourseGradeBase(object):
@@ -36,21 +38,6 @@ class CourseGradeBase(object):
         return False
 
     @lazy
-    def graded_subsections_by_format(self):
-        """
-        Returns grades for the subsections in the course in
-        a dict keyed by subsection format types.
-        """
-        subsections_by_format = defaultdict(OrderedDict)
-        for chapter in self.chapter_grades.itervalues():
-            for subsection_grade in chapter['sections']:
-                if subsection_grade.graded:
-                    graded_total = subsection_grade.graded_total
-                    if graded_total.possible > 0:
-                        subsections_by_format[subsection_grade.format][subsection_grade.location] = subsection_grade
-        return subsections_by_format
-
-    @lazy
     def chapter_grades(self):
         """
         Returns a dictionary of dictionaries.
@@ -75,6 +62,19 @@ class CourseGradeBase(object):
             for subsection_grade in chapter['sections']:
                 subsection_grades[subsection_grade.location] = subsection_grade
         return subsection_grades
+
+    @lazy
+    def vertical_grades(self):
+        """
+        Returns an ordered dictionary of vertical grades,
+        keyed by vertical location.
+        """
+        vertical_grades = defaultdict(OrderedDict)
+        for chapter in self.chapter_grades.itervalues():
+            for subsection in chapter['sections']:
+                for vertical_grade in subsection['verticals']:
+                    vertical_grades[vertical_grade.location] = vertical_grade
+        return vertical_grades
 
     @lazy
     def locations_to_scores(self):
@@ -127,8 +127,9 @@ class CourseGradeBase(object):
         """
         course = self.course_data.course
         course.set_grading_policy(course.grading_policy)
+        graded_elements_by_format = course.grading.graded_elements_by_format(self.chapter_grades)
         return course.grader.grade(
-            self.graded_subsections_by_format,
+            graded_elements_by_format,
             generate_random_scores=settings.GENERATE_PROFILE_SCORES,
         )
 
@@ -148,7 +149,8 @@ class CourseGradeBase(object):
         """
         Helper that returns a dictionary of chapter grade information.
         """
-        chapter_subsection_grades = self._get_subsection_grades(course_structure, chapter.location)
+        chapter_subsection_grades = self.course_data.course.grading.get_subsection_grades(self, course_structure,
+                                                                                          chapter.location)
         return {
             'display_name': block_metadata_utils.display_name_with_default_escaped(chapter),
             'url_name': block_metadata_utils.url_name_for_block(chapter),
@@ -164,11 +166,28 @@ class CourseGradeBase(object):
             for subsection_key in course_structure.get_children(chapter_key)
         ]
 
+    def _get_vertical_grades(self, course_structure, subsection_key):
+        """
+        Returns a list of vertical grades for the given subsection.
+        """
+        return [
+            self._get_vertical_grade(course_structure[vertical_key])
+            for vertical_key in course_structure.get_children(subsection_key)
+        ]
+
     @abstractmethod
     def _get_subsection_grade(self, subsection):
         """
         Abstract method to be implemented by subclasses for returning
         the grade of the given subsection.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def _get_vertical_grade(self, vertical):
+        """
+        Abstract method to be implemented by subclasses for returning
+        the grade of the given vertical.
         """
         raise NotImplementedError
 
@@ -184,6 +203,9 @@ class ZeroCourseGrade(CourseGradeBase):
     def _get_subsection_grade(self, subsection):
         return ZeroSubsectionGrade(subsection, self.course_data)
 
+    def _get_vertical_grade(self, vertical):
+        return ZeroVerticalGrade(vertical, self.course_data)
+
 
 class CourseGrade(CourseGradeBase):
     """
@@ -191,6 +213,7 @@ class CourseGrade(CourseGradeBase):
     """
     def __init__(self, user, course_data, *args, **kwargs):
         super(CourseGrade, self).__init__(user, course_data, *args, **kwargs)
+        self._vertical_grade_factory = VerticalGradeFactory(user, course_data=course_data)
         self._subsection_grade_factory = SubsectionGradeFactory(user, course_data=course_data)
 
     def update(self):
@@ -217,6 +240,10 @@ class CourseGrade(CourseGradeBase):
     def _get_subsection_grade(self, subsection):
         # Pass read_only here so the subsection grades can be persisted in bulk at the end.
         return self._subsection_grade_factory.create(subsection, read_only=True)
+
+    def _get_vertical_grade(self, vertical):
+        # Pass read_only here so the vertical grades can be persisted in bulk at the end.
+        return self._vertical_grade_factory.create(vertical, read_only=True)
 
     @staticmethod
     def _compute_percent(grader_result):
