@@ -856,6 +856,13 @@ class CourseFields(object):
         scope=Scope.settings, default=False
     )
 
+    available_proctoring_services = String(
+        display_name=_("Available Proctoring services"),
+        help=_("Comma-separated list of services available for this course."),
+        default="",
+        scope=Scope.settings,
+    )
+
 
 class CourseModule(CourseFields, SequenceModule):  # pylint: disable=abstract-method
     """

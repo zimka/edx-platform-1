@@ -148,6 +148,16 @@ class ProctoringFields(object):
         """
         return self._get_course().allow_proctoring_opt_out
 
+    @property
+    def available_proctoring_services(self):
+        """
+        Returns the list of proctoring services for the course if available, else None
+        """
+        if self._get_course().available_proctoring_services:
+            return self._get_course().available_proctoring_services.split(",")
+        else:
+            return None
+
     @is_proctored_exam.setter
     def is_proctored_exam(self, value):
         """ Alias the is_proctored_enabled field to the more legible is_proctored_exam """
@@ -475,6 +485,7 @@ class SequenceModule(SequenceFields, ProctoringFields, XModule):
                 ),
                 'is_practice_exam': self.is_practice_exam,
                 'allow_proctoring_opt_out': self.allow_proctoring_opt_out,
+                'available_proctoring_services': self.available_proctoring_services,
                 'due_date': self.due
             }
 
