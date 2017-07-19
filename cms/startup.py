@@ -38,6 +38,10 @@ def run():
 
     add_mimetypes()
 
+    if settings.FEATURES.get('ENABLE_THIRD_PARTY_AUTH', False):
+        from third_party_auth import settings as auth_settings
+        auth_settings.apply_settings(settings)
+
     # In order to allow descriptors to use a handler url, we need to
     # monkey-patch the x_module library.
     # TODO: Remove this code when Runtimes are no longer created by modulestores

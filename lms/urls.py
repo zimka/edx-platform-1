@@ -1000,3 +1000,19 @@ if settings.FEATURES.get('ENABLE_FINANCIAL_ASSISTANCE_FORM'):
             name='submit_financial_assistance_request'
         )
     )
+
+urlpatterns += (
+    # Extend API
+    url(r'^api/extended/', include('open_edx_api_extension.urls', namespace='api_extension')),
+    url(r'^social-logout', 'sso_edx_npoed.views.logout', name='social-logout'),
+)
+
+if settings.ORA2_FILEUPLOAD_BACKEND == 'filesystem':
+    import openassessment.fileupload.urls
+    urlpatterns += (
+        url(r'^openassessment/storage', include(openassessment.fileupload.urls)),
+    )
+
+urlpatterns += (
+    url(r'^', include('sso_edx_npoed.sso_api_urls')),
+)
