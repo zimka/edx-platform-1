@@ -1,6 +1,7 @@
 <%page expression_filter="h"/>
 <%!
     from openedx.core.djangolib.markup import HTML
+    from util.date_utils import strftime_localized
     from django.utils.translation import ugettext as _
 %>
 %if unit_title:
@@ -9,8 +10,11 @@
 % if xblock_context['is_graded']:
     <h4 class="hd-8 de-emphasized">${_("This content is graded")}
     % if xblock_context['format']:
-        ${_("as ")}<td>${xblock_context['format']},</td>
-        <td>${_("weight: ")}${xblock_context['weight']}</td>
+        ${_("as ")}<td>${xblock_context['format']}</td><br>
+        ${_("weight: ")}${xblock_context['weight']}
+    % endif
+    % if xblock_context['due_date']:
+        <br>${_("due: ")}${strftime_localized(xblock_context['due_date'], 'DATE_TIME')}
     % endif
     </h4>
 % endif

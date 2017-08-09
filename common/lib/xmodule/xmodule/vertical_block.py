@@ -73,6 +73,7 @@ class VerticalBlock(SequenceFields, XModuleFields, StudioEditableBlock, XmlParse
         context['is_graded'] = self.graded
         context['weight'] = self.weight
         context['format'] = self.format
+        context['due_date'] = self.due
 
         # pylint: disable=no-member
         for child in self.get_display_items():
