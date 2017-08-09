@@ -32,7 +32,7 @@ define(['js/views/validation',
                 'short_label': 'course-grading-assignment-shortname',
                 'min_count': 'course-grading-assignment-totalassignments',
                 'drop_count': 'course-grading-assignment-droppable',
-                'passing_grade' : 'course-grading-assignment-passing-grade',ansible-playbook openedu_dolphin_plp.yml
+                'passing_grade' : 'course-grading-assignment-passing-grade',
                 'weight': 'course-grading-assignment-gradeweight'
             },
             updateModel: function(event) {

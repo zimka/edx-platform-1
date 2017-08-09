@@ -52,7 +52,8 @@ define(['backbone', 'underscore', 'gettext'], function(Backbone, _, gettext) {
 //                  if ((this.collection.sumWeights() + attrs.weight - this.get('weight')) > 100)
 //                  errors.weight = "The weights cannot add to more than 100.";
                     }
-                } }
+                }
+            }
             if (_.has(attrs, 'passing_grade')) {
                 var passingGrade = attrs.passing_grade,
                     intPsGrade = Math.round(passingGrade); // see if this ensures value saved is int
