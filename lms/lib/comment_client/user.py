@@ -4,7 +4,13 @@ from .utils import merge_dict, perform_request, CommentClientRequestError, Comme
 import models
 import settings
 
+try:
+    from sso_edx_npoed.decorators import comment_client_user_npoed_dec
+except ImportError:
+    def comment_client_user_npoed_dec(): pass
 
+
+@comment_client_user_npoed_dec
 class User(models.Model):
 
     accessible_fields = [
