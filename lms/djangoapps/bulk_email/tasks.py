@@ -47,6 +47,7 @@ from lms.djangoapps.instructor_task.subtasks import (
     update_subtask_status,
 )
 from util.date_utils import get_default_time_display
+from util.openedu_email import openedu_email
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 
 log = logging.getLogger('edx.celery.task')
@@ -509,12 +510,16 @@ def _send_course_email(entry_id, email_id, to_list, global_email_context, subtas
             plaintext_msg = course_email_template.render_plaintext(course_email.text_message, email_context)
             html_msg = course_email_template.render_htmltext(course_email.html_message, email_context)
 
+            html_msg, plaintext_msg, unsub_headers = openedu_email(
+                html_msg, plaintext_msg, email, course_email, course_title, global_email_context['course_url'])
+
             # Create email:
             email_msg = EmailMultiAlternatives(
                 course_email.subject,
                 plaintext_msg,
                 from_addr,
                 [email],
+                headers=unsub_headers,
                 connection=connection
             )
             email_msg.attach_alternative(html_msg, 'text/html')
