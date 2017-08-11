@@ -14439,6 +14439,10 @@ msgid "Welcome to {org}'s {course_name}!"
 msgstr "Добро пожаловать на {org} {course_name}!"
 
 #: lms/templates/courseware/info.html
+msgid "Welcome to '{course_name}'!"
+msgstr "Добро пожаловать на курс '{course_name}'!"
+
+#: lms/templates/courseware/info.html
 msgid "Resume Course"
 msgstr "Вернуться к курсу"
 
