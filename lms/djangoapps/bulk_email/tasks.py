@@ -47,7 +47,7 @@ from lms.djangoapps.instructor_task.subtasks import (
     update_subtask_status,
 )
 from util.date_utils import get_default_time_display
-from util.openedu_email import openedu_email
+from util.openedu_email import openedu_email, openedu_format_address
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 
 log = logging.getLogger('edx.celery.task')
@@ -394,7 +394,7 @@ def _get_source_address(course_id, course_title, truncate=True):
             )
         )
 
-    from_addr = format_address(course_title_no_quotes)
+    from_addr = openedu_format_address(course_title_no_quotes)
 
     # If the encoded from_addr is longer than 320 characters, reformat,
     # but with the course name rather than course title.

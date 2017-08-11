@@ -33,3 +33,11 @@ def openedu_email(html_msg, plaintext_msg, email, course_email, course_title, co
     plaintext_msg = u'{0}Для отписки от рассылки курса перейдите по ссылке {1}.'.format(plaintext_msg, unsub_url)
 
     return html_msg, plaintext_msg, unsub_headers
+
+
+def openedu_format_address(course_title_no_quotes):
+    from_addr = u'"Курс {0}" <{1}>'.format(
+            course_title_no_quotes,
+            settings.BULK_EMAIL_DEFAULT_FROM_EMAIL
+    )
+    return from_addr
