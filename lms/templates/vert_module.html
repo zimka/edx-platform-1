@@ -3,6 +3,7 @@
     from openedx.core.djangolib.markup import HTML
     from util.date_utils import strftime_localized
     from django.utils.translation import ugettext as _
+    data_string = _('due {date}')
 %>
 %if unit_title:
   <h2 class="hd hd-2 unit-title">${unit_title}</h2>
@@ -14,7 +15,7 @@
         ${_("weight: ")}${xblock_context['weight']}
     % endif
     % if xblock_context['due_date']:
-        <br>${_("due: ")}${strftime_localized(xblock_context['due_date'], 'DATE_TIME')}
+        <br><span class="localized-datetime subtitle-name" data-datetime="${xblock_context['due_date']}" data-string="${data_string}" data-timezone="${user_timezone}" data-language="${user_language}"></span>
     % endif
     </h4>
 % endif
