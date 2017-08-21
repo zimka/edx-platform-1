@@ -12,6 +12,8 @@ from .subsection_grade import ZeroSubsectionGrade
 from .vertical_grade_factory import VerticalGradeFactory
 from .vertical_grade import ZeroVerticalGrade
 
+import logging
+
 
 class CourseGradeBase(object):
     """
@@ -83,8 +85,9 @@ class CourseGradeBase(object):
         """
         locations_to_scores = {}
         for chapter in self.chapter_grades.itervalues():
-            for subsection_grade in chapter['sections']:
-                locations_to_scores.update(subsection_grade.locations_to_scores)
+            for subsection_grade_value in chapter['sections'].values():
+                for subsection_grade in subsection_grade_value['verticals']:
+                    locations_to_scores.update(subsection_grade.locations_to_scores)
         return locations_to_scores
 
     def score_for_chapter(self, chapter_key):

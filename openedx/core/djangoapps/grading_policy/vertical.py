@@ -156,7 +156,7 @@ class VerticalGrading(object):
         for assignment_type, assignment_info in graded_assignments.iteritems():
             for vertical_location in assignment_info['vertical_headers']:
                 try:
-                    vertical_grade = course_grade.graded_verticals_by_format[assignment_type][vertical_location]
+                    vertical_grade = VerticalGrading.graded_elements_by_format(course_grade.chapter_grades)[assignment_type][vertical_location]
                 except KeyError:
                     grade_result_list.append([u'Not Available'])
                 else:
