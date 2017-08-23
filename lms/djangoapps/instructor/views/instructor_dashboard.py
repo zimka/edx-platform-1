@@ -123,11 +123,14 @@ def instructor_dashboard_2(request, course_id):
 
     sections = [
         _section_course_info(course, access),
-        _section_membership(course, access, is_white_label),
+        _section_user_ban(course, access),
         _section_cohort_management(course, access),
         _section_student_admin(course, access),
         _section_data_download(course, access),
     ]
+
+    if request.user.is_staff:
+        sections.append(_section_membership(course, access, is_white_label))
 
     analytics_dashboard_message = None
     if show_analytics_dashboard_message(course_key):
@@ -750,6 +753,16 @@ def _section_open_response_assessment(request, course, openassessment_blocks, ac
     }
     return section_data
 
+
+def _section_user_ban(course, access):
+    course_key = course.id
+    section_data = {
+        'section_key': 'ban_user',
+        'section_display_name': _('Ban User'),
+        'access': access,
+        'ban_button_url': reverse('students_update_enrollment', kwargs={'course_id': unicode(course_key)}),
+    }
+    return section_data
 
 def is_ecommerce_course(course_key):
     """

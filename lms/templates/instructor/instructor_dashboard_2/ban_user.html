@@ -1,0 +1,16 @@
+<%namespace name='static' file='/static_content.html'/>
+<%page args="section_data"/>
+<%!
+from django.utils.translation import ugettext as _
+%>
+<fieldset class="ban-user">
+    <label>
+        ${_("Enter email address or username.")}
+        <textarea rows="6" name="student-ids" placeholder="${_("Email Address/Username")}" spellcheck="false"></textarea>
+    </label>
+    <div>
+        <input type="button" name="ban-button" class="ban-button" value="${_("Block student on the course")}" data-endpoint="${ section_data['ban_button_url'] }" data-action="ban" >
+    </div>
+    <div class="request-response"></div>
+    <div class="request-response-error"></div>
+</fieldset>

@@ -681,6 +681,31 @@ def students_update_enrollment(request, course_id):
                     else:
                         state_transition = UNENROLLED_TO_UNENROLLED
 
+            elif action == 'ban':
+                try:
+                    from open_edx_api_extension.utils import plp_check_unenroll
+                    plp_check, plp_response = plp_check_unenroll(
+                        identifiers, user.username, str(course_id), request.user.username
+                    )
+                    if not plp_check:
+                        return plp_response
+                except ImportError:
+                    pass
+                before, after = unenroll_email(
+                    course_id, email, False, email_params, language=language
+                )
+                before_enrollment = before.to_dict()['enrollment']
+                before_allowed = before.to_dict()['allowed']
+                enrollment_obj = CourseEnrollment.get_enrollment(user, course_id)
+
+                if before_enrollment:
+                    state_transition = ENROLLED_TO_UNENROLLED
+                else:
+                    if before_allowed:
+                        state_transition = ALLOWEDTOENROLL_TO_UNENROLLED
+                    else:
+                        state_transition = UNENROLLED_TO_UNENROLLED
+
             else:
                 return HttpResponseBadRequest(strip_tags(
                     "Unrecognized action '{}'".format(action)
