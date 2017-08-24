@@ -2,17 +2,10 @@ from aws import *
 
 # ==== Raven ====
 RAVEN_CONFIG = AUTH_TOKENS.get('RAVEN_CONFIG', {})
-RAVEN_DSN = ENV_TOKENS.get('RAVEN_DSN', None) # FIXME: for a smooth upgrade, remove in future
-if RAVEN_CONFIG or RAVEN_DSN:
+if RAVEN_CONFIG:
     try:
         from raven.transport.requests import RequestsHTTPTransport
         RAVEN_CONFIG['transport'] = RequestsHTTPTransport
-
-        # ==== FIXME: for a smooth upgrade, remove in future
-        if RAVEN_DSN:
-            RAVEN_CONFIG['dsn'] = RAVEN_DSN
-        # ====
-
         INSTALLED_APPS += ('raven.contrib.django.raven_compat', )
     except ImportError:
         print 'could not enable Raven!'
