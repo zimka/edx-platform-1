@@ -52,6 +52,50 @@
                 </label>
                 <p class='field-message' id='review-rules-description'><%- gettext('Specify any additional rules or rule exceptions that the proctoring review team should enforce when reviewing the videos. For example, you could specify that calculators are allowed.') %></p>
             </li>
+
+            <li class="field-exam-review-rules-checkbox">
+                <p><input type="checkbox" id="web_sites"/>
+                <label class="label">
+                    <%- gettext('websites - разрешено пользоваться веб-сайтами (включая поисковые системы)') %>
+                </label></p>
+                <p><input type="checkbox" id="books"/>
+                <label class="label">
+                    <%- gettext('books - разрешено пользоваться книгами') %>
+                </label></p>
+                <p><input type="checkbox" id="papersheet" checked="checked"/>
+                <label class="label">
+                    <%- gettext('paper - разрешено пользоваться бумагой для расчетов') %>
+                </label></p>
+                <p><input type="checkbox" id="messengers"/>
+                <label class="label">
+                    <%- gettext('messengers - разрешено пользоваться мессенджерами') %>
+                </label></p>
+                <p><input type="checkbox" id="calculator" checked="checked"/>
+                <label class="label">
+                    <%- gettext('calculator - разрешено пользоваться калькулятором, встроенным в ОС ') %>
+                </label></p>
+                <p><input type="checkbox" id="excel"/>
+                <label class="label">
+                    <%- gettext('excel - разрешено пользоваться Экселем') %>
+                </label></p>
+                <p><input type="checkbox" id="human_assistant"/>
+                <label class="label">
+                    <%- gettext('human_assistant - разрешена помощь другого человека') %>
+                </label></p>
+                <p><input type="checkbox" id="absence"/>
+                <label class="label">
+                    <%- gettext('absence - разрешено выходить из поля обзора камеры') %>
+                </label></p>
+                <p><input type="checkbox" id="voices"/>
+                <label class="label">
+                    <%- gettext('voices - разрешены разговоры') %>
+                </label></p>
+                <p><input type="checkbox" id="gaze_averted" checked="checked"/>
+                <label class="label">
+                    <%- gettext('gaze_averted - разрешен увод взгляда из области экрана') %>
+                </label></p>
+            </li>
+
         </ul>
     </div>
 </form>
