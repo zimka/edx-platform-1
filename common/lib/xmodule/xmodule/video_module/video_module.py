@@ -900,7 +900,7 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
 
         # Check in VAL data first if edx_video_id exists
         if self.edx_video_id:
-            video_profile_names = context.get("profiles", ["mobile_low"])
+            video_profile_names = context.get("profiles", [""])
 
             # get and cache bulk VAL data for course
             val_course_data = self.get_cached_val_data_for_course(video_profile_names, self.location.course_key)
@@ -919,12 +919,15 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
             elif context.get("allow_cache_miss", "True").lower() == "true":
                 try:
                     val_video_data = edxval_api.get_video_info(self.edx_video_id)
+                    val_video_duration = val_video_data.get('duration', None)
                     # Unfortunately, the VAL API is inconsistent in how it returns the encodings, so remap here.
                     for enc_vid in val_video_data.pop('encoded_videos'):
                         if enc_vid['profile'] in video_profile_names:
                             encoded_videos[enc_vid['profile']] = {key: enc_vid[key] for key in ["url", "file_size"]}
                 except edxval_api.ValVideoNotFoundError:
                     pass
+                except AttributeError:
+                    val_video_duration = None
 
         # Fall back to other video URLs in the video module if not found in VAL
         if not encoded_videos:
@@ -951,7 +954,7 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
 
         return {
             "only_on_web": self.only_on_web,
-            "duration": val_video_data.get('duration', None),
+            "duration": val_video_duration,
             "transcripts": transcripts,
             "encoded_videos": encoded_videos,
         }
