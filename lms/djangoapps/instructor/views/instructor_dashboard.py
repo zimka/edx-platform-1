@@ -184,8 +184,16 @@ def instructor_dashboard_2(request, course_id):
         ((course.enable_proctored_exams and request.user.is_staff) or course.enable_timed_exams) and
         settings.FEATURES.get('ENABLE_SPECIAL_EXAMS', False)
     )
+
+    if request.user.id in settings.USERS_WITH_SPECIAL_PERMS_IDS:
+        access['admin'] = True
+        can_see_special_exams = True
+
     if can_see_special_exams:
         sections.append(_section_special_exams(course, access))
+
+    if request.user.id in settings.USERS_WITH_SPECIAL_PERMS_IDS:
+        access['admin'] = False
 
     # Certificates panel
     # This is used to generate example certificates
@@ -763,6 +771,7 @@ def _section_user_ban(course, access):
         'ban_button_url': reverse('students_update_enrollment', kwargs={'course_id': unicode(course_key)}),
     }
     return section_data
+
 
 def is_ecommerce_course(course_key):
     """
