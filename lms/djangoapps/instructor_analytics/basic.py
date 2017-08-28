@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Student and course analytics.
 
@@ -31,6 +32,7 @@ STUDENT_FEATURES = ('id', 'username', 'first_name', 'last_name', 'is_staff', 'em
 PROFILE_FEATURES = ('name', 'language', 'location', 'year_of_birth', 'gender',
                     'level_of_education', 'mailing_address', 'goals', 'meta',
                     'city', 'country')
+SSO_FEATURES = ('city', 'country', 'university')
 ORDER_ITEM_FEATURES = ('list_price', 'unit_cost', 'status')
 ORDER_FEATURES = ('purchase_time',)
 
@@ -43,6 +45,7 @@ SALE_ORDER_FEATURES = ('id', 'company_name', 'company_contact_name', 'company_co
                        'bill_to_country', 'order_type', 'created')
 
 AVAILABLE_FEATURES = STUDENT_FEATURES + PROFILE_FEATURES
+AVAILABLE_FEATURES += SSO_FEATURES
 COURSE_REGISTRATION_FEATURES = ('code', 'course_id', 'created_by', 'created_at', 'is_valid')
 COUPON_FEATURES = ('code', 'course_id', 'percentage_discount', 'description', 'expiration_date', 'is_active')
 CERTIFICATE_FEATURES = ('course_id', 'mode', 'status', 'grade', 'created_date', 'is_active', 'error_reason')
@@ -256,6 +259,14 @@ def enrolled_students_features(course_key, features):
         if profile is not None:
             profile_dict = dict((feature, extract_attr(profile, feature))
                                 for feature in profile_features)
+            goals = getattr(profile, 'goals', '{}')
+            try:
+                goals_dict = json.loads(goals)
+            except ValueError:
+                goals_dict = {}
+            for goals_feature, goals_value in goals_dict.iteritems():
+                profile_dict[goals_feature] = goals_value
+            profile_dict['goals'] = None
             student_dict.update(profile_dict)
 
             # now fetch the requested meta fields

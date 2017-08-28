@@ -63,7 +63,7 @@ from openedx.core.djangoapps.course_groups.cohorts import get_cohort
 from openedx.core.djangoapps.course_groups.models import CourseUserGroup
 from opaque_keys.edx.keys import UsageKey
 from openedx.core.djangoapps.course_groups.cohorts import add_user_to_cohort, is_course_cohorted
-from student.models import CourseEnrollment, CourseAccessRole
+from student.models import CourseEnrollment, CourseAccessRole, UserProfile
 from survey.models import SurveyAnswer
 from track.event_transaction_utils import set_event_transaction_type, create_new_event_transaction_id
 from track.views import task_track
@@ -757,7 +757,7 @@ def upload_grades_csv(_xmodule_instance_args, _entry_id, course_id, _task_input,
     grade_header = course.grading.grade_header(graded_assignments)
 
     rows.append(
-        ["Student ID", "Email", "Username", "Grade"] +
+        ["Student ID", "Email", "Username", "Last Name", "First Name", "Second Name", "Grade", "Grade Percent"] +
         grade_header +
         cohorts_header +
         group_configs_header +
@@ -823,6 +823,13 @@ def upload_grades_csv(_xmodule_instance_args, _entry_id, course_id, _task_input,
             course_grade.letter_grade,
             student.id in whitelisted_user_ids
         )
+        second_name = ''
+        try:
+            up = UserProfile.objects.get(user=student)
+            if up.goals:
+                second_name = json.loads(up.goals).get('second_name', '')
+        except ValueError:
+            pass
         if certificate_info[0] == 'Y':
             TASK_LOG.info(
                 u'Student is marked eligible_for_certificate'
@@ -840,7 +847,8 @@ def upload_grades_csv(_xmodule_instance_args, _entry_id, course_id, _task_input,
         grade_results = list(chain.from_iterable(grade_results))
 
         rows.append(
-            [student.id, student.email, student.username, course_grade.percent] +
+            [student.id, student.email, student.username, student.last_name, student.first_name,
+             second_name, course_grade.percent, course_grade.percent*100] +
             grade_results + cohorts_group_name + group_configs_group_names + team_name +
             [enrollment_mode] + [verification_status] + certificate_info
         )
