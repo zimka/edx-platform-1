@@ -1240,6 +1240,7 @@ def get_students_features(request, course_id, csv=False):  # pylint: disable=red
             'id', 'username', 'name', 'email', 'language', 'location',
             'year_of_birth', 'gender', 'level_of_education', 'mailing_address',
             'goals', 'enrollment_mode', 'verification_status',
+            'city', 'university', 'country',
         ]
 
     # Provide human-friendly and translatable names for these features. These names
