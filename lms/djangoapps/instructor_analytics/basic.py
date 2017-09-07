@@ -260,6 +260,8 @@ def enrolled_students_features(course_key, features):
             profile_dict = dict((feature, extract_attr(profile, feature))
                                 for feature in profile_features)
             goals = getattr(profile, 'goals', '{}')
+            if not goals:
+                goals = '{}'
             try:
                 goals_dict = json.loads(goals)
             except ValueError:
