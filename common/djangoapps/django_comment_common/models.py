@@ -152,14 +152,14 @@ class ForumsConfig(ConfigurationModel):
     """Config for the connection to the cs_comments_service forums backend."""
 
     connection_timeout = models.FloatField(
-        default=5.0,
+        default=10.0,
         help_text="Seconds to wait when trying to connect to the comment service.",
     )
 
     @property
     def api_key(self):
         """The API key used to authenticate to the comments service."""
-        return getattr(settings, "COMMENTS_SERVICE_KEY", None)
+        return getattr(settings, "COMMENTS_SERVICE_KEY", "password")
 
     def __unicode__(self):
         """Simple representation so the admin screen looks less ugly."""
