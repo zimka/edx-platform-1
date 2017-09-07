@@ -92,7 +92,7 @@ class TrueCheckbox(widgets.CheckboxInput):
     A checkbox widget that only accepts "true" (case-insensitive) as true.
     """
     def value_from_datadict(self, data, files, name):
-        value = data.get(name, '')
+        value = str(data.get(name, ''))
         return value.lower() == 'true'
 
 
