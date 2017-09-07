@@ -14,10 +14,10 @@
         ${_("as ")}<td>${xblock_context['format']}</td><br>
         ${_("weight: ")}${xblock_context['weight']}
     % endif
-    % if xblock_context['due_date']:
-        <br><span class="localized-datetime subtitle-name" data-datetime="${xblock_context['due_date']}" data-string="${data_string}" data-timezone="${user_timezone}" data-language="${user_language}"></span>
-    % endif
     </h4>
+%endif
+% if xblock_context['due_date']:
+    <h4 class="hd-8 de-emphasized"><span class="localized-datetime subtitle-name" data-datetime="${xblock_context['due_date']}" data-string="${data_string}" data-timezone="${user_timezone}" data-language="${user_language}"></span></h4>
 % endif
 
 % if show_bookmark_button:
