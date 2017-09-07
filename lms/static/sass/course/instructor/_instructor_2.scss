@@ -2115,6 +2115,7 @@ input[name="subject"] {
       th {
         @extend %t-action2;
         text-align: left;
+        font-size: 9px;
         border-bottom: 1px solid $border-color-1;
         &.attempt-allowed-time {
             width: 90px;
