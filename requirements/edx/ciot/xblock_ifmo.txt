@@ -1,0 +1,13 @@
+-e git+https://github.com/openeduITMO/ifmo-edx-celery-grader@v4.0#egg=ifmo-edx-celery-grader==4.0
+-e git+https://github.com/openeduITMO/ifmo-xblock-htmlacademy@v4.2#egg=ifmo-xblock-htmlacademy
+-e git+https://github.com/openeduITMO/ifmo-xblock-ant@890e154ad875f1ff95fa141dc51f75bf54aca25f#egg=ifmo-xblock-academicnt==4.1.1
+
+-e git+https://github.com/openeduITMO/ifmo-xblock-scilab@master#egg=ifmo_xblock_scilab
+-e git+https://github.com/openeduITMO/ifmo-submissions@master#egg=ifmo_submissions
+-e git+https://github.com/openeduITMO/ifmo-xblock-framework@master#egg=ifmo_xblock_framework
+-e git+https://github.com/openeduITMO/ifmo-xblock-imagemagick@master#egg=ifmo_xblock_imagemagick
+-e git+https://github.com/openeduITMO/ifmo-xqueue-api@master#egg=ifmo_xqueue_api
+
+-e git+https://github.com/gr8boom/stsbsim@master#egg=stsbsim-xblock
+
+-e git+https://github.com/cerberus-ab/qnet-xblock#egg=qnet-xblock
