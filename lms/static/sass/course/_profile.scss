@@ -174,6 +174,28 @@
       min-height: 400px;
       width: 100%;
     }
+    
+    .grade-category-detail {
+      margin: 3em 0;
+
+      .grade-category-detail-table {
+        margin: 0 auto;
+
+        td, th {
+          padding: .5em 0.7em;
+          border: 1px solid $black;
+          text-align: center;
+
+          &.pass {
+            color: $success-color;
+          }
+
+          &.fail {
+            color: $alert-color;
+          }
+        }
+      }
+    }
 
     > .credit-eligibility{
       border-top: 1px solid $lightGrey;
@@ -266,6 +288,36 @@
           vertical-align: top;
         }
 
+        > .scores {
+          display: table-cell;
+          @include padding-left(flex-gutter(9));
+          width: flex-grid(7, 9);
+        }
+
+        .scores {
+          margin: lh(0.5) 0;
+
+          h3, h4 {
+            color: #666;
+            font-size: em(14);
+            display: inline-block;
+          }
+
+          ol {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: inline-block;
+
+            li {
+              display: inline-block;
+              font-size: em(14);
+              font-weight: normal;
+              padding-right: 1em;
+            }
+          }
+        }
+        
         .sections {
           display: inline-block;
           @include padding-left(flex-gutter(9));
@@ -283,7 +335,7 @@
             }
 
             .hd {
-              color: $gray-d1;
+              color: #666;
 
               span {
                 color: $gray-d2;
@@ -299,27 +351,17 @@
               font-weight: 600;
             }
 
-            .scores {
-              margin: lh(0.5) 0;
+            h3 + .verticals {
+              padding-top: lh();
+            }
 
-              dt {
-                display: inline-block;
-                width: auto;
-                margin: initial;
-                @include margin-right($baseline);
-                border: initial;
-                padding: initial;
-                font-size: em(14);
+            .verticals {
+              padding-left: lh(0.5);
+              h4 {
+                font-size: em(15);
               }
-
-              dd {
-                display: inline-block;
-                margin: 0;
-                @include margin-right($baseline);
-                @include padding-right(1em);
-                font-size: em(14);
-                font-weight: normal;
-                color: $gray-d2;
+              > div {
+                margin-bottom: 1.5em;
               }
             }
           }
