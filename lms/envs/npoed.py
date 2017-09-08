@@ -74,4 +74,5 @@ TRACK_MAX_EVENT = 327680
 INSTALLED_APPS += (
     # Api extension for openedu
     'open_edx_api_extension',
+    'video_evms',
 )

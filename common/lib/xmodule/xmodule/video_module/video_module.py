@@ -73,8 +73,9 @@ from xmodule.mixin import LicenseMixin
 # (4) is one of the next items on the backlog for edxval, and should get rid
 # of this particular import silliness. It's just that I haven't made one before,
 # and I was worried about trying it with my deadline constraints.
+from video_evms.mixins import VideoModuleEvmsMixin, VideoDescriptorEvmsMixin
 try:
-    import edxval.api as edxval_api
+    import video_evms.api as edxval_api
 except ImportError:
     edxval_api = None
 
@@ -91,7 +92,7 @@ _ = lambda text: text
 
 
 @XBlock.wants('settings')
-class VideoModule(VideoFields, VideoTranscriptsMixin, VideoStudentViewHandlers, XModule, LicenseMixin):
+class VideoModule(VideoModuleEvmsMixin, VideoFields, VideoTranscriptsMixin, VideoStudentViewHandlers, XModule, LicenseMixin):
     """
     XML source example:
         <video show_captions="true"
@@ -374,7 +375,7 @@ class VideoModule(VideoFields, VideoTranscriptsMixin, VideoStudentViewHandlers, 
 
 @XBlock.wants("request_cache")
 @XBlock.wants("settings")
-class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandlers,
+class VideoDescriptor(VideoDescriptorEvmsMixin, VideoFields, VideoTranscriptsMixin, VideoStudioViewHandlers,
                       TabsEditingDescriptor, EmptyDataRawDescriptor, LicenseMixin):
     """
     Descriptor for `VideoModule`.
@@ -897,6 +898,7 @@ class VideoDescriptor(VideoFields, VideoTranscriptsMixin, VideoStudioViewHandler
 
         encoded_videos = {}
         val_video_data = {}
+        val_video_duration = None
 
         # Check in VAL data first if edx_video_id exists
         if self.edx_video_id:
