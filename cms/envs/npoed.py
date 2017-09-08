@@ -76,6 +76,11 @@ ROOT_URLCONF = 'sso_edx_npoed.cms_urls'
 
 FEATURES['PROCTORED_EXAMS_ATTEMPT_DELETE'] = FEATURES.get('PROCTORED_EXAMS_ATTEMPT_DELETE', False)
 
+EDX_API_KEY = AUTH_TOKENS.get("EDX_API_KEY")
+INSTALLED_APPS += (
+    'open_edx_api_extension_cms',
+)
+
 TRACK_MAX_EVENT = 327680
 
 # Used with XQueue
