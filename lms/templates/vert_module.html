@@ -8,7 +8,7 @@
 %if unit_title:
   <h2 class="hd hd-2 unit-title">${unit_title}</h2>
 % endif
-% if xblock_context['is_graded']:
+% if 'is_graded' in xblock_context and xblock_context['is_graded']:
     <h4 class="hd-8 de-emphasized">${_("This content is graded")}
     % if xblock_context['format']:
         ${_("as ")}<td>${xblock_context['format']}</td><br>
@@ -16,7 +16,7 @@
     % endif
     </h4>
 %endif
-% if xblock_context['due_date']:
+% if 'due_date' in xblock_context and xblock_context['due_date']:
     <h4 class="hd-8 de-emphasized"><span class="localized-datetime subtitle-name" data-datetime="${xblock_context['due_date']}" data-string="${data_string}" data-timezone="${user_timezone}" data-language="${user_language}"></span></h4>
 % endif
 
