@@ -1,4 +1,4 @@
-"""" Common utilities for comment client wrapper """
+""" Common utilities for comment client wrapper """
 from contextlib import contextmanager
 import dogstats_wrapper as dog_stats_api
 import logging
