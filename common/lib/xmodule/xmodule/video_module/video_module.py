@@ -106,6 +106,7 @@ class VideoModule(VideoModuleEvmsMixin, VideoFields, VideoTranscriptsMixin, Vide
     """
     video_time = 0
     icon_class = 'video'
+    youtube_streams = ""
 
     # To make sure that js files are called in proper order we use numerical
     # index. We do that to avoid issues that occurs in tests.
@@ -292,7 +293,8 @@ class VideoModule(VideoModuleEvmsMixin, VideoFields, VideoTranscriptsMixin, Vide
             cdn_eval = False
             cdn_exp_group = None
 
-        self.youtube_streams = youtube_streams or create_youtube_string(self)  # pylint: disable=W0201
+        if len(sources) == 0:
+            self.youtube_streams = youtube_streams or create_youtube_string(self)  # pylint: disable=W0201
 
         settings_service = self.runtime.service(self, 'settings')
 
