@@ -50,8 +50,6 @@ def get_library_creator_status(user):
         return False
     elif user.is_staff:
         return True
-    elif settings.FEATURES.get('ENABLE_CREATOR_GROUP', False):
-        return get_course_creator_status(user) == 'granted'
     else:
         return True
 
