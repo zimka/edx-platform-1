@@ -393,11 +393,7 @@ def export_status_handler(request, course_key_string):
         if hasattr(artifact.file.storage, 'bucket'):
             filename = os.path.basename(artifact.file.name).encode('utf-8')
             disposition = 'attachment; filename="{}"'.format(filename)
-            output_url = artifact.file.storage.url(artifact.file.name, response_headers={
-                'response-content-disposition': disposition,
-                'response-content-encoding': 'application/octet-stream',
-                'response-content-type': 'application/x-tgz'
-            })
+            output_url = artifact.file.storage.url(artifact.file.name)
         else:
             # local file, serve from the authorization wrapper view
             output_url = reverse_course_url('export_output_handler', course_key)
