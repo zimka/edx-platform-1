@@ -39,7 +39,7 @@ from django.conf import settings
                             </h4>
                             <p>
                                 %if vertical.format is not None:
-                                    ${vertical.format}, weight: ${vertical.weight}
+                                    ${vertical.format}, ${_("weight:")} ${vertical.weight}
                                 %endif
                                 %if vertical.due is not None:
                                     <em class="localized-datetime" data-datetime="${vertical.due}" data-string="${_('due {date}')}" data-timezone="${user_timezone}" data-language="${user_language}"></em>
