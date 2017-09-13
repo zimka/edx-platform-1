@@ -9720,3 +9720,7 @@ msgstr "Использовать субтитры"
 #:
 msgid "Show all posts"
 msgstr "Все темы"
+
+#:
+msgid "You must complete the proctoring setup before you can start the exam."
+msgstr "Необходимо выполнить настройку прокторинга перед началом экзамена."

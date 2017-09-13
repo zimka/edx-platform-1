@@ -11961,10 +11961,10 @@ msgstr "Вы просматриваете курс под именем {i_start}
 #: lms/templates/problem.html
 msgid "You have used {num_used} of {num_total} attempt"
 msgid_plural "You have used {num_used} of {num_total} attempts"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Вы использовали {num_used} из {num_total} попытки"
+msgstr[1] "Вы использовали {num_used} из {num_total} попыток"
+msgstr[2] "Вы использовали {num_used} из {num_total} попытки"
+msgstr[3] "Вы использовали {num_used} из {num_total} попыток"
 
 #: lms/templates/problem.html
 msgid ""
@@ -23380,7 +23380,7 @@ msgstr "с прокторингом"
 
 #: edx_proctoring/views.py:505
 msgid "timed"
-msgstr "ограничено по времени"
+msgstr "ограниченный по времени"
 
 #: edx_proctoring/templates/emails/proctoring_attempt_status_email.html:3
 #, python-format
@@ -24885,3 +24885,37 @@ msgstr "Нет оцениваемых заданий в блоке"
 #:
 msgid "as "
 msgstr "как "
+
+#:
+msgid ""
+"\n"
+"      To be eligible for course credit or for a MicroMasters credential, you must pass the proctoring review for this exam.\n"
+"    "
+msgstr ""
+"\n"
+"      Для получения сертификата вам необходимо пройти это задание с подтверждением личности.\n"
+"    "
+
+#:
+msgid "Select Proctoring Service"
+msgstr "Укажите вашу прокторингвую систему"
+
+#:
+msgid "- Choose one -"
+msgstr "- Выберите одну -"
+
+#:
+msgid "Start Proctored Exam"
+msgstr "Начать экзамен"
+
+#:
+msgid "Cannot Start Proctored Exam"
+msgstr "Невозможно начать экзамен с прокторингом"
+
+#:
+msgid "Doing so means that you are no longer eligible for academic credit."
+msgstr "ВНИМАНИЕ! В этом случае вы не сможете получить сертификат!"
+
+#:
+msgid "You must complete the proctoring setup before you can start the exam."
+msgstr "Необходимо выполнить настройку прокторинга перед началом экзамена."
