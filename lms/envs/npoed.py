@@ -71,6 +71,9 @@ LOCALE_PATHS += (ORA_LOCALE_PATH,)
 
 TRACK_MAX_EVENT = 327680
 
+if AUTH_TOKENS.get('AWS_S3_CALLING_FORMAT'):
+    AWS_S3_CALLING_FORMAT = AUTH_TOKENS.get('AWS_S3_CALLING_FORMAT')
+
 INSTALLED_APPS += (
     # Api extension for openedu
     'open_edx_api_extension',
