@@ -57,6 +57,7 @@ from xmodule.modulestore.django import modulestore
 from xmodule.tabs import CourseTab
 
 from .tools import get_units_with_due_date, title_or_url
+from openedx.core.djangoapps.course_shifts import _section_course_shifts
 
 log = logging.getLogger(__name__)
 
@@ -225,6 +226,11 @@ def instructor_dashboard_2(request, course_id):
     )
 
     certificate_invalidations = CertificateInvalidation.get_certificate_invalidations(course_key)
+
+    if settings.FEATURES.get("ENABLE_COURSE_SHIFTS"):
+        course_shifts_section = (_section_course_shifts(course, access))
+        if course_shifts_section:
+            sections.append(course_shifts_section)
 
     context = {
         'course': course,
