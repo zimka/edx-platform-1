@@ -196,10 +196,13 @@ def cohort_handler(request, course_key_string, cohort_id=None):
     course = get_course_with_access(request.user, 'staff', course_key)
     if request.method == 'GET':
         if not cohort_id:
-            all_cohorts = [
-                _get_cohort_representation(c, course)
-                for c in cohorts.get_course_cohorts(course)
-            ]
+            all_cohorts = []
+            for c in cohorts.get_course_cohorts(course):
+                try:
+                    repr_ = _get_cohort_representation(c, course)
+                    all_cohorts.append(repr_)
+                except:
+                    pass
             return JsonResponse({'cohorts': all_cohorts})
         else:
             cohort = cohorts.get_cohort_by_id(course_key, cohort_id)
