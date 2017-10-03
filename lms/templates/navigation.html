@@ -48,6 +48,28 @@ site_status_msg = get_site_status_msg(course_id)
 % endif
 </%block>
   <header id="global-navigation" class="header-global ${"slim" if course else ""}" >
+<%
+include_demo_notification = False
+if course:
+    is_course_demo = "demo" in course.id.run
+    include_demo_notification = settings.FEATURES.get('ENABLE_DEMO_COURSE_NOTIFICATION') and is_course_demo
+%>
+
+%if include_demo_notification:
+    <script type="text/template" id="demo-notification-tpl">
+        <%static:include path="demo_notification/demo-notification.underscore" />
+    </script>
+    <script type="text/javascript">
+        $( document ).ready(function() {
+            var status_place = $(document).find(".demo-notification-status");
+            console.log(status_place);
+            var template = $(document).find("#demo-notification-tpl").text();
+            var rendered_template = _.template(template);
+            status_place.html(rendered_template);
+        });
+    </script>
+    <div class="demo-notification-status outer"></div>
+%endif
     <nav class="wrapper-header" aria-label="${_('Global')}">
       <h1 class="hd logo-header">
         <div class="logo">
