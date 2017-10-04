@@ -856,6 +856,15 @@ class CourseFields(object):
         scope=Scope.settings, default=False
     )
 
+    enable_course_shifts = Boolean(
+        display_name=_("Enable Course Shifts"),
+        help=_("Attention! If you set it True, you won't be able to turn feature off for this course,"
+                "even by setting it 'False' back."
+        ),
+        scope=Scope.settings,
+        default=False
+    )
+
 
 class CourseModule(CourseFields, SequenceModule):  # pylint: disable=abstract-method
     """
