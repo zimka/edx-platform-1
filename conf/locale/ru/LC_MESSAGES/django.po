@@ -23546,3 +23546,16 @@ msgid ""
 "A new revision was created: Merge between Revision #%(r1)d and Revision "
 "#%(r2)d"
 msgstr "Создана новая версия: слияние версий #%(r1)d и #%(r2)d"
+
+
+msgid "Ban User"
+msgstr "Блокировка студентов"
+
+msgid "Enter email address or username."
+msgstr "Введите электронную почту или имя пользователя."
+
+msgid "Email Address/Username"
+msgstr "Электронная почта/имя пользователя"
+
+msgid "Block student on the course"
+msgstr "Заблокировать студента на курсе"
