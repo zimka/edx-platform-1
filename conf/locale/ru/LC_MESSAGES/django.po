@@ -7051,7 +7051,7 @@ msgstr "Показатели"
 
 #: lms/djangoapps/instructor/views/instructor_dashboard.py
 msgid "Open Responses"
-msgstr ""
+msgstr "Взаимное оценивание"
 
 #. Translators: number sent refers to the number of emails sent
 #: lms/djangoapps/instructor/views/instructor_task_helpers.py
@@ -24952,3 +24952,6 @@ msgstr "Электронная почта/имя пользователя"
 
 msgid "Block student on the course"
 msgstr "Заблокировать студента на курсе"
+
+msgid "Answers are displayed within the problem"
+msgstr "Ответы в задаче отмечены"
