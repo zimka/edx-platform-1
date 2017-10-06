@@ -19,6 +19,7 @@ from django.utils.translation import ugettext as _
 from django.utils.translation import get_language_bidi
 from branding import api as branding_api
 from pipeline_mako import render_require_js_path_overrides
+from sso_edx_npoed.utils import get_plp_flatpage
 %>
 <!DOCTYPE html>
 <!--[if lte IE 9]><html class="ie ie9 lte9" lang="${LANGUAGE_CODE}"><![endif]-->
@@ -27,7 +28,9 @@ from pipeline_mako import render_require_js_path_overrides
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+<%block cached="True" cache_timeout="60">
+  ${get_plp_flatpage(flatpage_url="/anchor_before_head/")}
+</%block>
 ## Define a couple of helper functions to make life easier when
 ## embedding theme conditionals into templates. All inheriting
 ## templates have access to these functions, and we can import these
@@ -120,10 +123,15 @@ from pipeline_mako import render_require_js_path_overrides
     </script>
 % endif
 
+<%block cached="True" cache_timeout="60">
+  ${get_plp_flatpage(flatpage_url="/anchor_after_head/")}
+</%block>
 </head>
 
 <body class="${static.dir_rtl()} <%block name='bodyclass'/> lang_${LANGUAGE_CODE}">
-
+<%block cached="True" cache_timeout="60">
+  ${get_plp_flatpage(flatpage_url="/anchor_before_body/")}
+</%block>
 <%static:optional_include_mako file="body-initial.html" is_theming_enabled="True" />
 <div id="page-prompt"></div>
 % if not disable_window_wrap:
@@ -154,6 +162,10 @@ from pipeline_mako import render_require_js_path_overrides
   <script type="text/javascript" src="${static.url('js/vendor/noreferrer.js')}" charset="utf-8"></script>
   <script type="text/javascript" src="${static.url('js/utils/navigation.js')}" charset="utf-8"></script>
   <%static:optional_include_mako file="body-extra.html" is_theming_enabled="True" />
+
+<%block cached="True" cache_timeout="60">
+  ${get_plp_flatpage(flatpage_url="/anchor_after_body/")}
+</%block>
 </body>
 </html>
 

@@ -39,6 +39,29 @@ include_special_exams = settings.FEATURES.get('ENABLE_SPECIAL_EXAMS', False) and
     % endfor
     <div class="proctored_exam_status"></div>
 % endif
+<%
+include_demo_notification = False
+if course:
+    is_course_demo = "demo" in course.id.run
+    include_demo_notification = settings.FEATURES.get('ENABLE_DEMO_COURSE_NOTIFICATION') and is_course_demo
+%>
+
+%if include_demo_notification:
+    <script type="text/template" id="demo-notification-tpl">
+        <%static:include path="demo_notification/demo-notification.underscore" />
+    </script>
+    <script type="text/javascript">
+        $( document ).ready(function() {
+            var status_place = $(document).find(".demo-notification-status");
+            var template = $(document).find("#demo-notification-tpl").text();
+            var rendered_template = _.template(template);
+            status_place.html(rendered_template);
+            var outer = status_place.filter('.outer').find('.demo-notification-header');
+            outer.html('');
+        });
+    </script>
+    <div class="demo-notification-status"></div>
+%endif
 % if show_preview_menu:
     <nav class="wrapper-preview-menu" aria-label="${_('Course View')}">
         <div class="preview-menu">
