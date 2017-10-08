@@ -1,0 +1,27 @@
+---
+metadata:
+    display_name: "Работа с картой"
+    markdown: !!null
+data:   |
+        <problem>
+            <p>
+                В задачах "работа с картой", которые также известны как "укажи на картинку" студенты должны кликнуть на определённую область изображения.
+                Эта область определяется включением координат в тело задачи. Вы можете определить одну или несколько прямоугольных областей либо одну непрямоугольную область. 
+                Подробнее смотрите раздел <a href="http://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/image_mapped_input.html" target="_blank">Image Mapped Input Problem</a>
+                в руководстве <i>Building and Running an edx Course</i>.
+            </p>
+            <p>
+                Когда вы добавляете задачу, выберите <strong>Настройки</strong>
+                для ввода <strong>Названия</strong> и других необходимых параметров.</p>
+            <p>Можно использовать приведенную ниже задачу как образец.</p>
+            <imageresponse>
+                <p>Какая страна является родиной Великой пирамиды в Гизе, а также города Каир? Нажмите на страну на карте ниже.</p>
+                <imageinput src="https://studio.edx.org/c4x/edX/DemoX/asset/Africa.png" width="600" height="638" rectangle="(338,98)-(412,168)" alt="Карта Африки"/>
+                <solution>
+                    <div class="detailed-solution">
+                        <p>Пояснение</p>
+                        <p>Египет - родина не только пирамид и Каира, но также и Сфинкса.</p>
+                    </div>
+                </solution>
+            </imageresponse>
+        </problem>
