@@ -1,4 +1,4 @@
--e git+https://github.com/miptliot/edx-proctoring.git@edx-0.18.0-openedu#egg=edx_proctoring
+-e git+https://github.com/miptliot/edx-proctoring.git@edx-0.18.0-examus#egg=edx_proctoring
 
 -e git+https://github.com/miptliot/examus_edx_backend.git@master#egg=examus_edx_backend
 -e git+https://github.com/miptliot/itmo_edx_backend.git@master#egg=itmo_edx_backend
