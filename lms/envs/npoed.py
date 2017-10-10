@@ -79,3 +79,8 @@ INSTALLED_APPS += (
     'open_edx_api_extension',
     'video_evms',
 )
+
+
+INSTALLED_APPS += ('openedx.core.djangoapps.instructor_reset_track', )
+MIDDLEWARE_CLASSES += ('openedx.core.djangoapps.instructor_reset_track.middleware.InstructorResetMiddleware',)
+FEATURES["ENABLE_INSTRUCTOR_RESET_TRACK"] = True

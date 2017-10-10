@@ -235,6 +235,9 @@ def instructor_dashboard_2(request, course_id):
 
     certificate_invalidations = CertificateInvalidation.get_certificate_invalidations(course_key)
 
+    if settings.FEATURES.get("ENABLE_INSTRUCTOR_RESET_TRACK"):
+        sections.append(_section_instructor_resets(course, access))
+
     context = {
         'course': course,
         'studio_url': get_studio_url(course, 'course'),
@@ -779,3 +782,16 @@ def is_ecommerce_course(course_key):
     """
     sku_count = len([mode.sku for mode in CourseMode.modes_for_course(course_key) if mode.sku])
     return sku_count > 0
+
+
+def _section_instructor_resets(course, access):
+    """Provide data for instructor resets dasboard section"""
+    course_key = course.id
+    section_data = {
+        'section_key': 'instructor_reset_track',
+        'section_display_name': _('Instructor Student Attempt Resets'),
+        'access': access,
+        'course_id': unicode(course_key),
+        'instructor_resets_url': reverse('instructor_reset_track', kwargs={'course_id': unicode(course_key)}),
+    }
+    return section_data
