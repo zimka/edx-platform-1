@@ -44,11 +44,13 @@ include_demo_notification = False
 if course:
     is_course_demo = "demo" in course.id.run
     include_demo_notification = settings.FEATURES.get('ENABLE_DEMO_COURSE_NOTIFICATION') and is_course_demo
+    spec_name = 'ux'
+    if 'vr' in course.id.course.split('_'):
+        spec_name = 'vr'
 %>
-
 %if include_demo_notification:
     <script type="text/template" id="demo-notification-tpl">
-        <%static:include path="demo_notification/demo-notification.underscore" />
+        <%static:include path="demo_notification/demo-notification-${spec_name}.underscore"/>
     </script>
     <script type="text/javascript">
         $( document ).ready(function() {

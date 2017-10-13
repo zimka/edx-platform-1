@@ -2,16 +2,16 @@
   <div class="demo-notification-banner" style="margin-top:23px;">
     <div class="container-fluid">
     <div class="row top-bar">
-      <div class="col-sm-3 col-md-3>
+      <div class="col-sm-3 col-md-3 col-xs-3">
         <a href="https://openprofession.ru" id="logo" class="header__logo">
           <img src="https://albania.opro.ciot-env.ru/static/img/logo.svg" alt="${platform_name()}"/>
         </a>
       </div>
-      <div class="col-sm-5 col-md-6 edx-header-text"> Вы просматриваете курс в демо режиме</div>
-      <div class="version col-md-3 col-sm-2 text-right aut-block col-xs-2 col">
+      <div class="col-sm-6 col-xs-6 col-md-6 edx-header-text"> Вы просматриваете курс в демо режиме</div>
+      <div class="version col-md-3 col-sm-3 text-right aut-block col-xs-3 col">
         <div class="" id="sb_demo" style="position: relative; cursor:pointer; margin-bottom: -80px;">
            <span class="dropdown-toggle" id="dropdownMenu2" data-toggle="dropdown" style="border:solid; padding:10px;">
-             <span class="hidden-sm hidden-xs">Оплатить</span>
+             <span class="">Оплатить</span>
            </span>
            <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu2">
              <li><a href="https://openprofession.ru/op_payment?edmodule_id=7&edmodule_enrollment_id=9&contented=true">Оплатить всю программу “Дизайнер интерфейсов”</a></li>
@@ -43,6 +43,7 @@
     }
 
     .demo-notification-header {
+        min-width:769px;
         width: 100%;
         position: fixed;
         z-index:5000;
@@ -168,3 +169,4 @@ $(document).mouseup(function (e)
           });
       });
   </script>
+
