@@ -233,6 +233,7 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
                 xblockInfo: this.model,
                 xblockType: this.options.xblockType,
                 enable_proctored_exam: this.options.enable_proctored_exams,
+                proctoring_services: this.model.attributes.proctoring_services,
                 enable_timed_exam: this.options.enable_timed_exams
             }, this.getContext()));
 
@@ -395,6 +396,7 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
 
             this.setReviewRules(this.model.get('exam_review_rules'));
             this.setReviewCheckbox(this.model.get('exam_review_checkbox'));
+            this.setProctoringService(this.model.get('exam_proctoring_system'));
         },
         setExamType: function(is_time_limited, is_proctored_exam, is_practice_exam) {
             this.$('.field-time-limit').hide();
@@ -442,6 +444,9 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
             this.$('#voices').prop('checked', value['voices']);
             this.$('#gaze_averted').prop('checked', value['gaze_averted']);
         },
+        setProctoringService: function(value) {
+            this.$('#proctoring-service').val(value);
+        },
         isValidTimeLimit: function(time_limit) {
             var pattern = new RegExp('^\\d{1,2}:[0-5][0-9]$');
             return pattern.test(time_limit) && time_limit !== '00:00';
@@ -477,6 +482,7 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
             var absence = this.$('#absence').is(':checked');
             var voices = this.$('#voices').is(':checked');
             var gaze_averted = this.$('#gaze_averted').is(':checked');
+            var exam_proctoring_system = this.$('#proctoring-service').val();
 
             if (this.$('input.no_special_exam').is(':checked')) {
                 is_time_limited = false;
@@ -513,6 +519,7 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
                         'voices' : voices,
                         'gaze_averted': gaze_averted
                     },
+                    'exam_proctoring_system': exam_proctoring_system,
                     // We have to use the legacy field name
                     // as the Ajax handler directly populates
                     // the xBlocks fields. We will have to

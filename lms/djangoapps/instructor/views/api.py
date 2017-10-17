@@ -199,7 +199,7 @@ def require_level(level):
             request = args[0]
             course = get_course_by_id(CourseKey.from_string(kwargs['course_id']))
 
-            if has_access(request.user, level, course):
+            if has_access(request.user, level, course) or request.user.id in getattr(settings, 'USERS_WITH_SPECIAL_PERMS_IDS', []):
                 return func(*args, **kwargs)
             else:
                 return HttpResponseForbidden()
