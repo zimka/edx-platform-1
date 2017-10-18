@@ -222,19 +222,23 @@ if (is_proctored_exam) {
             </div>
         <% } else { %>
             <% if (xblockInfo.get('due_date') || xblockInfo.get('graded')) { %>
+            <%
+                var parentGradingType = parentInfo.attributes.format;
+                var weight = xblockInfo.get('weight');
+            %>
+                <% if (weight > 0) {%>
                 <div class="status-grading">
                     <p>
-                        <span class="sr status-grading-label"> <%- gettext('Graded as:') %> </span>
                         <span class="icon fa fa-check" aria-hidden="true"></span>
-                        <span class="status-grading-value"> <%- gradingType %> </span>
+                        <span class="status-grading-label"> <%- gettext('Graded as:') %> </span>
+                        <span class="status-grading-value" > <%- gradingType %> </span>
                         <% if (xblockInfo.get('due_date') && !course.get('self_paced')) { %>
                             <span class="status-grading-date"> <%- gettext('Due:') %> <%- xblockInfo.get('due_date') %> </span>
                         <% } %>
-                        <% if (xblockInfo.get('graded') && gradingType) { %>
-                            <span class="status-grading-weight"> <%= gettext('Weight:') %> <%= xblockInfo.get('weight') %> </span>
-                        <% } %>
+                        <span class="status-grading-weight"> <%= gettext('Weight:') %> <%= weight %> </span>
                     </p>
                 </div>
+                <% } %>
             <% } %>
         <% } %>
         <% if (statusMessages.length > 0) { %>

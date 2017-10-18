@@ -800,6 +800,7 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
             };
             if (xblockInfo.isVertical()) {
                 editors = [DueDateEditor, WeightEditor,StaffLockEditor];
+                xblockInfo['format'] = options.parentInfo.get('format');
             } else {
                 tabs = [
                     {
