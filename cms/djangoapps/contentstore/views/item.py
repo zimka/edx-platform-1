@@ -1041,7 +1041,9 @@ def _get_gating_info(course, xblock):
             info["visibility_state"] = VisibilityState.gated
     return info
 
+from vertical_grading import vertical_grading_xblock_info
 
+@vertical_grading_xblock_info
 def create_xblock_info(xblock, data=None, metadata=None, include_ancestor_info=False, include_child_info=False,
                        course_outline=False, include_children_predicate=NEVER, parent_xblock=None, graders=None,
                        user=None, course=None, is_concise=False):

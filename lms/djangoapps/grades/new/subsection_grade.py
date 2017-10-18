@@ -11,6 +11,7 @@ from xmodule.graders import AggregatedScore
 
 from ..config.waffle import waffle, WRITE_ONLY_IF_ENGAGED
 
+from vertical_grading import VerticalGradingSubsectionMixin, VerticalGradingZeroSubsectionMixin
 
 log = getLogger(__name__)
 
@@ -55,7 +56,7 @@ class SubsectionGradeBase(object):
         return self.all_total.attempted
 
 
-class ZeroSubsectionGrade(SubsectionGradeBase):
+class ZeroSubsectionGrade(VerticalGradingZeroSubsectionMixin, SubsectionGradeBase):
     """
     Class for Subsection Grades with Zero values.
     """
@@ -85,7 +86,7 @@ class ZeroSubsectionGrade(SubsectionGradeBase):
         return locations
 
 
-class SubsectionGrade(SubsectionGradeBase):
+class SubsectionGrade(VerticalGradingSubsectionMixin, SubsectionGradeBase):
     """
     Class for Subsection Grades.
     """
@@ -102,7 +103,6 @@ class SubsectionGrade(SubsectionGradeBase):
                 start_node=self.location,
         ):
             self._compute_block_score(descendant_key, course_structure, submissions_scores, csm_scores)
-
         self.all_total, self.graded_total = graders.aggregate_scores(self.scores)
         self._log_event(log.debug, u"init_from_structure", student)
         return self

@@ -19,9 +19,10 @@ log = logging.getLogger(__name__)
 # OBSOLETE: This obsoletes 'type'
 CLASS_PRIORITY = ['video', 'problem']
 
+from vertical_grading import VerticalGradingBlockMixin
 
 @XBlock.needs('user', 'bookmarks')
-class VerticalBlock(SequenceFields, XModuleFields, StudioEditableBlock, XmlParserMixin, MakoTemplateBlockBase, XBlock):
+class VerticalBlock(VerticalGradingBlockMixin, SequenceFields, XModuleFields, StudioEditableBlock, XmlParserMixin, MakoTemplateBlockBase, XBlock):
     """
     Layout XBlock for rendering subblocks vertically.
     """

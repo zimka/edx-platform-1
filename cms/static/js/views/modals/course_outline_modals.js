@@ -15,7 +15,7 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
     'use strict';
     var CourseOutlineXBlockModal, SettingsXBlockModal, PublishXBlockModal, AbstractEditor, BaseDateEditor,
         ReleaseDateEditor, DueDateEditor, GradingEditor, PublishEditor, AbstractVisibilityEditor, StaffLockEditor,
-        ContentVisibilityEditor, TimedExaminationPreferenceEditor, AccessEditor, ShowCorrectnessEditor;
+        ContentVisibilityEditor, TimedExaminationPreferenceEditor, AccessEditor, ShowCorrectnessEditor, WeightEditor;
 
     CourseOutlineXBlockModal = BaseModal.extend({
         events: _.extend({}, BaseModal.prototype.events, {
@@ -764,6 +764,23 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
         }
     });
 
+    WeightEditor = AbstractEditor.extend({
+        templateName: 'weight-editor',
+
+        setValue: function (value) {
+            this.$('#weight').val(value);
+        },
+
+        getValue: function () {
+            return this.$('#weight').val();
+        },
+
+        getRequestData: function () {
+            return {
+                'metadata': {'weight': this.getValue()}
+            };
+         }
+     });
     return {
         getModal: function(type, xblockInfo, options) {
             if (type === 'edit') {
@@ -782,7 +799,7 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
                 editors: []
             };
             if (xblockInfo.isVertical()) {
-                editors = [StaffLockEditor];
+                editors = [DueDateEditor, WeightEditor,StaffLockEditor];
             } else {
                 tabs = [
                     {
@@ -800,7 +817,7 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
                     tabs[0].editors = [ReleaseDateEditor];
                     tabs[1].editors = [StaffLockEditor];
                 } else if (xblockInfo.isSequential()) {
-                    tabs[0].editors = [ReleaseDateEditor, GradingEditor, DueDateEditor];
+                    tabs[0].editors = [ReleaseDateEditor, GradingEditor];
                     tabs[1].editors = [ContentVisibilityEditor, ShowCorrectnessEditor];
 
                     if (options.enable_proctored_exams || options.enable_timed_exams) {
