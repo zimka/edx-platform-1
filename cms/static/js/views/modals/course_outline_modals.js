@@ -354,10 +354,12 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
                 this.$('.field-time-limit input').val('00:30');
             }
             if (showRulesField) {
+                this.$('.field-proctoring-service').show();
                 this.$('.field-exam-review-rules').show();
                 this.$('.field-exam-review-rules-checkbox').show();
             }
             else {
+                this.$('.field-proctoring-service').hide();
                 this.$('.field-exam-review-rules').hide();
                 this.$('.field-exam-review-rules-checkbox').hide();
             }
@@ -402,6 +404,7 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
             this.$('.field-time-limit').hide();
             this.$('.field-exam-review-rules').hide();
             this.$('.field-exam-review-rules-checkbox').hide();
+            this.$('.field-proctoring-service').hide();
 
             if (!is_time_limited) {
                 this.$('input.no_special_exam').prop('checked', true);
@@ -417,6 +420,7 @@ define(['jquery', 'backbone', 'underscore', 'gettext', 'js/views/baseview',
                     this.$('input.proctored_exam').prop('checked', true);
                     this.$('.field-exam-review-rules').show();
                     this.$('.field-exam-review-rules-checkbox').show();
+                    this.$('.field-proctoring-service').show();
                 }
             } else {
                 // Since we have an early exit at the top of the method
