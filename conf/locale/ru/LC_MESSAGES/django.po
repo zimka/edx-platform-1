@@ -24942,7 +24942,7 @@ msgid "You must complete the proctoring setup before you can start the exam."
 msgstr "Необходимо выполнить настройку прокторинга перед началом экзамена."
 
 msgid "Ban User"
-msgstr "Блокировка студентов"
+msgstr "Отчисление студентов"
 
 msgid "Enter email address or username."
 msgstr "Введите электронную почту или имя пользователя."
