@@ -58,6 +58,7 @@ class CourseMetadata(object):
         'chrome',
         'default_tab',
         'exam_review_checkbox',
+        'exam_proctoring_system',
     ]
 
     @classmethod

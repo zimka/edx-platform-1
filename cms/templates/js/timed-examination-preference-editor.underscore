@@ -36,6 +36,17 @@
             <% } %>
         </ul>
         <ul class="list-fields list-input exam-options">
+            <% if (proctoring_services) { %>
+                <li class="field-input input-select field-proctoring-service">
+                    <label for="proctoring-service"><%- gettext("Proctoring Service") %></label>
+                    <select id="proctoring-service">
+                        <option value="" selected> - </option>
+                        <% for (var i = 0; i < proctoring_services.length; i++) {%>
+                            <option value="<%- proctoring_services[i] %>"><%- proctoring_services[i] %></option>
+                        <% } %>
+                    </select>
+                </li>
+            <% } %>
             <li class="field field-text field-time-limit">
                 <label class="label">
                     <%- gettext('Time Allotted (HH:MM):') %>

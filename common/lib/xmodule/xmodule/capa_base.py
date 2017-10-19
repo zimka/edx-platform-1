@@ -715,7 +715,7 @@ class CapaMixin(CapaFields):
         save_message = None
         if self.has_saved_answers:
             save_message = _(
-                "Your answers were previously saved. Click '{button_name}' to grade them."
+                u"Your answers were previously saved. Click '{button_name}' to grade them."
             ).format(button_name=self.submit_button_name())
 
         context = {
@@ -1596,7 +1596,7 @@ class CapaMixin(CapaFields):
         msg = _("Your answers have been saved.")
         if not self.max_attempts == 0:
             msg = _(
-                "Your answers have been saved but not graded. Click '{button_name}' to grade them."
+                u"Your answers have been saved but not graded. Click '{button_name}' to grade them."
             ).format(button_name=self.submit_button_name())
         return {
             'success': True,
