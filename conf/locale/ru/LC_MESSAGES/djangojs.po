@@ -9724,3 +9724,12 @@ msgstr "Все темы"
 #:
 msgid "You must complete the proctoring setup before you can start the exam."
 msgstr "Необходимо выполнить настройку прокторинга перед началом экзамена."
+
+msgid "There was an error enrolling:"
+msgstr "При записи на курс произошла ошибка:"
+
+msgid "There was an error unenrolling:"
+msgstr "При отписке с курса произошла ошибка"
+
+msgid "There was an error processing:"
+msgstr "При обработке произошла ошибка"

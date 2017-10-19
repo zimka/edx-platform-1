@@ -977,7 +977,7 @@ class ResourceTemplates(object):
     @classmethod
     def get_template_dir(cls):
         if getattr(cls, 'template_dir_name', None):
-            dirname = os.path.join('templates', cls.template_dir_name)
+            dirname = os.path.join('templates_ru', cls.template_dir_name)
             if not resource_isdir(__name__, dirname):
                 log.warning(u"No resource directory {dir} found when loading {cls_name} templates".format(
                     dir=dirname,

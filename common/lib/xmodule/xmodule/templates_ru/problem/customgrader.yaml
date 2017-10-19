@@ -1,0 +1,68 @@
+---
+metadata:
+    display_name: Специальная задача (оценивание скриптом Python)
+    markdown: !!null
+data: |
+      <problem>
+            <p>
+                В задачах этого типа (также называемых задачами write-your-own-grader, "напиши-свой-скрипт-оценивания"), для оценивания используется скрипт, встраиваемый в текст задачи для оценки ответа учащегося. Задача может принадлежать к любому типу. Чаще всего скриптом оцениваются задачи с открытым ответом на ввод числа или текста.
+      </p>
+            <p>
+                Вы можете использовать разметку тегов скрипта в вопросе и в ответе. 
+            </p>
+            <p>
+                С помощью скриптов Python вы можете создать задачи с частичным присваиванием балла (partical credit), задачи с открытым ответом и задачи, в тексте которых содержатся переменные, значение которых присваивается с рандомизацией. Добавлять к ответам изображения можно с помощью тега "img". Заметьте, что тег "img" обязательно должен стоять внутри контейнера "div" (а он, в свою очередь, содержится внутри контейнера "solution" ) и что учащиеся увидят эти изображения только нажав на кнопку "Показать ответ".
+            </p>
+            <p>
+                Подробнее смотрите раздел <a href="http://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/custom_python.html" target="_blank">
+                Write-Your-Own-Grader Problem</a> в руководстве <i>Building and Running an edX Course</i>.
+            </p>
+            <p>
+                Когда вы добавляете задачу, выберите <strong>Настройки</strong>
+                для ввода <strong>Названия</strong> и других необходимых параметров.
+            </p>
+            <p>Можно использовать приведенную ниже задачу как образец.</p>
+            <hr/>
+        <customresponse cfn="test_add_to_ten">
+      <script type="loncapa/python">
+      def test_add_to_ten(expect, ans):
+          return test_add(10, ans)
+
+      </script>
+            <label>Введите два целых числа, сумма которых равна 10.</label>
+            <textline size="40" correct_answer="3" label="Введите первое число" /><br/>
+            <textline size="40" correct_answer="7" label="Введите второе число" />
+            <solution>
+                <div class="detailed-solution">
+                    <p>Пояснение</p>
+                    <p>Любые целые числа, удовлетворяющие условию \(y = 10 - x\) подходят для данного условия.</p>
+                </div>
+            </solution>
+        </customresponse>
+
+        <customresponse cfn="test_add" expect="20">
+      <script type="loncapa/python">
+
+      def test_add(expect, ans):
+          try:
+              a1=int(ans[0])
+              a2=int(ans[1])
+              return (a1+a2) == int(expect)
+          except ValueError:
+              return False
+
+      </script>
+            <label>Введите два целых числа, сумма которых равна 20.</label>
+            <textline size="40" correct_answer="11" label="Введите первое число" /><br/>
+            <textline size="40" correct_answer="9" label="Введите второе число" />
+            <solution>
+                <div class="detailed-solution">
+                    <p>Пояснение</p>
+                    <p>Любые целые числа, удовлетворяющие условию  \(y = 20 - x\) подходят для данного условия.</p>
+                    <p>Для добавления изображения к решению используйте HTML-тег "img". Обязательно заполните текст в атрибуте "alt".</p>
+                    <img src="/static/images/placeholder-image.png" width="400"
+                    alt="Описание изображения, используемого в решении."/>
+                </div>
+            </solution>
+        </customresponse>
+      </problem>

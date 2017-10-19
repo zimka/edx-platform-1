@@ -139,12 +139,12 @@ such that the value can be defined later than this assignment (file load order).
             if (errors.length) {
                 errorsLabel = (function() {
                     if (dataFromServer.action === 'enroll') {
-                        return 'There was an error enrolling:';
+                        return gettext('There was an error enrolling:');
                     } else if (dataFromServer.action === 'unenroll') {
-                        return 'There was an error unenrolling:';
+                        return gettext('There was an error unenrolling:');
                     } else {
                         console.warn("unknown action from server '" + dataFromServer.action + "'");  // eslint-disable-line no-console, max-len
-                        return 'There was an error processing:';
+                        return gettext('There was an error processing:');
                     }
                 }());
                 renderIdsLists = function(errs) {

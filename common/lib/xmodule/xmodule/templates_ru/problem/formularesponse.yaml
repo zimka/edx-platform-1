@@ -1,0 +1,14 @@
+---
+metadata:
+    display_name: Ввод математического выражения
+    markdown: !!null
+data: |
+      <problem>
+          <formularesponse type="ci" samples="R_1,R_2,R_3@1,2,3:3,4,5#10" answer="R_1*R_2/R_3">
+              <p>Вы можете использовать данный шаблон как пример для задач с вводом математического выражения. Изменяйте данный пример по вашему усмотрению.</p>
+              <label>Введите текст вопроса. Данное поле обязательно. Например: напишите выражение умножения переменных R_1 и R_2 и деления на R_3.</label>
+              <description>Здесь можно добавить дополнительные подсказки. Например: Попробуйте ввести R_1*R_2/R_3</description>
+              <responseparam type="tolerance" default="0.00001"/>
+              <formulaequationinput size="40"/>
+          </formularesponse>
+      </problem>

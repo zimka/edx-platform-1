@@ -1,0 +1,215 @@
+---
+metadata:
+    display_name: Задачи с разметкой LaTeX
+    source_code: |
+        % Почти любой вид заданий edX может быть разработан с использованием LaTeX
+        % в качестве входного языка.  Пишите на LaTeX как обычно, используя равенства.
+        % Ключевой возможностью является \edXabox{} - макрос, определяющий "окно
+        % ответа" которое запрашивает ответ у студентов и определяет,
+        % каким будет ожидаемый (правильный) ответ.
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \subsection{Пример задачи "options" - выбор}
+
+        Какая из стран празднует День независимости 15 августа?
+        \edXabox{options='Индия','Испания','Китай','Бермуды' expect='Индия'}
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \subsection{Пример задачи "multiple choice" - множественный выбор}
+        В какой стране самое большое население?
+        \edXabox{ type="multichoice" expect="Индонезия" options="Бразилия","Германия","Индонезия","Россия" }
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \subsection{Пример задачи "symbolic" - ввод формулы}
+        Напишите уравнение Эйнштейна, описывающее соотношение массы и энергии.
+        \edXabox{type='symbolic' size='90' expect='m*c^2' }
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \subsection{Пример задачи с ответом на ввод числа}
+        Сколько рублей останется у Пети, если из своих 100р. он раздаст 50.02р?
+        \edXinline{Останется = }\edXabox{expect="48.98" type="numerical" tolerance='0.02' inline='1' } %
+        \edXinline{~р.}
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \subsection{Пример задачи с ответом на ввод текста }
+        В каком учебном заведении Китая впервые было разрешено совместное обучение юношей и девушек?
+        \edXabox{ type="string" expect="Нанкинский Нормальный Институт" options="ci" }
+        Вы можете включить объяснение ответа, используя edXsolution макрос.
+        Кликните мышкой на кнопке "Показать ответ", чтобы увидеть объяснение.
+        \begin{edXsolution}
+        Нанкинский Нормальный Институт первым принял девушек для обучения в 1920.
+        \end{edXsolution}
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \subsection{Пример задачи "custom response" - настраиваемый ответ}
+        В этой задаче настраиваемый скрипт на Python определяет, является ли ответ правильным.
+        \begin{edXscript}
+        def sumtest(expect,ans):
+            (a1,a2) = map(float,eval(ans))
+            return (a1+a2)==10
+        \end{edXscript}
+
+        Введите на Python список пар чисел, сумма которых равна 10. Например, ваш ответ может быть [9,1] или [4,6].
+
+        \edXabox{expect="[1,9]" type="custom" cfn="sumtest"}
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \subsection{Пример графический образ}
+
+        Включите графический образ, используя следующий макрос:
+
+        \edXxml{<img src="https://courses.edx.org/static/images/placeholder-image.png"/>}
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \subsection{Пример "show/hide explanation" - показать/скрыть объяснение}
+
+        Вы можете использовать дополнительную информацию, которая будет появляться лишь в определённое время по включённому флагу "showhide".
+
+        \edXshowhide{sh1}{Больше объяснений}{Это скрытое объяснение. Оно
+        может содержать уравнения, например $\alpha = \frac{2}{\sqrt{1+\gamma}}$ }.
+
+        Это дополнительный текст после скрытого объяснения.
+    markdown: !!null
+
+data: |
+    <?xml version="1.0"?>
+    <problem>
+      <p>
+          Если у вас уже есть задача, написанная на LaTeX, вы можете использовать такой тип задач,
+      чтобы легко преобразовать ваш код в XML. После того, как вы вставите свой код в редакторе LaTeX, 
+      нужно будет произвести некоторые настройки.</p>
+      <p>Подробнее смотрите раздел 
+          <a href="http://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/problem_in_latex.html" target="_blank">
+          Problem Written in LaTeX</a> в руководстве <i>Building and Running an edX Course</i>.
+      </p>
+      <p>Можно использовать приведенную ниже задачу как образец.</p>
+      <p><strong>Пример задачи с выбором (option) </strong></p>
+      <br/>
+      <optionresponse>
+        <label>>Какая из стран празднует свою независимость 15 августа?</label>
+        <optioninput options="('Индия','Испания','Китай','Бермуды')" correct="Индия"></optioninput>
+        <solution>
+          <div class="detailed-solution">
+            <p>Пояснение</p>
+            <p>Индия стала независимой 15 августа 1947 г.</p>
+          </div>
+        </solution>
+      </optionresponse>
+      <br/>
+      <p><strong>Пример задачи с множественным выбором (Multiple Choice)</strong></p>
+      <multiplechoiceresponse>
+        <label>В какой стране самое большое население?</label>
+        <choicegroup type="MultipleChoice">
+          <choice correct="false" name="brazil">Бразилия</choice>
+          <choice correct="false" name="germany">Германия</choice>
+          <choice correct="true" name="indonesia">Индонезия</choice>
+          <choice correct="false" name="russia">Россия</choice>
+        </choicegroup>
+        <solution>
+          <div class="detailed-solution">
+            <p>Пояснение</p>
+            <p>Согласно оценкам на сентябрь 2014 года:</p>
+            <p>Население Индонезии примерно 250 миллионов.</p>
+            <p>Население Бразилии примерно 200 миллионов.</p>
+            <p>Население России примерно 146 миллионов.</p>
+            <p>Население Германии примерно 81 миллион.</p>
+          </div>
+        </solution>
+      </multiplechoiceresponse>
+      <br/>
+      <p><strong>Пример задачи с математическим выражением (Math Expression)</strong></p>
+      <symbolicresponse expect="m*c^2">
+        <p>Напишите уравнение Эйнштейна, описывающее соотношение массы и энергии[mathjaxinline]m[/mathjaxinline]?</p>
+        <textline size="90" correct_answer="m*c^2" math="1"/>
+      </symbolicresponse>
+      <br/>
+      <p><strong>Пример задачи с числовым ответом (Numerical)</strong></p>
+      <numericalresponse inline="1" answer="49.98">
+        <label>Сколько рублей останется у Пети, если из своих 100р. он раздаст 50.02р.</label>
+        <formulaequationinput trailing_text="р." />
+        <responseparam type="tolerance" default="0.02"/>
+      </numericalresponse>
+      <br/>
+      <p><strong>Пример задачи с заполнением пустот (Fill-in-the Blank)</strong></p>
+      <stringresponse answer="Нанкинский Нормальный Институт" type="ci" >
+        <label>В каком учебном заведении Китая впервые было разрешено совместное обучение юношей и девушек?</label>
+        <additional_answer>Национальный Центральный Университет</additional_answer>
+        <additional_answer>Нанкинский Университет</additional_answer>
+        <textline size="40"/>
+        <solution>
+          <div class="detailed-solution">
+            <p>Пояснение</p>
+            <p>Нанкинский Нормальный Институт первым принял девушек для обучения в 1920 г.</p>
+          </div>
+        </solution>
+      </stringresponse>
+      <br/>
+      <p><strong>Пример задачи с настраиваемым ответом (Custom Python-Evaluated Input)</strong></p>
+      <customresponse cfn="test_add_to_ten">
+        <script type="loncapa/python">
+    def test_add_to_ten(expect, ans):
+        return test_add(10, ans)
+      </script>
+        <p>Введите два целых числа, которые в сумме составляют 10.</p>
+        <textline size="40" correct_answer="3"/><br/>
+        <textline size="40" correct_answer="7"/>
+        <solution>
+          <div class="detailed-solution">
+            <p>Пояснение</p>
+            <p>Подходят любые целые числа, удовлетворящие условию \(y = 10 - x\).</p>
+          </div>
+        </solution>
+      </customresponse>
+
+      <customresponse cfn="test_add" expect="20">
+        <script type="loncapa/python">
+    def test_add(expect, ans):
+        try:
+            a1=int(ans[0])
+            a2=int(ans[1])
+            return (a1+a2) == int(expect)
+        except ValueError:
+            return False
+      </script>
+        <p>Введите два целых числа, которые в сумме составляют 20.</p>
+        <textline size="40" correct_answer="11"/><br/>
+        <textline size="40" correct_answer="9"/>
+        <solution>
+          <div class="detailed-solution">
+            <p>Пояснение</p>
+            <p>Подходят любые целые числа, удовлетворящие условию \(y = 20 - x\).</p>
+            <p>Чтобы добавить изображение, используйте HTML-тег "img" . Обязательно заполните текст тега всплывающей подсказки (alt).</p>
+            <img src="/static/images/placeholder-image.png" width="400" alt="описание изображения"/>
+          </div>
+        </solution>
+      </customresponse>
+      <br/>
+
+      <p><strong>Пример задачи "работа с картой"</strong></p>
+      <imageresponse>
+        <p>
+          В какой стране находятся пирамиды Гизы и город Каир?
+          Нажмите на изображении страны на карте.
+        </p>
+        <imageinput src="https://studio.edx.org/c4x/edX/DemoX/asset/Africa.png"
+        width="600" height="638" rectangle="(338,98)-(412,168)" alt="Карта Африки"/>
+        <solution>
+          <div class="detailed-solution">
+            <p>Пояснение</p>
+            <p>В Египте находятся не только пирамиды и Каир, но также Сфинкс.</p>
+          </div>
+        </solution>
+      </imageresponse>
+      <br/>
+
+      <p><strong>Пример скрытого объяснени</strong></p>
+      <p>Вы можете использовать дополнительную информацию, которая будет появляться лишь в определённое время по включённому флагу "showhide". </p>
+      <p>
+        <table class="wikitable collapsible collapsed">
+          <tbody>
+            <tr>
+              <th> Больше информации [<a href="javascript:$('#sh1').toggle()" id="sh1l">show</a>]</th>
+            </tr>
+            <tr id="sh1" style="display:none">
+              <td>
+                <p>Это скрытое объяснение. Оно может содержать может содержать уравнения, например [mathjaxinline]\alpha = \frac{2}{\sqrt {1+\gamma }}[/mathjaxinline].  </p>
+                <p>Это дополнительный текст после скрытого объяснения. </p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </p>
+    </problem>

@@ -1,0 +1,68 @@
+---
+metadata:
+    display_name: Пользовательские задачи с Javascript
+    markdown: !!null
+    showanswer: never
+data: |
+      <problem>
+          <p>
+              Этот вид задач (также называемых задачами типа "Custom JavaScript" или задачами "JS Input") позволяет добавить в Studio задачу или инструмент, использующий JavaScript.
+        Studio встраивает задачу в IFrame, что обеспечивает интерактивное взаимодействие между учащимися и LMS. 
+        Оценивать работу учащихся можно с использованием JavaScript и некоторых базовых выражений на языке Python, при этом оценивание интегрировано с системой оценивания edX.
+          </p>
+          <p>
+               В задачах JS Input должны использоваться HTML, JavaScript и CSS. 
+         Для создания задач этого типа можно использовать Google Web Toolkit (GWT) или подобные инструменты.
+          </p>
+          <p>
+              Подробнее смотрите раздел 
+              <a href="http://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/custom_javascript.html" target="_blank">
+              Custom JavaScript Problem</a> в руководстве <i>Building and Running an edX Course</i>.
+          </p>
+          <p>
+              JavaScript разработчики могут также посмотреть раздел 
+              <a href="http://edx.readthedocs.io/projects/edx-developer-guide/en/latest/extending_platform/javascript.html" target="_blank">
+              Custom JavaScript Applications</a> в руководстве <i>EdX Developer's Guide</i>.
+          </p>
+          <p>
+              При использовании данного типа задач обязательно выберите <strong>Настройки</strong> для отображения правильного названия вопроса и других значений.
+        Также удостоверьтесь в заполнении атрибута <strong>title</strong> в теге <strong>jsinput</strong>, который используется для создаваемого IFrame.
+        В общем случае он должен соответствовать тегу title файла HTML, который размещается внутри IFrame и указан в атрибуте <strong>html_file</strong>.
+          </p>
+          <p>Можно использовать приведенную ниже задачу как образец.</p>
+          <customresponse cfn="check_function">
+      <script type="loncapa/python">
+      <![CDATA[
+      import json
+      def check_function(e, ans):
+        """
+        "response" - словарь из ключей "answer" и "state".
+        Значение ключа "answer" (ответ) - это строка JSON, возвращаемая методом "getGrade".
+        Значение ключа "state" (состояние) - это строка JSON, возвращаемая методом "getState".
+        Текущее состояние записывается при нажатии "Submit" (проверить) или "Save" (сохранить).
+        """
+        response = json.loads(ans)
+        # Вы можете использовать для оценивания значение, указанное в ключе ответа:
+        answer = json.loads(response["answer"])
+        return answer == "correct"
+
+        # Или же вы можете использовать для оценивания значение ключа состояния:
+        """
+        state = json.loads(response["state"])
+        return state["selectedChoice"] == "correct"
+        """
+      ]]>
+      </script>
+            <p>Этот текст показывается до IFrame.</p>
+            <jsinput
+              gradefn="JSInputDemo.getGrade"
+              get_statefn="JSInputDemo.getState"
+              set_statefn="JSInputDemo.setState"
+              initial_state='{"selectedChoice": "incorrect1", "availableChoices": ["incorrect1", "correct", "incorrect2"]}'
+              width="600"
+              height="100"
+              html_file="https://files.edx.org/custom-js-example/jsinput_example.html"
+              title="Выпадающий список с динамическим текстом"
+              sop="false"/>
+          </customresponse>
+      </problem>
