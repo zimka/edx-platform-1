@@ -1700,15 +1700,15 @@ msgstr ""
 
 #: common/lib/capa/capa/responsetypes.py
 msgid "Correct:"
-msgstr ""
+msgstr "Верно:"
 
 #: common/lib/capa/capa/responsetypes.py
 msgid "Incorrect:"
-msgstr ""
+msgstr "Неверно:"
 
 #: common/lib/capa/capa/responsetypes.py
 msgid "Answer"
-msgstr ""
+msgstr "Ответ"
 
 #: common/lib/capa/capa/responsetypes.py
 msgid "Error {err} in evaluating hint function {hintfn}."
@@ -2257,34 +2257,35 @@ msgstr "Подсказка ({hint_num} из {hints_count}): "
 msgid ""
 "Your answers were previously saved. Click '{button_name}' to grade them."
 msgstr ""
+"Ваш ответ был сохранён ранее. Нажмите '{button_name}' для его оценки."
 
 #: common/lib/xmodule/xmodule/capa_base.py
 msgid "Incorrect ({progress} point)"
 msgid_plural "Incorrect ({progress} points)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Неверно ({progress}) баллов"
+msgstr[1] "Неверно ({progress}) баллов"
+msgstr[2] "Неверно ({progress}) баллов"
+msgstr[3] "Неверно ({progress}) баллов"
 
 #: common/lib/xmodule/xmodule/capa_base.py
 msgid "Correct ({progress} point)"
 msgid_plural "Correct ({progress} points)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Верно ({progress}) баллов"
+msgstr[1] "Верно ({progress}) баллов"
+msgstr[2] "Верно ({progress}) баллов"
+msgstr[3] "Верно ({progress}) баллов"
 
 #: common/lib/xmodule/xmodule/capa_base.py
 msgid "Partially correct ({progress} point)"
 msgid_plural "Partially correct ({progress} points)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Частично верно ({progress}) баллов"
+msgstr[1] "Частично верно ({progress}) баллов"
+msgstr[2] "Частично верно ({progress}) баллов"
+msgstr[3] "Частично верно ({progress}) баллов"
 
 #: common/lib/xmodule/xmodule/capa_base.py
 msgid "Partially Correct"
-msgstr ""
+msgstr "Частично верно"
 
 #. Translators: 'closed' means the problem's due date has passed. You may no
 #. longer attempt to solve the problem.
@@ -2294,7 +2295,7 @@ msgstr "Срок сдачи задания прошёл."
 
 #: common/lib/xmodule/xmodule/capa_base.py
 msgid "Problem must be reset before it can be submitted again."
-msgstr ""
+msgstr "Необходимо сбросить попытку перед повторной отправкой."
 
 #: common/lib/xmodule/xmodule/capa_base.py
 msgid "You must wait at least {wait} seconds between submissions."
@@ -24970,3 +24971,6 @@ msgstr "Пользователь не записан на курс"
 
 msgid " (forbidden by PLP: {plp_reason})"
 msgstr " (запрещено PLP: {plp_reason})"
+
+msgid "Course team have to specified Proctoring Service before you will have ability to pass this exam"
+msgstr "Прохождение данного экзамена будет доступно после того, как команда курса выберет для него прокторинговую систему"

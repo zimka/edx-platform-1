@@ -393,20 +393,20 @@ msgstr "Ответить на пояснение"
 #: common/lib/xmodule/xmodule/js/src/capa/display.js
 msgid "%(num_points)s point possible (graded)"
 msgid_plural "%(num_points)s points possible (graded)"
-msgstr[0] "%(num_points)s балл возможен (оценивается)"
-msgstr[1] "%(num_points)s балла возможно (оценивается)"
-msgstr[2] "%(num_points)s балла возможно (оценивается)"
-msgstr[3] "%(num_points)s баллов возможно (оценивается)"
+msgstr[0] "%(num_points)s возможный балл (оценивается)"
+msgstr[1] "%(num_points)s возмыжных балла (оценивается)"
+msgstr[2] "%(num_points)s возможных баллов (оценивается)"
+msgstr[3] "%(num_points)s возможных баллов  (оценивается)"
 
 #. Translators: %(num_points)s is the number of points possible (examples: 1,
 #. 3, 10).;
 #: common/lib/xmodule/xmodule/js/src/capa/display.js
 msgid "%(num_points)s point possible (ungraded)"
 msgid_plural "%(num_points)s points possible (ungraded)"
-msgstr[0] "%(num_points)s балл возможен (не оценивается)"
-msgstr[1] "%(num_points)s балла возможно (не оценивается)"
-msgstr[2] "%(num_points)s балла возможно (не оценивается)"
-msgstr[3] "%(num_points)s балла возможно (не оценивается)"
+msgstr[0] "%(num_points)s возможный балл (не оценивается)"
+msgstr[1] "%(num_points)s возможных балла (не оценивается)"
+msgstr[2] "%(num_points)s возможных баллов (не оценивается)"
+msgstr[3] "%(num_points)s возможных баллов  (не оценивается)"
 
 #. Translators: %(earned)s is the number of points earned. %(possible)s is the
 #. total number of points (examples: 0/1, 1/1, 2/3, 5/10). The total number of
@@ -2027,7 +2027,7 @@ msgstr ""
 msgid ""
 "Your request could not be completed. Reload the page and try again. If the "
 "issue persists, click the Help tab to report the problem."
-msgstr ""
+msgstr "Не удалось выполнить ваш запрос.  Перезагрузите страницу и попробуйте ещё раз."
 
 #: common/static/common/js/components/views/paging_header.js
 msgid "Showing {firstIndex} out of {numItems} total"
@@ -2183,12 +2183,13 @@ msgstr ""
 
 #: common/static/common/js/discussion/views/discussion_thread_view.js
 msgid "Responses could not be loaded. Refresh the page and try again."
-msgstr ""
+msgstr "Не удалось загрузить сообщения. Перезагрузите страницу и попробуйте ещё раз."
 
 #: common/static/common/js/discussion/views/discussion_thread_view.js
 msgid ""
 "Additional responses could not be loaded. Refresh the page and try again."
 msgstr ""
+"Не удалось загрузить новые сообщения. Перезагрузите страницу и попробуйте ещё раз."
 
 #: common/static/common/js/discussion/views/discussion_thread_view.js
 msgid "{numResponses} other response"
@@ -5869,11 +5870,11 @@ msgstr ""
 
 #: cms/static/js/views/utils/move_xblock_utils.js
 msgid "Undo move"
-msgstr ""
+msgstr "Отменить перемешение"
 
 #: cms/static/js/views/utils/move_xblock_utils.js
 msgid "Take me to the new location"
-msgstr ""
+msgstr "Переместить в новое место"
 
 #: cms/static/js/views/utils/xblock_utils.js
 msgid "Duplicating"
@@ -5881,15 +5882,15 @@ msgstr "Копирование"
 
 #: cms/static/js/views/utils/xblock_utils.js
 msgid "Undo moving"
-msgstr ""
+msgstr "Отменить перемещение"
 
 #: cms/static/js/views/utils/xblock_utils.js
 msgid "Moving"
-msgstr ""
+msgstr "Переместить"
 
 #: cms/static/js/views/utils/xblock_utils.js
 msgid "Deleting this {xblock_type} is permanent and cannot be undone."
-msgstr ""
+msgstr "Удаление компонента {xblock_type} не может быть отменено!"
 
 #: cms/static/js/views/utils/xblock_utils.js
 msgid ""
@@ -5901,15 +5902,15 @@ msgstr ""
 
 #: cms/static/js/views/utils/xblock_utils.js
 msgid "Delete this {xblock_type} (and prerequisite)?"
-msgstr ""
+msgstr "Удалить этот {xblock_type} (и всё содержимое?)"
 
 #: cms/static/js/views/utils/xblock_utils.js
 msgid "Yes, delete this {xblock_type}"
-msgstr ""
+msgstr "Да, удалить этот {xblock_type}"
 
 #: cms/static/js/views/utils/xblock_utils.js
 msgid "Delete this {xblock_type}?"
-msgstr ""
+msgstr "Удалить этот {xblock_type}?"
 
 #: cms/static/js/views/utils/xblock_utils.js
 msgid "section"
@@ -6008,7 +6009,7 @@ msgstr "Настройки"
 
 #: cms/static/js/views/xblock_outline.js
 msgid "New {component_type}"
-msgstr ""
+msgstr "Новый {component_type}"
 
 #. Translators: This message will be added to the front of messages of type
 #. warning,
@@ -6070,16 +6071,16 @@ msgstr "Отдалить"
 
 #: common/static/common/templates/sequence-breadcrumbs.underscore
 msgid "Return to course outline"
-msgstr ""
+msgstr "Вернуться к схеме курса"
 
 #: common/static/common/templates/sequence-breadcrumbs.underscore
 msgid "Outline"
-msgstr ""
+msgstr "Схема"
 
 #: common/static/common/templates/components/paging-footer.underscore
 #, python-format
 msgid "Page number out of %(total_pages)s"
-msgstr ""
+msgstr "Страница из %(total_pages)s"
 
 #: common/static/common/templates/components/paging-footer.underscore
 msgid "Enter the page number you'd like to quickly navigate to."
@@ -6151,7 +6152,7 @@ msgstr "Загрузить ещё"
 
 #: common/static/common/templates/discussion/new-post-alert.underscore
 msgid "Error posting your message."
-msgstr ""
+msgstr "Ошибка в процессе публикации сообщения."
 
 #: common/static/common/templates/discussion/new-post.underscore
 msgid "Add a Post"
@@ -6159,7 +6160,7 @@ msgstr "Добавить сообщение"
 
 #: common/static/common/templates/discussion/new-post.underscore
 msgid "Visible to"
-msgstr ""
+msgstr "Видим для"
 
 #: common/static/common/templates/discussion/new-post.underscore
 msgid ""
@@ -6179,10 +6180,11 @@ msgstr "Все группы"
 msgid ""
 "Add a clear and descriptive title to encourage participation. (Required)"
 msgstr ""
+"Придумайте четкий и понятный заголовок"
 
 #: common/static/common/templates/discussion/new-post.underscore
 msgid "Your question or idea (required)"
-msgstr ""
+msgstr "Ваш вопрос или идея"
 
 #: common/static/common/templates/discussion/new-post.underscore
 msgid "follow this post"
@@ -6205,11 +6207,11 @@ msgstr "Отправить"
 
 #: common/static/common/templates/discussion/post-user-display.underscore
 msgid "(Community TA)"
-msgstr ""
+msgstr "(Староста ообщества)"
 
 #: common/static/common/templates/discussion/post-user-display.underscore
 msgid "(Staff)"
-msgstr ""
+msgstr "(Команда Курса)"
 
 #: common/static/common/templates/discussion/profile-thread.underscore
 #: common/static/common/templates/discussion/thread.underscore
@@ -6245,7 +6247,7 @@ msgstr "Редактирование сообщения"
 
 #: common/static/common/templates/discussion/thread-edit.underscore
 msgid "Edit your post below."
-msgstr ""
+msgstr "Отредактируйте ваше сообщение"
 
 #: common/static/common/templates/discussion/thread-edit.underscore
 msgid "Update post"
@@ -6357,13 +6359,14 @@ msgstr "Данное сообщение видно всем."
 
 #: common/static/common/templates/discussion/thread-type.underscore
 msgid "Post type"
-msgstr ""
+msgstr "Тип"
 
 #: common/static/common/templates/discussion/thread-type.underscore
 msgid ""
 "Questions raise issues that need answers. Discussions share ideas and start "
 "conversations. (Required)"
 msgstr ""
+"Вопрос - что-то непонятное в процессе прохождения курса. Обсуждение - есть идеи или предложения."
 
 #: common/static/common/templates/discussion/thread-type.underscore
 msgid "Question"
@@ -6383,11 +6386,11 @@ msgstr "Ответить:"
 
 #: common/static/common/templates/discussion/topic.underscore
 msgid "Topic area"
-msgstr ""
+msgstr "Раздел для темы"
 
 #: common/static/common/templates/discussion/topic.underscore
 msgid "Add your post to a relevant topic to help others find it. (Required)"
-msgstr ""
+msgstr "Укажите релевантный раздел для удобства поиска другими участниками"
 
 #: lms/djangoapps/discussion/static/discussion/templates/discussion-home.underscore
 msgid "Discussion Home"
@@ -6449,7 +6452,7 @@ msgstr ""
 
 #: lms/djangoapps/discussion/static/discussion/templates/user-profile.underscore
 msgid "All Posts"
-msgstr ""
+msgstr "Все сообщения"
 
 #: lms/djangoapps/support/static/support/templates/certificates.underscore
 msgid "username or email"
@@ -9733,3 +9736,12 @@ msgstr "При отписке с курса произошла ошибка"
 
 msgid "There was an error processing:"
 msgstr "При обработке произошла ошибка"
+
+msgid "Bookmark this page"
+msgstr "Добавить в закладки"
+
+msgid  "You are taking \"{exam_link}\" as a {exam_type} exam. The timer on the right shows the time remaining in the exam."
+msgstr "Вы проходите \"{exam_link}\" как {exam_type}. Справа отображается оставшееся время док конца экзамена"
+
+msgid "discussion posted %(time_ago)s by %(author)s'"
+msgstr "опубликовано %(time_ago)s пользователем %(author)s'"
