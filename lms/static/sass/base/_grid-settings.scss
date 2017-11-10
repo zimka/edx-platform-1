@@ -15,6 +15,7 @@ $bp-small: new-breakpoint(min-width 321px max-width 540px, 4);
 $bp-medium: new-breakpoint(min-width 541px max-width 768px, 8);
 $bp-large: new-breakpoint(min-width $large-min-width max-width 979px, 12);
 $bp-huge:  new-breakpoint(min-width 980px 12);
+$bp-zerohuge: new-breakpoint(min-width 320px max-width 979px);
 
 // edX-centric breakpoints (to be temporarily used with edx.org features only)
 $edx-bp-tiny: new-breakpoint(max-width 320px 4);
