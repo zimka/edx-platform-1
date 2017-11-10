@@ -1035,3 +1035,11 @@ if settings.FEATURES.get('ENABLE_FINANCIAL_ASSISTANCE_FORM'):
             name='submit_financial_assistance_request'
         )
     )
+if settings.FEATURES.get("ENABLE_COURSE_SHIFTS"):
+    urlpatterns += (
+        url(r'^course_shifts/',
+            include(
+                'course_shifts.urls',
+                namespace="course_shifts")
+            ),
+    )

@@ -128,7 +128,7 @@ from openedx.core.djangoapps.user_api.preferences import api as preferences_api
 from openedx.core.djangoapps.programs.utils import get_programs_for_dashboard, get_display_category
 from openedx.core.djangoapps.programs.models import ProgramsApiConfig
 from openedx.core.djangoapps.theming import helpers as theming_helpers
-
+from course_shifts import CourseShiftManager
 
 log = logging.getLogger("edx.student")
 AUDIT_LOG = logging.getLogger("audit")
@@ -1025,6 +1025,7 @@ def change_enrollment(request, check_access=True):
         )
         return HttpResponseBadRequest(_("Invalid course id"))
 
+    course_shift_name = request.POST.get("course_shift")
     if action == "enroll":
         # Make sure the course exists
         # We don't do this check on unenroll, or a bad course id can't be unenrolled from
@@ -1065,6 +1066,10 @@ def change_enrollment(request, check_access=True):
             try:
                 enroll_mode = CourseMode.auto_enroll_mode(course_id, available_modes)
                 if enroll_mode:
+                    if course_shift_name:
+                        shift_manager = CourseShiftManager(course_id)
+                        shift = shift_manager.get_shift(course_shift_name)
+                        shift_manager.enroll_user(user, shift)
                     CourseEnrollment.enroll(user, course_id, check_access=check_access, mode=enroll_mode)
             except Exception:  # pylint: disable=broad-except
                 return HttpResponseBadRequest(_("Could not enroll"))

@@ -182,6 +182,10 @@ setup_instructor_dashboard_sections = (idash_content) ->
   ,
     constructor: window.InstructorDashboard.sections.Certificates
     $element: idash_content.find ".#{CSS_IDASH_SECTION}#certificates"
+  ,
+    constructor: window.InstructorDashboard.sections.CourseShifts
+    $element: idash_content.find ".#{CSS_IDASH_SECTION}#course_shifts"
+
   ]
   # proctoring can be feature disabled
   if edx.instructor_dashboard.proctoring != undefined

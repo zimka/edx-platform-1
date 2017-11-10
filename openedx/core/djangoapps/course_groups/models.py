@@ -42,7 +42,8 @@ class CourseUserGroup(models.Model):
     # For now, only have group type 'cohort', but adding a type field to support
     # things like 'question_discussion', 'friends', 'off-line-class', etc
     COHORT = 'cohort'  # If changing this string, update it in migration 0006.forwards() as well
-    GROUP_TYPE_CHOICES = ((COHORT, 'Cohort'),)
+    SHIFT = 'shift'
+    GROUP_TYPE_CHOICES = ((COHORT, 'Cohort'), (SHIFT, "Shift"))
     group_type = models.CharField(max_length=20, choices=GROUP_TYPE_CHOICES)
 
     @classmethod
