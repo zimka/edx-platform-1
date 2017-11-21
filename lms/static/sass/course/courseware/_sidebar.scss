@@ -50,6 +50,16 @@
                         font-size: $body-font-size;
                         color: $gray-l3;
                     }
+
+                    @include media($bp-zerohuge) {
+                        padding: 15px;
+                        font-size: 14px;
+                        overflow: hidden;
+
+                        .icon {
+                            left: 5px;
+                        }
+                    }
                 }
 
                 &.is-open {
@@ -101,6 +111,10 @@
                             border-radius: ($baseline/4);
                             font-family: $sans-serif;
                             color: $base-font-color;
+                            @include media($bp-zerohuge) {
+                                font-size: 13px;
+                                padding: 0;
+                            }
 
                             p {
 
