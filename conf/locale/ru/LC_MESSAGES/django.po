@@ -2,7 +2,7 @@
 # edX community translations have been downloaded from Russian (http://www.transifex.com/open-edx/edx-platform/language/ru/).
 # Copyright (C) 2017 EdX
 # This file is distributed under the GNU AFFERO GENERAL PUBLIC LICENSE.
-# 
+#
 # Translators:
 # Alexandr Kosharny <acosarnii@gmail.com>, 2016
 # Andrey Bochkarev <abocha@ya.ru>, 2015
@@ -57,7 +57,7 @@
 # edX translation file.
 # Copyright (C) 2017 EdX
 # This file is distributed under the GNU AFFERO GENERAL PUBLIC LICENSE.
-# 
+#
 # Translators:
 # AndyZ <Andrey.Zakhvatov@gmail.com>, 2014
 # Андрей Сандлер <inactive+asandler@transifex.com>, 2013
@@ -79,7 +79,7 @@
 # edX community translations have been downloaded from Russian (http://www.transifex.com/open-edx/edx-platform/language/ru/)
 # Copyright (C) 2017 edX
 # This file is distributed under the GNU AFFERO GENERAL PUBLIC LICENSE.
-# 
+#
 # Translators:
 # Alexandr Kosharny <acosarnii@gmail.com>, 2016
 # Andrey Bochkarev <abocha@ya.ru>, 2015
@@ -144,7 +144,7 @@
 # edX translation file
 # Copyright (C) 2017 edX
 # This file is distributed under the GNU AFFERO GENERAL PUBLIC LICENSE.
-# 
+#
 # Translators:
 # Alena Koneva <alenakoneva@ya.ru>, 2014
 # Alexander Averyanov <olexandr.averyanov@gmail.com>, 2015
@@ -181,7 +181,7 @@
 # edX translation file
 # Copyright (C) 2017 edX
 # This file is distributed under the GNU AFFERO GENERAL PUBLIC LICENSE.
-# 
+#
 # Translators:
 # AndyZ <Andrey.Zakhvatov@gmail.com>, 2014
 # Liubov Fomicheva <liubov.nelapa@gmail.com>, 2015-2016
@@ -14928,7 +14928,7 @@ msgstr "Все темы"
 #. Translators: This is a menu option for showing only unread forum threads
 #: lms/templates/discussion/_thread_list_template.html
 msgid "Unread posts"
-msgstr "Непроочитанные темы"
+msgstr "Непрочитанные темы"
 
 #. Translators: This is a menu option for showing only unanswered forum
 #. question threads
