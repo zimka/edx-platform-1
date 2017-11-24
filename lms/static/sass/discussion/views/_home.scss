@@ -1,14 +1,21 @@
 // discussion - views - home layout
 // ====================
 
+// temp discussion nav style (todo add <%static:css group='style-main-v2'/>)
+body.view-in-course  {
+  .wrapper-course-material .course-material {
+    padding: 10px 0 0 0;
+  }
+}
 // temp discussion title style (todo add to _headings.scss)
-.hd-2 {
+.hd-5 {
   &.coursename-title {
-    padding: 25px 15px;
-    font-size: 1.5em;
+    padding: 3px 0;
+    font-size: 1.1em;
     font-weight: 600;
     line-height: 1.4em;
-    margin: 0;
+    margin-top: 0;
+    margin-bottom: 0;
   }
 }
 
