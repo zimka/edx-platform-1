@@ -5,6 +5,7 @@
     define([
         'underscore',
         'backbone',
+        'gettext',
         'edx-ui-toolkit/js/utils/html-utils',
         'edx-ui-toolkit/js/utils/constants',
         'common/js/discussion/utils',
@@ -13,7 +14,7 @@
         'discussion/js/views/discussion_search_view',
         'text!discussion/templates/discussion-home.underscore'
     ],
-    function(_, Backbone, HtmlUtils, Constants, DiscussionUtil,
+    function(_, Backbone, gettext, HtmlUtils, Constants, DiscussionUtil,
         DiscussionThreadListView, DiscussionFakeBreadcrumbs, DiscussionSearchView, discussionHomeTemplate) {
         var DiscussionBoardView = Backbone.View.extend({
             events: {
@@ -125,7 +126,7 @@
                 if (event.which === Constants.keyCodes.enter || event.type === 'click') {
                     event.preventDefault();
                     this.hideBrowseMenu();
-                    this.breadcrumbs.model.set('contents', ['Search Results']);
+                    this.breadcrumbs.model.set('contents', [gettext('Search Results')]);
                     this.discussionThreadListView.performSearch($('.search-input', this.$el));
                 }
             },
