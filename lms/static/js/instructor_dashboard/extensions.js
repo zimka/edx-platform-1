@@ -39,7 +39,7 @@
                         return ext.display_response('set-extension', data);
                     },
                     error: function(xhr) {
-                        return ext.fail_with_error('set-extension', 'Error changing due date', xhr);
+                        return ext.fail_with_error('set-extension', gettext('Error changing due date'), xhr);
                     }
                 });
             });
@@ -61,7 +61,7 @@
                         return ext.display_response('reset-extension', data);
                     },
                     error: function(xhr) {
-                        return ext.fail_with_error('reset-extension', 'Error reseting due date', xhr);
+                        return ext.fail_with_error('reset-extension', gettext('Error reseting due date'), xhr);
                     }
                 });
             });
@@ -80,7 +80,7 @@
                     url: url,
                     data: sendData,
                     error: function(xhr) {
-                        return ext.fail_with_error('view-granted-extensions', 'Error getting due dates', xhr);
+                        return ext.fail_with_error('view-granted-extensions', gettext('Error getting due dates'), xhr);
                     },
                     success: function(data) {
                         return ext.display_grid(data);
@@ -102,7 +102,7 @@
                     url: url,
                     data: sendData,
                     error: function(xhr) {
-                        return ext.fail_with_error('view-granted-extensions', 'Error getting due dates', xhr);
+                        return ext.fail_with_error('view-granted-extensions', gettext('Error getting due dates'), xhr);
                     },
                     success: function(data) {
                         return ext.display_grid(data);
