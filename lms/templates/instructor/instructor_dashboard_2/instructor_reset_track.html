@@ -1,0 +1,37 @@
+<%page args="section_data" expression_filter="h"/>
+<%!
+from django.utils.translation import ugettext as _
+from datetime import datetime, timedelta
+import pytz
+%>
+<div>
+<div class="instructor-reset-track-container action-type-container">
+    <h3 class="hd hd-3">${_('Instructor Resets')}</h3>
+    <p></p>
+    <div id="instructor-reset-track-table">
+        <input type="text" name="instructor-reset-track-username-filter" maxlength="55" size="25" placeholder="${_("Student Username")}">
+        <button class="button apply-username-filter-button">${_("Apply username filter")}</button>
+        <div class="request-response-error"></div>
+        <br/>
+        <table>
+            <thead>
+            <tr>
+                <th style="width: 15%;"> ${_("Instructor")} </th>
+                <th style="width: 15%;"> ${_("Student")} </th>
+                <th> ${_("Problem location")}</th>
+                <th style="width: 10%;"> ${_("Action")} </th>
+                <th> ${_("Response")} </th>
+                <th style="width: 15%;"> ${_("Time")} </th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <button class="button prev-button disabled">${_("Previous")}</button>
+        <button class="button next-button" value="${section_data['instructor_resets_url']}">${_("Next")}</button>
+        <div class="table-pages"></div>
+
+        <input class="default-api-url" type="hidden" value="${section_data['instructor_resets_url']}">
+    </div>
+</div>
+</div>
