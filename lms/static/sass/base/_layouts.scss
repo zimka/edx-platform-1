@@ -7,9 +7,10 @@ body.view-in-course {
   background-color: $body-bg;
 
   // keep application of widths to window-wrap
-  .window-wrap {
+  // hide the limit for mobile view 
+  /* .window-wrap {
     min-width: 760px;
-  }
+  } */
 
   // courseware header
   .header-global,
