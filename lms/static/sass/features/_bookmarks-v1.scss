@@ -14,7 +14,6 @@ $bookmarked-icon: "\f02e"; // .fa-bookmark
 
 // Rules for Bookmarks Button
 .courseware-bookmarks-button {
-  width: flex-grid(5);
   vertical-align: top;
 
   .bookmarks-list-button {
@@ -25,10 +24,15 @@ $bookmarked-icon: "\f02e"; // .fa-bookmark
     @include font-size(13);
     width: 100%;
     padding: ($baseline/4) ($baseline/2);
+    white-space: nowrap;
 
     &:before {
       content: $bookmarked-icon;
       font-family: FontAwesome;
+    }
+
+    @media (max-width: 677px) {
+      padding: ($baseline/4);
     }
   }
 }

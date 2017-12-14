@@ -173,6 +173,11 @@
     .grade-detail-graph {
       min-height: 400px;
       width: 100%;
+      display: block;
+      // hide canvas on small screens
+      @media (max-width: 1200px) { 
+        display: none;
+      }
     }
     
     .grade-category-detail {
