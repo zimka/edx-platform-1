@@ -30,11 +30,23 @@ $bookmarked-icon: "\f02e"; // .fa-bookmark
       content: $bookmarked-icon;
       font-family: FontAwesome;
     }
+  }
 
-    @media (max-width: 677px) {
+  @media (max-width: 677px) {
+    width: 100%;
+    .bookmarks-list-button {
       padding: ($baseline/4);
+      display: inline-block;
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      &:before {
+        display: none;
+      }
     }
   }
+
+
 }
 
 // Rules for bookmark icon shown on each sequence nav item
