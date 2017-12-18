@@ -18,7 +18,7 @@ class ExamSessionSet:
 
     @property
     def sessions(self):
-        return self._sessions.values()
+        return set(self._sessions.values())
 
     @property
     def exam_duration(self):
@@ -38,6 +38,15 @@ class ExamSessionSet:
 
     def is_suspicious(self):
         return len(self._sessions) > 1
+
+    def pretty_repr(self):
+        date_keys = sorted(self._sessions.keys())
+        data = self._sessions
+        template = "At {date}: {ip}('{session_key}')"
+        return "\n".join(
+            template.format(date=k, ip=data[k].ip, session_key=data[k].key)
+            for k in date_keys
+        )
 
     @classmethod
     def from_json(cls, serial):
@@ -67,6 +76,11 @@ class ExamSessionSet:
             if other._sessions[key] not in combined_dict.values():
                 combined_dict[key] = other._sessions[key]
         return ExamSessionSet(combined_dict)
+
+    def __eq__(self, other):
+        if not isinstance(other, ExamSessionSet):
+            raise TypeError("Can't compare with {}, only with ExamSessionSet".format(type(other)))
+        return self.sessions == other.sessions
 
 
 def _get_client_ip(request):
