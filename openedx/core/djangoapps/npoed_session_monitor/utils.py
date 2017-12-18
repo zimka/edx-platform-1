@@ -11,19 +11,12 @@ class ExamSessionSet:
     """
     Contains info about user sessions: when it was observed, session key and IP-address
     """
-    EXAM_DURATION_DEFAULT = 3600
-
     def __init__(self, sessions_dict={}):
         self._sessions = sessions_dict
 
     @property
     def sessions(self):
         return set(self._sessions.values())
-
-    @property
-    def exam_duration(self):
-        # TODO: we need to keep exam's duration in the instance or elsewhere
-        return self.EXAM_DURATION_DEFAULT
 
     def add(self, session_entry):
         if session_entry in self:
@@ -79,7 +72,7 @@ class ExamSessionSet:
 
     def __eq__(self, other):
         if not isinstance(other, ExamSessionSet):
-            raise TypeError("Can't compare with {}, only with ExamSessionSet".format(type(other)))
+            return False
         return self.sessions == other.sessions
 
 

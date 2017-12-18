@@ -46,6 +46,8 @@ class SuspiciousExamAttempt(models.Model):
     """
     Record of suspicious exam, for which several user sessions were observed.
     """
+    #TODO: Currently exam attempt deletion leads to SuspiciousExamAttempt deletion
+
     exam_attempt = models.OneToOneField(ProctoredExamStudentAttempt)
     exam_sessions = ExamSessionSetField()
 
@@ -75,12 +77,9 @@ class ExamSessionSetStorage(object):
 
     @classmethod
     def set(cls, attempt_pk, exam_session_set):
-        timeout = 2*exam_session_set.exam_duration
-        cache_key = cls.CACHE_KEY.format(attempt_pk=attempt_pk)
-        cache.set(cache_key, exam_session_set.to_json(), timeout)
-
+        # .set should be called quite rare, so it is safe to pull exam from db every time
+        exam_attempt = ProctoredExamStudentAttempt.objects.get(pk=attempt_pk)
         if exam_session_set.is_suspicious():
-            exam_attempt = ProctoredExamStudentAttempt.objects.get(pk=attempt_pk)
             model, created = SuspiciousExamAttempt.objects.get_or_create(exam_attempt=exam_attempt)
             saved_exam_session_set = model.exam_sessions
             # It's unlikely but possible, that cache was somehow lost, but we have saved data
@@ -92,3 +91,9 @@ class ExamSessionSetStorage(object):
                 exam_attempt.user,
                 exam_attempt.proctored_exam)
             )
+
+        # double exam length
+        timeout_seconds = 2 * (exam_attempt.allowed_time_limit_mins * 60)
+
+        cache_key = cls.CACHE_KEY.format(attempt_pk=attempt_pk)
+        cache.set(cache_key, exam_session_set.to_json(), timeout_seconds)
