@@ -51,6 +51,25 @@ class SuspiciousExamAttempt(models.Model):
     exam_attempt = models.OneToOneField(ProctoredExamStudentAttempt)
     exam_sessions = ExamSessionSetField()
 
+    @property
+    def username(self):
+        return self.exam_attempt.user.username
+
+    @property
+    def exam_name(self):
+        return self.exam_attempt.proctored_exam.exam_name
+
+    @classmethod
+    def get_course_attempts(cls, course_key):
+        return cls.objects.filter(exam_attempt__proctored_exam__course_id=unicode(course_key))
+
+    def to_json(self):
+        return{
+            "username":self.username,
+            "exam_name":self.exam_name,
+            "sessions": self.exam_sessions.pretty_repr(joined=False)
+        }
+
     def __unicode__(self):
         return "SuspiciousExamAttempt<" + str(self.exam_attempt.proctored_exam) + "|" + str(self.exam_attempt.user) + "|"+str(self.exam_sessions) +">"
 

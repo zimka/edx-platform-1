@@ -32,14 +32,18 @@ class ExamSessionSet:
     def is_suspicious(self):
         return len(self._sessions) > 1
 
-    def pretty_repr(self):
+    def pretty_repr(self, joined=True):
         date_keys = sorted(self._sessions.keys())
         data = self._sessions
         template = "At {date}: {ip}('{session_key}')"
-        return "\n".join(
+        strings = [
             template.format(date=k, ip=data[k].ip, session_key=data[k].key)
             for k in date_keys
-        )
+        ]
+        if joined:
+            return "\n".join(strings)
+        else:
+            return strings
 
     @classmethod
     def from_json(cls, serial):
