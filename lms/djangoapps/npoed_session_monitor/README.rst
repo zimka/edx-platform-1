@@ -13,7 +13,7 @@ Installation
 
   ::
 
-    INSTALLED_APPS += ('openedx.core.djangoapps.npoed_session_monitor'',)
+    INSTALLED_APPS += ('lms.djangoapps.npoed_session_monitor'',)
 
 2. Add npoed_session_monitor.decorator.npoed_session_monitoring to edx_proctoring.views.StudentProctoredExamAttemptCollection.get
 
@@ -21,7 +21,7 @@ Installation
 
     edx_proctoring.views.py:
 
-        from openedx.core.djangoapps.npoed_session_monitor.decorator import npoed_session_monitoring
+        from lms.djangoapps.npoed_session_monitor.decorator import npoed_session_monitoring
 
         class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
         ...
@@ -34,3 +34,9 @@ Installation
   ::
 
     python manage.py lms migrate npoed_session_monitoring --settings=YOUR_SETTINGS
+
+4. Add string into Open_edX.egg-info/entry_points.txt (or run pip install -e /edx/app/edxapp/edx-platform)
+
+  ::
+
+     suspicious_monitor = lms.djangoapps.npoed_session_monitor.plugins:SuspiciousMonitorTab
