@@ -100,3 +100,13 @@ INSTALLED_APPS += (
 
 FEATURES['EVMS_TURN_ON'] = True
 FEATURES["EVMS_QUALITY_CONTROL_ON"] = True
+
+LOCALE_PATHS = (REPO_ROOT + "/npoed_translations", ) + LOCALE_PATHS
+
+ORA_PATH_VENV = 'venvs/edxapp/lib/python2.7/site-packages/openassessment'
+ORA_LOCALE_PATH = '{}/{}/locale'.format(PROJECT_ROOT.dirname().dirname(), ORA_PATH_VENV)
+LOCALE_PATHS += (ORA_LOCALE_PATH,)
+
+PROCTOR_PATH_VENV = "venvs/edxapp/src/edx-proctoring/edx_proctoring"
+PROCTOR_LOCALE_PATH = '{}/{}/locale'.format(PROJECT_ROOT.dirname().dirname(), PROCTOR_PATH_VENV)
+LOCALE_PATHS += (PROCTOR_LOCALE_PATH,)
