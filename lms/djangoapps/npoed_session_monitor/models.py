@@ -59,14 +59,23 @@ class SuspiciousExamAttempt(models.Model):
     def exam_name(self):
         return self.exam_attempt.proctored_exam.exam_name
 
+    @property
+    def datetime(self):
+        return self.exam_sessions.datetime
+
+    @property
+    def exam_location(self):
+        return self.exam_attempt.proctored_exam.content_id
+
     @classmethod
     def get_course_attempts(cls, course_key):
         return cls.objects.filter(exam_attempt__proctored_exam__course_id=unicode(course_key))
 
-    def to_json(self):
+    def info(self):
         return{
             "username": self.username,
             "exam_name": self.exam_name,
+            "datetime": self.datetime,
             "sessions": self.exam_sessions.pretty_repr()
         }
 

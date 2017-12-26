@@ -29,18 +29,19 @@ from openedx.core.djangolib.markup import HTML
         <br>
         <table style="width: 100%; border:1px solid black; text-align:center">
             <thead>
-
-                <tr>
+                <tr style="border: 1px solid black">
                     <th>${_("Username")}</th>
                     <th>${_("Exam name")}</th>
+                    <th>${_("Attempt datetime")}</th>
                     <th>${_("Sessions")}</th>
                 </tr>
             </thead>
             <tbody>
                 % for attempt in attempts:
-                    <tr>
+                    <tr style="border: 1px solid black">
                         <td>${attempt["username"]}</td>
-                        <td>${attempt["exam_name"]}</td>
+                        <td><a href="${attempt["url"]}">${attempt["exam_name"]}</a></td>
+                        <td>${attempt["datetime"]}</td>
                         <td>
                             % for session in attempt["sessions"]:
                             ${session}<br>

@@ -1,14 +1,17 @@
 from django.template.loader import render_to_string
+from django.core.urlresolvers import reverse
 from django.http import Http404
 from web_fragments.fragment import Fragment
-from opaque_keys.edx.keys import CourseKey
+from opaque_keys.edx.keys import CourseKey, UsageKey
 
 from openedx.core.djangoapps.plugin_api.views import EdxFragmentView
-from lms.djangoapps.courseware.views.views import modulestore, has_access, setup_masquerade
+from lms.djangoapps.courseware import access
+from xmodule.modulestore.django import modulestore
 from lms.djangoapps.courseware.courses import get_course_with_access
-from lms.djangoapps.npoed_session_monitor.models import SuspiciousExamAttempt
 from util.json_request import JsonResponse
 
+from lms.djangoapps.npoed_session_monitor.models import SuspiciousExamAttempt
+from cms.djangoapps.contentstore.utils import reverse_usage_url
 from .plugins import SuspiciousMonitorTab
 
 
@@ -19,7 +22,7 @@ def suspicious_monitor_view(request, course_id):
     """
     course_key = CourseKey.from_string(course_id)
     course = get_course_with_access(request.user, 'load', course_key, check_if_enrolled=True)
-    if not bool(has_access(request.user, 'staff', course)):
+    if not bool(access.has_access(request.user, 'staff', course)):
         raise Http404()
 
     if request.is_ajax():
@@ -61,7 +64,15 @@ class SuspiciousMonitorFragmentView(EdxFragmentView):
         Collects specific for tab data: information about suspicious attempts
         """
         attempts = SuspiciousExamAttempt.get_course_attempts(course_id)
-        context = {"attempts": [x.to_json() for x in attempts]}
+        attempts_info = []
+        for att in attempts:
+            info = att.info()
+            attempts_info.append(info)
+            block_id = att.exam_location
+            block_location = UsageKey.from_string(block_id)
+            url_base = get_sequential_base_url(block_location)
+            info["url"] = url_base
+        context = {"attempts": attempts_info}
         return context
 
 
@@ -73,7 +84,7 @@ def _create_context(request, course_id=None, course=None, **kwargs):
     if not course:
         course = modulestore().get_course(CourseKey.from_string(course_id))
 
-    staff_access = has_access(request.user, 'staff', course)
+    staff_access = access.has_access(request.user, 'staff', course)
     context = {
         'course': course,
         'tab': tab,
@@ -85,3 +96,17 @@ def _create_context(request, course_id=None, course=None, **kwargs):
         'disable_courseware_js': True,
     }
     return context
+
+
+def get_sequential_base_url(usage_key):
+    store = modulestore()
+    section = store.get_item(usage_key)
+    if section.category != 'sequential':
+        raise TypeError('Key must be from sequential')
+    chapter = section.get_parent()
+    return reverse('courseware_section', kwargs={
+        'course_id': str(usage_key.course_key),
+        'section': section.location.block_id,
+        'chapter': chapter.location.block_id
+    })
+

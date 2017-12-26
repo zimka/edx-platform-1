@@ -3,6 +3,8 @@ from dateutil import parser
 import datetime
 import json
 
+from django.utils.translation import ugettext as _
+
 
 SessionEntry = namedtuple("SessionEntry", ['key', 'ip'])
 
@@ -30,7 +32,9 @@ class ExamSessionSet:
 
     def to_json(self):
         to_str = lambda x: x.isoformat()
-        session_dict = dict((json.dumps(k, default=to_str), json.dumps(v._asdict())) for k,v in self._sessions.iteritems())
+        session_dict = dict(
+            (json.dumps(k, default=to_str), json.dumps(v._asdict())) for k,v in self._sessions.iteritems()
+        )
         return json.dumps(session_dict)
 
     def is_suspicious(self):
@@ -42,9 +46,9 @@ class ExamSessionSet:
         """
         date_keys = sorted(self._sessions.keys())
         data = self._sessions
-        template = "At {date}: {ip}('{session_key}')"
+        template = _("At {date}: {ip}('{session_key}')")
         strings = [
-            template.format(date=k, ip=data[k].ip, session_key=data[k].key)
+            template.format(date=k.replace(microsecond=0), ip=data[k].ip, session_key=data[k].key)
             for k in date_keys
         ]
         return strings
@@ -59,6 +63,10 @@ class ExamSessionSet:
             )
             for k,v in session_dict_str.iteritems())
         return cls(session_dict)
+
+    @property
+    def datetime(self):
+        return min(k for k in self._sessions.keys()) if self._sessions else None
 
     def __contains__(self, item):
         return item in self.sessions
