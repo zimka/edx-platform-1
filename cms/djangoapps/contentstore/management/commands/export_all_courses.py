@@ -12,6 +12,9 @@ class Command(BaseCommand):
     Export all courses from mongo to the specified data directory and list the courses which failed to export
     """
     help = 'Export all courses from mongo to the specified data directory and list the courses which failed to export'
+    def add_arguments(self, parser):
+        parser.add_argument('output_path')
+
 
     def add_arguments(self, parser):
         parser.add_argument('output_path')
