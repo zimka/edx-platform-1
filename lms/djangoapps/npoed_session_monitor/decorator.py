@@ -4,7 +4,8 @@ from .utils import get_session_entry
 
 def npoed_session_monitoring(func):
     """
-    At the end of exam we push suspicious attempts from cache to db
+    At the end of exam we push suspicious attempts from cache to db.
+    This decorator should be applied to get method of edx_proctoring.views.StudentProctoredExamAttemptCollection.
     """
     def get(self, request):
         response = func(self, request)

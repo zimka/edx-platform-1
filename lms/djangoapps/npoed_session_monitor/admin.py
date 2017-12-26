@@ -1,8 +1,12 @@
+from django.conf import settings
 from django.contrib import admin
 from .models import SuspiciousExamAttempt
 
 
 class SuspiciousExamAttemptForm(admin.ModelAdmin):
+    """
+    Admin Form. Show info about suspicious attempts.
+    """
     list_display = ("exam_id", "username")
     readonly_fields = ("exam_id", "username", "sessions")
     exclude = ("exam_attempt", "exam_sessions")
@@ -18,7 +22,8 @@ class SuspiciousExamAttemptForm(admin.ModelAdmin):
 
     def sessions(self, obj):
         exam_session_set = obj.exam_sessions
-        return exam_session_set.pretty_repr()
+        return "\n".join(exam_session_set.pretty_repr())
     sessions.short_description = "Seen sessions"
 
-admin.site.register(SuspiciousExamAttempt, SuspiciousExamAttemptForm)
+if settings.FEATURES.get("ENABLE_SUSPICIOUS_MONITOR", False) and settings.FEATURES.get("ENABLE_SUSPICIOUS_MONITOR_ADMIN", False):
+    admin.site.register(SuspiciousExamAttempt, SuspiciousExamAttemptForm)

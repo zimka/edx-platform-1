@@ -4,7 +4,8 @@ This app watches student's behavior during the exams and if it is suspicious sav
 
 It is up to staff to make any decisions about suspicious behavior.
 Currently it checks if there were several web sessions during the exam (which possibly means that student haven't passed exam himself) and saves info about these sessions.
-To save already seen sessions it uses cache.
+App uses cache to save already seen sessions.
+Suspicious attempts can monitored at the new CourseTab, that is available for staff only.
 
 Installation
 ------------

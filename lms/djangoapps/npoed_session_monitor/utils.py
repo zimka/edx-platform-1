@@ -9,7 +9,7 @@ SessionEntry = namedtuple("SessionEntry", ['key', 'ip'])
 
 class ExamSessionSet:
     """
-    Contains info about user sessions: when it was observed, session key and IP-address
+    Contains info about user sessions: when it was observed, session key and IP-address.
     """
     def __init__(self, sessions_dict={}):
         self._sessions = sessions_dict
@@ -19,6 +19,10 @@ class ExamSessionSet:
         return set(self._sessions.values())
 
     def add(self, session_entry):
+        """
+        Adds session_entry if it wasn't seen earlier.
+        Doesn't change date-key for session_entry if it was seen.
+        """
         if session_entry in self:
             return
         date = datetime.datetime.now()
@@ -32,7 +36,10 @@ class ExamSessionSet:
     def is_suspicious(self):
         return len(self._sessions) > 1
 
-    def pretty_repr(self, joined=True):
+    def pretty_repr(self):
+        """
+        Returns list of strings for each seen session
+        """
         date_keys = sorted(self._sessions.keys())
         data = self._sessions
         template = "At {date}: {ip}('{session_key}')"
@@ -40,10 +47,7 @@ class ExamSessionSet:
             template.format(date=k, ip=data[k].ip, session_key=data[k].key)
             for k in date_keys
         ]
-        if joined:
-            return "\n".join(strings)
-        else:
-            return strings
+        return strings
 
     @classmethod
     def from_json(cls, serial):

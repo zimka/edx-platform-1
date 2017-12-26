@@ -1,5 +1,5 @@
 from django.conf.urls import url, patterns
-from .views import SuspiciousMonitorFragmentView, suspicious_monitor_view
+from .views import SuspiciousMonitorFragmentView
 
 urlpatterns = patterns(
     'npoed_session_monitor.views',

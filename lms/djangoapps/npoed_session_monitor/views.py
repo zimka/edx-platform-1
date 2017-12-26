@@ -1,4 +1,5 @@
 from django.template.loader import render_to_string
+from django.http import Http404
 from web_fragments.fragment import Fragment
 from opaque_keys.edx.keys import CourseKey
 
@@ -12,10 +13,17 @@ from .plugins import SuspiciousMonitorTab
 
 
 def suspicious_monitor_view(request, course_id):
+    """
+    Basic view for fragment, that can process ajax and synchronous requests.
+    Non-staff gets 404
+    """
     course_key = CourseKey.from_string(course_id)
     course = get_course_with_access(request.user, 'load', course_key, check_if_enrolled=True)
+    if not bool(has_access(request.user, 'staff', course)):
+        raise Http404()
 
     if request.is_ajax():
+        # TODO: Do we need ajax?
         return JsonResponse({"message": "OK"})
     else:
         course_id = unicode(course.id)
@@ -24,7 +32,14 @@ def suspicious_monitor_view(request, course_id):
 
 
 class SuspiciousMonitorFragmentView(EdxFragmentView):
+    """
+    Fragment view. Renders tab content without header, footer and so on.
+    """
+
     def render_to_fragment(self, request, course_id=None, *args, **kwargs):
+        """
+        Returns fragment with collected data and static
+        """
         context = self.get_fragment_context(course_id)
         html = render_to_string('suspicious_monitor/suspicious_monitor_fragment.html', context)
 
@@ -42,13 +57,18 @@ class SuspiciousMonitorFragmentView(EdxFragmentView):
         return render_to_string('courseware/tab-view.html', page_context)
 
     def get_fragment_context(self, course_id):
+        """
+        Collects specific for tab data: information about suspicious attempts
+        """
         attempts = SuspiciousExamAttempt.get_course_attempts(course_id)
         context = {"attempts": [x.to_json() for x in attempts]}
         return context
 
 
 def _create_context(request, course_id=None, course=None, **kwargs):
-
+    """
+    Collects non-specific context for rendering tab at standalone html
+    """
     tab = SuspiciousMonitorTab({})
     if not course:
         course = modulestore().get_course(CourseKey.from_string(course_id))

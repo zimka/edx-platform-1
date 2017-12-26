@@ -46,7 +46,7 @@ class SuspiciousExamAttempt(models.Model):
     """
     Record of suspicious exam, for which several user sessions were observed.
     """
-    #TODO: Currently exam attempt deletion leads to SuspiciousExamAttempt deletion
+    # TODO: Currently exam attempt deletion leads to SuspiciousExamAttempt deletion
 
     exam_attempt = models.OneToOneField(ProctoredExamStudentAttempt)
     exam_sessions = ExamSessionSetField()
@@ -65,9 +65,9 @@ class SuspiciousExamAttempt(models.Model):
 
     def to_json(self):
         return{
-            "username":self.username,
-            "exam_name":self.exam_name,
-            "sessions": self.exam_sessions.pretty_repr(joined=False)
+            "username": self.username,
+            "exam_name": self.exam_name,
+            "sessions": self.exam_sessions.pretty_repr()
         }
 
     def __unicode__(self):
