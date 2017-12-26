@@ -1,3 +1,4 @@
+# coding: utf-8
 """
 MongoDB/GridFS-level code for the contentstore.
 """
@@ -356,17 +357,20 @@ class MongoContentStore(ContentStore):
                     dest_course_key.make_asset_key(asset_key['category'], asset_key['name']).for_branch(None)
                 )
 
-            self.fs.put(
-                source_content.read(),
-                _id=asset_id, filename=asset['filename'], content_type=asset['contentType'],
-                displayname=asset['displayname'], content_son=asset_key,
-                # thumbnail is not technically correct but will be functionally correct as the code
-                # only looks at the name which is not course relative.
-                thumbnail_location=asset['thumbnail_location'],
-                import_path=asset['import_path'],
-                # getattr b/c caching may mean some pickled instances don't have attr
-                locked=asset.get('locked', False)
-            )
+            try:
+                self.fs.put(
+                    source_content.read(),
+                    _id=asset_id, filename=asset['filename'], content_type=asset['contentType'],
+                    displayname=asset['displayname'], content_son=asset_key,
+                    # thumbnail is not technically correct but will be functionally correct as the code
+                    # only looks at the name which is not course relative.
+                    thumbnail_location=asset['thumbnail_location'],
+                    import_path=asset['import_path'],
+                    # getattr b/c caching may mean some pickled instances don't have attr
+                    locked=asset.get('locked', False)
+                )
+            except FileExists:
+                pass
 
     def delete_all_course_assets(self, course_key):
         """
