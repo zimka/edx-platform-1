@@ -27,6 +27,7 @@ from .signals import (
     VERTICAL_SCORE_CHANGED,
     SCORE_PUBLISHED,
 )
+from .stsos import stsos_data
 from ..constants import ScoreDatabaseTableEnum
 from ..new.course_grade_factory import CourseGradeFactory
 from ..scores import weighted_score
@@ -280,3 +281,8 @@ def _emit_problem_submitted_event(kwargs):
                 'weighted_possible': kwargs.get('weighted_possible'),
             }
         )
+
+
+@receiver(PROBLEM_WEIGHTED_SCORE_CHANGED)
+def stsos_handler(sender, **kwargs):
+    stsos_data(kwargs)
