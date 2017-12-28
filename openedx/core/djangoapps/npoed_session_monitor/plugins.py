@@ -12,8 +12,8 @@ class SuspiciousMonitorTab(TabFragmentViewMixin, tabs.EnrolledTab):
     """
     type = "suspicious_monitor"
     title = ugettext_noop("Suspicious Monitor")
-    view_name = "npoed_session_monitor.views.suspicious_monitor_view"
-    fragment_view_name = "npoed_session_monitor.views.SucpiciousMonitorFragmentView"
+    view_name = "openedx.core.djangoapps.npoed_session_monitor.views.suspicious_monitor_view"
+    fragment_view_name = "openedx.core.djangoapps.npoed_session_monitor.views.SucpiciousMonitorFragmentView"
     priority = None
     is_hideable = False
     is_default = False

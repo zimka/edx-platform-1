@@ -2,7 +2,7 @@ from django.conf.urls import url, patterns
 from .views import SuspiciousMonitorFragmentView, delete_suspicious_attempt
 
 urlpatterns = patterns(
-    'npoed_session_monitor.views',
+    'openedx.core.djangoapps.npoed_session_monitor.views',
     url(
         r'suspicious_monitor_fragment_view$',
         SuspiciousMonitorFragmentView.as_view(),

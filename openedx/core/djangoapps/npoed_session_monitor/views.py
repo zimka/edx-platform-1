@@ -10,11 +10,12 @@ from xmodule.modulestore.django import modulestore
 
 from lms.djangoapps.courseware import access
 from lms.djangoapps.courseware.courses import get_course_with_access
-from lms.djangoapps.npoed_session_monitor.models import SuspiciousExamAttempt
-from lms.djangoapps.npoed_session_monitor.utils import get_sequential_base_url
 from lms.djangoapps.instructor.views.api import require_level
 from openedx.core.djangoapps.plugin_api.views import EdxFragmentView
 from .plugins import SuspiciousMonitorTab
+
+from .utils import get_sequential_base_url
+from .models import SuspiciousExamAttempt
 
 
 def suspicious_monitor_view(request, course_id):

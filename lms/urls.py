@@ -711,6 +711,17 @@ if settings.FEATURES.get('ENABLE_DISCUSSION_SERVICE'):
         ),
     )
 
+if settings.FEATURES.get("ENABLE_SUSPICIOUS_MONITOR", False):
+    # Must be before '^courses/{}/tab/'
+    urlpatterns += (
+        url(
+            r'^courses/{}/suspicious_monitor/'.format(
+                settings.COURSE_ID_PATTERN,
+            ),
+            include('openedx.core.djangoapps.npoed_session_monitor.urls')
+        ),
+    )
+
 urlpatterns += (
     url(
         r'^courses/{}/tab/(?P<tab_type>[^/]+)/$'.format(
