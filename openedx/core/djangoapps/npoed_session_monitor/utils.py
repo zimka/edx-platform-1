@@ -115,6 +115,9 @@ def get_session_entry(request):
 
 
 def get_sequential_base_url(usage_key):
+    """
+    Return lms url for given section usage key
+    """
     store = modulestore()
     section = store.get_item(usage_key)
     if section.category != 'sequential':

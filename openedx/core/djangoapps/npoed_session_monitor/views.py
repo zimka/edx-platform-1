@@ -135,6 +135,9 @@ def delete_suspicious_attempt(request, course_id):
 # TODO: we use hack to get pk of deleted attempt.
 # Once we decide to add any js it should be replaced
 def _get_attempt_pk(data):
+    """
+    Returns primary key of suspicious attempt from form data
+    """
     PREFIX = "delete_attempt_"
     keys = [x for x in data.keys() if PREFIX in x]
     if len(keys) != 1:

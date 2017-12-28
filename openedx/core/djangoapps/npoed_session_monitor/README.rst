@@ -14,7 +14,7 @@ Installation
 
   ::
 
-    INSTALLED_APPS += ('lms.djangoapps.npoed_session_monitor'',)
+    INSTALLED_APPS += ('openedx.core.djangoapps.npoed_session_monitor'',)
 
 2. Add npoed_session_monitor.decorator.npoed_session_monitoring to edx_proctoring.views.StudentProctoredExamAttemptCollection.get
 
@@ -22,7 +22,7 @@ Installation
 
     edx_proctoring.views.py:
 
-        from lms.djangoapps.npoed_session_monitor.decorator import npoed_session_monitoring
+        from openedx.core.djangoapps.npoed_session_monitor.decorator import npoed_session_monitoring
 
         class StudentProctoredExamAttemptCollection(AuthenticatedAPIView):
         ...
@@ -40,4 +40,11 @@ Installation
 
   ::
 
-     suspicious_monitor = lms.djangoapps.npoed_session_monitor.plugins:SuspiciousMonitorTab
+     suspicious_monitor = openedx.core.djangoapps.npoed_session_monitor.plugins:SuspiciousMonitorTab
+
+5. Enable feature and (optionally) admin view
+
+  ::
+
+    FEATURES["ENABLE_SUSPICIOUS_MONITOR"] = True
+    FEATURES["ENABLE_SUSPICIOUS_MONITOR_ADMIN"] = True # Unnecessary option
