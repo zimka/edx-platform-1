@@ -14,6 +14,18 @@ from django_comment_client.permissions import has_permission
 from openedx.core.djangolib.js_utils import dump_js_escaped_json, js_escaped_string
 from openedx.core.djangolib.markup import HTML
 %>
+<%block name="header_extras">
+    <style>
+        .suspicious-monitor-board table{
+            width: 100%;
+            border:1px solid black;
+            text-align:center
+        }
+        .suspicious-monitor-board tr{
+            border: 1px solid black
+        }
+    </style>
+</%block>
 
 <section class="suspicious-monitor-board container" id="suspicious-monitor-container">
     <div class="page-content">
@@ -27,30 +39,38 @@ from openedx.core.djangolib.markup import HTML
             ${_("different session keys are not caused by cheating.")}
         </div>
         <br>
-        <table style="width: 100%; border:1px solid black; text-align:center">
+        <form method="POST" id="delete_suspicious_attempt" action=${delete_url}>
+        <input type="hidden" name="csrfmiddlewaretoken" value="${csrf_token}">
+
+        <table>
             <thead>
-                <tr style="border: 1px solid black">
+                <tr>
                     <th>${_("Username")}</th>
                     <th>${_("Exam name")}</th>
                     <th>${_("Attempt datetime")}</th>
                     <th>${_("Sessions")}</th>
+                    <th>${_("Delete")}</th>
                 </tr>
             </thead>
             <tbody>
                 % for attempt in attempts:
-                    <tr style="border: 1px solid black">
+                    <tr>
                         <td>${attempt["username"]}</td>
                         <td><a href="${attempt["url"]}">${attempt["exam_name"]}</a></td>
                         <td>${attempt["datetime"]}</td>
                         <td>
                             % for session in attempt["sessions"]:
-                            ${session}<br>
+                                ${session}<br>
                             % endfor
+                        </td>
+                        <td>
+                            <input type="submit" name="delete_attempt_${attempt['pk']}" value="delete">
                         </td>
                     </tr>
                 % endfor
             </tbody>
         </table>
+        </form>
     </div>
 </section>
 

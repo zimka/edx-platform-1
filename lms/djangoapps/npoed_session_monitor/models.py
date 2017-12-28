@@ -50,6 +50,7 @@ class SuspiciousExamAttempt(models.Model):
 
     exam_attempt = models.OneToOneField(ProctoredExamStudentAttempt)
     exam_sessions = ExamSessionSetField()
+    is_hidden = models.BooleanField(default=False)
 
     @property
     def username(self):
@@ -67,16 +68,28 @@ class SuspiciousExamAttempt(models.Model):
     def exam_location(self):
         return self.exam_attempt.proctored_exam.content_id
 
+    @property
+    def course_id(self):
+        return self.exam_attempt.proctored_exam.course_id
+
     @classmethod
     def get_course_attempts(cls, course_key):
-        return cls.objects.filter(exam_attempt__proctored_exam__course_id=unicode(course_key))
+        return cls.objects.filter(
+            exam_attempt__proctored_exam__course_id=unicode(course_key),
+            is_hidden=False
+        )
+
+    def hide(self):
+        self.is_hidden = True
+        self.save()
 
     def info(self):
         return{
             "username": self.username,
             "exam_name": self.exam_name,
             "datetime": self.datetime,
-            "sessions": self.exam_sessions.pretty_repr()
+            "sessions": self.exam_sessions.pretty_repr(),
+            "pk": self.pk
         }
 
     def __unicode__(self):

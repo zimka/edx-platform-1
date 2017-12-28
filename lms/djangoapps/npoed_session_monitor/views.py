@@ -1,17 +1,19 @@
-from django.template.loader import render_to_string
+from django.http import Http404, HttpResponseBadRequest, HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from django.http import Http404
-from web_fragments.fragment import Fragment
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.template.loader import render_to_string
 from opaque_keys.edx.keys import CourseKey, UsageKey
-
-from openedx.core.djangoapps.plugin_api.views import EdxFragmentView
-from lms.djangoapps.courseware import access
-from xmodule.modulestore.django import modulestore
-from lms.djangoapps.courseware.courses import get_course_with_access
 from util.json_request import JsonResponse
+from web_fragments.fragment import Fragment
+from xmodule.modulestore.django import modulestore
 
+from lms.djangoapps.courseware import access
+from lms.djangoapps.courseware.courses import get_course_with_access
 from lms.djangoapps.npoed_session_monitor.models import SuspiciousExamAttempt
-from cms.djangoapps.contentstore.utils import reverse_usage_url
+from lms.djangoapps.npoed_session_monitor.utils import get_sequential_base_url
+from lms.djangoapps.instructor.views.api import require_level
+from openedx.core.djangoapps.plugin_api.views import EdxFragmentView
 from .plugins import SuspiciousMonitorTab
 
 
@@ -72,7 +74,11 @@ class SuspiciousMonitorFragmentView(EdxFragmentView):
             block_location = UsageKey.from_string(block_id)
             url_base = get_sequential_base_url(block_location)
             info["url"] = url_base
-        context = {"attempts": attempts_info}
+        attempts_info = sorted(attempts_info, key=lambda x: x["datetime"])[::-1]
+        context = {
+            "attempts": attempts_info,
+            "delete_url": reverse('delete_suspicious_attempt', kwargs={'course_id':course_id})
+        }
         return context
 
 
@@ -97,16 +103,31 @@ def _create_context(request, course_id=None, course=None, **kwargs):
     }
     return context
 
+@require_POST
+@require_level('staff')
+@ensure_csrf_cookie
+def delete_suspicious_attempt(request, course_id):
+    """
+    Allows instructor to delete not-really-suspicious attempt from course tab
+    """
+    try:
+        attempt_pk = _get_attempt_pk(request.POST.dict())
+        attempt = SuspiciousExamAttempt.objects.get(pk=attempt_pk)
+    except SuspiciousExamAttempt.DoesNotExist:
+        return HttpResponseBadRequest()
+    if attempt.course_id != course_id:
+        return HttpResponseBadRequest()
+    attempt.hide()
+    redirect_url = reverse('suspicious_monitor_view', kwargs={"course_id": course_id})
+    return HttpResponseRedirect(redirect_url)
 
-def get_sequential_base_url(usage_key):
-    store = modulestore()
-    section = store.get_item(usage_key)
-    if section.category != 'sequential':
-        raise TypeError('Key must be from sequential')
-    chapter = section.get_parent()
-    return reverse('courseware_section', kwargs={
-        'course_id': str(usage_key.course_key),
-        'section': section.location.block_id,
-        'chapter': chapter.location.block_id
-    })
 
+# TODO: we use hack to get pk of deleted attempt.
+# Once we decide to add any js it should be replaced
+def _get_attempt_pk(data):
+    PREFIX = "delete_attempt_"
+    keys = [x for x in data.keys() if PREFIX in x]
+    if len(keys) != 1:
+        return -1
+    key = keys[0]
+    return int(key.split(PREFIX)[-1])

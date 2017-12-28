@@ -3,8 +3,9 @@ from dateutil import parser
 import datetime
 import json
 
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
-
+from xmodule.modulestore.django import modulestore
 
 SessionEntry = namedtuple("SessionEntry", ['key', 'ip'])
 
@@ -111,3 +112,16 @@ def get_session_entry(request):
     ip = _get_client_ip(request)
     session_key = request.session.session_key
     return SessionEntry(ip=ip, key=session_key)
+
+
+def get_sequential_base_url(usage_key):
+    store = modulestore()
+    section = store.get_item(usage_key)
+    if section.category != 'sequential':
+        raise TypeError('Key must be from sequential')
+    chapter = section.get_parent()
+    return reverse('courseware_section', kwargs={
+        'course_id': str(usage_key.course_key),
+        'section': section.location.block_id,
+        'chapter': chapter.location.block_id
+    })

@@ -1,5 +1,5 @@
 from django.conf.urls import url, patterns
-from .views import SuspiciousMonitorFragmentView
+from .views import SuspiciousMonitorFragmentView, delete_suspicious_attempt
 
 urlpatterns = patterns(
     'npoed_session_monitor.views',
@@ -8,5 +8,6 @@ urlpatterns = patterns(
         SuspiciousMonitorFragmentView.as_view(),
         name='suspicious_monitor_fragment_view'
     ),
+    url(r'delete_suspicious_attempt', delete_suspicious_attempt, name='delete_suspicious_attempt'),
     url(r'', 'suspicious_monitor_view', name='suspicious_monitor_view'),
 )
