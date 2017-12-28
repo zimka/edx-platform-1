@@ -41,7 +41,8 @@ from openedx.core.djangolib.markup import HTML
         <br>
         <form method="POST" id="delete_suspicious_attempt" action=${delete_url}>
         <input type="hidden" name="csrfmiddlewaretoken" value="${csrf_token}">
-
+        % if len(proctored_attempts):
+        <h4 class="hd hd-4">${_("Proctored suspicious exam attempts")}</h4>
         <table>
             <thead>
                 <tr>
@@ -53,7 +54,7 @@ from openedx.core.djangolib.markup import HTML
                 </tr>
             </thead>
             <tbody>
-                % for attempt in attempts:
+                % for attempt in proctored_attempts:
                     <tr>
                         <td>${attempt["username"]}</td>
                         <td><a href="${attempt["url"]}">${attempt["exam_name"]}</a></td>
@@ -70,6 +71,43 @@ from openedx.core.djangolib.markup import HTML
                 % endfor
             </tbody>
         </table>
+        <br>
+        % endif
+
+        % if len(non_proctored_attempts):
+        <h4 class="hd hd-4">${_("Non-proctored suspicious exam attempts")}</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>${_("Username")}</th>
+                    <th>${_("Exam name")}</th>
+                    <th>${_("Attempt datetime")}</th>
+                    <th>${_("Sessions")}</th>
+                    <th>${_("Delete")}</th>
+                </tr>
+            </thead>
+            <tbody>
+                % for attempt in non_proctored_attempts:
+                    <tr>
+                        <td>${attempt["username"]}</td>
+                        <td><a href="${attempt["url"]}">${attempt["exam_name"]}</a></td>
+                        <td>${attempt["datetime"]}</td>
+                        <td>
+                            % for session in attempt["sessions"]:
+                                ${session}<br>
+                            % endfor
+                        </td>
+                        <td>
+                            <input type="submit" name="delete_attempt_${attempt['pk']}" value="delete">
+                        </td>
+                    </tr>
+                % endfor
+            </tbody>
+        </table>
+        % endif
+        % if (len(proctored_attempts)==0) and (len(non_proctored_attempts)==0):
+            <h4 class="hd hd-4">${_("No suspicious exam attempts were detected.")}</h4>
+        % endif
         </form>
     </div>
 </section>

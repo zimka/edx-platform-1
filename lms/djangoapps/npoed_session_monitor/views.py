@@ -66,17 +66,26 @@ class SuspiciousMonitorFragmentView(EdxFragmentView):
         Collects specific for tab data: information about suspicious attempts
         """
         attempts = SuspiciousExamAttempt.get_course_attempts(course_id)
-        attempts_info = []
+        proctored_attempts_info = []
+        non_proctored_attempts_info = []
+
         for att in attempts:
             info = att.info()
-            attempts_info.append(info)
             block_id = att.exam_location
             block_location = UsageKey.from_string(block_id)
             url_base = get_sequential_base_url(block_location)
             info["url"] = url_base
-        attempts_info = sorted(attempts_info, key=lambda x: x["datetime"])[::-1]
+            if att.is_proctored:
+                proctored_attempts_info.append(info)
+            else:
+                non_proctored_attempts_info.append(info)
+
+        proctored_attempts_info = sorted(proctored_attempts_info, key=lambda x: x["datetime"])[::-1]
+        non_proctored_attempts_info = sorted(non_proctored_attempts_info, key=lambda x: x["datetime"])[::-1]
+
         context = {
-            "attempts": attempts_info,
+            "proctored_attempts": proctored_attempts_info,
+            "non_proctored_attempts": non_proctored_attempts_info,
             "delete_url": reverse('delete_suspicious_attempt', kwargs={'course_id':course_id})
         }
         return context

@@ -78,6 +78,9 @@ class SuspiciousExamAttempt(models.Model):
             exam_attempt__proctored_exam__course_id=unicode(course_key),
             is_hidden=False
         )
+    @property
+    def is_proctored(self):
+        return self.exam_attempt.proctored_exam.is_proctored
 
     def hide(self):
         self.is_hidden = True
