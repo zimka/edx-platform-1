@@ -877,7 +877,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"      Ваша тренировачная прокторинг сессия: <b> завершена </b>\n"
+"      Ваша тренировочная прокторинг сессия: <b> завершена </b>\n"
 "    "
 
 #: edx_proctoring/templates/proctoring/seq_proctored_practice_exam_submitted.html:20
@@ -1659,7 +1659,7 @@ msgstr ""
 "    "
 
 msgid "Select Proctoring Service"
-msgstr "Укажите вашу прокторингвую систему"
+msgstr "Укажите вашу прокторинговую систему"
 
 msgid "- Choose one -"
 msgstr "- Выберите одну -"
