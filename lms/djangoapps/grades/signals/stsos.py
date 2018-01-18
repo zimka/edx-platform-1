@@ -45,7 +45,7 @@ def stsos_data(kwargs):
     stsos['courseId'] = stsos_id
     stsos['sessionId'] = kwargs['course_id']
     stsos['usiaId'] = esia_id
-    stsos['date'] = kwargs['modified'].strftime('%Y-%m-%d')
+    stsos['date'] = kwargs['modified'].strftime('%Y-%m-%dT%H:%M:%S%z')
     stsos['rating'] = None
     if 'weighted_earned' in kwargs.keys() and 'weighted_possible' in kwargs.keys():
         try:
@@ -70,4 +70,4 @@ def stsos_data(kwargs):
         return
     stsos['checkpointName'] = checkpoint_name
     stsos['checkpointId'] = kwargs['usage_id']
-    log.info(stsos)
+    log.info(json.dumps(stsos))
