@@ -1,5 +1,5 @@
 -e git+https://github.com/miptliot/open_edx_api_extension.git@develop#egg=open_edx_api_extension
 -e git+https://github.com/miptliot/open_edx_api_extension_cms.git@release-2017-07-04#egg=open_edx_api_extension_cms
--e git+https://github.com/miptliot/npoed-sso-edx-client.git@develop#egg=sso_edx_npoed
+-e git+https://github.com/miptliot/npoed-sso-edx-client.git@master#egg=sso_edx_npoed
 -e git+https://github.com/miptliot/video_evms.git@master#egg=video_evms
 icalendar==3.11.7
