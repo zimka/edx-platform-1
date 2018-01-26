@@ -14,7 +14,7 @@ from .utils.timer import timed
 
 
 DEFAULT_PORT = {"lms": 8000, "studio": 8001}
-DEFAULT_SETTINGS = 'devstack'
+DEFAULT_SETTINGS = 'npoed_dev'
 OPTIMIZED_SETTINGS = "devstack_optimized"
 OPTIMIZED_ASSETS_SETTINGS = "test_static_optimized"
 
