@@ -89,7 +89,8 @@ from lms.envs.common import (
     FILE_UPLOAD_STORAGE_BUCKET_NAME,
     FILE_UPLOAD_STORAGE_PREFIX,
 
-    COURSE_ENROLLMENT_MODES
+    COURSE_ENROLLMENT_MODES,
+    GRADING_TYPE
 )
 from path import Path as path
 from warnings import simplefilter
