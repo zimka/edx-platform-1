@@ -103,7 +103,7 @@ from xmodule.x_module import STUDENT_VIEW
 
 from ..entrance_exams import user_can_skip_entrance_exam
 from ..module_render import get_module, get_module_by_usage_id, get_module_for_descriptor
-from openedx.core.djangoapps.course_shifts import get_course_active_shifts_json
+from  course_shifts import get_course_active_shifts_json
 
 log = logging.getLogger("edx.courseware")
 

@@ -57,7 +57,7 @@ from xmodule.modulestore.django import modulestore
 from xmodule.tabs import CourseTab
 
 from .tools import get_units_with_due_date, title_or_url
-from openedx.core.djangoapps.course_shifts import _section_course_shifts
+from course_shifts import _section_course_shifts
 
 log = logging.getLogger(__name__)
 

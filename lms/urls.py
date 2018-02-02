@@ -1032,9 +1032,9 @@ if settings.FEATURES.get('ENABLE_FINANCIAL_ASSISTANCE_FORM'):
     )
 
 urlpatterns += (
-    url(r'^course_shifts/',
+    url(r'^api/course_shifts/',
         include(
-            'openedx.core.djangoapps.course_shifts.urls',
+            'course_shifts.urls',
             app_name="course_shifts",
             namespace="course_shifts")
         ),

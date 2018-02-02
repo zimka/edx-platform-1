@@ -129,7 +129,7 @@ from util.json_request import JsonResponse
 from util.milestones_helpers import get_pre_requisite_courses_not_completed
 from util.password_policy_validators import validate_password_strength
 from xmodule.modulestore.django import modulestore
-from openedx.core.djangoapps.course_shifts.manager import CourseShiftManager
+from course_shifts.manager import CourseShiftManager
 
 log = logging.getLogger("edx.student")
 AUDIT_LOG = logging.getLogger("audit")
