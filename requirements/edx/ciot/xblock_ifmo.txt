@@ -1,6 +1,6 @@
 -e git+https://github.com/openeduITMO/ifmo-edx-celery-grader@v4.0#egg=ifmo-edx-celery-grader==4.0
 -e git+https://github.com/openeduITMO/ifmo-xblock-htmlacademy@v4.2#egg=ifmo-xblock-htmlacademy
--e git+https://github.com/openeduITMO/ifmo-xblock-ant@890e154ad875f1ff95fa141dc51f75bf54aca25f#egg=ifmo-xblock-academicnt==4.1.1
+-e git+https://github.com/openeduITMO/ifmo-xblock-ant@v4.1.2#egg=ifmo-xblock-academicnt==4.1.2
 
 -e git+https://github.com/openeduITMO/ifmo-xblock-scilab@master#egg=ifmo_xblock_scilab
 -e git+https://github.com/openeduITMO/ifmo-submissions@master#egg=ifmo_submissions
