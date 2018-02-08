@@ -195,7 +195,7 @@ class VerticalGrading(object):
         Returns a list of subsection grades for the given chapter.
         """
         subsections_keys = course_structure.get_children(chapter_key)
-        subsections = dict()
+        subsections = OrderedDict()
         for subsection_key in subsections_keys:
             subsections[subsection_key] = dict()
             subsection = course_structure[subsection_key]
