@@ -561,6 +561,21 @@ def _deprecated_blocks_info(course_module, deprecated_block_types):
     for block in structure_data['blocks'].values():
         data['blocks'].append([reverse_usage_url('container_handler', block['parent']), block['display_name']])
 
+    # NPOED: NPOED-570
+    data['blocks'].extend(_exams_without_due_date_check(course_module))
+    return data
+
+
+def _exams_without_due_date_check(course_module):
+    if not settings.FEATURES.get('ENABLE_EXAM_DUE_WARNING', False):
+        return []
+    sequentials = modulestore().get_items(course_module.id, qualifiers={'category': 'sequential'})
+    data = []
+    message = _("Exam '{}' doesn't have due date. It may lead to the proctoring problems, please add due date.")
+    should_notify = lambda block: block.is_proctored_exam and not block.due
+    for block in sequentials:
+        if should_notify(block):
+            data.append([reverse_course_url('course_handler', str(course_module.id)), message.format(block.display_name)])
     return data
 
 

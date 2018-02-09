@@ -171,20 +171,24 @@ def xblock_handler(request, usage_key_string):
             _delete_item(usage_key, request.user)
             return JsonResponse()
         else:  # Since we have a usage_key, we are updating an existing xblock.
-            return _save_xblock(
-                request.user,
-                _get_xblock(usage_key, request.user),
-                data=request.json.get('data'),
-                children_strings=request.json.get('children'),
-                metadata=request.json.get('metadata'),
-                nullout=request.json.get('nullout'),
-                grader_type=request.json.get('graderType'),
-                is_prereq=request.json.get('isPrereq'),
-                prereq_usage_key=request.json.get('prereqUsageKey'),
-                prereq_min_score=request.json.get('prereqMinScore'),
-                publish=request.json.get('publish'),
-                fields=request.json.get('fields'),
-            )
+            # NPOED: NPOED-570
+            try:
+                return _save_xblock(
+                    request.user,
+                    _get_xblock(usage_key, request.user),
+                    data=request.json.get('data'),
+                    children_strings=request.json.get('children'),
+                    metadata=request.json.get('metadata'),
+                    nullout=request.json.get('nullout'),
+                    grader_type=request.json.get('graderType'),
+                    is_prereq=request.json.get('isPrereq'),
+                    prereq_usage_key=request.json.get('prereqUsageKey'),
+                    prereq_min_score=request.json.get('prereqMinScore'),
+                    publish=request.json.get('publish'),
+                    fields=request.json.get('fields'),
+                )
+            except ValueError as e:
+                return JsonResponse({"error": unicode(e)}, status=400)
     elif request.method in ('PUT', 'POST'):
         if 'duplicate_source_locator' in request.json:
             parent_usage_key = usage_key_with_run(request.json['parent_locator'])
@@ -454,6 +458,11 @@ def _update_with_callback(xblock, user, old_metadata=None, old_content=None):
             old_content = xblock.get_explicitly_set_fields_by_scope(Scope.content)
         xblock.xmodule_runtime = StudioEditModuleRuntime(user)
         xblock.editor_saved(user, old_metadata, old_content)
+
+        # NPOED: NPOED-570
+        if settings.FEATURES.get("ENABLE_EXAM_DUE_CHECK", False):
+            if xblock.is_proctored_exam and not xblock.due:
+                raise ValueError(_("You can not save proctored exam without due date. Please set due date."))
 
     # Update after the callback so any changes made in the callback will get persisted.
     return modulestore().update_item(xblock, user.id)
