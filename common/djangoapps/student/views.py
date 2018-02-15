@@ -129,7 +129,6 @@ from util.json_request import JsonResponse
 from util.milestones_helpers import get_pre_requisite_courses_not_completed
 from util.password_policy_validators import validate_password_strength
 from xmodule.modulestore.django import modulestore
-from course_shifts.manager import CourseShiftManager
 
 log = logging.getLogger("edx.student")
 AUDIT_LOG = logging.getLogger("audit")
@@ -1199,7 +1198,6 @@ def change_enrollment(request, check_access=True):
         )
         return HttpResponseBadRequest(_("Invalid course id"))
 
-    course_shift_name = request.POST.get("course_shift")
     if action == "enroll":
         # Make sure the course exists
         # We don't do this check on unenroll, or a bad course id can't be unenrolled from
@@ -1240,10 +1238,6 @@ def change_enrollment(request, check_access=True):
             try:
                 enroll_mode = CourseMode.auto_enroll_mode(course_id, available_modes)
                 if enroll_mode:
-                    if course_shift_name:
-                        shift_manager = CourseShiftManager(course_id)
-                        shift = shift_manager.get_shift(course_shift_name)
-                        shift_manager.enroll_user(user, shift)
                     CourseEnrollment.enroll(user, course_id, check_access=check_access, mode=enroll_mode)
             except Exception:  # pylint: disable=broad-except
                 return HttpResponseBadRequest(_("Could not enroll"))
