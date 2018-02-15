@@ -76,5 +76,9 @@ $bookmarked-icon: "\f02e"; // .fa-bookmark
       }
     }
 
+    @media (max-width: 800px) {
+      white-space: normal;
+    }
+
   }
 }
