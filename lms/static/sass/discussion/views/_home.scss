@@ -104,6 +104,10 @@ nav.wrapper-course-material {
     }
   }
 
+  .home-helpgrid-cover {
+    overflow-x: scroll;
+  }
+
   .home-helpgrid {
     border-bottom: none;
     border-radius: $forum-border-radius;
