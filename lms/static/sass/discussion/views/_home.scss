@@ -178,4 +178,10 @@ body.view-in-course  {
     .fa-square {color: $green;}
     .fa-envelope {color: $light-gray;}
   }
+
+  @media (max-width: 800px) {
+    margin-top: 25px;
+    padding-left: 0;
+  }
+
 }
