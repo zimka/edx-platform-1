@@ -70,6 +70,7 @@ def get_course_outline_block_tree(request, course_id):
         requested_fields=['children', 'display_name', 'type', 'due', 'graded', 'special_exam_info', 'format'],
         block_types_filter=['course', 'chapter', 'sequential']
     )
+    override_subsection_due_dates(request, course_key, all_blocks)
 
     course_outline_root_block = all_blocks['blocks'][all_blocks['root']]
     populate_children(course_outline_root_block, all_blocks['blocks'])
@@ -77,3 +78,43 @@ def get_course_outline_block_tree(request, course_id):
     mark_last_accessed(request.user, course_key, course_outline_root_block)
 
     return course_outline_root_block
+
+
+# NPOED: openedx.features.course_experience uses BlockStructure to render views
+# which doesn't use FieldOverrideProviders, therefore both INDIVIDUAL_DUE_DATE
+# and CourseShifts became broken. Here all subsections are rendered explicitly
+# and due date in block structure are replaced accordingly.
+def override_subsection_due_dates(request, course_key, all_blocks):
+    from django.http.response import Http404
+    # avoid circular dependencies
+    from lms.djangoapps.courseware.module_render import get_module_by_usage_id
+
+    blocks = all_blocks['blocks']
+    get_by_category = lambda category: [uid for uid in blocks if blocks[uid]['type'] == category]
+    subsections_ids = get_by_category('sequential')
+
+    keys_to_remove = []
+    with modulestore().bulk_operations(course_key):
+        course = modulestore().get_course(course_key)
+        for usage_id in subsections_ids:
+            try:
+                instance, _ = get_module_by_usage_id(request, str(course_key), usage_id, course=course)
+            except Http404:
+                # course_shifts can make subsection unavailable shifting
+                # it's release date. If "rendering" subsection we face 404,
+                # then remove them from blocks
+                keys_to_remove.append(usage_id)
+                continue
+
+            representation = blocks[usage_id]
+            if representation.get('due'):
+                representation['due'] = instance.due
+
+    # If there are some usages that "not released yet" we have to find all their parents
+    # and remove from these keys from 'children'
+    chapters_ids = get_by_category('chapter')
+    for usage_id in keys_to_remove:
+        for chapter_id in chapters_ids:
+            if usage_id in blocks[chapter_id]['children']:
+                blocks[chapter_id]['children'].remove(usage_id)
+                continue # there is only one parent anyway
