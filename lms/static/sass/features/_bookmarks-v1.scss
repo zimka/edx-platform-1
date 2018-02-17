@@ -10,6 +10,10 @@ $bookmarked-icon: "\f02e"; // .fa-bookmark
     @include box-sizing(border-box);
     display: inline-block;
   }
+
+  > .courseware-show-accordion {
+    display: none;
+  }
 }
 
 // Rules for Bookmarks Button
@@ -32,20 +36,14 @@ $bookmarked-icon: "\f02e"; // .fa-bookmark
     }
   }
 
-  @media (max-width: 677px) {
-    width: 100%;
+  @media (max-width: 800px) {
     .bookmarks-list-button {
-      padding: ($baseline/4);
+      padding: 8px 10px;
       display: inline-block;
-      width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
-      &:before {
-        display: none;
-      }
     }
   }
-
 
 }
 
