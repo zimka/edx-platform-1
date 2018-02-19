@@ -96,6 +96,23 @@ from openedx.core.djangolib.markup import HTML
 
   <script type="text/javascript">
     var $$course_id = "${course.id | n, js_escaped_string}";
+
+    // courseware mobile menu
+    $(document).ready(function(){
+	    $('.js-show-menu').click(function(){
+			if ($(window).width() < 800) {
+				$('.accordion').toggle();
+			} 
+		});
+	});
+	$(window).resize(function(){
+		if ($(window).width() > 800) {
+			$('.accordion').show();
+		} else {
+			$('.accordion').hide();
+		}
+	});
+	// end courseware mobile menu
   </script>
 
 ${HTML(fragment.foot_html())}
@@ -118,11 +135,13 @@ ${HTML(fragment.foot_html())}
 
       <div class="wrapper-course-modes">
 
-          <div class="courseware-bookmarks-button">
-              <a class="bookmarks-list-button" href="${reverse('openedx.course_bookmarks.home', args=[course.id])}">
-                  ${_('Bookmarks')}
-              </a>
-          </div>
+      		<div class="courseware-show-accordion js-show-menu">Меню курса</div>
+
+			<div class="courseware-bookmarks-button">
+				<a class="bookmarks-list-button" href="${reverse('openedx.course_bookmarks.home', args=[course.id])}">
+			    	${_('Bookmarks')}
+				</a>
+			</div>
 
           % if settings.FEATURES.get('ENABLE_COURSEWARE_SEARCH'):
             <div id="courseware-search-bar" class="search-bar courseware-search-bar" role="search" aria-label="Course">
