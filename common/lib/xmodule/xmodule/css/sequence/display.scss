@@ -244,6 +244,20 @@ $seq-nav-height: 44px;
   &.disabled {
     cursor: normal;
   }
+
+  @media (max-width: 800px) {
+    min-width: auto;
+
+    span:not(.icon) {
+      display: none;
+    }
+
+    span:not(:last-child) {
+      padding-right: 0;
+    }
+
+  }
+
 }
 
 .seq_contents {

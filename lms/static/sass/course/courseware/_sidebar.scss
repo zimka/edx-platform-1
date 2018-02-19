@@ -177,3 +177,40 @@
         }
     }
 }
+
+
+
+// courseware mobile menu
+@media (max-width: 800px) {
+  
+  .wrapper-course-modes {
+     > .courseware-show-accordion {
+      display: inline-block;
+      border: 1px solid #0d4e6c;
+      border-radius: 3px;
+      padding: 8px 10px;
+      background-color: transparent;
+      color: #0d4e6c;
+      text-align: center;
+      font-size: 13px;
+      margin: 0 5px 0 0;
+      line-height: 17px;
+      &:before {
+        content: "\f0c9";
+        font-family: FontAwesome;
+        margin: 0 3px 0 0;
+      }
+    }
+  }
+
+  .course-index,
+  .course-content {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .course-index .accordion {
+    display: none;
+  }
+
+}

@@ -19,6 +19,21 @@ body.view-in-course  {
   }
 }
 
+
+// discussion-page menu
+.content-wrapper {
+  padding: 0 2%;
+}
+nav.wrapper-course-material {
+  .course-material {
+    padding: 10px 0 0 0;
+  }
+  .course-tabs {
+    padding-top: 0;
+  }
+}
+
+
 // home - layout
 .view-discussion-home {
   @include padding-left($baseline);
@@ -87,6 +102,10 @@ body.view-in-course  {
         }
       }
     }
+  }
+
+  .home-helpgrid-cover {
+    overflow-x: scroll;
   }
 
   .home-helpgrid {
@@ -178,4 +197,10 @@ body.view-in-course  {
     .fa-square {color: $green;}
     .fa-envelope {color: $light-gray;}
   }
+
+  @media (max-width: 800px) {
+    margin-top: 25px;
+    padding-left: 0;
+  }
+
 }
