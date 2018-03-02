@@ -47,6 +47,12 @@ nav.wrapper-course-material {
     display: block;
   }
 
+  .notif-settings {
+    display: inline-block;
+    width: 85px;
+    vertical-align: top;
+  }
+
   .label-settings {
     padding-top: $baseline;
     padding-bottom: ($baseline/2);
@@ -126,7 +132,7 @@ nav.wrapper-course-material {
 
     .row-item-full, .row-item {
       font-size: $forum-small-font-size;
-      padding: 0 ($baseline/2);
+      padding: ($baseline/4)  ($baseline/2);
       width: 26%;
       vertical-align: middle;
 
@@ -176,7 +182,8 @@ nav.wrapper-course-material {
 
       .row-description {
         display: inline-block;
-        width:80%;
+        vertical-align: top;
+        width: calc(100% - 90px);
       }
     }
   }
