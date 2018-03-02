@@ -388,8 +388,13 @@ class CoursewareIndex(View):
             if self.section.position and self.section.has_children:
                 display_items = self.section.get_display_items()
                 if display_items:
-                    courseware_context['sequence_title'] = display_items[self.section.position - 1] \
-                        .display_name_with_default
+                    # SUPPORT-831 / EDX-571
+                    try:
+                        courseware_context['sequence_title'] = display_items[self.section.position - 1] \
+                            .display_name_with_default
+                    except IndexError:
+                        log.error("IndexError (SUPPORT-831 / EDX-571)")
+                        pass
 
         return courseware_context
 
