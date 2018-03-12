@@ -5,6 +5,6 @@
   <div class="sidebar-user-roles">
     ${", ".join(_(role_name) for role_name in django_user_roles)}
   </div>
-  <div class="sidebar-threads-count">${ungettext('%s discussion started', '%s discussions started', profiled_user['threads_count']) % span(profiled_user['threads_count']) | h}</div>
+  <div class="sidebar-threads-count">${ungettext('Discussion started - %s', 'Discussions started - %s', profiled_user['threads_count']) % span(profiled_user['threads_count']) | h}</div>
   <div class="sidebar-comments-count">${ungettext('%s comment', '%s comments', profiled_user['comments_count']) % span(profiled_user['comments_count']) | h}</div>
 </div>
