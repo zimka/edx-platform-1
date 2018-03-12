@@ -4177,7 +4177,7 @@ msgstr "Все темы"
 #. Translators: This is a menu option for showing only unread forum threads
 #: lms/templates/discussion/_thread_list_template.html
 msgid "Unread posts"
-msgstr "Непроочитанные темы"
+msgstr "Непрочитанные темы"
 
 #. Translators: This is a menu option for showing only unanswered forum
 #. question threads
