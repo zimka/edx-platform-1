@@ -98,6 +98,9 @@
         this.$apply_username_input.attr("value", "");
         this.$apply_username_button.attr("value", "");
       }
+      else if ("detail" in error_dict){
+        error_message = error_dict["detail"];
+      }
       return this.$request_response_error.text(error_message);
     };
 

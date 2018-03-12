@@ -22,7 +22,7 @@ class InstructorResetStudentAttemptsView(ListAPIView):
 
             200 - OK , 400 - bad parameters, 401 - non-staff user requests data, 403 - not authorized
     """
-    paginate_by = 25
+    paginate_by = 10
     serializer_class = InstructorResetStudentAttemptsSerializer
     authentication_classes = (OAuth2Authentication, SessionAuthentication)
     permission_classes = (permissions.IsAuthenticated, IsCourseStaffInstructor)

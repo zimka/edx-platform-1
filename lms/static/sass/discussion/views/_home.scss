@@ -19,6 +19,21 @@ body.view-in-course  {
   }
 }
 
+
+// discussion-page menu
+.content-wrapper {
+  padding: 0 2%;
+}
+nav.wrapper-course-material {
+  .course-material {
+    padding: 10px 0 0 0;
+  }
+  .course-tabs {
+    padding-top: 0;
+  }
+}
+
+
 // home - layout
 .view-discussion-home {
   @include padding-left($baseline);
@@ -30,6 +45,12 @@ body.view-in-course  {
   .label {
     @extend %t-copy-sub2;
     display: block;
+  }
+
+  .notif-settings {
+    display: inline-block;
+    width: 85px;
+    vertical-align: top;
   }
 
   .label-settings {
@@ -89,6 +110,10 @@ body.view-in-course  {
     }
   }
 
+  .home-helpgrid-cover {
+    overflow-x: scroll;
+  }
+
   .home-helpgrid {
     border-bottom: none;
     border-radius: $forum-border-radius;
@@ -107,7 +132,7 @@ body.view-in-course  {
 
     .row-item-full, .row-item {
       font-size: $forum-small-font-size;
-      padding: 0 ($baseline/2);
+      padding: ($baseline/4)  ($baseline/2);
       width: 26%;
       vertical-align: middle;
 
@@ -157,7 +182,8 @@ body.view-in-course  {
 
       .row-description {
         display: inline-block;
-        width:80%;
+        vertical-align: top;
+        width: calc(100% - 90px);
       }
     }
   }
@@ -178,4 +204,10 @@ body.view-in-course  {
     .fa-square {color: $green;}
     .fa-envelope {color: $light-gray;}
   }
+
+  @media (max-width: 800px) {
+    margin-top: 25px;
+    padding-left: 0;
+  }
+
 }

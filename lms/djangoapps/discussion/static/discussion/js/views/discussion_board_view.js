@@ -54,7 +54,7 @@
                     el: this.$('.forum-search')
                 }).render();
                 this.renderBreadcrumbs();
-                $(window).bind('load scroll resize', _.bind(this.updateSidebar, this));
+                $(window).bind('load resize', _.bind(this.updateSidebar, this));
                 this.showBrowseMenu(true);
                 return this;
             },
@@ -157,12 +157,16 @@
                 amount = Math.max(topOffset - discussionBottomOffset, 0);
                 sidebarHeight = sidebarHeight - this.sidebar_padding - amount;
                 sidebarHeight = Math.min(sidebarHeight + 1, $discussionBody.outerHeight());
+
                 $sidebar.css('height', sidebarHeight);
+
                 headerHeight = this.$('.forum-nav-header').outerHeight();
                 refineBarHeight = this.$('.forum-nav-refine-bar').outerHeight();
                 browseFilterHeight = this.$('.forum-nav-browse-filter').outerHeight();
+
                 this.$('.forum-nav-thread-list')
                     .css('height', (sidebarHeight - headerHeight - refineBarHeight - 2) + 'px');
+                    
                 this.$('.forum-nav-browse-menu')
                     .css('height', (sidebarHeight - headerHeight - browseFilterHeight - 2) + 'px');
             },

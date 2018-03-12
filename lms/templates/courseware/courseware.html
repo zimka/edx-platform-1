@@ -76,6 +76,9 @@ from openedx.core.djangolib.markup import HTML
   ## codemirror
   <script type="text/javascript" src="${static.url('js/vendor/codemirror-compressed.js')}"></script>
 
+  ## sidebar
+  <script type="text/javascript" src="${static.url('js/course_sidebar.js')}"></script>
+
   <%static:js group='courseware'/>
   <%include file="/mathjax_include.html" args="disable_fast_preview=True"/>
 
@@ -118,11 +121,13 @@ ${HTML(fragment.foot_html())}
 
       <div class="wrapper-course-modes">
 
-          <div class="courseware-bookmarks-button">
-              <a class="bookmarks-list-button" href="${reverse('openedx.course_bookmarks.home', args=[course.id])}">
-                  ${_('Bookmarks')}
-              </a>
-          </div>
+      		<div class="courseware-show-accordion js-open-menu">${_('Course menu')}</div>
+
+    			<div class="courseware-bookmarks-button">
+    				<a class="bookmarks-list-button" href="${reverse('openedx.course_bookmarks.home', args=[course.id])}">
+    			    	${_('Bookmarks')}
+    				</a>
+    			</div>
 
           % if settings.FEATURES.get('ENABLE_COURSEWARE_SEARCH'):
             <div id="courseware-search-bar" class="search-bar courseware-search-bar" role="search" aria-label="Course">
