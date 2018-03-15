@@ -13185,6 +13185,10 @@ msgid "Courseware"
 msgstr "Содержание"
 
 #: lms/templates/courseware/courseware.html
+msgid "Course menu"
+msgstr "Меню курсов"
+
+#: lms/templates/courseware/courseware.html
 msgid "Course Search"
 msgstr "Поиск курсов"
 
