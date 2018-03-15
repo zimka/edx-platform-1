@@ -20,6 +20,7 @@
     li {
       display: inline-block;
       list-style: none;
+      float: left;
 
       &.prominent {
         @include margin-right(16px);
@@ -46,8 +47,8 @@
         &:hover,
         &:focus,
         &.active {
-          color: $uxpl-blue-hover-active;
-          border-bottom-color: $uxpl-blue-hover-active;
+          color: $tab-blue-hover-active;
+          border-bottom-color: $tab-blue-hover-active;
         }
       }
     }
