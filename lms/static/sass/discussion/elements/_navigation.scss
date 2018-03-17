@@ -6,6 +6,7 @@
 .forum-nav {
     border: 1px solid #aaa;
     border-radius: $forum-border-radius;
+    margin: 0 0 30px 0;
 }
 
 // ------
@@ -391,4 +392,15 @@
 
 .forum-nav-loading {
     @extend %forum-nav-load-more-content;
+}
+
+
+@media (max-width: 420px) {
+    .forum-nav-filter-main , 
+    .forum-nav-sort {
+        display: block;
+        float: none;
+        text-align: left;
+        padding: 10px 0;
+    }
 }

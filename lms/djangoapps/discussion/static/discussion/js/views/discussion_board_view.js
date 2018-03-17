@@ -158,17 +158,38 @@
                 sidebarHeight = sidebarHeight - this.sidebar_padding - amount;
                 sidebarHeight = Math.min(sidebarHeight + 1, $discussionBody.outerHeight());
 
-                $sidebar.css('height', sidebarHeight);
-
                 headerHeight = this.$('.forum-nav-header').outerHeight();
                 refineBarHeight = this.$('.forum-nav-refine-bar').outerHeight();
                 browseFilterHeight = this.$('.forum-nav-browse-filter').outerHeight();
 
-                this.$('.forum-nav-thread-list')
-                    .css('height', (sidebarHeight - headerHeight - refineBarHeight - 2) + 'px');
+                if ($(window).width() > 800) {
+                    $('.forum-nav').css('height', sidebarHeight);
+
+                    this.$('.forum-nav-thread-list')
+                        .css('height', (sidebarHeight - headerHeight - refineBarHeight - 2) + 'px');
                     
-                this.$('.forum-nav-browse-menu')
-                    .css('height', (sidebarHeight - headerHeight - browseFilterHeight - 2) + 'px');
+                    this.$('.forum-nav-browse-menu')
+                        .css('height', (sidebarHeight - headerHeight - browseFilterHeight - 2) + 'px');
+
+                } else if ( $(window).width() > 420 && $(window).width() <  800 ) {
+
+                    $('.forum-nav').css('height', 340);
+
+                    this.$('.forum-nav-thread-list')
+                        .css('height', 308);
+                    
+                    this.$('.forum-nav-browse-menu')
+                        .css('height', 303);
+
+                } else {
+                    $('.forum-nav').css('height', 340);
+
+                    this.$('.forum-nav-thread-list')
+                        .css('height', 249);
+                    
+                    this.$('.forum-nav-browse-menu')
+                        .css('height', 303);
+                }
             },
 
             goHome: function() {
