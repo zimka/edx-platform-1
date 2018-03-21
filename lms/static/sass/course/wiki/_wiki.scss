@@ -984,3 +984,43 @@
   width: 100% !important;
   margin-left: 0;
 }
+
+
+
+@media (max-width: 800px) {
+
+  .wiki-wrapper section.wiki {
+    .main-article,
+    .article-functions {
+      float: none;
+      width: 100%;
+      padding: 40px;
+    }
+    .main-article h3 {
+      word-wrap: break-word;
+    }
+    .breadcrumbs-header {
+      height: auto;
+    }
+    .global-functions {
+      position: relative;
+      float: none !important;
+      .btn {
+        float: none !important;
+        margin: 0 0 0 40px;
+      }
+    }
+  }
+
+}
+
+@media (max-width: 500px) {
+
+  .wiki-wrapper section.wiki {
+    .global-functions .btn {
+      float: none !important;
+      margin: 10px 0 0 40px;
+    }
+  }
+
+}
