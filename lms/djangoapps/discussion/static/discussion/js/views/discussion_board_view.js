@@ -162,7 +162,16 @@
                 refineBarHeight = this.$('.forum-nav-refine-bar').outerHeight();
                 browseFilterHeight = this.$('.forum-nav-browse-filter').outerHeight();
 
-                if ($(window).width() > 800) {
+                $sidebar.css('height', sidebarHeight);
+
+                this.$('.forum-nav-thread-list')
+                    .css('height', (sidebarHeight - headerHeight - refineBarHeight - 2) + 'px');
+
+                this.$('.forum-nav-browse-menu')
+                    .css('height', (sidebarHeight - headerHeight - browseFilterHeight - 2) + 'px');
+
+               /* 
+               if ($(window).width() > 800) {
                     $('.forum-nav').css('height', sidebarHeight);
 
                     this.$('.forum-nav-thread-list')
@@ -189,7 +198,7 @@
                     
                     this.$('.forum-nav-browse-menu')
                         .css('height', 303);
-                }
+                }*/
             },
 
             goHome: function() {
