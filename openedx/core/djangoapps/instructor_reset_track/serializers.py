@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext as _
 from rest_framework import serializers
 
 from opaque_keys.edx.keys import CourseKey
@@ -35,7 +36,9 @@ class InputInstructorResetAttemptSerializer(serializers.Serializer):
         try:
             key = CourseKey.from_string(value)
         except:
-            raise serializers.ValidationError("No course with such course_id: '{}'".format(value))
+            raise serializers.ValidationError(_("{course_id} is not a valid course key.").format(
+                course_id=str(value)
+            ))
         return key
 
     def _validate_username(self, value):
@@ -44,7 +47,7 @@ class InputInstructorResetAttemptSerializer(serializers.Serializer):
         try:
             user = User.objects.get(username=value)
         except User.DoesNotExist:
-            raise serializers.ValidationError("No user with such username: '{}'".format(value))
+            raise serializers.ValidationError(_("No user with that username") + u": '{}'".format(value))
         return user
 
     def validate(self, data):
@@ -53,5 +56,6 @@ class InputInstructorResetAttemptSerializer(serializers.Serializer):
         if not user:
             return data
         if not CourseEnrollment.is_enrolled(user, key):
-            raise serializers.ValidationError("User '{}' not enrolled in the course '{}'".format(user.username, str(key)))
+            message =_("User {username} is not enrolled in the course {course_key}")
+            raise serializers.ValidationError(message.format(username=user.username, course_key=str(key)))
         return data

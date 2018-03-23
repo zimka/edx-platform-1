@@ -211,7 +211,10 @@ def send_beta_role_email(action, user, email_params):
 
     send_mail_to_student(user.email, email_params, language=get_user_email_language(user))
 
+# NPOED: SUPPORT-542
+from openedx.core.djangoapps.instructor_reset_track import npoed_instructor_reset_track
 
+@npoed_instructor_reset_track
 def reset_student_attempts(course_id, student, module_state_key, requesting_user, delete_module=False):
     """
     Reset student attempts for a problem. Optionally deletes all student state for the specified problem.
