@@ -81,7 +81,6 @@ INSTALLED_APPS += (
 )
 
 INSTALLED_APPS += ('openedx.core.djangoapps.instructor_reset_track', )
-MIDDLEWARE_CLASSES += ('openedx.core.djangoapps.instructor_reset_track.middleware.InstructorResetMiddleware',)
 FEATURES["ENABLE_INSTRUCTOR_RESET_TRACK"] = False
 LOCALE_PATHS = (REPO_ROOT + "/npoed_translations", ) + LOCALE_PATHS
 
