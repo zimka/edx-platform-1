@@ -137,6 +137,7 @@
             },
 
             updateSidebar: function() {
+                /*
                 var amount, browseFilterHeight, discussionBottomOffset, discussionsBodyBottom,
                     discussionsBodyTop, headerHeight, refineBarHeight, scrollTop, sidebarHeight, topOffset,
                     windowHeight, $discussionBody, $sidebar;
@@ -170,17 +171,30 @@
                 this.$('.forum-nav-browse-menu')
                     .css('height', (sidebarHeight - headerHeight - browseFilterHeight - 2) + 'px');
 
-               /* 
-               if ($(window).width() > 800) {
-                    $('.forum-nav').css('height', sidebarHeight);
+                del if static works
+                */
+                
+                if ($(window).width() > 1161) {
 
-                    this.$('.forum-nav-thread-list')
-                        .css('height', (sidebarHeight - headerHeight - refineBarHeight - 2) + 'px');
+                   $('.forum-nav').css('height', 700);
+
+                   this.$('.forum-nav-thread-list')
+                        .css('height', 668);
                     
                     this.$('.forum-nav-browse-menu')
-                        .css('height', (sidebarHeight - headerHeight - browseFilterHeight - 2) + 'px');
+                        .css('height', 663);
 
-                } else if ( $(window).width() > 420 && $(window).width() <  800 ) {
+                } else if ($(window).width() > 801 && $(window).width() <=  1160) {
+
+                   $('.forum-nav').css('height', 700);
+
+                   this.$('.forum-nav-thread-list')
+                        .css('height', 609);
+                    
+                    this.$('.forum-nav-browse-menu')
+                        .css('height', 663);
+
+                } else if ( $(window).width() > 420 && $(window).width() <=  800 ) {
 
                     $('.forum-nav').css('height', 340);
 
@@ -198,7 +212,7 @@
                     
                     this.$('.forum-nav-browse-menu')
                         .css('height', 303);
-                }*/
+                }
             },
 
             goHome: function() {

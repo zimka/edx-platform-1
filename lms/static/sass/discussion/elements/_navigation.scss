@@ -404,3 +404,13 @@
         padding: 10px 0;
     }
 }
+
+@media (min-width: 801px) and (max-width: 1160px) {
+    .forum-nav-filter-main , 
+    .forum-nav-sort {
+        display: block;
+        float: none;
+        text-align: left;
+        padding: 10px 0;
+    }
+} 
