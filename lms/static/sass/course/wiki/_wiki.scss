@@ -985,7 +985,13 @@
   margin-left: 0;
 }
 
-
+@media (max-width: 1000px) {
+  .wiki-wrapper section.wiki {
+    .modal {
+      width: calc(100% - 40px);
+    }
+  }
+}
 
 @media (max-width: 800px) {
 
