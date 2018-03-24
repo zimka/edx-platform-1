@@ -990,6 +990,10 @@
 @media (max-width: 800px) {
 
   .wiki-wrapper section.wiki {
+    .breadcrumb {
+      float: none !important;
+      height: 30px;
+    }
     .main-article,
     .article-functions {
       float: none;
