@@ -8,10 +8,21 @@ from openedx.core.djangoapps.course_groups.cohorts import get_cohort_by_name
 from .core import UserProblemSetDate, UserProblemAddDays, UserCourseSetDate, \
     UserCourseAddDays, CohortProblemSetDate, CohortProblemAddDays, CohortCourseSetDate, CohortCourseAddDays
 
+ACTION_KEYS_BY_TYPE = {
+    "who": ("user", "cohort"),
+    "when": ("add_days", "set_date"),
+    "where": ("course_key", "block_key")
+}
+ACTION_KEYS_ALL = tuple(
+  y for x in ACTION_KEYS_BY_TYPE.values() for y in x
+)
+
 
 def are_change_due_keys_broken(keys, course_key):
     if len(keys) != 3:
         return "Need 3 keys, got {}: {}".format(len(keys), ",".join(x for x in keys.keys()))
+    if not all(k in ACTION_KEYS_ALL for k in keys):
+        return _("Got unknown keys among '{}'").format(unicode(keys))
     if 'user' in keys:
         try:
             user = User.objects.get(username=keys['user'])

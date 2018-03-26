@@ -199,6 +199,9 @@ such that the value can be defined later than this assignment (file load order).
             }, {
                 constructor: window.InstructorDashboard.sections.InstructorResetTrack,
                 $element: idashContent.find('.' + CSS_IDASH_SECTION + '#instructor_reset_track')
+            }, {
+                constructor: window.InstructorDashboard.sections.ChangeDue,
+                $element: idashContent.find('.' + CSS_IDASH_SECTION + '#change_due')
             }
         ];
         if (edx.instructor_dashboard.proctoring !== void 0) {
