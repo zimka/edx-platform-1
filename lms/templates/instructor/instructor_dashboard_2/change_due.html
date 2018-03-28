@@ -18,7 +18,11 @@ from openedx.core.djangolib.markup import HTML
     <h3 class="hd hd3">${_("Description")}</h3>
     <p>  ${_("Here you can change due dates.")} </p>
     <p>
-        ${_("You should choose to whom to change dues (user or cohort), to which courseware to change due (some block or the whole course) and how to change dues (just add days for current deadline or to set new deadline date) ")}
+        ${_("You should choose to whom to change dues (user or cohort), to which courseware to change due (some block or the whole course) and how to change dues (just add days for current deadline or to set new deadline date).")}
+        ${_("You can't set date for the whole course, only for specific block.")}
+    </p>
+    <p>
+        ${_("You can use button at the bottom to show the info about all previous tasks.")}
     </p>
   </div>
   <form id="form-change-due" action="${ section_data['change_due_submit_url'] }" method="post">
@@ -56,7 +60,7 @@ from openedx.core.djangolib.markup import HTML
       <li class="field change-due-where">
         <div class="change-due-options">
           <label class="change-due-options-first"><input name="where" type="radio" value="course">${_("Course")}</label>
-          <label><input name="where" type="radio" value="block">${_("Block")}</label>
+          <label><input name="where" type="radio" value="block">${_("Assignment")}</label>
         </div>
         <div id="change-due-location" >
           <input type="text" name="location" maxlength="128" placeholder="${_("Problem location")}">
@@ -69,12 +73,12 @@ from openedx.core.djangolib.markup import HTML
         </div>
         <div class="change-due-add">
           <label>
-            <input type="text" id="change-due-input-add-date" name="add-days" maxlength="128" placeholder="${_("E.g: 7")}">
+            <input type="text" id="change-due-input-add-date" name="add-days" maxlength="128" placeholder="${_("e.g: 7")}">
           </label>
         </div>
         <div class="change-due-set">
           <label>
-            <input type="text" id="change-due-input-set-date" name="set-date" maxlength="10" placeholder="${_("E.g. 2017/01/31")}">
+            <input type="text" id="change-due-input-set-date" name="set-date" maxlength="10" placeholder="${_("e.g. 2017/01/31")}">
           </label>
         </div>
       </li>
@@ -92,44 +96,20 @@ from openedx.core.djangolib.markup import HTML
       <input type="button" name="send" value="${_("Show Change Due Tasks")}"
              data-endpoint="${section_data['change_due_tasks_url'] }">
       <table class="change-due-table">
+          <thead>
+          <tr>
+              <th>ID</th>
+              <th>${_("Instructor")}</th>
+              <th>${_("Status")}</th>
+              <th>${_("Date")}</th>
+              <th>${_("For whom")}</th>
+              <th>${_("For what")}</th>
+              <th>${_("Change due")}</th>
+          </tr>
+          </thead>
+          <tbody>
+          </tbody>
       </table>
   </div>
 </div>
 
-<%block name="header_extras">
-  <style>
-    .change-due-options{
-      padding: 2em 0 0 0;
-    }
-    .section-change-due input[type="radio"]{
-      vertical-align: baseline;
-    }
-    .section-change-due label{
-      margin: 0 1em 0 0;
-    }
-    .section-change-due .change-due-options-first{
-      float:left;
-    }
-    #change-due-location .blocked{
-      background-color: #efefef;
-    }
-    .change-due-disclaimer{
-      color: red;
-    }
-    table.change-due-table {
-        width: 100%;
-        table-layout: fixed;
-        text-align: center;
-        border: 1px solid black;
-    }
-
-    .change-due-table th {
-        border: 1px solid black;
-    }
-    .change-due-table td{
-        word-wrap:break-word;
-        border: 1px solid black;
-        vertical-align: middle;
-    }
-  </style>
-</%block>

@@ -4514,3 +4514,90 @@ msgstr[0] "Открыта %s тема для обсуждения"
 msgstr[1] "Открыто %s темы для обсуждения"
 msgstr[2] "Открыто %s тем для обсуждения"
 msgstr[3] "Открыто %s тем для обсуждения"
+
+msgid "Bulk Change Due"
+msgstr "Массовый перенос сроков"
+
+msgid "Add days"
+msgstr "Добавить дней"
+
+msgid ""
+"Feature INDIVIDUAL_DUE_DATES is turned off. "
+"Your changes won't affect due's till feature activation. "
+"Please contact support."
+msgstr ""
+"Функционал INDIVIDUAL_DUE_DATES не включен на платформе. "
+"Невозможно изменить сроки студентам. "
+"Пожалуйста, свяжитесь со службой поддержки."
+
+msgid "Here you can change due dates."
+msgstr "Здесь вы можете перенести сроки сдачи заданий."
+
+msgid "You should choose to whom to change dues (user or cohort), to which courseware to change due (some block or the whole course) and how to change dues (just add days for current deadline or to set new deadline date)."
+msgstr "Необходимо выбрать кому (студенту или группе), для чего (конкретный блок или весь курс) и как (добавить дней или выбрать дату) перенести сроки."
+
+msgid "You can't set date for the whole course, only for specific block."
+msgstr "Невозможно выбрать дату для курса."
+
+msgid "You can use button at the bottom to show the info about all previous tasks."
+msgstr "Вы можете использовать кнопку внизу, чтобы посмотреть информацию о предыдущих переносах."
+
+msgid "To use this option you should setup cohorts at first."
+msgstr "Чтобы использовать эту опцию, необходимо активировать Группы."
+
+msgid "e.g: 7"
+msgstr "например: 7"
+
+msgid "e.g. 2017/01/31"
+msgstr "например: 31/01/2017"
+
+msgid "Submit Change Due"
+msgstr "Выполнить перенос сроков"
+
+msgid "Show Change Due Tasks"
+msgstr "Показать переносы сроков"
+
+msgid "User is not specified"
+msgstr "Студент не указан"
+
+msgid "Cohort is not specified"
+msgstr "Группа не указана"
+
+msgid "Location is not specified"
+msgstr "Местоположение не указано"
+
+msgid "Days to add are not specified"
+msgstr "Количество дней не указано"
+
+msgid "Date is not specified"
+msgstr "Дата не указана"
+
+msgid "Need 3 keys, got {}: '{}'"
+msgstr "Нужно 3 ключа, получено {}: '{}'"
+
+msgid "Got unknown task: '{}'"
+msgstr "Получено неизвестное задание: '{}'"
+
+msgid "User not found: '{}'"
+msgstr "Студент не найден: '{}'"
+
+msgid "Cohort not found: '{}'"
+msgstr "Группа не найдена: '{}'"
+
+msgid "Block not found: '{}'"
+msgstr "Задание не найдено: '{}'"
+
+msgid "Add days must be integer; '{}' - is not integer"
+msgstr "'Добавить дней' должно быть целым числом; '{}' - не число"
+
+msgid "Can't parse date '{}'; Must be dd/mm/yyyy"
+msgstr "Дата '{}' не корректна; дата должна быть в формате dd/mm/yyyy"
+
+msgid "For whom"
+msgstr "Кому "
+
+msgid "For what"
+msgstr "Для чего"
+
+msgid "Change due"
+msgstr "Сдвиг срока"

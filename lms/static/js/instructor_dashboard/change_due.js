@@ -38,13 +38,13 @@
 
         ChangeDueInner.prototype.init = function () {
             this.$section.find(".change-due-when input[value=add]").prop("checked", true);
-            this.$section.find(".change-due-who input[value=cohort]").prop("checked", true);
+            this.$section.find(".change-due-who input[value=user]").prop("checked", true);
             this.$section.find(".change-due-where input[value=block]").prop("checked", true);
-            this.$user.addClass("hidden");
+            this.$cohort.addClass("hidden");
             this.$set_date.addClass("hidden");
             var form = this.$section.find("#change-due-tasks");
             var table = form.find("table");
-            table.html("");
+            table.addClass("hidden");
         };
 
         ChangeDueInner.prototype.onClickTitle = function () {
@@ -107,16 +107,6 @@
             }
         };
 
-        ChangeDueInner.prototype.tableHeader = "" +
-            "<tr>" +
-            "<th>ID</th>\n" +
-            "<th>Author</th>" +
-            "<th>Status</th>" +
-            "<th>Date</th>" +
-            "<th>Who</th>" +
-            "<th>Where</th>" +
-            "<th>When</th>" +
-            "</tr>";
         ChangeDueInner.prototype.getTableRow = function(obj){
             var resstr = "<tr>";
             var args = [obj.id, obj.author, obj.status, obj.date, obj.who, obj.where, obj.when];
@@ -128,22 +118,20 @@
 
         ChangeDueInner.prototype.showTasksStatus = function (event) {
             var form = this.$section.find("#change-due-tasks");
-            var table = form.find("table");
+            form.find('table').removeClass("hidden");
+            var tbody = form.find("tbody");
             var url = this.$show_button.attr("data-endpoint");
             var self = this;
+            tbody.html('');
             $.ajax({
                 type: 'GET',
                 url: url,
                 dataType: "json",
                 success: function (data) {
-                    var inner_table = self.tableHeader;
                     var tasks = data["tasks"];
-                    console.log(data);
                     for (var i=0; i<tasks.length; i++){
-                        var cur = tasks[i];
-                        inner_table += self.getTableRow(cur);
+                        tbody.append(self.getTableRow(tasks[i]));
                     }
-                    table.html(inner_table);
                 }
             });
         };

@@ -66,16 +66,16 @@ def get_tasks(request, course_id):
             "id": t.task_id,
             "author": t.requester.username,
             "status": t.task_output.strip('"') if t.task_state == "SUCCESS" else t.task_state.lower(),
-            "date": str(t.updated.replace(microsecond=0))
+            "date": str(t.updated.replace(microsecond=0, tzinfo=None))
         }
         task_input = json.loads(t.task_input)
-        task_args = {"who": None, "when":None, "where": None}
+        task_args = {"who": None, "when": None, "where": None}
         try:
             pairs = dict((key, task_input["values"][num]) for num, key in enumerate(task_input["keys"]))
             for wh_ in ACTION_KEYS_BY_TYPE:
                 for type_ in ACTION_KEYS_BY_TYPE[wh_]:
                     if type_ in pairs:
-                        task_args[wh_] = pairs[type_] + " ({})".format(type_)
+                        task_args[wh_] = pairs[type_]
         except Exception as e:
             logging.error(u"Exception during instructor 'change_due' task processing: '{}'".format(unicode(e)))
         current.update(task_args)

@@ -20,34 +20,34 @@ ACTION_KEYS_ALL = tuple(
 
 def are_change_due_keys_broken(keys, course_key):
     if len(keys) != 3:
-        return "Need 3 keys, got {}: {}".format(len(keys), ",".join(x for x in keys.keys()))
+        return _("Need 3 keys, got {}: '{}'").format(len(keys), ",".join(x for x in keys.keys()))
     if not all(k in ACTION_KEYS_ALL for k in keys):
-        return _("Got unknown keys among '{}'").format(unicode(keys))
+        return _("Got unknown task: '{}'").format(unicode([x for x in keys]))
     if 'user' in keys:
         try:
             user = User.objects.get(username=keys['user'])
-        except ValueError:
-            return _("No such user: {}").format(keys['user'])
+        except Exception:
+            return _("User not found: '{}'").format(keys['user'])
     if 'cohort' in keys:
         try:
             cohort = get_cohort_by_name(course_key, keys['cohort'])
         except ValueError:
-            return _("No such cohort: {}").format(keys['cohort'])
+            return _("Cohort not found: '{}'").format(keys['cohort'])
     if 'block_key' in keys:
         try:
             block = UsageKey.from_string(keys['block_key'])
         except InvalidKeyError:
-            return _("No such block: {}").format(keys['block_key'])
+            return _("Block not found: '{}'").format(keys['block_key'])
     if 'add_days' in keys:
         try:
             add_days = int(keys['add_days'])
         except ValueError:
-            return _("Add days must be integer; {} - is not integer ").format(keys['add_days'])
+            return _("Add days must be integer; '{}' - is not integer").format(keys['add_days'])
     if 'set_date' in keys:
         try:
             set_date = dateutil.parser.parse(keys['set_date'], dayfirst=True).replace(tzinfo=utc)
         except ValueError:
-            return _("Didn't understand date '{}'; Must be in dd/mm/yyyy").format(keys['set_date'])
+            return _("Can't parse date '{}'; Must be dd/mm/yyyy").format(keys['set_date'])
     return 0
 
 

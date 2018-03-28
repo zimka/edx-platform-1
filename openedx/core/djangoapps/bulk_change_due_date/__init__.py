@@ -12,7 +12,7 @@ def _section_change_due(course, access):
         cohorts = get_course_cohorts(course)
     section_data = {
         'section_key': 'change_due',
-        'section_display_name': _('Change due'),
+        'section_display_name': _("Bulk Change Due"),
         'access': access,
         'course_id': unicode(course_key),
         'change_due_submit_url': reverse('change_due_submit', kwargs={'course_id': unicode(course_key)}),

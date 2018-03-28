@@ -629,6 +629,43 @@
     padding: .5em 0;
   }
 }
+
+.instructor-dashboard-wrapper-2 section.idash-section#change_due{
+      .change-due-options{
+      padding: 2em 0 0 0;
+    }
+    .section-change-due input[type="radio"]{
+      vertical-align: baseline;
+    }
+    .section-change-due label{
+      margin: 0 1em 0 0;
+    }
+    .section-change-due .change-due-options-first{
+      float:left;
+    }
+    #change-due-location .blocked{
+      background-color: #efefef;
+    }
+    .change-due-disclaimer{
+      color: red;
+    }
+    table.change-due-table {
+        width: 100%;
+        table-layout: fixed;
+        text-align: center;
+        border: 1px solid black;
+    }
+
+    .change-due-table th {
+        border: 1px solid black;
+    }
+    .change-due-table td{
+        word-wrap:break-word;
+        border: 1px solid black;
+        vertical-align: middle;
+    }
+}
+
 // view - membership
 // --------------------
 .instructor-dashboard-wrapper-2 section.idash-section#membership {
