@@ -137,43 +137,7 @@
             },
 
             updateSidebar: function() {
-                /*
-                var amount, browseFilterHeight, discussionBottomOffset, discussionsBodyBottom,
-                    discussionsBodyTop, headerHeight, refineBarHeight, scrollTop, sidebarHeight, topOffset,
-                    windowHeight, $discussionBody, $sidebar;
-                scrollTop = $(window).scrollTop();
-                windowHeight = $(window).height();
-                $discussionBody = this.$('.discussion-column');
-                discussionsBodyTop = $discussionBody[0] ? $discussionBody.offset().top : undefined;
-                discussionsBodyBottom = discussionsBodyTop + $discussionBody.outerHeight();
-                $sidebar = this.$('.forum-nav');
-                if (scrollTop > discussionsBodyTop - this.sidebar_padding) {
-                    $sidebar.css('top', scrollTop - discussionsBodyTop + this.sidebar_padding);
-                } else {
-                    $sidebar.css('top', '0');
-                }
-                sidebarHeight = windowHeight - Math.max(discussionsBodyTop - scrollTop, this.sidebar_padding);
-                topOffset = scrollTop + windowHeight;
-                discussionBottomOffset = discussionsBodyBottom + this.sidebar_padding;
-                amount = Math.max(topOffset - discussionBottomOffset, 0);
-                sidebarHeight = sidebarHeight - this.sidebar_padding - amount;
-                sidebarHeight = Math.min(sidebarHeight + 1, $discussionBody.outerHeight());
-
-                headerHeight = this.$('.forum-nav-header').outerHeight();
-                refineBarHeight = this.$('.forum-nav-refine-bar').outerHeight();
-                browseFilterHeight = this.$('.forum-nav-browse-filter').outerHeight();
-
-                $sidebar.css('height', sidebarHeight);
-
-                this.$('.forum-nav-thread-list')
-                    .css('height', (sidebarHeight - headerHeight - refineBarHeight - 2) + 'px');
-
-                this.$('.forum-nav-browse-menu')
-                    .css('height', (sidebarHeight - headerHeight - browseFilterHeight - 2) + 'px');
-
-                del if static works
-                */
-                
+                // fixed static sidebar (adaptive height on 420-, 420-800, 800-1160, 1161+)                
                 if ($(window).width() > 1161) {
 
                    $('.forum-nav').css('height', 700);

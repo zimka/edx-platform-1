@@ -73,14 +73,25 @@
                             'left': 10 + '%',
                             'top': 10 + '%'
                         });
-                    } else {
+                    } else if (!$(modal_id).hasClass('email-modal') && $(window).width() > 1000) {
                         $(modal_id).css({
-                            'position': o.position,
-                            'opacity': 0,
-                            'z-index': 11000,
-                            'left': 50 + '%',
-                            'margin-left': -(modal_width / 2) + 'px',
-                            'top': o.top + 'px'
+                            "display": "block",
+                            "position": "fixed",
+                            "opacity": 0,
+                            "z-index": 11000,
+                            "top": o.top + "px",
+                            "left": 50 + "%",
+                            "margin-left": -(modal_width / 2) + "px"
+                        });
+                    } else if (!$(modal_id).hasClass('email-modal') && $(window).width() < 999) {
+                        $(modal_id).css({
+                            "display": "block",
+                            "position": "fixed",
+                            "opacity": 0,
+                            "z-index": 11000,
+                            "top": o.top + "px",
+                            "left": 0,
+                            "margin-left": 10
                         });
                     }
 

@@ -3881,6 +3881,7 @@ msgstr "Главная страница"
 #: common/lib/xmodule/xmodule/tabs.py lms/djangoapps/courseware/tabs.py lms/djangoapps/courseware/views/views.py lms/djangoapps/shoppingcart/reports.py
 #: openedx/features/course_experience/__init__.py cms/templates/widgets/header.html lms/templates/help_modal.html lms/templates/courseware/courseware.html
 #: lms/templates/ux/reference/bootstrap/course-skeleton.html
+#: openedx/features/course_bookmarks/templates/course_bookmarks/course-bookmarks.html
 #: openedx/features/course_bookmarks/static/course_bookmarks/fixtures/bookmarks.html
 msgid "Course"
 msgstr "Курс"
