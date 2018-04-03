@@ -1027,7 +1027,7 @@
 @media (max-width: 550px) {
 
   .wiki-wrapper section.wiki {
-    .btn.btn-danger
+    .btn.btn-danger {
       display: table;
       float: none;
       margin: 10px 0 0 0;
