@@ -60,8 +60,8 @@
                     var modal_width = $(modal_id).outerWidth();
 
                     var user_agent = window.navigator && window.navigator.userAgent || '';
-                    var mobile_device = (/Mobile/i).test(USER_AGENT),
-                        android_device = (/Android/i).test(USER_AGENT);
+                    var mobile_device = (/Mobile/i).test(user_agent),
+                        android_device = (/Android/i).test(user_agent);
 
                     $('#lean_overlay').css({'display': 'block', opacity: 0});
                     $('#lean_overlay').fadeTo(200, o.overlay);
