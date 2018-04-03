@@ -59,6 +59,10 @@
                     var modal_height = $(modal_id).outerHeight();
                     var modal_width = $(modal_id).outerWidth();
 
+                    var user_agent = window.navigator && window.navigator.userAgent || '';
+                    var mobile_device = (/Mobile/i).test(user_agent),
+                        android_device = (/Android/i).test(user_agent);
+
                     $('#lean_overlay').css({'display': 'block', opacity: 0});
                     $('#lean_overlay').fadeTo(200, o.overlay);
 
@@ -73,7 +77,7 @@
                             'left': 10 + '%',
                             'top': 10 + '%'
                         });
-                    } else if (!$(modal_id).hasClass('email-modal') && $(window).width() > 1000) {
+                    } else if (!$(modal_id).hasClass('email-modal') && $(window).width() > 1000 && !(mobile_device || android_device)) {
                         $(modal_id).css({
                             "display": "block",
                             "position": "fixed",
@@ -83,15 +87,16 @@
                             "left": 50 + "%",
                             "margin-left": -(modal_width / 2) + "px"
                         });
-                    } else if (!$(modal_id).hasClass('email-modal') && $(window).width() < 999) {
+                    } else if (!$(modal_id).hasClass('email-modal') && (mobile_device || android_device)) {
                         $(modal_id).css({
                             "display": "block",
-                            "position": "fixed",
+                            "position": "absolute",
                             "opacity": 0,
                             "z-index": 11000,
                             "top": o.top + "px",
                             "left": 0,
-                            "margin-left": 10
+                            "margin-left": 10,
+                            "width": "calc(100% - 40px)"
                         });
                     }
 
