@@ -3881,6 +3881,8 @@ msgstr "Главная страница"
 #: common/lib/xmodule/xmodule/tabs.py lms/djangoapps/courseware/tabs.py lms/djangoapps/courseware/views/views.py lms/djangoapps/shoppingcart/reports.py
 #: openedx/features/course_experience/__init__.py cms/templates/widgets/header.html lms/templates/help_modal.html lms/templates/courseware/courseware.html
 #: lms/templates/ux/reference/bootstrap/course-skeleton.html
+#: openedx/features/course_bookmarks/templates/course_bookmarks/course-bookmarks.html
+#: openedx/features/course_bookmarks/static/course_bookmarks/fixtures/bookmarks.html
 msgid "Course"
 msgstr "Курс"
 
@@ -9719,9 +9721,13 @@ msgid "You are not signed in. To view the discussion content, {sign_in_link} or 
 msgstr ""
 
 #: openedx/features/course_bookmarks/plugins.py openedx/features/course_bookmarks/views/course_bookmarks.py lms/templates/courseware/courseware.html
-#: openedx/features/course_bookmarks/templates/course_bookmarks/course-bookmarks.html
 msgid "Bookmarks"
 msgstr "Закладки"
+
+#: openedx/features/course_bookmarks/templates/course_bookmarks/course-bookmarks.html
+#: openedx/features/course_bookmarks/static/course_bookmarks/fixtures/bookmarks.html
+msgid "My Bookmarks"
+msgstr "Мои закладки"
 
 #: openedx/features/course_experience/plugins.py cms/templates/widgets/header.html openedx/features/course_experience/templates/course_experience/course-updates-fragment.html
 msgid "Updates"

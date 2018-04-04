@@ -358,11 +358,8 @@
   }
 
   #hint_id_content {
-    position: absolute;
-    top: 10px;
-    right: 0%;
     font-size: 12px;
-    text-align:right;
+    margin-bottom: 5px;
   }
 
   .CodeMirror {
@@ -525,6 +522,8 @@
       width: 100%;
       min-height: 450px;
       border: 0;
+      box-sizing: border-box;
+      overflow: scroll;
     }
 
     .modal-footer {
@@ -985,11 +984,24 @@
   margin-left: 0;
 }
 
+@media (max-width: 1000px) {
 
+  .wiki-wrapper section.wiki {
+    .btn.btn-primary {
+      display: block;
+      margin: 0 0 10px 0;
+    }
+  }
+
+}
 
 @media (max-width: 800px) {
 
   .wiki-wrapper section.wiki {
+    .breadcrumb {
+      float: none !important;
+      height: 30px;
+    }
     .main-article,
     .article-functions {
       float: none;
@@ -1012,6 +1024,18 @@
     }
   }
 
+}
+
+@media (max-width: 550px) {
+
+  .wiki-wrapper section.wiki {
+    .btn.btn-danger {
+      display: table;
+      float: none;
+      margin: 10px 0 0 0;
+    }
+  }
+  
 }
 
 @media (max-width: 500px) {

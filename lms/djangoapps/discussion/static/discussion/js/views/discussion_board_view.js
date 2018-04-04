@@ -137,68 +137,35 @@
             },
 
             updateSidebar: function() {
-                var amount, browseFilterHeight, discussionBottomOffset, discussionsBodyBottom,
-                    discussionsBodyTop, headerHeight, refineBarHeight, scrollTop, sidebarHeight, topOffset,
-                    windowHeight, $discussionBody, $sidebar;
-                scrollTop = $(window).scrollTop();
-                windowHeight = $(window).height();
-                $discussionBody = this.$('.discussion-column');
-                discussionsBodyTop = $discussionBody[0] ? $discussionBody.offset().top : undefined;
-                discussionsBodyBottom = discussionsBodyTop + $discussionBody.outerHeight();
-                $sidebar = this.$('.forum-nav');
-                if (scrollTop > discussionsBodyTop - this.sidebar_padding) {
-                    $sidebar.css('top', scrollTop - discussionsBodyTop + this.sidebar_padding);
-                } else {
-                    $sidebar.css('top', '0');
-                }
-                sidebarHeight = windowHeight - Math.max(discussionsBodyTop - scrollTop, this.sidebar_padding);
-                topOffset = scrollTop + windowHeight;
-                discussionBottomOffset = discussionsBodyBottom + this.sidebar_padding;
-                amount = Math.max(topOffset - discussionBottomOffset, 0);
-                sidebarHeight = sidebarHeight - this.sidebar_padding - amount;
-                sidebarHeight = Math.min(sidebarHeight + 1, $discussionBody.outerHeight());
+                // fixed static sidebar (adaptive height on 420-, 420-800, 800-1160, 1161+)                
+                var $sidebar = $('.forum-nav'),
+                    $sidebarThreads = this.$('.forum-nav-thread-list'),
+                    $sidebarMenu = this.$('.forum-nav-browse-menu');
 
-                headerHeight = this.$('.forum-nav-header').outerHeight();
-                refineBarHeight = this.$('.forum-nav-refine-bar').outerHeight();
-                browseFilterHeight = this.$('.forum-nav-browse-filter').outerHeight();
+                var heightLimit;
 
-                $sidebar.css('height', sidebarHeight);
+                if ($(window).width() >= 801) {
 
-                this.$('.forum-nav-thread-list')
-                    .css('height', (sidebarHeight - headerHeight - refineBarHeight - 2) + 'px');
-
-                this.$('.forum-nav-browse-menu')
-                    .css('height', (sidebarHeight - headerHeight - browseFilterHeight - 2) + 'px');
-
-               /* 
-               if ($(window).width() > 800) {
-                    $('.forum-nav').css('height', sidebarHeight);
-
-                    this.$('.forum-nav-thread-list')
-                        .css('height', (sidebarHeight - headerHeight - refineBarHeight - 2) + 'px');
-                    
-                    this.$('.forum-nav-browse-menu')
-                        .css('height', (sidebarHeight - headerHeight - browseFilterHeight - 2) + 'px');
-
-                } else if ( $(window).width() > 420 && $(window).width() <  800 ) {
-
-                    $('.forum-nav').css('height', 340);
-
-                    this.$('.forum-nav-thread-list')
-                        .css('height', 308);
-                    
-                    this.$('.forum-nav-browse-menu')
-                        .css('height', 303);
+                    heightLimit = 700;
 
                 } else {
-                    $('.forum-nav').css('height', 340);
 
-                    this.$('.forum-nav-thread-list')
-                        .css('height', 249);
+                    heightLimit = 340;
+
+                };
+
+                $sidebar.css('height', heightLimit);
+                $sidebarMenu.css('height', heightLimit - 37);
+
+                if ($(window).width() > 1161 || ($(window).width() <=  800 && $(window).width() > 421)) {
+
+                    $sidebarThreads.css('height', heightLimit - 32); 
                     
-                    this.$('.forum-nav-browse-menu')
-                        .css('height', 303);
-                }*/
+                } else if (($(window).width() <=  1160 && $(window).width() > 801) || $(window).width() <= 420 ) {
+                    
+                    $sidebarThreads.css('height', heightLimit - 91 );
+ 
+                };
             },
 
             goHome: function() {
