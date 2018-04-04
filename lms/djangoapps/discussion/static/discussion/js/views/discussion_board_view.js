@@ -154,7 +154,7 @@
 
                 };
 
-                sidebar.css('height', heightLimit);
+                $sidebar.css('height', heightLimit);
                 $sidebarMenu.css('height', heightLimit - 37);
 
                 if ($(window).width() > 1161 || ($(window).width() <=  800 && $(window).width() > 421)) {
