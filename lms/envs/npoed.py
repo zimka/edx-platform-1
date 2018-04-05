@@ -4,7 +4,6 @@ from .aws import *
 
 
 SSO_NPOED_URL = ENV_TOKENS.get('SSO_NPOED_URL')
-SSO_NPOED_URL = 'https://sso.albania.opro.ciot-env.ru/'
 if SSO_NPOED_URL:
     SSO_NPOED_URL = SSO_NPOED_URL.rstrip('/')
 
@@ -23,7 +22,6 @@ MIDDLEWARE_CLASSES += (
 )
 
 PLP_URL = ENV_TOKENS.get('PLP_URL')
-PLP_URL = 'https://albania.opro.ciot-env.ru/'
 if PLP_URL:
     PLP_URL = PLP_URL.rstrip('/')
 
@@ -61,12 +59,6 @@ SSO_API_KEY = 'aac2727346af584cb95d9e6fda6a8f6e985d4dd5'
 PLP_API_KEY = '84301f1007ff6cda8d9a2fdf77987830c0fa04dc'
 REGISTRATION_EXTRA_FIELDS = {}
 
-SSO_API_TOKEN = '81595d7b3c8b8f84ae6165cdf723b4f28f6068eb'
-
-DEBUG=True
-
-
-
 SOCIAL_AUTH_SSO_NPOED_OAUTH2_KEY = '4d042e811860942fa6b7'
 SOCIAL_AUTH_SSO_NPOED_OAUTH2_SECRET = 'c58f23ca07eaca73649a736eed5f2a91ba30f8a9'
 
@@ -82,9 +74,10 @@ COURSE_MODE_DEFAULTS = {
     'suggested_prices': '',
 }
 
-#EDX_API_KEY = 'EDX_API_KEY'
 SILENCED_SYSTEM_CHECKS = ("fields.E300", )
 LOCALE_PATHS = (REPO_ROOT + "/npoed_translations", ) + LOCALE_PATHS
 
 FEATURES["ENABLE_GRADING_FEATURES"] = True
-FEATURES["ENABLE_PASSING_GRADE"] = True
+
+INSTALLED_APPS += ("video_evms",)
+FEATURES["EVMS_TURN_ON"] = True
