@@ -370,6 +370,8 @@
 
   .CodeMirror-scroll {
     padding: 7px;
+    box-sizing: border-box;
+    width: 100%;
   }
 
   .schematic_container {
