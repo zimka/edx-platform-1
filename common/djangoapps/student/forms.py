@@ -102,6 +102,8 @@ class TrueCheckbox(widgets.CheckboxInput):
     """
     def value_from_datadict(self, data, files, name):
         value = data.get(name, '')
+        if isinstance(value, bool):
+            return value
         return value.lower() == 'true'
 
 

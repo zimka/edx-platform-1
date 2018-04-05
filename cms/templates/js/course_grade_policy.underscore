@@ -29,6 +29,13 @@
     <span class="tip tip-stacked"><%= gettext("The number of assignments of this type that will be dropped. The lowest scoring assignments are dropped first.") %></span>
   </div>
 
+  <% if (model.get('passing_grade') != null) { %>
+    <div class="field text" id="field-course-grading-assignment-passinggrade">
+      <label for="course-grading-assignment-passinggrade"><%= gettext("Passing Grade") %></label>
+      <input type="text" class="short" id="course-grading-assignment-passinggrade" value = "<%= model.get('passing_grade') %>" />
+      <span class="tip tip-stacked"><%= gettext("Minimum required percent for this category to get course credit.") %></span>
+    </div>
+  <% } %>
   <div class="actions">
   	<a href="#" class="button delete-button standard remove-item remove-grading-data"><span class="delete-icon"></span><%= gettext("Delete") %></a>
   </div>

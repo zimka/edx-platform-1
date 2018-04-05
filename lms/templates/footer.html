@@ -1,145 +1,123 @@
-## mako
-<%page expression_filter="h"/>
-<%!
-  from django.core.urlresolvers import reverse
-  from django.utils.translation import ugettext as _
-  from branding.api import get_footer
-  from openedx.core.djangoapps.lang_pref.api import footer_language_selector_is_enabled
-%>
-<% footer = get_footer(is_secure=is_secure) %>
-<%namespace name='static' file='static_content.html'/>
-
-% if uses_bootstrap:
-  <div class="container-fluid wrapper-footer">
-    <footer>
-      <div class="row">
-        <div class="col-md-9">
-          <nav class="navbar site-nav navbar-toggleable-sm navbar-light" aria-label="${_('About')}">
-            <ul class="navbar-nav">
-              % for item_num, link in enumerate(footer['navigation_links'], start=1):
-                <li class="nav-item">
-                  <a class="nav-link" href="${link['url']}">${link['title']}</a>
-                </li>
-              % endfor
-            </ul>
-          </nav>
-
-          ## Site operators: Please do not remove this paragraph! This attributes back to edX and makes your acknowledgement of edX's trademarks clear.
-          <p class="copyright">${footer['copyright']} ${u" | {icp}".format(icp=getattr(settings,'ICP_LICENSE')) if getattr(settings,'ICP_LICENSE',False) else ""}</p>
-
-          <nav class="navbar legal-nav navbar-toggleable-sm navbar-light" aria-label="${_('Legal')}">
-            <ul class="navbar-nav">
-              % for item_num, link in enumerate(footer['legal_links'], start=1):
-                <li class="nav-item">
-                  <a class="nav-link" href="${link['url']}">${link['title']}</a>
-                </li>
-              % endfor
-              <li class="nav-item">
-                <a class="nav-link" href="${footer['edx_org_link']['url']}">${footer['edx_org_link']['text']}</a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-        <div class="col-md-3">
-          ## Please leave this link and use one of the logos provided
-          ## The OpenEdX link may be hidden when this view is served
-          ## through an API to partner sites (such as marketing sites or blogs),
-          ## which are not technically powered by Open edX.
-          % if not hide_openedx_link:
-            <div class="footer-about-openedx">
-              <p>
-                <a href="${footer['openedx_link']['url']}">
-                  <img src="${footer['openedx_link']['image']}" alt="${footer['openedx_link']['title']}" width="140" />
-                </a>
-              </p>
-            </div>
-          % endif
-        </div>
+        <link rel="shortcut icon" type="image/ico" href="http://openprofession.ru/static/img/favicon.png">
+<!--
+        <link href="https://openprofession.ru/static/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://openprofession.ru/static/css/catalog.css" rel="stylesheet">
+        <link href="https://openprofession.ru/static/css/flatpage-fix.css" rel="stylesheet">
+        <link href="https://openprofession.ru/static/css/mobile-fix.css" rel="stylesheet">
+        <link href="https://openprofession.ru/static/css/plp.bundle.min.css" ,="" rel="stylesheet">
+   -->
+  
+  
+  <footer id="footer" class="wrapper footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-3 col-md-2">
+        <a href="https://openprofession.ru" class="footer__logo">
+          <img src="/static/img/logo-white.svg" alt="">
+        </a>
+        <ul class="footer__social">
+          <li class="footer__social-item footer__vk">
+            <a href="https://vk.com/open_profession" target="_blank"><i class="icon icon_type_vk"></i></a>
+          </li>
+          <li class="footer__social-item footer__facebook">
+            <a href="https://www.facebook.com/openprofession/" target="_blank"><i class="icon icon_type_facebook"></i></a>
+          </li>
+          <li class="footer__social-item footer__instagram">
+            <a href="https://instagram.com/open_profession" target="_blank"><i class="icon icon_type_instagram"></i></a>
+          </li>
+        </ul>
       </div>
-    </footer>
+      <div class="col-sm-9 col-md-10">
+          <style>.prosent {display:none}
+.footer__copywriter {display:none}
+.footer__navigation-list ul {width:40%}
+
+.footer__navigation-list {
+    margin-left: 50px !important;}
+
+.footer__navigation-list li {
+    display: block;
+    margin-bottom: 6px;}
+</style>
+<div class="footer__navigation-list">
+  <ul>
+    <li><a href="/about" class="title">О Проекте</a></li>
+    <li><a href="/add" class="title">Разместить свой курс</a></li>
+    <li><a href="/jobs" class="title">Вакансии</a></li>
+
+
+    <!--li><a href="/learning-paths" class="title">Образовательные траектории</a></li-->
+    <!--li><a href="/active-group/" class="title">Присоединиться к проекту</a></li-->
+    <!--li><a href="/partners">Бизнес-партнеры</a></li-->
+    <!--li><a href="/universities">Университеты</a></li-->
+
+  </ul>
+
+
+  <!--ul>
+    <li><a href="http://business.openprofession.ru/?utm_source=op&utm_medium=click&utm_compaign=op&utm_term=footer&utm_content=" target="_blank">Для компаний</a></li>
+    <li><a href="http://business.openprofession.ru/?utm_source=op&utm_medium=click&utm_compaign=op&utm_term=footer&utm_content=/" target="_blank">Для образовательных организаций</a></li>
+ 
+   <!--li><a href="/course" class="title">Курсы</a></li>
+    <li><a href="">Специализации</a></li>
+    <li><a href="https://courses.mipt.ru">Онлайн-магистратура</a></li>
+    <li><a href="/spoc">Мини-курсы</a></li>
+    <li><a href="/ape">Дополнительное профессиональное образование (ДПО)</a></li-->
+  
+
+
+  <ul>
+    <li><a href="/terms">Пользовательское соглашение</a></li>
+    <li><a href="/privacy_policy">Политика конфиденциальности</a></li>
+    <li><a href="/requirements">Технические требования</a></li>
+    <!--li><a href="/payment" class="title">Оплата</a></li>
+    <li><a href="/certs">Сертификаты</a></li>
+    <li><a href="/professions">Профессии</a></li>
+    <li><a href="/employment">Трудоустройство</a></li>
+    <li><a href="/confirm_course">Зачет курса в вашем университете</a></li-->
+  </ul>
+</div>
+
+<!--div class="footer__programs">
+  <h3>Избранные программы обучения</h3>
+  <div class="footer__programs-item">
+    <p>
+      <span class="name">Курс:</span>
+      <a href="#">Grow to Greatness: Smart Growth for Private Businesses</a>
+    </p>
   </div>
-% else:
-  <div class="wrapper wrapper-footer">
-    <footer id="footer-openedx" class="grid-container"
-      ## When rendering the footer through the branding API,
-      ## the direction may not be set on the parent element,
-      ## so we set it here.
-      % if bidi:
-        dir=${bidi}
-      % endif
-    >
-      <div class="colophon">
-        <nav class="nav-colophon" aria-label="${_('About')}">
-          <ol>
-              % for item_num, link in enumerate(footer['navigation_links'], start=1):
-              <li class="nav-colophon-0${item_num}">
-                <a id="${link['name']}" href="${link['url']}">${link['title']}</a>
-              </li>
-              % endfor
-          </ol>
-        </nav>
+  <div class="footer__programs-item">
+    <p>
+      <span class="name">Специализация:</span>
+      <a href="#">Grow to Greatness: Smart Growth for Private Businesses</a>
+    </p>
+  </div>
+  <div class="footer__programs-item">
+    <p>
+      <span class="name">Мини-курсы:</span>
+      <a href="#">Grow to Greatness: Smart Growth for Private Businesses</a>
+    </p>
+  </div>
+</div-->
 
-        % if context.get('include_language_selector', footer_language_selector_is_enabled()):
-            <%include file="${static.get_template_path('widgets/footer-language-selector.html')}"/>
-        % endif
+<div class="footer__contact">
+  <h3><a href="/contacts" class="title">Контакты</a></h3>
+  <ul class="footer__contact-list">
+    <li><a class="css-color" href="/feedback"><img src="/static/img/icons/mail.svg" alt=""> <span>Сообщить о проблеме</span></a></li>
+    <!--li><a href="/faq">Часто задаваемые вопросы</a></li-->
+    <!--li><a href="/confirm_course">Корпоративным клиентам</a></li-->
+  </ul>
 
-        <div class="wrapper-logo">
-          <p>
-            <a href="/">
-              ## The default logo is a placeholder.
-              ## You can either replace this link entirely or update
-              ## the FOOTER_ORGANIZATION_IMAGE in Django settings.
-              ## If you customize FOOTER_ORGANIZATION_IMAGE, then the image
-              ## can be included in the footer on other sites
-              ## (e.g. a blog or marketing front-end) to provide a consistent
-              ## user experience.  See the branding app for details.
-              <img alt="organization logo" src="${footer['logo_image']}">
-            </a>
-          </p>
-        </div>
+</div>
 
-        ## Site operators: Please do not remove this paragraph! This attributes back to edX and makes your acknowledgement of edX's trademarks clear.
-        <p class="copyright">${footer['copyright']} ${u" | {icp}".format(icp=getattr(settings,'ICP_LICENSE')) if getattr(settings,'ICP_LICENSE',False) else ""}</p>
 
-        <nav class="nav-legal" aria-label="${_('Legal')}">
-          <ul>
-            % for item_num, link in enumerate(footer['legal_links'], start=1):
-              <li class="nav-legal-0${item_num}">
-                <a href="${link['url']}">${link['title']}</a>
-              </li>
-            % endfor
-            <li><a href="${footer['edx_org_link']['url']}">${footer['edx_org_link']['text']}</a></li>
-          </ul>
-        </nav>
       </div>
-
-      ## Please leave this link and use one of the logos provided
-      ## The OpenEdX link may be hidden when this view is served
-      ## through an API to partner sites (such as marketing sites or blogs),
-      ## which are not technically powered by OpenEdX.
-      % if not hide_openedx_link:
-      <div class="footer-about-openedx">
-        <p>
-          <a href="${footer['openedx_link']['url']}">
-            <img src="${footer['openedx_link']['image']}" alt="${footer['openedx_link']['title']}" width="140" />
-          </a>
+      <div class="col-sm-12">
+        <p class="footer__copywriter">
+            OpenProfession.ru 2018.
         </p>
       </div>
-      % endif
-    </footer>
+    </div>
   </div>
-% endif
-% if include_dependencies:
-  <%static:js group='base_vendor'/>
-  <%static:css group='style-vendor'/>
-  <%include file="widgets/segment-io.html" />
-  <%include file="widgets/segment-io-footer.html" />
-% endif
-% if footer_css_urls:
-  % for url in footer_css_urls:
-    <link rel="stylesheet" type="text/css" href="${url}"></link>
-  % endfor
-% endif
-% if settings.FEATURES.get('ENABLE_COOKIE_CONSENT', False):
-  <%include file="widgets/cookie-consent.html" />
-% endif
+</footer>
+

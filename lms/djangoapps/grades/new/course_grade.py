@@ -12,6 +12,8 @@ from xmodule import block_metadata_utils
 from .subsection_grade import ZeroSubsectionGrade
 from .subsection_grade_factory import SubsectionGradeFactory
 
+from npoed_grading_features import enable_passing_grade
+
 
 def uniqueify(iterable):
     return OrderedDict([(item, None) for item in iterable]).keys()
@@ -194,6 +196,7 @@ class ZeroCourseGrade(CourseGradeBase):
         return ZeroSubsectionGrade(subsection, self.course_data)
 
 
+@enable_passing_grade
 class CourseGrade(CourseGradeBase):
     """
     Course Grade class when grades are updated or read from storage.

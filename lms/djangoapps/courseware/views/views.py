@@ -104,6 +104,8 @@ from xmodule.x_module import STUDENT_VIEW
 from ..entrance_exams import user_can_skip_entrance_exam
 from ..module_render import get_module, get_module_by_usage_id, get_module_for_descriptor
 
+from npoed_grading_features import enable_passing_grade
+
 log = logging.getLogger("edx.courseware")
 
 
@@ -1058,6 +1060,7 @@ def _get_cert_data(student, course, course_key, is_active, enrollment_mode):
     )
 
 
+@enable_passing_grade
 def _credit_course_requirements(course_key, student):
     """Return information about which credit requirements a user has satisfied.
 
@@ -1311,6 +1314,7 @@ def course_survey(request, course_id):
     )
 
 
+@enable_passing_grade
 def is_course_passed(course, grade_summary=None, student=None, request=None):
     """
     check user's course passing status. return True if passed
