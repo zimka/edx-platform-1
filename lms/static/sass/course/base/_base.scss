@@ -30,6 +30,24 @@
   }
 }
 
+// index
+.container {
+  > .info-wrapper ,
+  > .home {
+    width: auto;
+  }
+  > .home {
+    display: block;
+  }
+}
+@media (max-width: 800px) {
+  .container {
+    > .info-wrapper {
+      display: block;
+    }
+  }
+}
+
 
 // +Resets - Old, Body
 // ====================

@@ -7,6 +7,7 @@
     from openedx.core.djangolib.js_utils import (
         dump_js_escaped_json, js_escaped_string
     )
+    from django.utils.translation import ugettext as _
 %>
 
 $(function () {
@@ -116,7 +117,7 @@ $(function () {
             
             detail_tooltips[section['category'] + "-grade_breakdown"] = [ section['detail'] ]
   
-    ticks += [ [overviewBarX, "Total"] ]
+    ticks += [ [overviewBarX, _("Total")] ]
     tickIndex += 1 + sectionSpacer
   
   totalScore = grade_summary['percent']

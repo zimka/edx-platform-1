@@ -268,15 +268,21 @@ class DjangoXBlockUserStateClient(XBlockUserStateClient):
         evt_time = time()
 
         for usage_key, state in block_keys_to_state.items():
-            student_module, created = StudentModule.objects.get_or_create(
-                student=user,
-                course_id=usage_key.course_key,
-                module_state_key=usage_key,
-                defaults={
-                    'state': json.dumps(state),
-                    'module_type': usage_key.block_type,
-                },
-            )
+            try:
+                student_module, created = StudentModule.objects.get_or_create(
+                    student=user,
+                    course_id=usage_key.course_key,
+                    module_state_key=usage_key,
+                    defaults={
+                        'state': json.dumps(state),
+                        'module_type': usage_key.block_type,
+                   },
+                )
+            except IntegrityError:
+                log.warning("set_many: IntegrityError for student {} - course_id {} - usage key {}".format(
+                    user, repr(unicode(usage_key.course_key)), usage_key
+                ))
+                return
 
             num_fields_before = num_fields_after = num_new_fields_set = len(state)
             num_fields_updated = 0

@@ -7,9 +7,10 @@ body.view-in-course {
   background-color: $body-bg;
 
   // keep application of widths to window-wrap
-  .window-wrap {
+  // hide the limit for mobile view 
+  /* .window-wrap {
     min-width: 760px;
-  }
+  } */
 
   // courseware header
   .header-global,
@@ -24,12 +25,18 @@ body.view-in-course {
   // courseware tabs and staff preview bar
   .wrapper-course-material,
   .wrapper-preview-menu {
-    padding: 0;
+    padding: 0 2%;
   }
 
   .wrapper-course-material .course-material,
   .wrapper-preview-menu .preview-menu  {
     width: auto;
+  }
+
+  .coursename-title {
+    padding: 3px 15px;
+    margin-top: 0;
+    margin-bottom: 0;
   }
 
   .wrapper-preview-menu .preview-menu {

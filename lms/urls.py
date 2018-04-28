@@ -1016,3 +1016,7 @@ if settings.ORA2_FILEUPLOAD_BACKEND == 'filesystem':
 urlpatterns += (
     url(r'^', include('sso_edx_npoed.sso_api_urls')),
 )
+
+urlpatterns += (
+    url(r'^api/extended/instructor_reset_track/', include('openedx.core.djangoapps.instructor_reset_track.urls')),
+)

@@ -12,7 +12,7 @@ from xblock.scorable import ScorableXBlockMixin, Score
 from courseware.model_data import get_score, set_score
 from eventtracking import tracker
 from openedx.core.lib.grade_utils import is_score_higher_or_equal
-from student.models import user_by_anonymous_id
+from student.models import user_by_anonymous_id, ENROLL_STATUS_CHANGE
 from util.date_utils import to_timestamp
 from track.event_transaction_utils import (
     get_event_transaction_type,
@@ -27,6 +27,7 @@ from .signals import (
     VERTICAL_SCORE_CHANGED,
     SCORE_PUBLISHED,
 )
+from .stsos import stsos_data, stsos_enroll_data
 from ..constants import ScoreDatabaseTableEnum
 from ..new.course_grade_factory import CourseGradeFactory
 from ..scores import weighted_score
@@ -280,3 +281,13 @@ def _emit_problem_submitted_event(kwargs):
                 'weighted_possible': kwargs.get('weighted_possible'),
             }
         )
+
+
+@receiver(PROBLEM_WEIGHTED_SCORE_CHANGED)
+def stsos_handler(sender, **kwargs):
+    stsos_data(kwargs)
+
+
+@receiver(ENROLL_STATUS_CHANGE)
+def stsos_enroll_handler(sender, **kwargs):
+    stsos_enroll_data(kwargs)

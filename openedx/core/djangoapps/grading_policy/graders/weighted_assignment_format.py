@@ -3,6 +3,7 @@ Grades all sections matching the format 'type' taking into account a weight.
 """
 import logging
 import random
+from django.utils.translation import ugettext as _
 from xmodule.graders import CourseGrader
 
 log = logging.getLogger("edx.graders")
@@ -172,11 +173,11 @@ class WeightedAssignmentFormatGrader(CourseGrader):
                 'prominent': True
             }, ]
         else:
-            total_detail = u"{section_type} Average = {percent:.0%}".format(
+            total_detail = _(u"{section_type} Average = {percent:.0%}").format(
                 percent=total_percent,
                 section_type=self.section_type
             )
-            total_label = u"{short_label} Avg".format(short_label=self.short_label)
+            total_label = _(u"{short_label} Avg").format(short_label=self.short_label)
 
             if self.show_only_average:
                 breakdown = []

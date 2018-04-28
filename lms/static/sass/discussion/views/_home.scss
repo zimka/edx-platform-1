@@ -1,6 +1,39 @@
 // discussion - views - home layout
 // ====================
 
+// temp discussion nav style (todo add <%static:css group='style-main-v2'/>)
+body.view-in-course  {
+  .wrapper-course-material .course-material {
+    padding: 10px 0 0 0;
+  }
+}
+// temp discussion title style (todo add to _headings.scss)
+.hd-5 {
+  &.coursename-title {
+    padding: 3px 15px;
+    font-size: 1.1em;
+    font-weight: 600;
+    line-height: 1.4em;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
+
+// discussion-page menu
+.content-wrapper {
+  padding: 0 2%;
+}
+nav.wrapper-course-material {
+  .course-material {
+    padding: 10px 0 0 0;
+  }
+  .course-tabs {
+    padding-top: 0;
+  }
+}
+
+
 // home - layout
 .view-discussion-home {
   @include padding-left($baseline);
@@ -12,6 +45,12 @@
   .label {
     @extend %t-copy-sub2;
     display: block;
+  }
+
+  .notif-settings {
+    display: inline-block;
+    width: 85px;
+    vertical-align: top;
   }
 
   .label-settings {
@@ -71,6 +110,10 @@
     }
   }
 
+  .home-helpgrid-cover {
+    overflow-x: scroll;
+  }
+
   .home-helpgrid {
     border-bottom: none;
     border-radius: $forum-border-radius;
@@ -89,7 +132,7 @@
 
     .row-item-full, .row-item {
       font-size: $forum-small-font-size;
-      padding: 0 ($baseline/2);
+      padding: ($baseline/4)  ($baseline/2);
       width: 26%;
       vertical-align: middle;
 
@@ -139,7 +182,8 @@
 
       .row-description {
         display: inline-block;
-        width:80%;
+        vertical-align: top;
+        width: calc(100% - 90px);
       }
     }
   }
@@ -160,4 +204,10 @@
     .fa-square {color: $green;}
     .fa-envelope {color: $light-gray;}
   }
+
+  @media (max-width: 800px) {
+    margin-top: 25px;
+    padding-left: 0;
+  }
+
 }

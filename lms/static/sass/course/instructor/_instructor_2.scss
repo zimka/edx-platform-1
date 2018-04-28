@@ -587,6 +587,48 @@
   }
 }
 
+
+.instructor-dashboard-wrapper-2 section.idash-section#instructor_reset_track{
+  #instructor-reset-track-table table{
+    border: 1px solid black;
+    table-layout: fixed;
+    width: 100%;
+    margin: 1em 0;
+  }
+
+  #instructor-reset-track-table td, #instructor-reset-track-table th{
+    word-wrap: break-word;
+    min-width: 3em;
+    border: 1px solid black;
+    width: 3em; /* the normal 'fixed' width */
+    max-width: 3em;
+    padding: 0.2em;
+    margin: 1em;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  #instructor-reset-track-table .table-pages{
+    display: block;
+    font-size: 1.2em;
+    margin:0 auto;
+    vertical-align: text-bottom;
+    width:100px;
+  }
+
+  #instructor-reset-track-table .prev-button{
+    float:left;
+  }
+
+  #instructor-reset-track-table .next-button{
+    float:right;
+  }
+
+  #instructor-reset-track-table .request-response-error{
+    margin: .5em 0;
+    padding: .5em 0;
+  }
+}
 // view - membership
 // --------------------
 .instructor-dashboard-wrapper-2 section.idash-section#membership {

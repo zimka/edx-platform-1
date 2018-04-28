@@ -8,9 +8,9 @@ import random
 
 from django.db import IntegrityError, transaction
 from django.db.models.signals import post_save, m2m_changed
-from django.dispatch import receiver
+from django.dispatch import receiver, Signal
 from django.http import Http404
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from courseware import courses
 from eventtracking import tracker
@@ -27,6 +27,7 @@ from .models import (
 
 
 log = logging.getLogger(__name__)
+COURSE_COHORT_ADD = Signal(providing_args=["group_name", "course_id", "username"])
 
 
 @receiver(post_save, sender=CourseUserGroup)
@@ -404,6 +405,7 @@ def add_user_to_cohort(cohort, username_or_email):
             "previous_cohort_name": membership.previous_cohort_name,
         }
     )
+    COURSE_COHORT_ADD.send(sender=None, group_name=cohort.name, course_id=cohort.course_id, username=user.username)
     return (user, membership.previous_cohort_name)
 
 
