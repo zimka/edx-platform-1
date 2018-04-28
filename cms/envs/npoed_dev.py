@@ -1,14 +1,16 @@
+import datetime
 from devstack import *
 
 FEATURES['ENABLE_SPECIAL_EXAMS'] = True
 
-SSO_ENABLED = False
+SSO_ENABLED = ENV_TOKENS.get("SSO_ENABLED", False)
+
+SSO_NPOED_URL = ""
 
 if SSO_ENABLED:
-    SSO_NPOED_URL = 'http://sso.local.se:8080'
-
+    SSO_NPOED_URL = ENV_TOKENS.get("SSO_NPOED_URL", 'http://sso.local.se:8080')
     SSO_API_URL = '%s/api-edx/' % SSO_NPOED_URL
-    SSO_API_TOKEN = 'xxxxxxxxxxxxxxxxxxx'
+    SSO_API_TOKEN = ENV_TOKENS.get("SSO_API_TOKEN", '123456')
 
     SOCIAL_AUTH_EXCLUDE_URL_PATTERN = r'^/admin'
     SOCIAL_AUTH_LOGOUT_URL = '%s/logout/' % SSO_NPOED_URL
