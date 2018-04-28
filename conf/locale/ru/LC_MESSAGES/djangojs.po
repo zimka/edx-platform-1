@@ -9536,3 +9536,26 @@ msgstr ""
 #: cms/templates/js/video/transcripts/messages/transcripts-use-existing.underscore
 msgid "Use Current Transcript"
 msgstr "Использовать субтитры"
+
+#:
+msgid "Show all posts"
+msgstr "Все темы"
+
+#:
+msgid "You must complete the proctoring setup before you can start the exam."
+msgstr "Дождитесь выполнения проктором необходимых действий перед началом экзамена."
+
+msgid "There was an error enrolling:"
+msgstr "При записи на курс произошла ошибка:"
+
+msgid "There was an error unenrolling:"
+msgstr "При отписке с курса произошла ошибка"
+
+msgid "There was an error processing:"
+msgstr "При обработке произошла ошибка"
+
+msgid  "You are taking \"{exam_link}\" as a {exam_type} exam. The timer on the right shows the time remaining in the exam."
+msgstr "Вы проходите \"{exam_link}\" как {exam_type}. Справа отображается оставшееся время док конца экзамена"
+
+msgid "discussion posted %(time_ago)s by %(author)s'"
+msgstr "опубликовано %(time_ago)s пользователем %(author)s'"
