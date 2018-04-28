@@ -7,7 +7,7 @@ import settings
 try:
     from sso_edx_npoed.decorators import comment_client_user_npoed_dec
 except ImportError:
-    def comment_client_user_npoed_dec(): pass
+    def comment_client_user_npoed_dec(cls): return cls
 
 
 @comment_client_user_npoed_dec

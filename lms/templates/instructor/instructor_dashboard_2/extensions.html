@@ -19,7 +19,7 @@ from django.utils.translation import ugettext as _
   <p>
     ${_("Choose the graded unit:")}
     <select name="url">
-      <option value="">Choose one</option>
+      <option value="">${_("Choose one")}</option>
       %for title, url in section_data['units_with_due_dates']:
       <option value="${url}">${title}</option>
       %endfor
@@ -54,7 +54,7 @@ from django.utils.translation import ugettext as _
   <p>
     ${_("Choose the graded unit:")}
     <select name="url">
-      <option value="">Choose one</option>
+      <option value="">${_("Choose one")}</option>
       %for title, url in section_data['units_with_due_dates']:
       <option value="${url}">${title}</option>
       %endfor
@@ -97,7 +97,7 @@ from django.utils.translation import ugettext as _
   <p>
     ${_("Choose the graded unit:")}
     <select name="url">
-      <option value="">Choose one</option>
+      <option value="">${_("Choose one")}</option>
       %for title, url in section_data['units_with_due_dates']:
       <option value="${url}">${title}</option>
       %endfor

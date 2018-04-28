@@ -27,6 +27,10 @@ def _save_forum_role(course_key, name):
     Save and Update 'course_key' for all roles which are already created to keep course_id same
     as actual passed course key
     """
+    existing_roles = Role.objects.filter(name=name, course_id=course_key)
+    if existing_roles.count() > 1:
+       for role in existing_roles[1:]:
+           role.delete()
     role, created = Role.objects.get_or_create(name=name, course_id=course_key)
     if created is False:
         role.course_id = course_key

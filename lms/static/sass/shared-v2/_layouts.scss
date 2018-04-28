@@ -38,9 +38,13 @@
                 @include text-align(right);
                 display: inline-block;
                 vertical-align: text-bottom;
+                margin-left: 20px;
 
                 .form-actions {
                     display: inline-block;
+                    @media (max-width: 500px) {
+                        display: block;
+                    }
                 }
 
                 .form-actions > *:first-child {

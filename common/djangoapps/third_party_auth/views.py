@@ -16,6 +16,8 @@ from .models import SAMLConfiguration
 
 URL_NAMESPACE = getattr(settings, setting_name('URL_NAMESPACE'), None) or 'social'
 
+import logging
+log = logging.getLogger(__name__)
 
 def inactive_user_view(request):
     """
@@ -30,8 +32,14 @@ def inactive_user_view(request):
     # 'next' may be set to '/account/finish_auth/.../' if this user needs to be auto-enrolled
     # in a course. Otherwise, just redirect them to the dashboard, which displays a message
     # about activating their account.
-    profile = UserProfile.objects.get(user=request.user)
-    compose_and_send_activation_email(request.user, profile)
+
+    # EDX-570
+    if str(request.user) == 'AnonymousUser':
+        log.error("request.user is AnonymousUser!")
+    else:
+        profile = UserProfile.objects.get(user=request.user)
+        compose_and_send_activation_email(request.user, profile)
+
     return redirect(request.GET.get('next', 'dashboard'))
 
 

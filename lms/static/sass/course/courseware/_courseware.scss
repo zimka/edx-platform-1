@@ -502,6 +502,11 @@ html.video-fullscreen {
           border-bottom: 0px;
           margin-bottom: 0px;
       }
+
+      .vert > .xblock-student_view-html {
+        overflow-x: scroll;
+      }
+
     }
 
     section.xblock-student_view-wrapper div.vert-mod > div {

@@ -5,6 +5,7 @@
     define([
         'underscore',
         'backbone',
+        'gettext',
         'edx-ui-toolkit/js/utils/html-utils',
         'edx-ui-toolkit/js/utils/constants',
         'common/js/discussion/utils',
@@ -13,7 +14,7 @@
         'discussion/js/views/discussion_search_view',
         'text!discussion/templates/discussion-home.underscore'
     ],
-    function(_, Backbone, HtmlUtils, Constants, DiscussionUtil,
+    function(_, Backbone, gettext, HtmlUtils, Constants, DiscussionUtil,
         DiscussionThreadListView, DiscussionFakeBreadcrumbs, DiscussionSearchView, discussionHomeTemplate) {
         var DiscussionBoardView = Backbone.View.extend({
             events: {
@@ -53,7 +54,7 @@
                     el: this.$('.forum-search')
                 }).render();
                 this.renderBreadcrumbs();
-                $(window).bind('load scroll resize', _.bind(this.updateSidebar, this));
+                $(window).bind('load resize', _.bind(this.updateSidebar, this));
                 this.showBrowseMenu(true);
                 return this;
             },
@@ -125,7 +126,7 @@
                 if (event.which === Constants.keyCodes.enter || event.type === 'click') {
                     event.preventDefault();
                     this.hideBrowseMenu();
-                    this.breadcrumbs.model.set('contents', ['Search Results']);
+                    this.breadcrumbs.model.set('contents', [gettext('Search Results')]);
                     this.discussionThreadListView.performSearch($('.search-input', this.$el));
                 }
             },
@@ -136,34 +137,35 @@
             },
 
             updateSidebar: function() {
-                var amount, browseFilterHeight, discussionBottomOffset, discussionsBodyBottom,
-                    discussionsBodyTop, headerHeight, refineBarHeight, scrollTop, sidebarHeight, topOffset,
-                    windowHeight, $discussionBody, $sidebar;
-                scrollTop = $(window).scrollTop();
-                windowHeight = $(window).height();
-                $discussionBody = this.$('.discussion-column');
-                discussionsBodyTop = $discussionBody[0] ? $discussionBody.offset().top : undefined;
-                discussionsBodyBottom = discussionsBodyTop + $discussionBody.outerHeight();
-                $sidebar = this.$('.forum-nav');
-                if (scrollTop > discussionsBodyTop - this.sidebar_padding) {
-                    $sidebar.css('top', scrollTop - discussionsBodyTop + this.sidebar_padding);
+                // fixed static sidebar (adaptive height on 420-, 420-800, 800-1160, 1161+)                
+                var $sidebar = $('.forum-nav'),
+                    $sidebarThreads = this.$('.forum-nav-thread-list'),
+                    $sidebarMenu = this.$('.forum-nav-browse-menu');
+
+                var heightLimit;
+
+                if ($(window).width() >= 801) {
+
+                    heightLimit = 700;
+
                 } else {
-                    $sidebar.css('top', '0');
-                }
-                sidebarHeight = windowHeight - Math.max(discussionsBodyTop - scrollTop, this.sidebar_padding);
-                topOffset = scrollTop + windowHeight;
-                discussionBottomOffset = discussionsBodyBottom + this.sidebar_padding;
-                amount = Math.max(topOffset - discussionBottomOffset, 0);
-                sidebarHeight = sidebarHeight - this.sidebar_padding - amount;
-                sidebarHeight = Math.min(sidebarHeight + 1, $discussionBody.outerHeight());
-                $sidebar.css('height', sidebarHeight);
-                headerHeight = this.$('.forum-nav-header').outerHeight();
-                refineBarHeight = this.$('.forum-nav-refine-bar').outerHeight();
-                browseFilterHeight = this.$('.forum-nav-browse-filter').outerHeight();
-                this.$('.forum-nav-thread-list')
-                    .css('height', (sidebarHeight - headerHeight - refineBarHeight - 2) + 'px');
-                this.$('.forum-nav-browse-menu')
-                    .css('height', (sidebarHeight - headerHeight - browseFilterHeight - 2) + 'px');
+
+                    heightLimit = 340;
+
+                };
+
+                $sidebar.css('height', heightLimit);
+                $sidebarMenu.css('height', heightLimit - 37);
+
+                if ($(window).width() > 1161 || ($(window).width() <=  800 && $(window).width() > 421)) {
+
+                    $sidebarThreads.css('height', heightLimit - 32); 
+                    
+                } else if (($(window).width() <=  1160 && $(window).width() > 801) || $(window).width() <= 420 ) {
+                    
+                    $sidebarThreads.css('height', heightLimit - 91 );
+ 
+                };
             },
 
             goHome: function() {
