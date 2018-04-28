@@ -24940,7 +24940,7 @@ msgstr "ВНИМАНИЕ! В этом случае вы не сможете по
 
 #:
 msgid "You must complete the proctoring setup before you can start the exam."
-msgstr "Необходимо выполнить настройку прокторинга перед началом экзамена."
+msgstr "Дождитесь выполнения проктором необходимых действий перед началом экзамена."
 
 msgid "Ban User"
 msgstr "Отчисление студентов"
@@ -24974,3 +24974,18 @@ msgstr " (запрещено PLP: {plp_reason})"
 
 msgid "Course team have to specified Proctoring Service before you will have ability to pass this exam"
 msgstr "Прохождение данного экзамена будет доступно после того, как команда курса выберет для него прокторинговую систему"
+
+#: edx_proctoring/api.py:963
+#, python-brace-format
+msgid "Proctoring Results For {course_name} {exam_name}"
+msgstr "Результаты прокторинга для {course_name} {exam_name}"
+
+#: edx_proctoring/api.py:972
+#, python-brace-format
+msgid "Proctoring Review In Progress For {course_name} {exam_name}"
+msgstr "Прокторинг на рассмотрении для {course_name} {exam_name}"
+
+#: edx_proctoring/api.py:1000
+#, python-brace-format
+msgid "Proctored exam {exam_name} in {course_name} for user {username}"
+msgstr "Прокторинговое испытание {exam_name} на курсе {course_name} для пользователя {username}"
