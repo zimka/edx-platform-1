@@ -12,7 +12,7 @@ from pkg_resources import resource_string
 
 from lxml import etree
 from xblock.core import XBlock
-from xblock.fields import Integer, Scope, Boolean, String
+from xblock.fields import Integer, Scope, Boolean, String, Dict
 from xblock.fragment import Fragment
 
 from .exceptions import NotFoundError
@@ -112,6 +112,33 @@ class ProctoringFields(object):
         scope=Scope.settings,
     )
 
+    exam_review_checkbox = Dict(
+        display_name=_("exam_review_checkbox"),
+        help=_(
+            "exam_review_checkbox"
+        ),
+        default={
+             "calculator": True,
+             "excel": False,
+             "messengers": False,
+             "absence": False,
+             "books": False,
+             "papersheet": True,
+             "aid": False,
+             "web_sites": False,
+             "voice": False,
+             "gaze_averted": True
+        },
+        scope=Scope.settings,
+    )
+
+    exam_proctoring_system = String(
+        display_name=_("Proctoring system"),
+        help=_(""),
+        default='',
+        scope=Scope.settings,
+    )
+
     is_practice_exam = Boolean(
         display_name=_("Is Practice Exam"),
         help=_(
@@ -147,6 +174,16 @@ class ProctoringFields(object):
         taking a proctored exam, or opting out to take the exam without proctoring.
         """
         return self._get_course().allow_proctoring_opt_out
+
+    @property
+    def available_proctoring_services(self):
+        """
+        Returns the list of proctoring services for the course if available, else None
+        """
+        if self._get_course().available_proctoring_services:
+            return self._get_course().available_proctoring_services.split(",")
+        else:
+            return None
 
     @is_proctored_exam.setter
     def is_proctored_exam(self, value):
@@ -467,6 +504,11 @@ class SequenceModule(SequenceFields, ProctoringFields, XModule):
             course_id = self.runtime.course_id
             content_id = self.location
 
+            available_proctoring_services = self.available_proctoring_services
+            log.info(available_proctoring_services)
+            if self.exam_proctoring_system and len(available_proctoring_services) > 1:
+                available_proctoring_services = [self.exam_proctoring_system]
+
             context = {
                 'display_name': self.display_name,
                 'default_time_limit_mins': (
@@ -475,6 +517,7 @@ class SequenceModule(SequenceFields, ProctoringFields, XModule):
                 ),
                 'is_practice_exam': self.is_practice_exam,
                 'allow_proctoring_opt_out': self.allow_proctoring_opt_out,
+                'available_proctoring_services': available_proctoring_services,
                 'due_date': self.due
             }
 

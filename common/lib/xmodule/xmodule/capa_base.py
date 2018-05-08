@@ -1503,7 +1503,7 @@ class CapaMixin(ScorableXBlockMixin, CapaFields):
         msg = _("Your answers have been saved.")
         if not self.max_attempts == 0:
             msg = _(
-                "Your answers have been saved but not graded. Click '{button_name}' to grade them."
+                u"Your answers have been saved but not graded. Click '{button_name}' to grade them."
             ).format(button_name=self.submit_button_name())
         return {
             'success': True,

@@ -1093,6 +1093,15 @@ def create_xblock_info(xblock, data=None, metadata=None, include_ancestor_info=F
     if course is None:
         course = modulestore().get_course(xblock.location.course_key)
 
+    proctoring_services = None
+    if course:
+        try:
+            all_proctoring_services = course.available_proctoring_services()
+        except TypeError:
+            all_proctoring_services = course.available_proctoring_services
+        if ',' in all_proctoring_services:
+            proctoring_services = all_proctoring_services.split(',')
+
     # Compute the child info first so it can be included in aggregate information for the parent
     should_visit_children = include_child_info and (course_outline and not is_xblock_unit or not course_outline)
     if should_visit_children and xblock.has_children:
@@ -1188,6 +1197,7 @@ def create_xblock_info(xblock, data=None, metadata=None, include_ancestor_info=F
                 xblock_info.update({
                     'enable_proctored_exams': xblock.enable_proctored_exams,
                     'create_zendesk_tickets': xblock.create_zendesk_tickets,
+                    'proctoring_services': proctoring_services,
                     'enable_timed_exams': xblock.enable_timed_exams
                 })
             elif xblock.category == 'sequential':
@@ -1197,6 +1207,9 @@ def create_xblock_info(xblock, data=None, metadata=None, include_ancestor_info=F
                     'is_time_limited': xblock.is_time_limited,
                     'exam_review_rules': xblock.exam_review_rules,
                     'default_time_limit_minutes': xblock.default_time_limit_minutes,
+                    'exam_review_checkbox': xblock.exam_review_checkbox,
+                    'proctoring_services': proctoring_services,
+                    'exam_proctoring_system': xblock.exam_proctoring_system,
                 })
 
         # Update with gating info
