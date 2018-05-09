@@ -36,6 +36,15 @@ tinymce.PluginManager.add('codemirror', function(editor, url) {
         var sourceHtmlParams = "?CodeMirrorPath=" + editor.settings.codemirror.path +
             "&ParentOrigin=" + window.location.origin;
 
+        var parser = document.createElement('a');
+        parser.href = url;
+        var pathname = parser.pathname;
+        var pathnameArr = pathname.split('/');
+        if ((pathnameArr.length > 1) && (pathnameArr[1] !== 'static')) {
+            pathnameArr[1] = 'static';
+        }
+        url = window.location.origin + pathnameArr.join('/');
+
 		// Open editor window
 		var win = editor.windowManager.open({
 			title: 'HTML source code',
