@@ -71,7 +71,6 @@ class SequenceFields(object):
     )
 
 from openedx.core.djangoapps.npoed_multiproctoring import enable_npoed_multiproctoring
-from openedx.core.djangoapps.npoed_multiproctoring.models import CourseMultiproctoringState
 
 @enable_npoed_multiproctoring
 class ProctoringFields(object):
@@ -150,13 +149,6 @@ class ProctoringFields(object):
         taking a proctored exam, or opting out to take the exam without proctoring.
         """
         return self._get_course().allow_proctoring_opt_out
-
-    @property
-    def available_proctoring_services(self):
-        """
-        Returns the list of proctoring services for the course if available, else None
-        """
-        return CourseMultiproctoringState.get_service_names(self.location.course_key)
 
     @is_proctored_exam.setter
     def is_proctored_exam(self, value):
@@ -476,6 +468,7 @@ class SequenceModule(SequenceFields, ProctoringFields, XModule):
             user_role_in_course = 'staff' if self.runtime.user_is_staff else 'student'
             course_id = self.runtime.course_id
             content_id = self.location
+
             context = {
                 'display_name': self.display_name,
                 'default_time_limit_mins': (

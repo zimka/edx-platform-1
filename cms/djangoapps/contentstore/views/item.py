@@ -1095,6 +1095,7 @@ def create_xblock_info(xblock, data=None, metadata=None, include_ancestor_info=F
     # For this reason, we load the course once and re-use it when recursively loading children.
     if course is None:
         course = modulestore().get_course(xblock.location.course_key)
+
     # Compute the child info first so it can be included in aggregate information for the parent
     should_visit_children = include_child_info and (course_outline and not is_xblock_unit or not course_outline)
     if should_visit_children and xblock.has_children:
