@@ -70,7 +70,10 @@ class SequenceFields(object):
         scope=Scope.settings,
     )
 
+from openedx.core.djangoapps.npoed_multiproctoring import enable_npoed_multiproctoring
+from openedx.core.djangoapps.npoed_multiproctoring.models import CourseMultiproctoringState
 
+@enable_npoed_multiproctoring
 class ProctoringFields(object):
     """
     Fields that are specific to Proctored or Timed Exams
@@ -108,33 +111,6 @@ class ProctoringFields(object):
         help=_(
             "This setting indicates what rules the proctoring team should follow when viewing the videos."
         ),
-        default='',
-        scope=Scope.settings,
-    )
-
-    exam_review_checkbox = Dict(
-        display_name=_("exam_review_checkbox"),
-        help=_(
-            "exam_review_checkbox"
-        ),
-        default={
-             "calculator": True,
-             "excel": False,
-             "messengers": False,
-             "absence": False,
-             "books": False,
-             "papersheet": True,
-             "aid": False,
-             "web_sites": False,
-             "voice": False,
-             "gaze_averted": True
-        },
-        scope=Scope.settings,
-    )
-
-    exam_proctoring_system = String(
-        display_name=_("Proctoring system"),
-        help=_(""),
         default='',
         scope=Scope.settings,
     )
@@ -180,10 +156,7 @@ class ProctoringFields(object):
         """
         Returns the list of proctoring services for the course if available, else None
         """
-        if self._get_course().available_proctoring_services:
-            return self._get_course().available_proctoring_services.split(",")
-        else:
-            return None
+        return CourseMultiproctoringState.get_service_names(self.location.course_key)
 
     @is_proctored_exam.setter
     def is_proctored_exam(self, value):
@@ -503,12 +476,6 @@ class SequenceModule(SequenceFields, ProctoringFields, XModule):
             user_role_in_course = 'staff' if self.runtime.user_is_staff else 'student'
             course_id = self.runtime.course_id
             content_id = self.location
-
-            available_proctoring_services = self.available_proctoring_services
-            log.info(available_proctoring_services)
-            if self.exam_proctoring_system and len(available_proctoring_services) > 1:
-                available_proctoring_services = [self.exam_proctoring_system]
-
             context = {
                 'display_name': self.display_name,
                 'default_time_limit_mins': (
@@ -517,7 +484,6 @@ class SequenceModule(SequenceFields, ProctoringFields, XModule):
                 ),
                 'is_practice_exam': self.is_practice_exam,
                 'allow_proctoring_opt_out': self.allow_proctoring_opt_out,
-                'available_proctoring_services': available_proctoring_services,
                 'due_date': self.due
             }
 

@@ -10,7 +10,9 @@ from openedx.core.djangoapps.waffle_utils import WaffleSwitchNamespace
 from xblock_django.models import XBlockStudioConfigurationFlag
 from xmodule.modulestore.django import modulestore
 
+from openedx.core.djangoapps.npoed_multiproctoring import enable_npoed_multiproctoring
 
+@enable_npoed_multiproctoring
 class CourseMetadata(object):
     '''
     For CRUD operations on metadata fields which do not have specific editors
@@ -59,8 +61,6 @@ class CourseMetadata(object):
         'show_correctness',
         'chrome',
         'default_tab',
-        'exam_review_checkbox',
-        'exam_proctoring_system',
     ]
 
     @classmethod
