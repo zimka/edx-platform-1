@@ -5,8 +5,9 @@ get_course_blocks function.
 from openedx.core.djangoapps.content.block_structure.api import get_block_structure_manager
 from openedx.core.djangoapps.content.block_structure.transformers import BlockStructureTransformers
 
-from .transformers import library_content, start_date, user_partitions, visibility
+from .transformers import library_content, start_date, user_partitions, visibility, load_override_data
 from .usage_info import CourseUsageInfo
+from django.conf import settings
 
 # Default list of transformers for manipulating course block structures
 # based on the user's access to the course blocks.
@@ -16,6 +17,17 @@ COURSE_BLOCK_ACCESS_TRANSFORMERS = [
     user_partitions.UserPartitionTransformer(),
     visibility.VisibilityTransformer(),
 ]
+if (settings.FEATURES.get('INDIVIDUAL_DUE_DATES')):
+    COURSE_BLOCK_ACCESS_TRANSFORMERS.append(load_override_data.OverrideDataTransformer())
+
+try:
+    from course_shifts.transformer import CourseShiftsTransformer
+    if (settings.FEATURES.get('ENABLE_COURSE_SHIFTS')):
+        pass
+        # Course shift transformer is currently disabled
+        # COURSE_BLOCK_ACCESS_TRANSFORMERS = [CourseShiftsTransformer()] + COURSE_BLOCK_ACCESS_TRANSFORMERS
+except ImportError:
+    pass
 
 
 def get_course_blocks(
