@@ -124,7 +124,8 @@
                 comments = new Comments();
                 this.commentViews = [];
                 comments.comparator = function(comment) {
-                    return comment.get('created_at');
+                    var time = new Date(comment.get('created_at'));
+                    return -1* time;
                 };
                 collectComments = function(comment) {
                     var children;
