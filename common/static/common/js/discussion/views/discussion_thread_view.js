@@ -198,7 +198,11 @@
                             self.markedAnswers.add(data.content.endorsed_responses);
                         }
                         self.responses.add(
-                            self.isQuestion() ? data.content.non_endorsed_responses : data.content.children
+                            (self.isQuestion() ? data.content.non_endorsed_responses : data.content.children).sort(
+                                function(a,b){
+                                    return (a.created_at < b.created_at);
+                                }
+                            )
                         );
                         self.renderResponseCountAndPagination(
                             self.isQuestion() ?
