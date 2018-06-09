@@ -198,11 +198,7 @@
                             self.markedAnswers.add(data.content.endorsed_responses);
                         }
                         self.responses.add(
-                            (self.isQuestion() ? data.content.non_endorsed_responses : data.content.children).sort(
-                                function(a,b){
-                                    return (a.created_at < b.created_at);
-                                }
-                            )
+                            self.isQuestion() ? data.content.non_endorsed_responses : data.content.children
                         );
                         self.renderResponseCountAndPagination(
                             self.isQuestion() ?
@@ -313,7 +309,12 @@
                 view.on('comment:add', this.addComment);
                 view.on('comment:endorse', this.endorseThread);
                 view.render();
-                this.$el.find(listSelector).append(view.el);
+                if (options.isNewComment){
+                    this.$el.find(listSelector).prepend(view.el);
+                }
+                else{
+                    this.$el.find(listSelector).append(view.el);
+                }
                 view.afterInsert();
                 if (options.focusAddedResponse) {
                     this.focusToTheAddedResponse(view.el);
@@ -366,7 +367,8 @@
                 });
                 comment.set('thread', this.model.get('thread'));
                 this.renderResponseToList(comment, '.js-response-list', {
-                    focusAddedResponse: true
+                    focusAddedResponse: true,
+                    isNewComment: true
                 });
                 this.model.addComment();
                 this.renderAddResponseButton();
