@@ -124,8 +124,7 @@
                 comments = new Comments();
                 this.commentViews = [];
                 comments.comparator = function(comment) {
-                    var time = new Date(comment.get('created_at'));
-                    return -1* time;
+                    return comment.get('created_at');
                 };
                 collectComments = function(comment) {
                     var children;
@@ -164,7 +163,7 @@
                 if (this.readOnly) {
                     this.$el.find('.comments').append(view.el);
                 } else {
-                    this.$el.find('.comments .new-comment').before(view.el);
+                    this.$el.find('.comments .new-comment').after(view.el);
                 }
                 view.bind('comment:edit', function(event) {
                     if (self.editView) {
