@@ -16,18 +16,37 @@ from openedx.core.djangolib.markup import HTML
 %>
 <%block name="header_extras">
     <style>
+        #suspicious-monitor-container {
+           max-width: 1180px;
+        }
+        .page-content {
+            padding: 40px;
+        }
+        nav.wrapper-course-material .course-tabs {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .course-material {
+          padding-top: 10px;
+        }
+        .course-material .coursename-title {
+          padding: 3px 15px 3px 15px;
+          margin-bottom: 0px;
+        }
         .suspicious-monitor-board table{
-            width: 100%;
+            width: 90%;
             border:1px solid black;
-            text-align:center
+            text-align:center;
+            word-break:break-all;
         }
         .suspicious-monitor-board tr{
-            border: 1px solid black
+            border: 1px solid black;
         }
     </style>
 </%block>
 
 <section class="suspicious-monitor-board container" id="suspicious-monitor-container">
+    <div>
     <div class="page-content">
         <div>
             ${_("Here you can watch exam attempts that our system have found suspicious.")}
@@ -44,6 +63,13 @@ from openedx.core.djangolib.markup import HTML
         % if len(proctored_attempts):
         <h4 class="hd hd-4">${_("Proctored suspicious exam attempts")}</h4>
         <table>
+            <colgroup>
+              <col width="20%">
+              <col width="10%">
+              <col width="20%">
+              <col width="40%">
+              <col width="10%">
+            </colgroup>
             <thead>
                 <tr>
                     <th>${_("Username")}</th>
@@ -77,6 +103,13 @@ from openedx.core.djangolib.markup import HTML
         % if len(non_proctored_attempts):
         <h4 class="hd hd-4">${_("Non-proctored suspicious exam attempts")}</h4>
         <table>
+            <colgroup>
+              <col width="20%">
+              <col width="10%">
+              <col width="20%">
+              <col width="40%">
+              <col width="10%">
+            </colgroup>
             <thead>
                 <tr>
                     <th>${_("Username")}</th>
@@ -109,6 +142,7 @@ from openedx.core.djangolib.markup import HTML
             <h4 class="hd hd-4">${_("No suspicious exam attempts were detected.")}</h4>
         % endif
         </form>
+    </div>
     </div>
 </section>
 

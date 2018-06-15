@@ -47,9 +47,9 @@ class ExamSessionSet:
         """
         date_keys = sorted(self._sessions.keys())
         data = self._sessions
-        template = _("At {date}: {ip}('{session_key}')")
+        template = _("{datetime}: {ip} ('{session_key}')")
         strings = [
-            template.format(date=k.replace(microsecond=0), ip=data[k].ip, session_key=data[k].key)
+            template.format(datetime=k.time().replace(microsecond=0), ip=data[k].ip, session_key=data[k].key)
             for k in date_keys
         ]
         return strings
