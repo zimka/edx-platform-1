@@ -96,6 +96,9 @@ PROCTOR_PATH_VENV = "venvs/edxapp/src/edx-proctoring/edx_proctoring"
 PROCTOR_LOCALE_PATH = '{}/{}/locale'.format(PROJECT_ROOT.dirname().dirname(), PROCTOR_PATH_VENV)
 LOCALE_PATHS += (PROCTOR_LOCALE_PATH,)
 
+
+PROCTORING_DEFAULT_LINK_URLS = AUTH_TOKENS.get('PROCTORING_DEFAULT_LINK_URLS')
+
 INSTALLED_APPS += ('openedx.core.djangoapps.npoed_session_monitor',)
 FEATURES["ENABLE_SUSPICIOUS_MONITOR"] = True
 FEATURES["ENABLE_SUSPICIOUS_MONITOR_ADMIN"] = True # Optional
