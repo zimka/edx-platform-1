@@ -95,3 +95,7 @@ LOCALE_PATHS += (ORA_LOCALE_PATH,)
 PROCTOR_PATH_VENV = "venvs/edxapp/src/edx-proctoring/edx_proctoring"
 PROCTOR_LOCALE_PATH = '{}/{}/locale'.format(PROJECT_ROOT.dirname().dirname(), PROCTOR_PATH_VENV)
 LOCALE_PATHS += (PROCTOR_LOCALE_PATH,)
+
+INSTALLED_APPS += ('openedx.core.djangoapps.npoed_session_monitor',)
+FEATURES["ENABLE_SUSPICIOUS_MONITOR"] = True
+FEATURES["ENABLE_SUSPICIOUS_MONITOR_ADMIN"] = True # Optional
