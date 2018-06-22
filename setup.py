@@ -38,6 +38,7 @@ setup(
             "teams = lms.djangoapps.teams.plugins:TeamsTab",
             "textbooks = lms.djangoapps.courseware.tabs:TextbookTabs",
             "wiki = lms.djangoapps.course_wiki.tab:WikiTab",
+            "suspicious_monitor = openedx.core.djangoapps.npoed_session_monitor.plugins:SuspiciousMonitorTab"
         ],
         "openedx.user_partition_scheme": [
             "random = openedx.core.djangoapps.user_api.partition_schemes:RandomUserPartitionScheme",
