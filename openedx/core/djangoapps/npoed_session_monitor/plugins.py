@@ -11,7 +11,7 @@ class SuspiciousMonitorTab(TabFragmentViewMixin, tabs.EnrolledTab):
     Tab is visible for instructors only
     """
     type = "suspicious_monitor"
-    title = ugettext_noop("Suspicious Monitor")
+    title = ugettext_noop("Proctoring alerts")
     view_name = "openedx.core.djangoapps.npoed_session_monitor.views.suspicious_monitor_view"
     fragment_view_name = "openedx.core.djangoapps.npoed_session_monitor.views.SucpiciousMonitorFragmentView"
     priority = None
